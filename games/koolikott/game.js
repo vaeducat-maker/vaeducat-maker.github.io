@@ -75,14 +75,14 @@ function ping(kind='flip'){
   osc.connect(gain); gain.connect(audioContext.destination); osc.start(now); osc.stop(now+(kind==='win'?.36:.18));
 }
 
-function makeCard(item,type,index){
+function makeCard(item,type){
   const button=document.createElement('button');
   button.className='memory-card';
   button.type='button';
   button.dataset.pair=item.id;
   button.dataset.type=type;
   button.setAttribute('aria-label','Suletud kaart');
-  button.innerHTML=`<span class="card-face card-back"><img src="../../assets/kiisu-miisu-logo.png" alt=""></span>
+  button.innerHTML=`<span class="card-face card-back" aria-hidden="true"></span>
     <span class="card-face card-front ${type}">${type==='picture'?`<img src="assets/${item.id}.png" alt="${item.word}">`:`<span>${item.word}</span>`}</span>`;
   button.addEventListener('click',()=>flipCard(button));
   return button;
@@ -92,10 +92,10 @@ function buildGame(){
   stopTimer(); firstCard=secondCard=null; boardLocked=false; moves=0; matches=0; seconds=0; started=false;
   movesEl.textContent='0'; matchedEl.textContent='0'; totalPairsEl.textContent=level; timerEl.textContent='00:00'; updateBest();
   const cards=[];
-  activeItems().forEach((item,i)=>{cards.push(makeCard(item,'picture',i));cards.push(makeCard(item,'word',i));});
+  activeItems().forEach((item)=>{cards.push(makeCard(item,'picture'));cards.push(makeCard(item,'word'));});
   shuffle(cards);
   board.replaceChildren(...cards);
-  board.style.setProperty('--columns',level===10?5:4);
+  board.style.setProperty('--columns',level===10?5:6);
   board.style.setProperty('--mobile-columns',level===10?4:3);
   buildWordList();
 }
