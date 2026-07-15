@@ -17,137 +17,104 @@
     <nav class="nav" aria-label="Põhinavigatsioon">
       <a class="nav-new" href="#uus">UUS!!!</a>
       <a href="#mangud">Mängud</a>
-      <a href="#materjalid">Materjalid</a>
       <a href="#teemad">Teemad</a>
-      <a href="#meist">Meist</a>
     </nav>
   </div>
 </header>
 
 <main>
-  <section class="new-section" id="uus" aria-labelledby="new-title">
-    <div class="container">
-      <article class="new-feature-card">
-        <div class="new-copy">
+  <section class="showcase-section" aria-label="Uus materjal ja uusim mäng">
+    <div class="container showcase-grid">
+      <article class="showcase-card material-showcase" id="uus">
+        <div class="showcase-copy">
           <div class="new-label">UUS!!!</div>
-          <div class="meta">TASUTA MÄNG · EESTI KEEL A1 · 14.07.2026</div>
-          <h1 id="new-title">Koolikoti memomäng</h1>
-          <p>Leia pildile õige eestikeelne sõna. Uus tasuta mäng täiendab õppematerjali <strong>„Mis on koolikotis?”</strong>.</p>
+          <div class="meta">TASUTA TÖÖLEHT · 15.07.2026</div>
+          <h1>Lõika! Kosmoserada</h1>
+          <p>Harjuta kääridega täpset lõikamist mööda pikka ja käänulist kosmoserada.</p>
           <div class="actions">
-            <a class="button primary" href="games/koolikott/">Mängi kohe</a>
-            <a class="button secondary" href="materials/koolikott/">Vaata materjali</a>
+            <a class="button material-primary" href="materials/loika-kosmoserada/">Vaata materjali</a>
+            <a class="secondary-action" href="downloads/loika-kosmoserada.pdf" download>
+              <span aria-hidden="true">↓</span> Laadi PDF alla
+            </a>
           </div>
-          <p class="new-note">Töötab telefonis, tahvelarvutis ja arvutis. Registreerimist pole vaja.</p>
         </div>
-        <div class="game-visual new-visual" aria-hidden="true">
-          <div class="mini-card back"><img src="assets/kiisu-miisu-logo.png" alt=""></div>
-          <div class="mini-card picture"><img src="games/koolikott/assets/pliiats.png" alt=""></div>
-          <div class="mini-card word">pliiats</div>
-          <div class="spark s1">✦</div><div class="spark s2">●</div><div class="spark s3">✦</div>
+        <div class="material-showcase-visual">
+          <span class="accent-dot accent-dot-one" aria-hidden="true"></span>
+          <span class="accent-dot accent-dot-two" aria-hidden="true"></span>
+          <img src="assets/loika-kosmoserada.png" alt="Lõika! Kosmoserada töölehe eelvaade">
+        </div>
+      </article>
+
+      <article class="showcase-card game-showcase" id="mangud">
+        <div class="showcase-copy">
+          <div class="latest-badge game-badge">KIISU MIISU MÄNGUD</div>
+          <div class="meta game-meta">EESTI KEEL · A1 · TASUTA</div>
+          <h2>Koolikoti memomäng</h2>
+          <p>Ühenda koolitarbe pilt õige eestikeelse sõnaga. Vali 6 või 10 paari ja mängi kohe veebis.</p>
+          <div class="actions">
+            <a class="button game-primary" href="games/koolikott/">Mängi kohe</a>
+            <a class="secondary-action game-link" href="materials/koolikott/">
+              Vaata sõnu <span aria-hidden="true">→</span>
+            </a>
+          </div>
+        </div>
+        <div class="game-showcase-visual" aria-hidden="true">
+          <div class="game-card game-card-blue"><img src="games/koolikott/assets/pinal.png" alt=""></div>
+          <div class="game-card game-card-white"><img src="games/koolikott/assets/pliiats.png" alt=""></div>
+          <div class="game-card game-card-word">PLIIATS</div>
+          <span class="game-spark spark-one">✦</span>
+          <span class="game-spark spark-two">+</span>
         </div>
       </article>
     </div>
   </section>
 
-  <section class="hero">
-    <div class="container hero-grid">
-      <div>
+  <section class="intro-strip" aria-label="KIISU MIISU tutvustus">
+    <div class="container intro-inner">
+      <div class="intro-copy">
         <div class="eyebrow">Autori õppematerjalide töötuba</div>
-        <h2 class="hero-title">Õppimine algab uudishimust.</h2>
-        <p>
-          KIISU MIISU ühendab keeleõppe, ajaloo, kultuuri, looduse ja tänapäevased tehnoloogiad
-          selgeteks ning ilusateks materjalideks lastele.
-        </p>
-        <p><strong>Учёба, которая начинается с любопытства.</strong></p>
-        <div class="actions">
-          <a class="button primary" href="#materjalid">Vaata materjale</a>
-          <a class="button secondary" href="#mangud">Mängi</a>
-        </div>
+        <h2>Õppimine algab uudishimust.</h2>
+        <p>Selged materjalid, mängud ja väikesed avastused lastele.</p>
       </div>
-      <div class="hero-card">
-        <img src="assets/kiisu-miisu-logo.png" alt="KIISU MIISU maskott">
-        <small>Üks äratuntav stiil. Palju päriselt huvitavaid teemasid.</small>
-      </div>
+      <img class="intro-mascot" src="assets/kiisu-miisu-logo.png" alt="KIISU MIISU maskott">
     </div>
   </section>
 
-  <section class="section" id="teemad">
+  <section class="section topics-section" id="teemad">
     <div class="container">
       <div class="section-head">
         <h2>Teemad</h2>
-        <p>Materjalid kasvavad samm-sammult üheks tervikuks: vaata, laadi alla ja harjuta mängides.</p>
+        <p>Vali teema ja ava sobiv materjal või mäng.</p>
       </div>
-      <div class="cards">
-        <article class="card"><div class="icon">🇪🇪</div><h3>Eesti keel</h3><p>Sõnavara, plakatid, töölehed ja väikesed keeleharjutused.</p></article>
-        <article class="card"><div class="icon">🏛️</div><h3>Ajalugu ja kultuur</h3><p>Ajastud, inimesed, müüdid ja lood, mis aitavad maailma mõista.</p></article>
-        <article class="card"><div class="icon">🌿</div><h3>Loodus</h3><p>Vaatlused, katsed ja õppematerjalid päris elust.</p></article>
-        <article class="card"><div class="icon">🎮</div><h3>Mängud ja rakendused</h3><p>Interaktiivsed harjutused, kaardid ja õppemängud.</p></article>
-      </div>
-    </div>
-  </section>
-
-  <section class="section game-catalog-section" id="mangud">
-    <div class="container">
-      <div class="section-head">
-        <div>
-          <div class="latest-badge game-badge">KIISU MIISU MÄNGUD</div>
-          <h2>Mängi ja harjuta</h2>
-        </div>
-        <p>Tasuta mängud käivituvad kohe veebilehel. Midagi ei ole vaja installida.</p>
-      </div>
-      <article class="game-catalog-card">
-        <div class="game-catalog-icon">🎒</div>
-        <div>
-          <div class="meta">EESTI KEEL · A1 · TASUTA</div>
-          <h3>Koolikoti memomäng</h3>
-          <p>Ühenda koolitarbe pilt õige eestikeelse sõnaga. Vali 6 või 10 paari.</p>
-        </div>
-        <div class="game-catalog-actions">
-          <a class="button primary" href="games/koolikott/">Mängi kohe</a>
-          <a class="text-link" href="materials/koolikott/">Seotud materjal →</a>
-        </div>
-      </article>
-    </div>
-  </section>
-
-  <section class="section alt" id="materjalid">
-    <div class="container">
-      <div class="section-head">
-        <div><h2>Materjalid</h2></div>
-        <p>Praegu on portaalis kaks esimest tasuta materjali.</p>
-      </div>
-      <div class="material-grid">
-        <article class="material-tile">
-          <img src="assets/minu-tanased-ulesanded.jpg" alt="Minu tänased ülesanded tööleht">
-          <div class="material-tile-body">
-            <div class="meta">TASUTA · A4</div>
-            <h3>Minu tänased ülesanded</h3>
-            <p>Lapse lihtne päevaplaan kuni seitsme ülesande jaoks.</p>
-            <a class="text-link" href="materials/tanased-ulesanded/">Ava materjal →</a>
+      <div class="cards topic-cards">
+        <a class="card topic-card topic-link topic-estonian" href="materials/koolikott/">
+          <div class="icon" aria-hidden="true">
+            <svg viewBox="0 0 48 48" role="img"><path d="M10 12h28v20H19l-9 7V12Z"/><path d="M17 20h14M17 26h10"/></svg>
           </div>
-        </article>
-        <article class="material-tile featured-tile">
-          <div class="tile-badge">UUS MÄNG!</div>
-          <img src="assets/mis-on-koolikotis.png" alt="Mis on koolikotis õppematerjal">
-          <div class="material-tile-body">
-            <div class="meta">EESTI KEEL · A1 · TASUTA</div>
-            <h3>Mis on koolikotis?</h3>
-            <p>Visuaalne sõnavaraplakat ja tasuta memomäng koolitarvete õppimiseks.</p>
-            <div class="tile-actions">
-              <a class="text-link" href="materials/koolikott/">Vaata komplekti →</a>
-              <a class="text-link purple-link" href="games/koolikott/">Mängi →</a>
-            </div>
+          <div class="topic-card-top"><h3>Eesti keel</h3><span class="topic-arrow" aria-hidden="true">→</span></div>
+          <p>Sõnavara, plakatid, töölehed ja väikesed keeleharjutused.</p>
+        </a>
+        <article class="card topic-card topic-coming topic-history" aria-label="Ajalugu ja kultuur — materjalid tulevad peagi">
+          <div class="icon" aria-hidden="true">
+            <svg viewBox="0 0 48 48" role="img"><path d="m8 18 16-9 16 9H8Z"/><path d="M12 20v15M20 20v15M28 20v15M36 20v15M8 38h32"/></svg>
           </div>
+          <div class="topic-card-top"><h3>Ajalugu ja kultuur</h3><span class="coming-badge">PEAGI</span></div>
+          <p>Ajastud, inimesed, müüdid ja lood, mis aitavad maailma mõista.</p>
         </article>
-      </div>
-    </div>
-  </section>
-
-  <section class="section" id="meist">
-    <div class="container">
-      <div class="section-head">
-        <h2>KIISU MIISU</h2>
-        <p>Autorlik hariduslik töötuba, kus isiklik huvi, ajalugu, kultuur, loodus ja tehnoloogia muutuvad laste jaoks elavateks õppematerjalideks.</p>
+        <article class="card topic-card topic-coming topic-nature" aria-label="Loodus — materjalid tulevad peagi">
+          <div class="icon" aria-hidden="true">
+            <svg viewBox="0 0 48 48" role="img"><path d="M12 36c15 0 24-9 24-24-15 0-24 9-24 24Z"/><path d="M14 34c7-7 13-12 21-18M22 27l-1-8M28 22l7 1"/></svg>
+          </div>
+          <div class="topic-card-top"><h3>Loodus</h3><span class="coming-badge">PEAGI</span></div>
+          <p>Vaatlused, katsed ja õppematerjalid päris elust.</p>
+        </article>
+        <a class="card topic-card topic-link topic-games" href="games/koolikott/">
+          <div class="icon" aria-hidden="true">
+            <svg viewBox="0 0 48 48" role="img"><path d="M15 17h18c6 0 10 5 9 11l-1 6c-1 4-6 5-8 2l-3-4H18l-3 4c-2 3-7 2-8-2l-1-6c-1-6 3-11 9-11Z"/><path d="M15 24h8M19 20v8M31 24h.1M36 28h.1"/></svg>
+          </div>
+          <div class="topic-card-top"><h3>Mängud ja rakendused</h3><span class="topic-arrow" aria-hidden="true">→</span></div>
+          <p>Interaktiivsed harjutused, kaardid ja õppemängud.</p>
+        </a>
       </div>
     </div>
   </section>
