@@ -95,7 +95,7 @@ function buildGame(){
   activeItems().forEach((item)=>{cards.push(makeCard(item,'picture'));cards.push(makeCard(item,'word'));});
   shuffle(cards);
   board.replaceChildren(...cards);
-  board.style.setProperty('--columns',level===10?5:6);
+  board.style.setProperty('--columns',level===10?10:6);
   board.style.setProperty('--mobile-columns',level===10?4:3);
   buildWordList();
 }
