@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#182452">
+  <title>EDUKASS — Звездопад умножения (тест)</title>
+  <meta name="description" content="Тестовая браузерная игра EDUKASS для тренировки таблицы умножения.">
+  <link rel="stylesheet" href="game.css?v=2">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="../../" aria-label="На главную">
+      <span class="brand-cat" aria-hidden="true"><img src="assets/edukass-cat-transparent.png" alt=""></span>
+      <span><b>EDU</b>KASS</span>
+    </a>
+    <div class="top-actions">
+      <button class="tiny-button" id="languageButton" type="button" aria-label="Сменить язык">ET</button>
+      <button class="tiny-button" id="resetButton" type="button" data-i18n="reset">Сбросить тест</button>
+    </div>
+  </header>
+
+  <main class="app-shell">
+    <section id="storyScreen" class="screen is-active" aria-labelledby="storyTitle">
+      <div class="story-card">
+        <div class="story-copy">
+          <p class="eyebrow" data-i18n="prototype">ТЕСТОВАЯ ВЕРСИЯ</p>
+          <h1 id="storyTitle" data-i18n="storyTitle">Звёздный вызов</h1>
+          <p data-i18n="storyText">Над EDUKASS начался волшебный звездопад. Решай примеры, отталкивай звёзды правильными ответами и собери энергию для ракеты.</p>
+          <div class="speed-box">
+            <strong data-i18n="chooseSpeed">Выбери скорость звездопада</strong>
+            <div class="speed-options" role="group" aria-label="Скорость игры">
+              <button class="speed-button active" data-speed="slow" type="button" data-i18n="slow">Медленно</button>
+              <button class="speed-button" data-speed="normal" type="button" data-i18n="normal">Обычно</button>
+              <button class="speed-button" data-speed="fast" type="button" data-i18n="fast">Быстро</button>
+            </div>
+          </div>
+          <button class="primary-button" id="openMapButton" type="button" data-i18n="openMap">К уровням</button>
+        </div>
+        <div class="story-scene" aria-hidden="true">
+          <div class="intro-moon"></div>
+          <div class="intro-orbit"></div>
+          <div class="intro-stars">✦ <span>✧</span> ★ <span>✦</span> ✧</div>
+          <div class="story-cat-crop"><img class="story-cat" src="assets/edukass-cat-transparent.png" alt=""></div>
+          <div class="sign">×</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="mapScreen" class="screen" aria-labelledby="mapTitle">
+      <div class="map-head">
+        <div>
+          <p class="eyebrow" data-i18n="journey">ЗВЁЗДНЫЙ МАРШРУТ EDUKASS</p>
+          <h1 id="mapTitle" data-i18n="mapTitle">Карта уровней</h1>
+          <p data-i18n="mapText">Пройди три уровня и собери три звезды для запуска ракеты.</p>
+        </div>
+        <div class="energy-panel"><span data-i18n="energy">Звёзды</span><strong id="energyCount">0/3</strong></div>
+      </div>
+
+      <div class="map-board">
+        <div class="map-sparkles" aria-hidden="true">✦　·　✧　·　★　·　✦</div>
+        <svg class="map-line" viewBox="0 0 1000 370" aria-hidden="true" preserveAspectRatio="none">
+          <path d="M115 270 C260 70 390 330 520 180 S760 80 900 165" fill="none" stroke="rgba(255,255,255,.82)" stroke-width="18" stroke-linecap="round" stroke-dasharray="3 36"/>
+        </svg>
+        <button class="level-node" data-level="0" type="button" style="--x:11%;--y:72%">
+          <span class="node-number">1</span><strong>×2</strong><small data-i18n="orbit">Орбита</small>
+        </button>
+        <button class="level-node" data-level="1" type="button" style="--x:49%;--y:46%">
+          <span class="node-number">2</span><strong>×5</strong><small data-i18n="nebula">Туманность</small>
+        </button>
+        <button class="level-node" data-level="2" type="button" style="--x:87%;--y:40%">
+          <span class="node-number">3</span><strong>×10</strong><small data-i18n="spaceport">Космодром</small>
+        </button>
+        <div class="map-rocket" aria-hidden="true">
+          <svg viewBox="0 0 120 160"><path d="M60 8c28 25 34 62 25 93H35C26 70 32 33 60 8Z" fill="#fff" stroke="#17365f" stroke-width="6"/><circle cx="60" cy="58" r="16" fill="#70d9cf" stroke="#17365f" stroke-width="5"/><path d="M35 88 17 119l25-8M85 88l18 31-25-8" fill="#ff9a3c" stroke="#17365f" stroke-width="6" stroke-linejoin="round"/><path d="M48 103h24l-4 25H52Z" fill="#7355b7" stroke="#17365f" stroke-width="5"/><path d="m52 130 8 22 8-22" fill="#ffd34d"/></svg>
+        </div>
+      </div>
+      <p class="map-tip" id="mapTip" data-i18n="mapTip">Начни с уровня ×2.</p>
+    </section>
+
+    <section id="battleScreen" class="screen battle-screen" aria-labelledby="battleTitle">
+      <div class="battle-top">
+        <button class="back-button" id="backToMapButton" type="button" data-i18n="mapBack">← Карта</button>
+        <div class="battle-title-wrap"><span id="locationName">Орбита</span><h1 id="battleTitle">×2</h1></div>
+        <div class="progress-pill"><span data-i18n="answers">Примеры</span><strong>★ <span id="correctCount">0</span>/10</strong></div>
+      </div>
+
+      <div class="battle-stage" id="battleStage">
+        <div class="space-glow glow-a"></div><div class="space-glow glow-b"></div>
+        <div class="star-curtain" id="starCurtain" aria-hidden="true"></div>
+        <div class="impact-flash" id="impactFlash" aria-hidden="true"></div>
+        <div class="shower-meter" aria-hidden="true"><span id="distanceFill"></span><i>★</i></div>
+
+        <div class="question-card" id="questionCard">
+          <p class="question-label" data-i18n="solve">Реши пример</p>
+          <div class="equation"><span id="factorA">2</span><span>×</span><span id="factorB">3</span><span>=</span><span class="answer-slot" id="answerDisplay">?</span></div>
+          <p class="feedback" id="feedback" aria-live="polite"></p>
+        </div>
+
+        <div class="hero-zone" id="heroZone">
+          <div class="hero-cat-crop"><img class="hero-cat" src="assets/edukass-cat-transparent.png" alt="EDUKASS"></div>
+          <div class="hero-shadow"></div>
+          <div class="hero-spark" aria-hidden="true">✦</div>
+        </div>
+      </div>
+
+      <div class="keypad" aria-label="Клавиатура ответа">
+        <button type="button" data-key="1">1</button><button type="button" data-key="2">2</button><button type="button" data-key="3">3</button>
+        <button type="button" data-key="4">4</button><button type="button" data-key="5">5</button><button type="button" data-key="6">6</button>
+        <button type="button" data-key="7">7</button><button type="button" data-key="8">8</button><button type="button" data-key="9">9</button>
+        <button class="key-clear-all" type="button" data-key="clearAll" aria-label="Очистить">C</button><button type="button" data-key="0">0</button><button class="key-clear" type="button" data-key="clear" aria-label="Удалить цифру">⌫</button>
+      </div>
+      <p class="keyboard-tip" data-i18n="keyboardTip">Ответ проверится сам — Enter нажимать не нужно.</p>
+    </section>
+
+    <section id="resultScreen" class="screen" aria-labelledby="resultTitle">
+      <div class="result-card">
+        <div class="result-animation" aria-hidden="true">
+          <div class="crystal">★</div>
+          <div class="result-cat-crop"><img class="result-cat" src="assets/edukass-cat-transparent.png" alt=""></div>
+        </div>
+        <p class="eyebrow" data-i18n="wellDone">ОТЛИЧНО!</p>
+        <h1 id="resultTitle" data-i18n="levelDone">Уровень пройден</h1>
+        <p id="resultText">Ты оттолкнул звездопад и получил звезду энергии.</p>
+        <div class="result-stats"><span data-i18n="mistakes">Ошибки</span><strong id="mistakeCount">0</strong><span data-i18n="time">Время</span><strong id="timeCount">00:00</strong></div>
+        <button class="primary-button" id="continueButton" type="button" data-i18n="continue">Продолжить путь</button>
+      </div>
+    </section>
+
+    <dialog id="retryDialog" class="retry-dialog">
+      <div class="retry-content">
+        <div class="retry-visual" aria-hidden="true"><span>★</span><div class="retry-cat-crop"><img src="assets/edukass-cat-transparent.png" alt=""></div></div>
+        <h2 data-i18n="almost">Почти получилось!</h2>
+        <p data-i18n="retryText">Звёздный дождь добрался до EDUKASS. Начнём уровень сначала.</p>
+        <div class="retry-actions">
+          <button class="primary-button" id="retryButton" type="button" data-i18n="retry">Повторить</button>
+          <button class="secondary-button" id="slowerButton" type="button" data-i18n="slower">Сделать медленнее</button>
+        </div>
+      </div>
+    </dialog>
+
+    <dialog id="finalDialog" class="final-dialog">
+      <div class="final-content">
+        <div class="launch-scene" aria-hidden="true">
+          <div class="launch-stars">✦　·　✧　·　✦</div>
+          <div class="launch-rocket">🚀</div>
+        </div>
+        <p class="eyebrow" data-i18n="testComplete">ТЕСТ ПРОЙДЕН</p>
+        <h2 data-i18n="rocketReady">Ракета EDUKASS готова!</h2>
+        <p data-i18n="finalText">Ты собрал три звезды на уровнях ×2, ×5 и ×10. Ракета готова к полёту!</p>
+        <button class="primary-button" id="closeFinalButton" type="button" data-i18n="backMap">Вернуться на карту</button>
+      </div>
+    </dialog>
+  </main>
+  <script src="game.js?v=2"></script>
+</body>
+</html>
