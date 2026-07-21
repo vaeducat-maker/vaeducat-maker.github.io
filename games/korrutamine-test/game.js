@@ -63,7 +63,8 @@ const ROUND_LENGTH=15;
 const ANSWER_DELAYS={exact:480,possiblePrefix:2200,wrong:1050};
 const START_SHOWER_PROGRESS=.08;
 const WRONG_ANSWER_ADVANCE=.105;
-const NAVIGATION_MARKER='edukass-game-v26';
+const NAVIGATION_MARKER='edukass-game-v27';
+const REWARD_BEFORE_HOLD=1500;
 
 const LEVELS=[
   {id:1,title:'Korrutamise valik',short:'Vali ×',mode:'choice',operation:'multiply',seconds:175,accent:'#70d9cf'},
@@ -1199,50 +1200,61 @@ function startRewardCinematic(levelPassed,levelId,firstCompletion=true){
   rewardFx.stop();
   rewardScene.classList.remove('is-playing');
   void rewardScene.offsetWidth;
-  rewardScene.classList.add('is-playing');
   if(!levelPassed){
+    rewardScene.classList.add('is-playing');
     rewardFx.dustBurst(.42,.86,28,['#7355b7','#ff9a3c','#ffd34d']);
     rewardFx.shockwave(.42,.78,'#ffd34d',.7);
     return;
   }
 
+  const changeOffset=firstCompletion?REWARD_BEFORE_HOLD:0;
+  const cue=(delay,callback)=>scheduleCinematic(changeOffset+delay,callback);
+  const beginRewardChange=()=>{
+    rewardScene.classList.add('is-playing');
+    if(firstCompletion)playSound('rewardReveal');
+  };
+
   if(firstCompletion){
     resultScreen.classList.add('reward-cinematic-locked');
     resultPrimaryButton.disabled=true;
     resultMapButton.disabled=true;
-    playSound('rewardReveal');
+    scheduleCinematic(REWARD_BEFORE_HOLD,beginRewardChange);
   }else{
     resultScreen.classList.add('reward-reveal-complete');
+    beginRewardChange();
   }
 
   if(levelId===15){
-    scheduleCinematic(1050,()=>playSound('portalOpen'));
-    scheduleCinematic(1050,()=>rewardFx.sparkBurst(.84,.22,34,['#70d9cf','#e64e89','#fff'],.82));
-    scheduleCinematic(1760,()=>rewardFx.shockwave(.82,.5,'#70d9cf',.92));
-    scheduleCinematic(2580,()=>rewardFx.sparkBurst(.82,.5,72,['#fff','#70d9cf','#e64e89','#ffd34d'],1.12));
-    scheduleCinematic(3260,()=>rewardFx.sparkBurst(.62,.53,52,['#fff','#ffd34d','#ff9a3c'],1.35));
-    scheduleCinematic(3420,()=>rewardFx.shockwave(.75,.5,'#fff',1.15));
+    cue(2150,()=>playSound('portalOpen'));
+    cue(1120,()=>rewardFx.sparkBurst(.84,.22,34,['#70d9cf','#e64e89','#fff'],.82));
+    cue(2180,()=>rewardFx.shockwave(.82,.5,'#70d9cf',.92));
+    cue(3360,()=>rewardFx.sparkBurst(.82,.5,72,['#fff','#70d9cf','#e64e89','#ffd34d'],1.12));
+    cue(4380,()=>rewardFx.sparkBurst(.62,.53,52,['#fff','#ffd34d','#ff9a3c'],1.35));
+    cue(4540,()=>rewardFx.shockwave(.75,.5,'#fff',1.15));
   }else if(levelId===10){
-    scheduleCinematic(1050,()=>playSound('engineStart'));
-    scheduleCinematic(1040,()=>rewardFx.sparkBurst(.695,.73,20,['#ffd34d','#ff9a3c','#fff'],.6));
-    scheduleCinematic(2200,()=>{
+    cue(2200,()=>playSound('engineStart'));
+    cue(1460,()=>rewardFx.sparkBurst(.695,.73,20,['#ffd34d','#ff9a3c','#fff'],.6));
+    cue(3260,()=>{
       rewardFx.sparkBurst(.665,.72,68,['#fff','#ffd34d','#ff9a3c','#e64e89'],1.25);
       rewardFx.shockwave(.665,.7,'#ffd34d',1.05);
       rewardFx.dustBurst(.665,.88,24);
     });
   }else if(levelId===5){
-    scheduleCinematic(1080,()=>playSound('shipFound'));
-    scheduleCinematic(1050,()=>rewardFx.sparkBurst(.66,.17,24,['#fff','#70d9cf','#ffd34d'],.7));
-    scheduleCinematic(2240,()=>{
+    cue(2080,()=>playSound('shipFound'));
+    cue(1370,()=>rewardFx.sparkBurst(.66,.17,24,['#fff','#70d9cf','#ffd34d'],.7));
+    cue(2820,()=>{
       rewardFx.sparkBurst(.66,.52,66,['#fff','#70d9cf','#ffd34d','#e64e89'],1.2);
       rewardFx.shockwave(.66,.52,'#fff',1);
     });
   }else{
     const target=levelId>10?[.84,.5]:levelId>5?[.66,.72]:[.66,.52];
-    scheduleCinematic(1020,()=>rewardFx.sparkBurst(target[0],target[1],42,['#fff','#ffd34d','#70d9cf'],.9));
-    scheduleCinematic(1080,()=>rewardFx.shockwave(target[0],target[1],'#70d9cf',.74));
+    cue(1320,()=>rewardFx.sparkBurst(target[0],target[1],42,['#fff','#ffd34d','#70d9cf'],.9));
+    cue(1480,()=>rewardFx.shockwave(target[0],target[1],'#70d9cf',.74));
   }
-  if(firstCompletion)scheduleCinematic(levelId===15?5050:(levelId===5||levelId===10?4050:2100),finishRewardReveal);
+  if(firstCompletion){
+    const revealAfterChange=levelId===15?6500:(levelId===5||levelId===10?5700:3800);
+    scheduleCinematic(REWARD_BEFORE_HOLD+revealAfterChange,finishRewardReveal);
+  }
 }
 
 function runResultAction(){
@@ -1368,6 +1380,7 @@ else showLesson('multiply',null,{historyMode:'replace'});
 
 window.__EDUKASS_TEST__={
   LEVELS,
+  REWARD_BEFORE_HOLD,
   buildLevelQuestions,
   buildChoiceOptions,
   requestLevel,
