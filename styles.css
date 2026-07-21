@@ -1084,6 +1084,46 @@ h1, h2, h3,
 .spark-two { color: var(--magenta); opacity: .75; }
 
 /* Compact brand statement: no second full hero */
+.math-prototype-strip {
+  padding: 0 0 24px;
+}
+
+.math-prototype-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 22px 26px;
+  border: 1px solid rgba(23,54,95,.13);
+  border-radius: 24px;
+  background: linear-gradient(110deg,#e8fbf8,#eef3ff 58%,#f6edff);
+  box-shadow: 0 12px 28px rgba(23,54,95,.09);
+}
+
+.math-prototype-inner span {
+  color: #7355b7;
+  font-size: .74rem;
+  font-weight: 900;
+  letter-spacing: .1em;
+}
+
+.math-prototype-inner h2 {
+  margin: 5px 0 3px;
+  color: #17365f;
+  font-size: clamp(1.45rem,3vw,2.15rem);
+}
+
+.math-prototype-inner p {
+  margin: 0;
+  color: #66778a;
+}
+
+.math-prototype-button {
+  flex: 0 0 auto;
+  background: #17365f;
+  color: #fff;
+}
+
 .intro-strip {
   padding: 30px 0;
   background: #fff;
@@ -1159,6 +1199,9 @@ h1, h2, h3,
 /* Both the latest material and game remain visible on a typical phone screen */
 @media (max-width: 620px) {
   .showcase-section { padding: 12px 0 18px; }
+  .math-prototype-strip { padding: 0 0 16px; }
+  .math-prototype-inner { align-items: flex-start; flex-direction: column; gap: 14px; padding: 19px; border-radius: 20px; }
+  .math-prototype-button { width: 100%; text-align: center; }
   .showcase-grid { gap: 12px; }
   .showcase-card {
     grid-template-columns: minmax(0, 1fr) 112px;

@@ -4,9 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#182452">
-  <title>EDUKASS — Звездопад умножения (тест)</title>
-  <meta name="description" content="Тестовая браузерная игра EDUKASS для тренировки таблицы умножения.">
-  <link rel="stylesheet" href="game.css?v=2">
+  <title>EDUKASS — Глава 1: один и два</title>
+  <meta name="description" content="Рабочий прототип первой главы EDUKASS: умножение и деление на 1 и 2.">
+  <link rel="stylesheet" href="game.css?v=17">
 </head>
 <body>
   <header class="topbar">
@@ -15,34 +15,72 @@
       <span><b>EDU</b>KASS</span>
     </a>
     <div class="top-actions">
-      <button class="tiny-button" id="languageButton" type="button" aria-label="Сменить язык">ET</button>
-      <button class="tiny-button" id="resetButton" type="button" data-i18n="reset">Сбросить тест</button>
+      <span class="prototype-badge">ПРОТОТИП ГЛАВЫ</span>
+      <button class="tiny-button" id="resetProgressButton" type="button">Начать заново</button>
     </div>
   </header>
 
   <main class="app-shell">
-    <section id="storyScreen" class="screen is-active" aria-labelledby="storyTitle">
-      <div class="story-card">
-        <div class="story-copy">
-          <p class="eyebrow" data-i18n="prototype">ТЕСТОВАЯ ВЕРСИЯ</p>
-          <h1 id="storyTitle" data-i18n="storyTitle">Звёздный вызов</h1>
-          <p data-i18n="storyText">Над EDUKASS начался волшебный звездопад. Решай примеры, отталкивай звёзды правильными ответами и собери энергию для ракеты.</p>
-          <div class="speed-box">
-            <strong data-i18n="chooseSpeed">Выбери скорость звездопада</strong>
-            <div class="speed-options" role="group" aria-label="Скорость игры">
-              <button class="speed-button active" data-speed="slow" type="button" data-i18n="slow">Медленно</button>
-              <button class="speed-button" data-speed="normal" type="button" data-i18n="normal">Обычно</button>
-              <button class="speed-button" data-speed="fast" type="button" data-i18n="fast">Быстро</button>
+    <section id="lessonScreen" class="screen is-active" aria-labelledby="lessonTitle">
+      <div class="lesson-card">
+        <div class="lesson-copy">
+          <p class="eyebrow" id="lessonEyebrow">ГЛАВА 1 · ОДИН И ДВА</p>
+          <h1 id="lessonTitle">Открываем числа 1 и 2</h1>
+          <p class="lesson-lead" id="lessonLead">Умножение на 1 — короткое правило. Основная работа этой главы начинается с двойки.</p>
+
+          <div id="multiplicationLesson" class="lesson-section">
+            <div class="rule-grid">
+              <article class="rule-card rule-one">
+                <span class="rule-symbol">×1</span>
+                <div><strong>Число не меняется</strong><p>7 × 1 = 7</p></div>
+              </article>
+              <article class="rule-card rule-two">
+                <span class="rule-symbol">×2</span>
+                <div><strong>Две одинаковые части</strong><p>2 × 4 = 4 + 4</p></div>
+              </article>
             </div>
           </div>
-          <button class="primary-button" id="openMapButton" type="button" data-i18n="openMap">К уровням</button>
+
+          <div id="divisionLesson" class="lesson-section" hidden>
+            <div class="rule-grid single-rule">
+              <article class="rule-card rule-two">
+                <span class="rule-symbol">÷2</span>
+                <div><strong>Разделить поровну на две части</strong><p>8 ÷ 2 = 4</p></div>
+              </article>
+            </div>
+          </div>
+
+          <div class="fact-explorer" aria-label="Интерактивное объяснение">
+            <div class="demo-equations">
+              <strong id="demoMultiplyEquation">2 × 4 = 8</strong>
+              <span id="demoDivisionEquation">8 ÷ 2 = 4</span>
+            </div>
+            <div class="star-array" id="demoStars" aria-hidden="true"></div>
+            <p class="explorer-hint">Нажми на число и посмотри, как меняется пример.</p>
+            <div class="factor-picker" id="factorPicker" aria-label="Выбери число">
+              <button type="button" data-demo-factor="1">1</button><button type="button" data-demo-factor="2">2</button>
+              <button type="button" data-demo-factor="3">3</button><button class="active" type="button" data-demo-factor="4">4</button>
+              <button type="button" data-demo-factor="5">5</button><button type="button" data-demo-factor="6">6</button>
+              <button type="button" data-demo-factor="7">7</button><button type="button" data-demo-factor="8">8</button>
+              <button type="button" data-demo-factor="9">9</button><button type="button" data-demo-factor="10">10</button>
+            </div>
+          </div>
+
+          <div class="knowledge-map" aria-label="Открытая часть таблицы умножения">
+            <div class="knowledge-label"><strong>Карта знаний</strong><span>Открываются строки 1 и 2</span></div>
+            <div class="knowledge-row"><b>×1</b><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span></div>
+            <div class="knowledge-row active-row"><b>×2</b><span>2</span><span>4</span><span>6</span><span>8</span><span>10</span><span>12</span><span>14</span><span>16</span><span>18</span><span>20</span></div>
+          </div>
+
+          <button class="primary-button lesson-button" id="lessonContinueButton" type="button">Открыть карту главы</button>
         </div>
-        <div class="story-scene" aria-hidden="true">
+
+        <div class="lesson-scene" aria-hidden="true">
           <div class="intro-moon"></div>
           <div class="intro-orbit"></div>
           <div class="intro-stars">✦ <span>✧</span> ★ <span>✦</span> ✧</div>
           <div class="story-cat-crop"><img class="story-cat" src="assets/edukass-cat-transparent.png" alt=""></div>
-          <div class="sign">×</div>
+          <div class="sign" id="lessonSign">×2</div>
         </div>
       </div>
     </section>
@@ -50,67 +88,68 @@
     <section id="mapScreen" class="screen" aria-labelledby="mapTitle">
       <div class="map-head">
         <div>
-          <p class="eyebrow" data-i18n="journey">ЗВЁЗДНЫЙ МАРШРУТ EDUKASS</p>
-          <h1 id="mapTitle" data-i18n="mapTitle">Карта уровней</h1>
-          <p data-i18n="mapText">Пройди три уровня и собери три звезды для запуска ракеты.</p>
+          <p class="eyebrow">ГЛАВА 1 · ОДИН И ДВА</p>
+          <h1 id="mapTitle">Первые 15 уровней</h1>
+          <p>Пройди каждый уровень без ошибок. Следующий откроется автоматически.</p>
         </div>
-        <div class="energy-panel"><span data-i18n="energy">Звёзды</span><strong id="energyCount">0/3</strong></div>
+        <div class="energy-panel"><span>Пройдено</span><strong><span id="completedLevelCount">0</span>/15</strong></div>
       </div>
 
-      <div class="map-board">
-        <div class="map-sparkles" aria-hidden="true">✦　·　✧　·　★　·　✦</div>
-        <svg class="map-line" viewBox="0 0 1000 370" aria-hidden="true" preserveAspectRatio="none">
-          <path d="M115 270 C260 70 390 330 520 180 S760 80 900 165" fill="none" stroke="rgba(255,255,255,.82)" stroke-width="18" stroke-linecap="round" stroke-dasharray="3 36"/>
-        </svg>
-        <button class="level-node" data-level="0" type="button" style="--x:11%;--y:72%">
-          <span class="node-number">1</span><strong>×2</strong><small data-i18n="orbit">Орбита</small>
-        </button>
-        <button class="level-node" data-level="1" type="button" style="--x:49%;--y:46%">
-          <span class="node-number">2</span><strong>×5</strong><small data-i18n="nebula">Туманность</small>
-        </button>
-        <button class="level-node" data-level="2" type="button" style="--x:87%;--y:40%">
-          <span class="node-number">3</span><strong>×10</strong><small data-i18n="spaceport">Космодром</small>
-        </button>
-        <div class="map-rocket" aria-hidden="true">
-          <svg viewBox="0 0 120 160"><path d="M60 8c28 25 34 62 25 93H35C26 70 32 33 60 8Z" fill="#fff" stroke="#17365f" stroke-width="6"/><circle cx="60" cy="58" r="16" fill="#70d9cf" stroke="#17365f" stroke-width="5"/><path d="M35 88 17 119l25-8M85 88l18 31-25-8" fill="#ff9a3c" stroke="#17365f" stroke-width="6" stroke-linejoin="round"/><path d="M48 103h24l-4 25H52Z" fill="#7355b7" stroke="#17365f" stroke-width="5"/><path d="m52 130 8 22 8-22" fill="#ffd34d"/></svg>
-        </div>
+      <div class="chapter-board">
+        <div class="chapter-route-head"><span>Умножение</span><span>Деление</span></div>
+        <div class="level-grid" id="levelGrid" aria-label="Уровни первой главы"></div>
       </div>
-      <p class="map-tip" id="mapTip" data-i18n="mapTip">Начни с уровня ×2.</p>
+      <div class="map-actions">
+        <button class="secondary-button" id="repeatLessonButton" type="button">Повторить объяснение</button>
+        <p class="map-tip">Уровни 1 и 11 — выбор из четырёх карточек. На остальных уровнях ответ вводится цифрами.</p>
+      </div>
     </section>
 
     <section id="battleScreen" class="screen battle-screen" aria-labelledby="battleTitle">
       <div class="battle-top">
-        <button class="back-button" id="backToMapButton" type="button" data-i18n="mapBack">← Карта</button>
-        <div class="battle-title-wrap"><span id="locationName">Орбита</span><h1 id="battleTitle">×2</h1></div>
-        <div class="progress-pill"><span data-i18n="answers">Примеры</span><strong>★ <span id="correctCount">0</span>/10</strong></div>
+        <button class="back-button" id="backToMapButton" type="button">← Карта</button>
+        <div class="battle-title-wrap"><span id="levelKicker">УРОВЕНЬ 1</span><h1 id="battleTitle">Карточки умножения</h1></div>
+        <div class="progress-pill"><span>Ответы</span><strong>★ <span id="correctCount">0</span>/15</strong></div>
       </div>
 
-      <div class="battle-stage" id="battleStage">
-        <div class="space-glow glow-a"></div><div class="space-glow glow-b"></div>
-        <div class="star-curtain" id="starCurtain" aria-hidden="true"></div>
-        <div class="impact-flash" id="impactFlash" aria-hidden="true"></div>
-        <div class="shower-meter" aria-hidden="true"><span id="distanceFill"></span><i>★</i></div>
+      <div class="level-guidance" id="levelGuidance">Выбери правильный ответ. Для прохождения нужны чистые 15/15.</div>
 
-        <div class="question-card" id="questionCard">
-          <p class="question-label" data-i18n="solve">Реши пример</p>
-          <div class="equation"><span id="factorA">2</span><span>×</span><span id="factorB">3</span><span>=</span><span class="answer-slot" id="answerDisplay">?</span></div>
-          <p class="feedback" id="feedback" aria-live="polite"></p>
+      <div class="play-grid">
+        <div class="scene-column">
+          <div class="question-card" id="questionCard">
+            <p class="question-label">Реши пример</p>
+            <div class="equation"><span id="factorA">2</span><span id="operationSymbol">×</span><span id="factorB">4</span><span>=</span><span class="answer-slot" id="answerDisplay">?</span></div>
+            <p class="feedback" id="feedback" aria-live="polite"></p>
+          </div>
+
+          <div class="battle-stage" id="battleStage">
+            <div class="space-glow glow-a"></div><div class="space-glow glow-b"></div>
+            <div class="star-curtain" id="starCurtain" aria-hidden="true"></div>
+            <div class="impact-flash" aria-hidden="true"></div>
+            <div class="shower-meter" id="showerMeter" aria-hidden="true"><span id="distanceFill"></span><i>★</i></div>
+            <div class="hero-zone" id="heroZone">
+              <div class="hero-cat-crop"><img class="hero-cat" src="assets/edukass-cat-transparent.png" alt="EDUKASS"></div>
+              <div class="hero-shadow"></div>
+              <div class="hero-spark" aria-hidden="true">✦</div>
+            </div>
+          </div>
         </div>
 
-        <div class="hero-zone" id="heroZone">
-          <div class="hero-cat-crop"><img class="hero-cat" src="assets/edukass-cat-transparent.png" alt="EDUKASS"></div>
-          <div class="hero-shadow"></div>
-          <div class="hero-spark" aria-hidden="true">✦</div>
-        </div>
+        <aside class="answer-panel" id="answerPanel" aria-label="Ответ">
+          <div class="answer-panel-head"><span id="answerPanelTitle">Выбери ответ</span></div>
+          <div class="choice-grid" id="choiceGrid" aria-label="Варианты ответа"></div>
+          <div class="keypad" id="keypad" aria-label="Клавиатура ответа">
+            <button type="button" data-key="1">1</button><button type="button" data-key="2">2</button><button type="button" data-key="3">3</button>
+            <button type="button" data-key="4">4</button><button type="button" data-key="5">5</button><button type="button" data-key="6">6</button>
+            <button type="button" data-key="7">7</button><button type="button" data-key="8">8</button><button type="button" data-key="9">9</button>
+            <button class="key-clear-all" type="button" data-key="clearAll" aria-label="Очистить">C</button><button type="button" data-key="0">0</button><button class="key-clear" type="button" data-key="clear" aria-label="Удалить цифру">⌫</button>
+          </div>
+          <div class="attempt-card">
+            <div><span>Попытка</span><strong id="attemptStatus">чистая</strong></div>
+            <p>Любая ошибка означает, что уровень нужно будет повторить.</p>
+          </div>
+        </aside>
       </div>
-
-      <div class="keypad" aria-label="Клавиатура ответа">
-        <button type="button" data-key="1">1</button><button type="button" data-key="2">2</button><button type="button" data-key="3">3</button>
-        <button type="button" data-key="4">4</button><button type="button" data-key="5">5</button><button type="button" data-key="6">6</button>
-        <button type="button" data-key="7">7</button><button type="button" data-key="8">8</button><button type="button" data-key="9">9</button>
-        <button class="key-clear-all" type="button" data-key="clearAll" aria-label="Очистить">C</button><button type="button" data-key="0">0</button><button class="key-clear" type="button" data-key="clear" aria-label="Удалить цифру">⌫</button>
-      </div>
-      <p class="keyboard-tip" data-i18n="keyboardTip">Ответ проверится сам — Enter нажимать не нужно.</p>
     </section>
 
     <section id="resultScreen" class="screen" aria-labelledby="resultTitle">
@@ -119,39 +158,18 @@
           <div class="crystal">★</div>
           <div class="result-cat-crop"><img class="result-cat" src="assets/edukass-cat-transparent.png" alt=""></div>
         </div>
-        <p class="eyebrow" data-i18n="wellDone">ОТЛИЧНО!</p>
-        <h1 id="resultTitle" data-i18n="levelDone">Уровень пройден</h1>
-        <p id="resultText">Ты оттолкнул звездопад и получил звезду энергии.</p>
-        <div class="result-stats"><span data-i18n="mistakes">Ошибки</span><strong id="mistakeCount">0</strong><span data-i18n="time">Время</span><strong id="timeCount">00:00</strong></div>
-        <button class="primary-button" id="continueButton" type="button" data-i18n="continue">Продолжить путь</button>
+        <p class="eyebrow" id="resultEyebrow">УРОВЕНЬ ЗАВЕРШЁН</p>
+        <h1 id="resultTitle">Уровень пройден</h1>
+        <p id="resultMessage">Все 15 ответов верны.</p>
+        <div class="result-stats"><span>Ошибки</span><strong id="mistakeCount">0</strong><span>Время</span><strong id="timeCount">00:00</strong></div>
+        <div class="result-actions">
+          <button class="primary-button" id="resultPrimaryButton" type="button">Следующий уровень</button>
+          <button class="secondary-button" id="resultMapButton" type="button">К карте</button>
+        </div>
       </div>
     </section>
-
-    <dialog id="retryDialog" class="retry-dialog">
-      <div class="retry-content">
-        <div class="retry-visual" aria-hidden="true"><span>★</span><div class="retry-cat-crop"><img src="assets/edukass-cat-transparent.png" alt=""></div></div>
-        <h2 data-i18n="almost">Почти получилось!</h2>
-        <p data-i18n="retryText">Звёздный дождь добрался до EDUKASS. Начнём уровень сначала.</p>
-        <div class="retry-actions">
-          <button class="primary-button" id="retryButton" type="button" data-i18n="retry">Повторить</button>
-          <button class="secondary-button" id="slowerButton" type="button" data-i18n="slower">Сделать медленнее</button>
-        </div>
-      </div>
-    </dialog>
-
-    <dialog id="finalDialog" class="final-dialog">
-      <div class="final-content">
-        <div class="launch-scene" aria-hidden="true">
-          <div class="launch-stars">✦　·　✧　·　✦</div>
-          <div class="launch-rocket">🚀</div>
-        </div>
-        <p class="eyebrow" data-i18n="testComplete">ТЕСТ ПРОЙДЕН</p>
-        <h2 data-i18n="rocketReady">Ракета EDUKASS готова!</h2>
-        <p data-i18n="finalText">Ты собрал три звезды на уровнях ×2, ×5 и ×10. Ракета готова к полёту!</p>
-        <button class="primary-button" id="closeFinalButton" type="button" data-i18n="backMap">Вернуться на карту</button>
-      </div>
-    </dialog>
   </main>
-  <script src="game.js?v=2"></script>
+
+  <script src="game.js?v=17"></script>
 </body>
 </html>
