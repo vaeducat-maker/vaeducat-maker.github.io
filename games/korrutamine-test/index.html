@@ -6,9 +6,35 @@
   <meta name="theme-color" content="#182452">
   <title>EDUKASS — 1. peatükk: üks ja kaks</title>
   <meta name="description" content="EDUKASSi esimese peatüki prototüüp: ühe ja kahega korrutamine ning jagamine.">
-  <link rel="stylesheet" href="game.css?v=27">
+  <link rel="stylesheet" href="game.css?v=28">
 </head>
-<body>
+<body class="intro-active">
+  <section class="game-intro is-running" id="introScreen" aria-label="EDUKASSi mängu algus">
+    <div class="intro-cosmos" aria-hidden="true">
+      <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+    </div>
+    <div class="intro-flying-star" aria-hidden="true">★</div>
+    <div class="intro-scene" aria-hidden="true">
+      <div class="intro-cat-crop">
+        <img src="assets/edukass-cat-transparent.png" alt="">
+        <span class="intro-cat-gear"><i class="intro-helmet"></i><i class="intro-wink"></i></span>
+      </div>
+      <span class="intro-ignition"><i></i></span>
+      <div class="intro-rocket">
+        <span class="intro-rocket-aura"></span>
+        <span class="intro-rocket-body"><i class="intro-rocket-window"></i></span>
+        <span class="intro-rocket-wing intro-rocket-wing-left"></span>
+        <span class="intro-rocket-wing intro-rocket-wing-right"></span>
+        <span class="intro-rocket-antenna"><i></i></span>
+        <span class="intro-rocket-flame"></span>
+      </div>
+      <div class="intro-spark-cloud"><i>✦</i><i>★</i><i>✧</i><i>✦</i><i>★</i></div>
+    </div>
+    <div class="intro-brand" aria-hidden="true"><b>EDU</b><span>KASS</span></div>
+    <button class="intro-play" id="introPlayButton" type="button" aria-label="Alusta mängu"><span>▶</span></button>
+    <div class="intro-light-wash" aria-hidden="true"></div>
+  </section>
+
   <header class="topbar">
     <a class="brand" href="../../" aria-label="Avalehele">
       <span class="brand-cat" aria-hidden="true"><img src="assets/edukass-cat-transparent.png" alt=""></span>
@@ -254,6 +280,6 @@
     </section>
   </main>
 
-  <script src="game.js?v=27"></script>
+  <script src="game.js?v=28"></script>
 </body>
 </html>

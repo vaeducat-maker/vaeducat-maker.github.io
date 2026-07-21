@@ -56,15 +56,20 @@ const rewardPill=document.querySelector('#rewardPill');
 const resultScreen=document.querySelector('#resultScreen');
 const battleFxCanvas=document.querySelector('#battleFxCanvas');
 const rewardFxCanvas=document.querySelector('#rewardFxCanvas');
+const introScreen=document.querySelector('#introScreen');
+const introPlayButton=document.querySelector('#introPlayButton');
 
 const STORAGE_KEY='edukass-chapter-one-v18';
 const SOUND_KEY='edukass-sound-enabled';
+const INTRO_SEEN_KEY='edukass-opening-seen-v28';
 const ROUND_LENGTH=15;
 const ANSWER_DELAYS={exact:480,possiblePrefix:2200,wrong:1050};
 const START_SHOWER_PROGRESS=.08;
 const WRONG_ANSWER_ADVANCE=.105;
-const NAVIGATION_MARKER='edukass-game-v27';
+const NAVIGATION_MARKER='edukass-game-v28';
 const REWARD_BEFORE_HOLD=1500;
+const INTRO_READY_DELAY=2200;
+const INTRO_EXIT_DELAY=1720;
 
 const LEVELS=[
   {id:1,title:'Korrutamise valik',short:'Vali ×',mode:'choice',operation:'multiply',seconds:175,accent:'#70d9cf'},
@@ -108,6 +113,9 @@ let dangerStage=0;
 let lastDangerBeat=0;
 let impactTimer=null;
 let cinematicTimers=[];
+let lastQuestionEquationKey='';
+let introReadyTimer=null;
+let introExitTimer=null;
 
 function navigationState(view,details={}){
   return {marker:NAVIGATION_MARKER,view,...details};
@@ -346,6 +354,15 @@ function playSound(kind){
     playSweep(145,620,2.35,.95,.061,'sawtooth');
     playTone(1318,3.05,.62,.037,'sine');
   }
+  if(kind==='introIgnition'){
+    playTone(440,0,.09,.035,'triangle');
+    playTone(620,.17,.1,.04,'triangle');
+    playTone(860,.34,.13,.045,'triangle');
+    playSweep(105,360,.4,.78,.055,'sawtooth');
+    playNoise(.42,.9,.07,820,'lowpass');
+    playChord([523,659,784],.78,.62,.032);
+    playSweep(380,1320,.92,.46,.038,'sine');
+  }
 }
 
 class ParticleStage{
@@ -558,6 +575,35 @@ function shuffle(array){
   return copy;
 }
 
+function equationKey(question){
+  if(!question)return '';
+  return `${question.operation}:${question.a}:${question.b}`;
+}
+
+function avoidAdjacentDuplicates(questions){
+  const pool=[...questions];
+  const arranged=[];
+  let previousKey='';
+  while(pool.length){
+    const counts=new Map();
+    pool.forEach(question=>counts.set(equationKey(question),(counts.get(equationKey(question))||0)+1));
+    const eligibleKeys=[...counts.entries()]
+      .filter(([key])=>key!==previousKey)
+      .sort((left,right)=>right[1]-left[1]);
+    if(!eligibleKeys.length)break;
+    const highestCount=eligibleKeys[0][1];
+    const strongestKeys=eligibleKeys.filter(([,count])=>count===highestCount).map(([key])=>key);
+    const chosenKey=strongestKeys[Math.floor(Math.random()*strongestKeys.length)];
+    const candidateIndexes=[];
+    pool.forEach((question,index)=>{if(equationKey(question)===chosenKey)candidateIndexes.push(index)});
+    const chosenIndex=candidateIndexes[Math.floor(Math.random()*candidateIndexes.length)];
+    const [question]=pool.splice(chosenIndex,1);
+    arranged.push(question);
+    previousKey=chosenKey;
+  }
+  return [...arranged,...pool];
+}
+
 function mul(a,b){return {a,b,answer:a*b,operation:'multiply',factor:a===2?b:(b===2?a:Math.max(a,b)),table:a===1||b===1?1:2}}
 function div(factor,divisor=2){return {a:factor*divisor,b:divisor,answer:factor,operation:'divide',factor,table:divisor}}
 
@@ -615,7 +661,17 @@ function buildLevelQuestions(levelId){
     ]; break;
     default: questions=repeatedMultiplication([1,2,3,4,5], 'forward',3);
   }
-  return shuffle(questions).slice(0,ROUND_LENGTH);
+  return avoidAdjacentDuplicates(shuffle(questions).slice(0,ROUND_LENGTH));
+}
+
+function separatorQuestion(level,lastKey){
+  const candidates=[];
+  for(let factor=1;factor<=10;factor++){
+    if(level.operation==='divide')candidates.push(div(factor));
+    else if(level.operation==='mixed')candidates.push(factor%2===0?div(factor):mul(2,factor));
+    else candidates.push(mul(2,factor));
+  }
+  return shuffle(candidates).find(question=>equationKey(question)!==lastKey)||null;
 }
 
 function questionKey(question){
@@ -828,6 +884,7 @@ function startLevel(levelId,{historyMode='push'}={}){
   clearAutoCheck();
   currentLevel=level;
   questionQueue=buildLevelQuestions(levelId);
+  lastQuestionEquationKey='';
   currentQuestion=null;
   currentAnswer='';
   correct=0;
@@ -870,8 +927,10 @@ function startLevel(levelId,{historyMode='push'}={}){
 function nextQuestion(){
   if(!roundActive)return;
   if(correct>=ROUND_LENGTH){finishAttempt('complete');return}
-  currentQuestion=questionQueue.shift();
+  const differentIndex=questionQueue.findIndex(question=>equationKey(question)!==lastQuestionEquationKey);
+  currentQuestion=differentIndex>=0?questionQueue.splice(differentIndex,1)[0]:separatorQuestion(currentLevel,lastQuestionEquationKey);
   if(!currentQuestion){finishAttempt('complete');return}
+  lastQuestionEquationKey=equationKey(currentQuestion);
   currentAnswer='';
   answerDisplay.textContent='?';
   answerDisplay.classList.remove('revealed-answer');
@@ -1097,6 +1156,7 @@ function finishAttempt(reason){
     saveProgress();
     configureRewardScene(currentLevel.id,firstCompletion,true);
     const milestone=currentLevel.id===5||currentLevel.id===10||chapterComplete;
+    resultEyebrow.hidden=false;
     resultEyebrow.textContent=chapterComplete?'PEATÜKK LÄBITUD':'MISSIOON LÄBITUD';
     resultTitle.textContent=milestone?'':'Tehtud!';
     resultTitle.hidden=milestone;
@@ -1107,12 +1167,13 @@ function finishAttempt(reason){
     resultAction=chapterComplete?'map':'next';
   }else{
     configureRewardScene(currentLevel?.id||1,false,false);
-    resultEyebrow.textContent='PROOVIME VEEL';
-    resultTitle.textContent='Tähesadu jõudis kiisuni';
+    resultEyebrow.textContent='';
+    resultEyebrow.hidden=true;
+    resultTitle.textContent='Proovi uuesti!';
     resultTitle.hidden=false;
-    resultMessage.textContent='Kogu 15 õiget vastust enne, kui tähesadu kiisuni jõuab.';
-    resultMessage.hidden=false;
-    resultPrimaryButton.textContent='Korda missiooni';
+    resultMessage.textContent='';
+    resultMessage.hidden=true;
+    resultPrimaryButton.textContent='Proovi uuesti';
     resultMapButton.hidden=false;
     resultAction='retry';
   }
@@ -1123,6 +1184,7 @@ function finishAttempt(reason){
       levelId:currentLevel.id,
       resultAction,
       resultEyebrow:resultEyebrow.textContent,
+      eyebrowHidden:resultEyebrow.hidden,
       resultTitle:resultTitle.textContent,
       resultMessage:resultMessage.textContent,
       titleHidden:resultTitle.hidden,
@@ -1279,6 +1341,7 @@ function restoreResult(state){
   currentLevel=LEVELS.find(level=>level.id===state.levelId)||currentLevel;
   resultAction=state.resultAction||'map';
   resultEyebrow.textContent=state.resultEyebrow||'MISSIOON LÄBITUD';
+  resultEyebrow.hidden=Boolean(state.eyebrowHidden);
   resultTitle.textContent=state.resultTitle||'Missioon läbitud';
   resultMessage.textContent=state.resultMessage||'';
   resultTitle.hidden=Boolean(state.titleHidden);
@@ -1323,6 +1386,39 @@ function resetProgress(){
   showLesson('multiply',null,{historyMode:'replace'});
 }
 
+function finishIntro(){
+  clearTimeout(introExitTimer);
+  introScreen.classList.add('is-finished');
+  document.body.classList.remove('intro-active');
+  introExitTimer=setTimeout(()=>{introScreen.hidden=true},440);
+}
+
+function launchIntro(quick=false){
+  if(introScreen.hidden||introScreen.classList.contains('is-launching'))return;
+  clearTimeout(introReadyTimer);
+  introPlayButton.disabled=true;
+  introScreen.classList.remove('intro-ready');
+  introScreen.classList.add('is-launching');
+  introScreen.classList.toggle('is-quick-exit',Boolean(quick));
+  localStorage.setItem(INTRO_SEEN_KEY,'true');
+  playSound('introIgnition');
+  introExitTimer=setTimeout(finishIntro,quick?620:INTRO_EXIT_DELAY);
+}
+
+function prepareIntro(){
+  const returning=localStorage.getItem(INTRO_SEEN_KEY)==='true';
+  introScreen.classList.toggle('is-returning',returning);
+  introPlayButton.disabled=!returning;
+  if(returning){
+    introScreen.classList.add('intro-ready');
+  }else{
+    introReadyTimer=setTimeout(()=>{
+      introScreen.classList.add('intro-ready');
+      introPlayButton.disabled=false;
+    },INTRO_READY_DELAY);
+  }
+}
+
 document.querySelectorAll('[data-demo-factor]').forEach(button=>button.addEventListener('click',()=>updateDemo(Number(button.dataset.demoFactor))));
 lessonContinueButton.addEventListener('click',()=>{
   if(currentLessonMode==='divide')progress.divisionLessonSeen=true;
@@ -1352,6 +1448,13 @@ resultMapButton.addEventListener('click',()=>history.back());
 resultPrimaryButton.addEventListener('click',runResultAction);
 document.querySelector('#resetProgressButton').addEventListener('click',resetProgress);
 soundToggleButton.addEventListener('click',toggleSound);
+introPlayButton.addEventListener('click',event=>{
+  event.stopPropagation();
+  launchIntro();
+});
+introScreen.addEventListener('click',()=>{
+  if(introScreen.classList.contains('is-returning'))launchIntro(true);
+});
 document.querySelectorAll('[data-key]').forEach(button=>button.addEventListener('click',()=>enterDigit(button.dataset.key)));
 
 document.addEventListener('keydown',event=>{
@@ -1377,17 +1480,22 @@ renderLevelMap();
 if(history.state?.marker===NAVIGATION_MARKER)restoreNavigation(history.state);
 else if(progress.multiplicationLessonSeen)showMap({historyMode:'replace'});
 else showLesson('multiply',null,{historyMode:'replace'});
+prepareIntro();
 
 window.__EDUKASS_TEST__={
   LEVELS,
   REWARD_BEFORE_HOLD,
+  INTRO_READY_DELAY,
   buildLevelQuestions,
   buildChoiceOptions,
+  equationKey,
+  avoidAdjacentDuplicates,
   requestLevel,
   startLevel,
   showMap,
   showExplanationHub,
   triggerImpact,
+  skipIntro:finishIntro,
   setShowerProgress:value=>{
     showerProgress=Math.max(0,Math.min(1,Number(value)||0));
     setShowerPosition();
@@ -1397,5 +1505,10 @@ window.__EDUKASS_TEST__={
     if(!currentQuestion)return;
     if(currentLevel.mode==='choice')submitChoice(currentQuestion.answer,[...choiceGrid.children].find(button=>Number(button.dataset.choice)===currentQuestion.answer));
     else String(currentQuestion.answer).split('').forEach(digit=>enterDigit(digit));
+  },
+  answerWrong:()=>{
+    if(!currentQuestion||!roundActive||inputLocked)return;
+    inputLocked=true;
+    handleWrongAnswer();
   }
 };
