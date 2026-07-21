@@ -338,6 +338,29 @@ button{color:inherit;touch-action:manipulation}
 
 /* Chapter 1: lesson and route */
 .prototype-badge{padding:8px 11px;border-radius:999px;background:var(--mint-soft);color:#23857d;font-size:.72rem;font-weight:900;letter-spacing:.08em;white-space:nowrap}
+.explanation-hub{position:relative;min-height:640px;padding:clamp(28px,5vw,64px);border-radius:34px;overflow:hidden;background:radial-gradient(circle at 84% 18%,rgba(112,217,207,.28),transparent 23%),radial-gradient(circle at 13% 76%,rgba(255,211,77,.16),transparent 22%),radial-gradient(circle at 32% 24%,rgba(255,255,255,.8) 0 1px,transparent 2px),radial-gradient(circle at 72% 68%,rgba(255,255,255,.72) 0 1.5px,transparent 2.5px),linear-gradient(145deg,#263e7f,#171d4c 62%,#5f448d);background-size:auto,auto,91px 87px,137px 121px,auto;box-shadow:var(--shadow)}
+.explanation-head{position:relative;z-index:2;max-width:720px}
+.explanation-head .eyebrow{color:#8de8df}
+.explanation-head h1{margin:4px 0 30px;color:#fff;font-size:clamp(2.65rem,5vw,5rem);line-height:.98}
+.explanation-grid{position:relative;z-index:2;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;max-width:880px}
+.explanation-choice{position:relative;min-height:210px;padding:28px 64px 28px 28px;border:2px solid rgba(255,255,255,.48);border-radius:29px;display:flex;align-items:center;gap:22px;text-align:left;color:var(--ink);background:rgba(255,255,255,.95);box-shadow:0 14px 0 rgba(8,14,46,.3),0 24px 42px rgba(7,12,41,.22);cursor:pointer;transition:transform .18s ease,box-shadow .18s ease,filter .18s ease}
+.explanation-choice:hover:not(:disabled){transform:translateY(-5px);box-shadow:0 19px 0 rgba(8,14,46,.3),0 29px 48px rgba(7,12,41,.28)}
+.explanation-choice:focus-visible{outline:5px solid var(--yellow);outline-offset:4px}
+.explanation-orbit{position:relative;flex:0 0 auto;width:104px;height:104px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 32% 27%,#fff 0 5%,var(--mint) 9% 58%,#2f8f9d 82%);filter:drop-shadow(0 10px 8px rgba(20,43,91,.25))}
+.explanation-orbit:after{content:"";position:absolute;left:-15px;right:-15px;top:39px;height:23px;border:6px solid rgba(115,85,183,.42);border-top-color:transparent;border-radius:50%;transform:rotate(-13deg)}
+.division-choice .explanation-orbit{background:radial-gradient(circle at 32% 27%,#fff 0 5%,#f08aaa 10% 58%,#a84c85 82%)}
+.explanation-orbit span{position:relative;z-index:2;color:#fff;font-size:3.15rem;font-weight:900;text-shadow:0 3px 2px rgba(14,24,65,.3)}
+.explanation-name{display:block;min-width:0}
+.explanation-name strong,.explanation-name small{display:block}
+.explanation-name strong{font-size:clamp(1.45rem,3vw,2.2rem);line-height:1.02}
+.explanation-name small{margin-top:8px;color:var(--muted);font-size:1rem;font-weight:900}
+.explanation-arrow{position:absolute;right:24px;top:50%;transform:translateY(-50%);font-size:2.2rem;font-weight:900;color:var(--purple)}
+.explanation-lock{display:none;position:absolute;right:23px;top:22px;font-size:1.25rem}
+.explanation-choice.locked{filter:grayscale(.82);opacity:.48;cursor:not-allowed;box-shadow:0 9px 0 rgba(8,14,46,.22)}
+.explanation-choice.locked .explanation-arrow{display:none}
+.explanation-choice.locked .explanation-lock{display:block}
+.explanation-back{position:relative;z-index:2;margin-top:34px;border-color:rgba(255,255,255,.7);background:rgba(255,255,255,.94)}
+.explanation-cat{position:absolute;z-index:1;right:-10px;bottom:-105px;width:min(36vw,390px);filter:drop-shadow(0 20px 15px rgba(7,13,41,.42));pointer-events:none}
 .lesson-card{min-height:690px;background:#fff;border:1px solid var(--line);border-radius:34px;box-shadow:var(--shadow);overflow:hidden;display:grid;grid-template-columns:minmax(0,1.22fr) minmax(330px,.78fr)}
 .lesson-copy{min-width:0;padding:clamp(28px,4vw,52px);display:flex;flex-direction:column;justify-content:center}
 .lesson-copy h1{font-size:clamp(2.45rem,4.5vw,4.55rem);line-height:.98;margin:0 0 14px}
@@ -425,6 +448,10 @@ button{color:inherit;touch-action:manipulation}
 }
 
 @media(max-width:880px){
+  .explanation-hub{min-height:580px}
+  .explanation-grid{grid-template-columns:1fr;max-width:600px}
+  .explanation-choice{min-height:150px}
+  .explanation-cat{width:360px;right:-70px;bottom:-130px;opacity:.72}
   .lesson-card{grid-template-columns:1fr;min-height:0}
   .lesson-copy{padding:34px 28px}
   .lesson-scene{min-height:390px}
@@ -439,6 +466,18 @@ button{color:inherit;touch-action:manipulation}
 
 @media(max-width:620px){
   .prototype-badge{display:none}
+  .explanation-hub{min-height:calc(100dvh - 104px);padding:28px 16px 120px;border-radius:24px}
+  .explanation-head h1{margin-bottom:22px;font-size:2.45rem}
+  .explanation-grid{gap:14px}
+  .explanation-choice{min-height:132px;padding:18px 48px 18px 16px;border-radius:23px;gap:16px;box-shadow:0 9px 0 rgba(8,14,46,.3),0 17px 30px rgba(7,12,41,.2)}
+  .explanation-orbit{width:78px;height:78px}
+  .explanation-orbit:after{left:-10px;right:-10px;top:29px;height:18px;border-width:4px}
+  .explanation-orbit span{font-size:2.4rem}
+  .explanation-name strong{font-size:1.35rem}
+  .explanation-name small{margin-top:5px;font-size:.87rem}
+  .explanation-arrow{right:17px;font-size:1.8rem}
+  .explanation-back{width:100%;margin-top:26px}
+  .explanation-cat{width:260px;right:-72px;bottom:-96px;opacity:.56}
   .battle-title-wrap{display:none}
   .lesson-card{border-radius:24px}
   .lesson-copy{padding:25px 17px}

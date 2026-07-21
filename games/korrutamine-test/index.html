@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#182452">
   <title>EDUKASS — Глава 1: один и два</title>
   <meta name="description" content="Рабочий прототип первой главы EDUKASS: умножение и деление на 1 и 2.">
-  <link rel="stylesheet" href="game.css?v=19">
+  <link rel="stylesheet" href="game.css?v=20">
 </head>
 <body>
   <header class="topbar">
@@ -67,6 +67,33 @@
           <div class="story-cat-crop"><img class="story-cat" src="assets/edukass-cat-transparent.png" alt=""></div>
           <div class="sign" id="lessonSign">×2</div>
         </div>
+      </div>
+    </section>
+
+    <section id="explanationScreen" class="screen" aria-labelledby="explanationTitle">
+      <div class="explanation-hub">
+        <div class="explanation-head">
+          <p class="eyebrow">ГЛАВА 1 · ОБЪЯСНЕНИЯ</p>
+          <h1 id="explanationTitle">Что повторим?</h1>
+        </div>
+
+        <div class="explanation-grid" aria-label="Все объяснения первой главы">
+          <button class="explanation-choice multiplication-choice" id="repeatMultiplicationButton" type="button">
+            <span class="explanation-orbit" aria-hidden="true"><span>×</span></span>
+            <span class="explanation-name"><strong>Умножение</strong><small>на 1 и 2</small></span>
+            <span class="explanation-arrow" aria-hidden="true">→</span>
+          </button>
+
+          <button class="explanation-choice division-choice" id="repeatDivisionButton" type="button">
+            <span class="explanation-orbit" aria-hidden="true"><span>÷</span></span>
+            <span class="explanation-name"><strong>Деление</strong><small>на 2</small></span>
+            <span class="explanation-lock" aria-hidden="true">🔒</span>
+            <span class="explanation-arrow" aria-hidden="true">→</span>
+          </button>
+        </div>
+
+        <button class="secondary-button explanation-back" id="explanationBackButton" type="button">К миссиям</button>
+        <img class="explanation-cat" src="assets/edukass-cat-transparent.png" alt="" aria-hidden="true">
       </div>
     </section>
 
@@ -148,6 +175,6 @@
     </section>
   </main>
 
-  <script src="game.js?v=19"></script>
+  <script src="game.js?v=20"></script>
 </body>
 </html>

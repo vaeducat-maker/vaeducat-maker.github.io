@@ -43,6 +43,7 @@ const explorerHint=document.querySelector('#explorerHint');
 const factorPicker=document.querySelector('#factorPicker');
 const mobileCorrectCount=document.querySelector('#mobileCorrectCount');
 const mobileProgressPill=document.querySelector('#mobileProgressPill');
+const repeatDivisionButton=document.querySelector('#repeatDivisionButton');
 
 const STORAGE_KEY='edukass-chapter-one-v18';
 const SOUND_KEY='edukass-sound-enabled';
@@ -355,10 +356,20 @@ function showLesson(mode='multiply',pendingLevel=null){
   lessonSign.textContent=division?'÷2':'×2';
   configureDemoPicker(division);
   updateDemo(4);
-  if(pendingLevel==='map')lessonContinueButton.textContent='К миссиям';
+  if(pendingLevel==='explanations')lessonContinueButton.textContent='К объяснениям';
+  else if(pendingLevel==='map')lessonContinueButton.textContent='К миссиям';
   else if(Number.isInteger(pendingLevel))lessonContinueButton.textContent=`Открыть миссию ${pendingLevel}`;
   else lessonContinueButton.textContent='Открыть миссию 1';
   showScreen('lessonScreen');
+}
+
+function showExplanationHub(){
+  stopRound();
+  const divisionUnlocked=progress.divisionLessonSeen||progress.unlockedLevel>=11;
+  repeatDivisionButton.disabled=!divisionUnlocked;
+  repeatDivisionButton.classList.toggle('locked',!divisionUnlocked);
+  repeatDivisionButton.setAttribute('aria-label',divisionUnlocked?'Повторить объяснение деления на 2':'Объяснение деления откроется после миссии 10');
+  showScreen('explanationScreen');
 }
 
 function renderLevelMap(){
@@ -691,7 +702,10 @@ lessonContinueButton.addEventListener('click',()=>{
   if(currentLessonMode==='divide')progress.divisionLessonSeen=true;
   else progress.multiplicationLessonSeen=true;
   saveProgress();
-  if(pendingLevelAfterLesson==='map'){
+  if(pendingLevelAfterLesson==='explanations'){
+    pendingLevelAfterLesson=null;
+    showExplanationHub();
+  }else if(pendingLevelAfterLesson==='map'){
     pendingLevelAfterLesson=null;
     showMap();
   }else if(Number.isInteger(pendingLevelAfterLesson)){
@@ -700,7 +714,10 @@ lessonContinueButton.addEventListener('click',()=>{
     startLevel(level);
   }else startLevel(1);
 });
-document.querySelector('#repeatLessonButton').addEventListener('click',()=>showLesson(progress.unlockedLevel>=11?'divide':'multiply','map'));
+document.querySelector('#repeatLessonButton').addEventListener('click',showExplanationHub);
+document.querySelector('#repeatMultiplicationButton').addEventListener('click',()=>showLesson('multiply','explanations'));
+repeatDivisionButton.addEventListener('click',()=>showLesson('divide','explanations'));
+document.querySelector('#explanationBackButton').addEventListener('click',showMap);
 document.querySelector('#backToMapButton').addEventListener('click',showMap);
 document.querySelector('#resultMapButton').addEventListener('click',showMap);
 resultPrimaryButton.addEventListener('click',runResultAction);
@@ -736,6 +753,7 @@ window.__EDUKASS_TEST__={
   requestLevel,
   startLevel,
   showMap,
+  showExplanationHub,
   getState:()=>({progress:JSON.parse(JSON.stringify(progress)),currentLevel:currentLevel?.id,currentQuestion:{...currentQuestion},correct,mistakes,showerProgress,roundActive}),
   answerCorrect:()=>{
     if(!currentQuestion)return;
