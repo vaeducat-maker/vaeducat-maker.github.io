@@ -51,24 +51,24 @@ const ROUND_LENGTH=15;
 const ANSWER_DELAYS={exact:480,possiblePrefix:2200,wrong:1050};
 const START_SHOWER_PROGRESS=.08;
 const WRONG_ANSWER_ADVANCE=.105;
-const NAVIGATION_MARKER='edukass-game-v21';
+const NAVIGATION_MARKER='edukass-game-v22';
 
 const LEVELS=[
-  {id:1,title:'Карточки умножения',short:'Выбор ×',mode:'choice',operation:'multiply',seconds:175,accent:'#70d9cf'},
-  {id:2,title:'Двойка начинается',short:'×2 · 1–5',mode:'input',operation:'multiply',seconds:165,accent:'#70d9cf'},
-  {id:3,title:'Продолжаем двойку',short:'×2 · 6–10',mode:'input',operation:'multiply',seconds:150,accent:'#69cde0'},
-  {id:4,title:'Вся таблица на 2',short:'×2 · всё',mode:'input',operation:'multiply',seconds:140,accent:'#63bfe4'},
-  {id:5,title:'Двойка с другой стороны',short:'число × 2',mode:'input',operation:'multiply',seconds:132,accent:'#6baee5'},
-  {id:6,title:'Меняем стороны',short:'×2 ↔ 2×',mode:'input',operation:'multiply',seconds:125,accent:'#779ce2'},
-  {id:7,title:'Уверенная двойка',short:'Точность',mode:'input',operation:'multiply',seconds:118,accent:'#858bdd'},
-  {id:8,title:'Повторяем трудное',short:'Повтор',mode:'input',operation:'multiply',seconds:112,accent:'#927bd5'},
-  {id:9,title:'Подготовка к проверке',short:'Смешиваем',mode:'input',operation:'multiply',seconds:106,accent:'#9d70cd'},
-  {id:10,title:'Проверка умножения',short:'Проверка ×',mode:'input',operation:'multiply',seconds:100,accent:'#a966c2'},
-  {id:11,title:'Карточки деления',short:'Выбор ÷',mode:'choice',operation:'divide',seconds:175,accent:'#e561a0'},
-  {id:12,title:'Делим на 2',short:'÷2 · 1–5',mode:'input',operation:'divide',seconds:165,accent:'#e86f91'},
-  {id:13,title:'Деление продолжается',short:'÷2 · 6–10',mode:'input',operation:'divide',seconds:150,accent:'#ed7d80'},
-  {id:14,title:'Всё деление на 2',short:'÷2 · всё',mode:'input',operation:'divide',seconds:135,accent:'#ef8d6e'},
-  {id:15,title:'Умножение и деление',short:'× и ÷',mode:'input',operation:'mixed',seconds:120,accent:'#f39b60'}
+  {id:1,title:'Korrutamise valik',short:'Vali ×',mode:'choice',operation:'multiply',seconds:175,accent:'#70d9cf'},
+  {id:2,title:'Alustame kahega',short:'×2 · 1–5',mode:'input',operation:'multiply',seconds:165,accent:'#70d9cf'},
+  {id:3,title:'Jätkame kahega',short:'×2 · 6–10',mode:'input',operation:'multiply',seconds:150,accent:'#69cde0'},
+  {id:4,title:'Kogu kahega korrutamine',short:'×2 · kõik',mode:'input',operation:'multiply',seconds:140,accent:'#63bfe4'},
+  {id:5,title:'Kaks teisel kohal',short:'arv × 2',mode:'input',operation:'multiply',seconds:132,accent:'#6baee5'},
+  {id:6,title:'Vahetame järjekorda',short:'×2 ↔ 2×',mode:'input',operation:'multiply',seconds:125,accent:'#779ce2'},
+  {id:7,title:'Kaks on selge',short:'Täpsus',mode:'input',operation:'multiply',seconds:118,accent:'#858bdd'},
+  {id:8,title:'Kordame keerulisi',short:'Kordus',mode:'input',operation:'multiply',seconds:112,accent:'#927bd5'},
+  {id:9,title:'Valmistume kontrolliks',short:'Segamini',mode:'input',operation:'multiply',seconds:106,accent:'#9d70cd'},
+  {id:10,title:'Korrutamise kontroll',short:'Kontroll ×',mode:'input',operation:'multiply',seconds:100,accent:'#a966c2'},
+  {id:11,title:'Jagamise valik',short:'Vali ÷',mode:'choice',operation:'divide',seconds:175,accent:'#e561a0'},
+  {id:12,title:'Jagame kahega',short:'÷2 · 1–5',mode:'input',operation:'divide',seconds:165,accent:'#e86f91'},
+  {id:13,title:'Jätkame jagamist',short:'÷2 · 6–10',mode:'input',operation:'divide',seconds:150,accent:'#ed7d80'},
+  {id:14,title:'Kogu kahega jagamine',short:'÷2 · kõik',mode:'input',operation:'divide',seconds:135,accent:'#ef8d6e'},
+  {id:15,title:'Korrutamine ja jagamine',short:'× ja ÷',mode:'input',operation:'mixed',seconds:120,accent:'#f39b60'}
 ];
 
 let progress=loadProgress();
@@ -136,7 +136,7 @@ function loadSoundPreference(){
 function updateSoundButton(){
   soundToggleButton.textContent=soundEnabled?'🔊':'🔇';
   soundToggleButton.setAttribute('aria-pressed',String(soundEnabled));
-  soundToggleButton.setAttribute('aria-label',soundEnabled?'Выключить звук':'Включить звук');
+  soundToggleButton.setAttribute('aria-label',soundEnabled?'Lülita heli välja':'Lülita heli sisse');
 }
 
 function toggleSound(){
@@ -356,13 +356,13 @@ function updateDemo(factor){
 }
 
 function configureDemoPicker(division){
-  factorPicker.setAttribute('aria-label',division?'Выбери делимое':'Выбери число');
-  explorerHint.textContent=division?'Нажми на делимое.':'Нажми на число.';
+  factorPicker.setAttribute('aria-label',division?'Vali jagatav':'Vali arv');
+  explorerHint.textContent=division?'Vajuta jagatavale.':'Vajuta arvule.';
   document.querySelectorAll('[data-demo-factor]').forEach((button,index)=>{
     const factor=index+1;
     button.dataset.demoFactor=String(factor);
     button.textContent=String(division?factor*2:factor);
-    button.setAttribute('aria-label',division?`Делимое ${factor*2}`:`Число ${factor}`);
+    button.setAttribute('aria-label',division?`Jagatav ${factor*2}`:`Arv ${factor}`);
   });
 }
 
@@ -371,17 +371,17 @@ function showLesson(mode='multiply',pendingLevel=null,{historyMode='push'}={}){
   currentLessonMode=mode;
   pendingLevelAfterLesson=pendingLevel;
   const division=mode==='divide';
-  lessonEyebrow.textContent=division?'ГЛАВА 1 · ОБРАТНАЯ СВЯЗЬ':'ГЛАВА 1 · ОДИН И ДВА';
-  lessonTitle.textContent=division?'Теперь делим на 2':'Открываем числа 1 и 2';
+  lessonEyebrow.textContent=division?'PEATÜKK 1 · JAGAMINE':'PEATÜKK 1 · ÜKS JA KAKS';
+  lessonTitle.textContent=division?'Nüüd jagame kahega':'Avastame arvud 1 ja 2';
   multiplicationLesson.hidden=division;
   divisionLesson.hidden=!division;
   lessonSign.textContent=division?'÷2':'×2';
   configureDemoPicker(division);
   updateDemo(4);
-  if(pendingLevel==='explanations')lessonContinueButton.textContent='К объяснениям';
-  else if(pendingLevel==='map')lessonContinueButton.textContent='К миссиям';
-  else if(Number.isInteger(pendingLevel))lessonContinueButton.textContent=`Открыть миссию ${pendingLevel}`;
-  else lessonContinueButton.textContent='Открыть миссию 1';
+  if(pendingLevel==='explanations')lessonContinueButton.textContent='Selgituste juurde';
+  else if(pendingLevel==='map')lessonContinueButton.textContent='Missioonide juurde';
+  else if(Number.isInteger(pendingLevel))lessonContinueButton.textContent=`Ava ${pendingLevel}. missioon`;
+  else lessonContinueButton.textContent='Ava 1. missioon';
   showScreen('lessonScreen',{historyMode,historyView:'lesson',historyData:{mode,pendingLevel}});
 }
 
@@ -390,7 +390,7 @@ function showExplanationHub({historyMode='push'}={}){
   const divisionUnlocked=progress.divisionLessonSeen||progress.unlockedLevel>=11;
   repeatDivisionButton.disabled=!divisionUnlocked;
   repeatDivisionButton.classList.toggle('locked',!divisionUnlocked);
-  repeatDivisionButton.setAttribute('aria-label',divisionUnlocked?'Повторить объяснение деления на 2':'Объяснение деления откроется после миссии 10');
+  repeatDivisionButton.setAttribute('aria-label',divisionUnlocked?'Korda kahega jagamise selgitust':'Jagamise selgitus avaneb pärast 10. missiooni');
   showScreen('explanationScreen',{historyMode,historyView:'explanations'});
 }
 
@@ -407,7 +407,7 @@ function renderLevelMap(){
     button.dataset.level=String(level.id);
     button.style.setProperty('--level-accent',level.accent);
     button.innerHTML=`<span class="celestial-shape"><span class="celestial-number">${completed?'✓':level.id}</span></span><strong class="level-name">${level.short}</strong>`;
-    button.setAttribute('aria-label',`Миссия ${level.id}: ${level.title}${completed?', пройдена':''}${!unlocked?', закрыта':''}`);
+    button.setAttribute('aria-label',`Missioon ${level.id}: ${level.title}${completed?', läbitud':''}${!unlocked?', lukus':''}`);
     if(unlocked)button.addEventListener('click',()=>requestLevel(level.id));
     return button;
   }));
@@ -442,7 +442,7 @@ function startLevel(levelId,{historyMode='push'}={}){
   showerProgress=START_SHOWER_PROGRESS;
   correctCount.textContent='0';
   mobileCorrectCount.textContent='0';
-  mobileProgressPill.setAttribute('aria-label','Выполнено: 0 из 15');
+  mobileProgressPill.setAttribute('aria-label','Tehtud: 0/15');
   feedback.textContent='';
   feedback.className='feedback visually-hidden';
   answerDisplay.textContent='?';
@@ -453,13 +453,13 @@ function startLevel(levelId,{historyMode='push'}={}){
   battleStage.className='battle-stage';
   battleStage.style.setProperty('--level-accent',level.accent);
   showerMeter.hidden=false;
-  levelKicker.textContent=`МИССИЯ ${level.id} ИЗ 15`;
+  levelKicker.textContent=`MISSIOON ${level.id} / 15`;
   battleTitle.textContent=level.title;
   const choiceMode=level.mode==='choice';
   answerPanel.classList.toggle('choice-mode',choiceMode);
   choiceGrid.hidden=!choiceMode;
   keypad.hidden=choiceMode;
-  answerPanelTitle.textContent=choiceMode?'Выбери ответ':'Введи число';
+  answerPanelTitle.textContent=choiceMode?'Vali vastus':'Sisesta arv';
   setShowerPosition();
   showScreen('battleScreen',{historyMode,historyView:'battle',historyData:{levelId}});
   battleStartedAt=Date.now();
@@ -553,8 +553,8 @@ function finishCorrectQuestion(){
   correct++;
   correctCount.textContent=correct;
   mobileCorrectCount.textContent=correct;
-  mobileProgressPill.setAttribute('aria-label',`Выполнено: ${correct} из 15`);
-  feedback.textContent='Верно';
+  mobileProgressPill.setAttribute('aria-label',`Tehtud: ${correct}/15`);
+  feedback.textContent='Õige';
   playSound('correct');
   showCorrectAnimation();
   if(correct>=ROUND_LENGTH)cancelAnimationFrame(motionFrame);
@@ -574,7 +574,7 @@ function handleWrongAnswer(clickedButton=null){
   queueRetry(currentQuestion);
   answerDisplay.textContent=String(currentQuestion.answer);
   answerDisplay.classList.add('revealed-answer');
-  feedback.textContent=`Правильный ответ ${currentQuestion.answer}`;
+  feedback.textContent=`Õige vastus on ${currentQuestion.answer}`;
   questionCard.classList.add('is-wrong');
   playSound('wrong');
   if(clickedButton)clickedButton.classList.add('wrong-choice');
@@ -668,16 +668,16 @@ function finishAttempt(reason){
     progress.completedLevels.sort((a,b)=>a-b);
     progress.unlockedLevel=Math.min(15,Math.max(progress.unlockedLevel,currentLevel.id+1));
     saveProgress();
-    resultEyebrow.textContent=chapterComplete?'ПЕРВЫЕ 15 МИССИЙ ГОТОВЫ':'МИССИЯ ПРОЙДЕНА';
-    resultTitle.textContent=chapterComplete?'Прототип главы пройден':'Миссия пройдена';
-    resultMessage.textContent=chapterComplete?'Первая глава готова.':'15 правильных ответов. Следующая миссия открыта.';
-    resultPrimaryButton.textContent=chapterComplete?'Вернуться к карте':currentLevel.id===10?'Перейти к делению':'Следующая миссия';
+    resultEyebrow.textContent=chapterComplete?'ESIMESED 15 MISSIOONI LÄBITUD':'MISSIOON LÄBITUD';
+    resultTitle.textContent=chapterComplete?'Esimene peatükk läbitud':'Missioon läbitud';
+    resultMessage.textContent=chapterComplete?'Esimene peatükk on valmis.':'15 õiget vastust. Järgmine missioon on avatud.';
+    resultPrimaryButton.textContent=chapterComplete?'Tagasi missioonide juurde':currentLevel.id===10?'Jagamise juurde':'Järgmine missioon';
     resultAction=chapterComplete?'map':'next';
   }else{
-    resultEyebrow.textContent='ПОПРОБУЕМ ЕЩЁ РАЗ';
-    resultTitle.textContent='Звездопад накрыл киску';
-    resultMessage.textContent='Набери 15 правильных ответов раньше звездопада.';
-    resultPrimaryButton.textContent='Повторить миссию';
+    resultEyebrow.textContent='PROOVIME VEEL';
+    resultTitle.textContent='Tähesadu jõudis kiisuni';
+    resultMessage.textContent='Kogu 15 õiget vastust enne, kui tähesadu kiisuni jõuab.';
+    resultPrimaryButton.textContent='Korda missiooni';
     resultAction='retry';
   }
   showScreen('resultScreen',{
@@ -717,10 +717,10 @@ function restoreResult(state){
   stopRound();
   currentLevel=LEVELS.find(level=>level.id===state.levelId)||currentLevel;
   resultAction=state.resultAction||'map';
-  resultEyebrow.textContent=state.resultEyebrow||'МИССИЯ ЗАВЕРШЕНА';
-  resultTitle.textContent=state.resultTitle||'Миссия пройдена';
+  resultEyebrow.textContent=state.resultEyebrow||'MISSIOON LÄBITUD';
+  resultTitle.textContent=state.resultTitle||'Missioon läbitud';
   resultMessage.textContent=state.resultMessage||'';
-  resultPrimaryButton.textContent=state.primaryText||'К миссиям';
+  resultPrimaryButton.textContent=state.primaryText||'Missioonide juurde';
   mistakeCount.textContent=Number.isInteger(state.mistakes)?state.mistakes:0;
   timeCount.textContent=formatTime(Number.isInteger(state.elapsed)?state.elapsed:0);
   showScreen('resultScreen',{historyMode:'none'});
@@ -747,7 +747,7 @@ function formatTime(seconds){
 }
 
 function resetProgress(){
-  if(!confirm('Начать первую главу заново? Пройденные миссии будут закрыты.'))return;
+  if(!confirm('Kas alustame esimest peatükki uuesti? Läbitud missioonid lukustatakse.'))return;
   stopRound();
   localStorage.removeItem(STORAGE_KEY);
   progress=defaultProgress();

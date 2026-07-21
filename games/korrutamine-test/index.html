@@ -1,23 +1,23 @@
 <!doctype html>
-<html lang="ru">
+<html lang="et">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#182452">
-  <title>EDUKASS — Глава 1: один и два</title>
-  <meta name="description" content="Рабочий прототип первой главы EDUKASS: умножение и деление на 1 и 2.">
-  <link rel="stylesheet" href="game.css?v=21">
+  <title>EDUKASS — 1. peatükk: üks ja kaks</title>
+  <meta name="description" content="EDUKASSi esimese peatüki prototüüp: ühe ja kahega korrutamine ning jagamine.">
+  <link rel="stylesheet" href="game.css?v=22">
 </head>
 <body>
   <header class="topbar">
-    <a class="brand" href="../../" aria-label="На главную">
+    <a class="brand" href="../../" aria-label="Avalehele">
       <span class="brand-cat" aria-hidden="true"><img src="assets/edukass-cat-transparent.png" alt=""></span>
       <span><b>EDU</b>KASS</span>
     </a>
     <div class="top-actions">
-      <span class="prototype-badge">ПРОТОТИП ГЛАВЫ</span>
-      <button class="sound-button" id="soundToggleButton" type="button" aria-label="Выключить звук" aria-pressed="true">🔊</button>
-      <button class="tiny-button" id="resetProgressButton" type="button">Начать заново</button>
+      <span class="prototype-badge">PEATÜKI PROTOTÜÜP</span>
+      <button class="sound-button" id="soundToggleButton" type="button" aria-label="Lülita heli välja" aria-pressed="true">🔊</button>
+      <button class="tiny-button" id="resetProgressButton" type="button">Alusta uuesti</button>
     </div>
   </header>
 
@@ -25,10 +25,10 @@
     <section id="lessonScreen" class="screen is-active" aria-labelledby="lessonTitle">
       <div class="lesson-card">
         <div class="lesson-copy">
-          <p class="eyebrow" id="lessonEyebrow">ГЛАВА 1 · ОДИН И ДВА</p>
-          <h1 id="lessonTitle">Открываем числа 1 и 2</h1>
+          <p class="eyebrow" id="lessonEyebrow">PEATÜKK 1 · ÜKS JA KAKS</p>
+          <h1 id="lessonTitle">Avastame arvud 1 ja 2</h1>
 
-          <div class="fact-explorer" aria-label="Интерактивное объяснение">
+          <div class="fact-explorer" aria-label="Interaktiivne selgitus">
             <div id="multiplicationLesson" class="lesson-section demo-stack">
               <article class="demo-lane demo-one">
                 <div class="demo-equations"><span>×1</span><strong id="demoOneEquation">1 × 4 = 4</strong></div>
@@ -47,8 +47,8 @@
               </article>
             </div>
 
-            <p class="explorer-hint" id="explorerHint">Нажми на число.</p>
-            <div class="factor-picker" id="factorPicker" aria-label="Выбери число">
+            <p class="explorer-hint" id="explorerHint">Vajuta arvule.</p>
+            <div class="factor-picker" id="factorPicker" aria-label="Vali arv">
               <button type="button" data-demo-factor="1">1</button><button type="button" data-demo-factor="2">2</button>
               <button type="button" data-demo-factor="3">3</button><button class="active" type="button" data-demo-factor="4">4</button>
               <button type="button" data-demo-factor="5">5</button><button type="button" data-demo-factor="6">6</button>
@@ -57,7 +57,7 @@
             </div>
           </div>
 
-          <button class="primary-button lesson-button" id="lessonContinueButton" type="button">Открыть миссию 1</button>
+          <button class="primary-button lesson-button" id="lessonContinueButton" type="button">Ava 1. missioon</button>
         </div>
 
         <div class="lesson-scene" aria-hidden="true">
@@ -73,26 +73,26 @@
     <section id="explanationScreen" class="screen" aria-labelledby="explanationTitle">
       <div class="explanation-hub">
         <div class="explanation-head">
-          <p class="eyebrow">ГЛАВА 1 · ОБЪЯСНЕНИЯ</p>
-          <h1 id="explanationTitle">Что повторим?</h1>
+          <p class="eyebrow">PEATÜKK 1 · SELGITUSED</p>
+          <h1 id="explanationTitle">Mida kordame?</h1>
         </div>
 
-        <div class="explanation-grid" aria-label="Все объяснения первой главы">
+        <div class="explanation-grid" aria-label="Esimese peatüki kõik selgitused">
           <button class="explanation-choice multiplication-choice" id="repeatMultiplicationButton" type="button">
             <span class="explanation-orbit" aria-hidden="true"><span>×</span></span>
-            <span class="explanation-name"><strong>Умножение</strong><small>на 1 и 2</small></span>
+            <span class="explanation-name"><strong>Korrutamine</strong><small>1 ja 2-ga</small></span>
             <span class="explanation-arrow" aria-hidden="true">→</span>
           </button>
 
           <button class="explanation-choice division-choice" id="repeatDivisionButton" type="button">
             <span class="explanation-orbit" aria-hidden="true"><span>÷</span></span>
-            <span class="explanation-name"><strong>Деление</strong><small>на 2</small></span>
+            <span class="explanation-name"><strong>Jagamine</strong><small>2-ga</small></span>
             <span class="explanation-lock" aria-hidden="true">🔒</span>
             <span class="explanation-arrow" aria-hidden="true">→</span>
           </button>
         </div>
 
-        <button class="secondary-button explanation-back" id="explanationBackButton" type="button">К миссиям</button>
+        <button class="secondary-button explanation-back" id="explanationBackButton" type="button">Missioonide juurde</button>
         <img class="explanation-cat" src="assets/edukass-cat-transparent.png" alt="" aria-hidden="true">
       </div>
     </section>
@@ -100,33 +100,33 @@
     <section id="mapScreen" class="screen" aria-labelledby="mapTitle">
       <div class="map-head">
         <div>
-          <p class="eyebrow">ГЛАВА 1 · ОДИН И ДВА</p>
-          <h1 id="mapTitle">Первые 15 миссий</h1>
+          <p class="eyebrow">PEATÜKK 1 · ÜKS JA KAKS</p>
+          <h1 id="mapTitle">Esimesed 15 missiooni</h1>
         </div>
-        <div class="energy-panel"><span>Пройдено</span><strong><span id="completedLevelCount">0</span>/15</strong></div>
+        <div class="energy-panel"><span>Läbitud</span><strong><span id="completedLevelCount">0</span>/15</strong></div>
       </div>
 
       <div class="chapter-board">
-        <div class="chapter-route-head"><span>Умножение</span><span>Деление</span></div>
-        <div class="level-grid" id="levelGrid" aria-label="Миссии первой главы"></div>
+        <div class="chapter-route-head"><span>Korrutamine</span><span>Jagamine</span></div>
+        <div class="level-grid" id="levelGrid" aria-label="Esimese peatüki missioonid"></div>
       </div>
       <div class="map-actions">
-        <button class="secondary-button" id="repeatLessonButton" type="button">Повторить объяснение</button>
+        <button class="secondary-button" id="repeatLessonButton" type="button">Korda selgitust</button>
       </div>
     </section>
 
     <section id="battleScreen" class="screen battle-screen" aria-labelledby="battleTitle">
       <div class="battle-top">
-        <button class="back-button" id="backToMapButton" type="button">← Миссии</button>
-        <div class="battle-title-wrap"><span id="levelKicker">МИССИЯ 1</span><h1 id="battleTitle">Карточки умножения</h1></div>
-        <div class="progress-pill"><span>Ответы</span><strong>★ <span id="correctCount">0</span>/15</strong></div>
+        <button class="back-button" id="backToMapButton" type="button">← Missioonid</button>
+        <div class="battle-title-wrap"><span id="levelKicker">MISSIOON 1</span><h1 id="battleTitle">Korrutamise valik</h1></div>
+        <div class="progress-pill"><span>Vastused</span><strong>★ <span id="correctCount">0</span>/15</strong></div>
       </div>
 
       <div class="play-grid">
         <div class="scene-column">
           <div class="question-card" id="questionCard">
-            <p class="question-label">Реши пример</p>
-            <div class="mobile-progress-pill" id="mobileProgressPill" aria-label="Выполнено: 0 из 15"><span aria-hidden="true">★</span><strong><span id="mobileCorrectCount">0</span>/15</strong></div>
+            <p class="question-label">Lahenda tehe</p>
+            <div class="mobile-progress-pill" id="mobileProgressPill" aria-label="Tehtud: 0/15"><span aria-hidden="true">★</span><strong><span id="mobileCorrectCount">0</span>/15</strong></div>
             <div class="equation"><span id="factorA">2</span><span id="operationSymbol">×</span><span id="factorB">4</span><span>=</span><span class="answer-slot" id="answerDisplay">?</span></div>
             <p class="feedback visually-hidden" id="feedback" aria-live="polite"></p>
           </div>
@@ -144,14 +144,14 @@
           </div>
         </div>
 
-        <aside class="answer-panel" id="answerPanel" aria-label="Ответ">
-          <div class="answer-panel-head"><span id="answerPanelTitle">Выбери ответ</span></div>
-          <div class="choice-grid" id="choiceGrid" aria-label="Варианты ответа"></div>
-          <div class="keypad" id="keypad" aria-label="Клавиатура ответа">
+        <aside class="answer-panel" id="answerPanel" aria-label="Vastus">
+          <div class="answer-panel-head"><span id="answerPanelTitle">Vali vastus</span></div>
+          <div class="choice-grid" id="choiceGrid" aria-label="Vastusevariandid"></div>
+          <div class="keypad" id="keypad" aria-label="Vastuse numbriklahvid">
             <button type="button" data-key="1">1</button><button type="button" data-key="2">2</button><button type="button" data-key="3">3</button>
             <button type="button" data-key="4">4</button><button type="button" data-key="5">5</button><button type="button" data-key="6">6</button>
             <button type="button" data-key="7">7</button><button type="button" data-key="8">8</button><button type="button" data-key="9">9</button>
-            <button class="key-clear-all" type="button" data-key="clearAll" aria-label="Очистить">C</button><button type="button" data-key="0">0</button><button class="key-clear" type="button" data-key="clear" aria-label="Удалить цифру">⌫</button>
+            <button class="key-clear-all" type="button" data-key="clearAll" aria-label="Tühjenda">C</button><button type="button" data-key="0">0</button><button class="key-clear" type="button" data-key="clear" aria-label="Kustuta number">⌫</button>
           </div>
         </aside>
       </div>
@@ -163,18 +163,18 @@
           <div class="crystal">★</div>
           <div class="result-cat-crop"><img class="result-cat" src="assets/edukass-cat-transparent.png" alt=""></div>
         </div>
-        <p class="eyebrow" id="resultEyebrow">МИССИЯ ЗАВЕРШЕНА</p>
-        <h1 id="resultTitle">Миссия пройдена</h1>
-        <p id="resultMessage">Все 15 ответов верны.</p>
-        <div class="result-stats"><span>Ошибки</span><strong id="mistakeCount">0</strong><span>Время</span><strong id="timeCount">00:00</strong></div>
+        <p class="eyebrow" id="resultEyebrow">MISSIOON LÄBITUD</p>
+        <h1 id="resultTitle">Missioon läbitud</h1>
+        <p id="resultMessage">15 õiget vastust.</p>
+        <div class="result-stats"><span>Vead</span><strong id="mistakeCount">0</strong><span>Aeg</span><strong id="timeCount">00:00</strong></div>
         <div class="result-actions">
-          <button class="primary-button" id="resultPrimaryButton" type="button">Следующая миссия</button>
-          <button class="secondary-button" id="resultMapButton" type="button">К карте</button>
+          <button class="primary-button" id="resultPrimaryButton" type="button">Järgmine missioon</button>
+          <button class="secondary-button" id="resultMapButton" type="button">Missioonide juurde</button>
         </div>
       </div>
     </section>
   </main>
 
-  <script src="game.js?v=21"></script>
+  <script src="game.js?v=22"></script>
 </body>
 </html>
