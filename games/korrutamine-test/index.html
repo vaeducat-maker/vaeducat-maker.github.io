@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#182452">
   <title>EDUKASS — 1. peatükk: üks ja kaks</title>
   <meta name="description" content="EDUKASSi esimese peatüki prototüüp: ühe ja kahega korrutamine ning jagamine.">
-  <link rel="stylesheet" href="game.css?v=23">
+  <link rel="stylesheet" href="game.css?v=24">
 </head>
 <body>
   <header class="topbar">
@@ -109,14 +109,19 @@
       <div class="chapter-board">
         <section class="story-progress" aria-labelledby="storyPhaseTitle">
           <div class="story-stage" id="storyStage">
-            <div class="story-status">
+            <div class="story-status visually-hidden">
               <span id="storyPhaseKicker">1. SIHT</span>
               <strong id="storyPhaseTitle">Leia kosmoselaev</strong>
+            </div>
+
+            <div class="story-energy-stream" aria-hidden="true">
+              <i></i><i></i><i></i><i></i><i></i>
             </div>
 
             <div class="story-cat-crop" aria-hidden="true"><img src="assets/edukass-cat-transparent.png" alt=""></div>
 
             <div class="story-ship" id="storyShip" aria-hidden="true">
+              <span class="ship-aura"></span>
               <span class="ship-part ship-body" data-ship-part="1"></span>
               <span class="ship-part ship-window" data-ship-part="2"></span>
               <span class="ship-part ship-wing ship-wing-left" data-ship-part="3"></span>
@@ -130,16 +135,17 @@
 
             <div class="story-portal" id="storyPortal" aria-hidden="true">
               <span class="portal-ring"></span>
+              <span class="portal-core"></span>
               <i data-portal-spark="1">★</i><i data-portal-spark="2">✦</i><i data-portal-spark="3">★</i><i data-portal-spark="4">✦</i><i data-portal-spark="5">★</i>
             </div>
 
             <div class="next-planet" id="nextPlanet" aria-hidden="true"><span>2</span></div>
           </div>
 
-          <div class="story-goals" aria-label="Peatüki eesmärgid">
-            <div class="story-goal is-active" data-story-goal="ship"><span>Leia laev</span><strong id="shipGoalCount">0/5</strong></div>
-            <div class="story-goal" data-story-goal="engine"><span>Käivita mootor</span><strong id="engineGoalCount">0/5</strong></div>
-            <div class="story-goal" data-story-goal="portal"><span>Ava tähevärav</span><strong id="portalGoalCount">0/5</strong></div>
+          <div class="story-goals" aria-label="Peatüki teekond">
+            <div class="story-goal is-active" data-story-goal="ship" aria-label="Kosmoselaev"><span class="goal-symbol goal-ship" aria-hidden="true"></span><strong id="shipGoalCount">0/5</strong></div>
+            <div class="story-goal" data-story-goal="engine" aria-label="Mootor"><span class="goal-symbol goal-engine" aria-hidden="true"></span><strong id="engineGoalCount">0/5</strong></div>
+            <div class="story-goal" data-story-goal="portal" aria-label="Tähevärav"><span class="goal-symbol goal-portal" aria-hidden="true"></span><strong id="portalGoalCount">0/5</strong></div>
           </div>
         </section>
 
@@ -196,21 +202,25 @@
     <section id="resultScreen" class="screen" aria-labelledby="resultTitle">
       <div class="result-card">
         <div class="result-animation reward-scene" id="rewardScene" aria-hidden="true">
-          <div class="reward-space-stars">✦　★　✧　✦　★</div>
+          <div class="reward-space-stars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="reward-speed-lines"><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="reward-flash"></div>
           <div class="crystal" id="rewardStar">★</div>
           <div class="reward-ship">
             <span class="reward-ship-body"><i></i></span>
             <span class="reward-ship-wing reward-ship-wing-left"></span>
             <span class="reward-ship-wing reward-ship-wing-right"></span>
+            <span class="reward-engine-cells"><i></i><i></i><i></i><i></i><i></i></span>
             <span class="reward-ship-flame"></span>
           </div>
-          <div class="reward-portal"><i></i><span>✦</span></div>
+          <div class="reward-portal"><i></i><b></b><span>✦</span></div>
+          <div class="reward-next-planet"></div>
           <div class="result-cat-crop"><img class="result-cat" src="assets/edukass-cat-transparent.png" alt=""></div>
         </div>
         <div class="reward-pill" id="rewardPill">★ +1 TÄHEENERGIA</div>
         <p class="eyebrow" id="resultEyebrow">MISSIOON LÄBITUD</p>
         <h1 id="resultTitle">Missioon läbitud</h1>
-        <p id="resultMessage">15 õiget vastust.</p>
+        <p id="resultMessage" hidden></p>
         <div class="result-stats"><span>Vead</span><strong id="mistakeCount">0</strong><span>Aeg</span><strong id="timeCount">00:00</strong></div>
         <div class="result-actions">
           <button class="primary-button" id="resultPrimaryButton" type="button">Järgmine missioon</button>
@@ -220,6 +230,6 @@
     </section>
   </main>
 
-  <script src="game.js?v=23"></script>
+  <script src="game.js?v=24"></script>
 </body>
 </html>

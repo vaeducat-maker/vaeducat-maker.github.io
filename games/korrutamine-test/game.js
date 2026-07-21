@@ -26,6 +26,7 @@ const resultEyebrow=document.querySelector('#resultEyebrow');
 const resultTitle=document.querySelector('#resultTitle');
 const resultMessage=document.querySelector('#resultMessage');
 const resultPrimaryButton=document.querySelector('#resultPrimaryButton');
+const resultMapButton=document.querySelector('#resultMapButton');
 const lessonEyebrow=document.querySelector('#lessonEyebrow');
 const lessonTitle=document.querySelector('#lessonTitle');
 const multiplicationLesson=document.querySelector('#multiplicationLesson');
@@ -59,7 +60,7 @@ const ROUND_LENGTH=15;
 const ANSWER_DELAYS={exact:480,possiblePrefix:2200,wrong:1050};
 const START_SHOWER_PROGRESS=.08;
 const WRONG_ANSWER_ADVANCE=.105;
-const NAVIGATION_MARKER='edukass-game-v23';
+const NAVIGATION_MARKER='edukass-game-v24';
 
 const LEVELS=[
   {id:1,title:'Korrutamise valik',short:'Vali ×',mode:'choice',operation:'multiply',seconds:175,accent:'#70d9cf'},
@@ -150,6 +151,10 @@ function updateSoundButton(){
 function toggleSound(){
   soundEnabled=!soundEnabled;
   localStorage.setItem(SOUND_KEY,String(soundEnabled));
+  if(!soundEnabled&&audioContext){
+    audioContext.close();
+    audioContext=null;
+  }
   updateSoundButton();
   if(soundEnabled)playSound('key');
 }
@@ -181,6 +186,29 @@ function playTone(frequency,startOffset,duration,volume,type='sine'){
   oscillator.stop(endsAt+.02);
 }
 
+function playSweep(fromFrequency,toFrequency,startOffset,duration,volume,type='sine'){
+  const context=getAudioContext();
+  if(!context)return;
+  const oscillator=context.createOscillator();
+  const gain=context.createGain();
+  const startsAt=context.currentTime+startOffset;
+  const endsAt=startsAt+duration;
+  oscillator.type=type;
+  oscillator.frequency.setValueAtTime(fromFrequency,startsAt);
+  oscillator.frequency.exponentialRampToValueAtTime(toFrequency,endsAt);
+  gain.gain.setValueAtTime(.0001,startsAt);
+  gain.gain.exponentialRampToValueAtTime(volume,startsAt+.035);
+  gain.gain.exponentialRampToValueAtTime(.0001,endsAt);
+  oscillator.connect(gain);
+  gain.connect(context.destination);
+  oscillator.start(startsAt);
+  oscillator.stop(endsAt+.03);
+}
+
+function playChord(frequencies,startOffset,duration,volume=.018){
+  frequencies.forEach((frequency,index)=>playTone(frequency,startOffset+(index*.018),duration,volume,'sine'));
+}
+
 function playSound(kind){
   if(!soundEnabled)return;
   if(kind==='key')playTone(430,0,.045,.025,'sine');
@@ -205,6 +233,29 @@ function playSound(kind){
     playTone(330,0,.12,.028,'sine');
     playTone(520,.12,.16,.034,'sine');
     playTone(780,.28,.2,.04,'sine');
+  }
+  if(kind==='storyStep'){
+    playSweep(460,760,0,.32,.024,'sine');
+    playTone(920,.26,.18,.027,'sine');
+    playTone(1180,.42,.22,.021,'sine');
+  }
+  if(kind==='shipFound'){
+    [0,.18,.36,.54,.72].forEach((offset,index)=>playTone(390+(index*72),offset,.09,.027,'triangle'));
+    playSweep(240,720,.78,.7,.032,'sine');
+    playChord([523,659,784],1.42,.65,.021);
+  }
+  if(kind==='engineStart'){
+    [0,.2,.4,.6,.8].forEach((offset,index)=>playTone(105+(index*17),offset,.16,.031,'sawtooth'));
+    playSweep(82,260,.82,1.05,.038,'sawtooth');
+    playChord([392,494,587],1.72,.75,.022);
+    playTone(988,2.05,.42,.023,'sine');
+  }
+  if(kind==='portalOpen'){
+    playSweep(180,1320,0,1.85,.027,'sine');
+    [392,494,587,784,988].forEach((frequency,index)=>playTone(frequency,.18+(index*.25),.32,.021,'sine'));
+    playChord([523,659,784,1047],1.65,.9,.019);
+    playSweep(145,620,2.35,.95,.037,'sawtooth');
+    playTone(1318,3.05,.62,.021,'sine');
   }
 }
 
@@ -428,6 +479,11 @@ function renderStoryProgress(){
   storyStage.classList.toggle('has-engine',engineProgress>0);
   storyStage.classList.toggle('has-portal',portalProgress>0);
   storyStage.classList.toggle('is-complete',completed===15);
+  storyStage.classList.toggle('phase-ship',phase==='ship');
+  storyStage.classList.toggle('phase-engine',phase==='engine');
+  storyStage.classList.toggle('phase-portal',phase==='portal');
+  storyStage.style.setProperty('--engine-progress',String(engineProgress));
+  storyStage.style.setProperty('--portal-progress',String(portalProgress));
   storyPhaseKicker.textContent=phase==='ship'?'1. SIHT':phase==='engine'?'2. SIHT':phase==='portal'?'3. SIHT':'PEATÜKK LÄBITUD';
   storyPhaseTitle.textContent=phase==='ship'?'Leia kosmoselaev':phase==='engine'?'Käivita mootor':phase==='portal'?'Ava tähevärav':'Uus planeet on avatud!';
   shipGoalCount.textContent=`${shipProgress}/5`;
@@ -443,6 +499,8 @@ function renderStoryProgress(){
     const done=goalName==='ship'?shipProgress===5:goalName==='engine'?engineProgress===5:portalProgress===5;
     goal.classList.toggle('is-done',done);
     goal.classList.toggle('is-active',phase===goalPhase);
+    const value=goalName==='ship'?shipProgress:goalName==='engine'?engineProgress:portalProgress;
+    goal.setAttribute('aria-label',`${goalName==='ship'?'Kosmoselaev':goalName==='engine'?'Mootor':'Tähevärav'}: ${value}/5`);
   });
 }
 
@@ -723,32 +781,24 @@ function finishAttempt(reason){
     progress.unlockedLevel=Math.min(15,Math.max(progress.unlockedLevel,currentLevel.id+1));
     saveProgress();
     configureRewardScene(currentLevel.id,firstCompletion,true);
-    resultEyebrow.textContent=chapterComplete?'ESIMENE PEATÜKK LÄBITUD':'MISSIOON LÄBITUD';
-    if(currentLevel.id===5){
-      resultTitle.textContent='Kosmoselaev leitud!';
-      resultMessage.textContent='Nüüd käivitame mootori.';
-      resultPrimaryButton.textContent='Käivita mootor';
-    }else if(currentLevel.id===10){
-      resultTitle.textContent='Mootor töötab!';
-      resultMessage.textContent='Järgmine siht: tähevärav.';
-      resultPrimaryButton.textContent='Jagamise juurde';
-    }else if(chapterComplete){
-      resultTitle.textContent='Tähevärav on avatud!';
-      resultMessage.textContent='Uus planeet ootab.';
-      resultPrimaryButton.textContent='Vaata uut planeeti';
-    }else{
-      resultTitle.textContent=firstCompletion?'Täheenergia +1':'Missioon läbitud';
-      resultMessage.textContent=currentLevel.id<5?'Laev ilmub täht-tähelt.':currentLevel.id<10?'Mootor kogub jõudu.':'Tähevärav avaneb.';
-      resultPrimaryButton.textContent='Järgmine missioon';
-    }
+    const milestone=currentLevel.id===5||currentLevel.id===10||chapterComplete;
+    resultEyebrow.textContent=chapterComplete?'PEATÜKK LÄBITUD':'MISSIOON LÄBITUD';
+    resultTitle.textContent=milestone?'':'Tehtud!';
+    resultTitle.hidden=milestone;
+    resultMessage.textContent='';
+    resultMessage.hidden=true;
+    resultPrimaryButton.textContent=chapterComplete?'Missioonid':'Edasi';
+    resultMapButton.hidden=chapterComplete;
     resultAction=chapterComplete?'map':'next';
-    playSound(chapterComplete?'launch':'reward');
   }else{
     configureRewardScene(currentLevel?.id||1,false,false);
     resultEyebrow.textContent='PROOVIME VEEL';
     resultTitle.textContent='Tähesadu jõudis kiisuni';
+    resultTitle.hidden=false;
     resultMessage.textContent='Kogu 15 õiget vastust enne, kui tähesadu kiisuni jõuab.';
+    resultMessage.hidden=false;
     resultPrimaryButton.textContent='Korda missiooni';
+    resultMapButton.hidden=false;
     resultAction='retry';
   }
   showScreen('resultScreen',{
@@ -760,17 +810,22 @@ function finishAttempt(reason){
       resultEyebrow:resultEyebrow.textContent,
       resultTitle:resultTitle.textContent,
       resultMessage:resultMessage.textContent,
+      titleHidden:resultTitle.hidden,
+      messageHidden:resultMessage.hidden,
       primaryText:resultPrimaryButton.textContent,
+      mapHidden:resultMapButton.hidden,
       levelPassed,
       firstCompletion,
       mistakes,
       elapsed
     }
   });
+  startRewardCinematic(levelPassed,currentLevel.id);
 }
 
 function configureRewardScene(levelId,firstCompletion,levelPassed){
   rewardScene.className='result-animation reward-scene';
+  rewardScene.dataset.level=String(levelId);
   rewardPill.hidden=!levelPassed;
   if(!levelPassed){
     rewardScene.classList.add('reward-failed');
@@ -783,6 +838,17 @@ function configureRewardScene(levelId,firstCompletion,levelPassed){
   else if(levelId>10)rewardScene.classList.add('reward-portal-step');
   else if(levelId>5)rewardScene.classList.add('reward-engine-step');
   else rewardScene.classList.add('reward-ship-step');
+}
+
+function startRewardCinematic(levelPassed,levelId){
+  rewardScene.classList.remove('is-playing');
+  void rewardScene.offsetWidth;
+  rewardScene.classList.add('is-playing');
+  if(!levelPassed)return;
+  if(levelId===15)playSound('portalOpen');
+  else if(levelId===10)playSound('engineStart');
+  else if(levelId===5)playSound('shipFound');
+  else playSound('storyStep');
 }
 
 function runResultAction(){
@@ -809,11 +875,15 @@ function restoreResult(state){
   resultEyebrow.textContent=state.resultEyebrow||'MISSIOON LÄBITUD';
   resultTitle.textContent=state.resultTitle||'Missioon läbitud';
   resultMessage.textContent=state.resultMessage||'';
+  resultTitle.hidden=Boolean(state.titleHidden);
+  resultMessage.hidden=state.messageHidden!==false;
   resultPrimaryButton.textContent=state.primaryText||'Missioonide juurde';
+  resultMapButton.hidden=Boolean(state.mapHidden);
   configureRewardScene(state.levelId,state.firstCompletion!==false,state.levelPassed!==false);
   mistakeCount.textContent=Number.isInteger(state.mistakes)?state.mistakes:0;
   timeCount.textContent=formatTime(Number.isInteger(state.elapsed)?state.elapsed:0);
   showScreen('resultScreen',{historyMode:'none'});
+  startRewardCinematic(state.levelPassed!==false,state.levelId);
 }
 
 function restoreNavigation(state){
@@ -869,7 +939,7 @@ document.querySelector('#repeatMultiplicationButton').addEventListener('click',(
 repeatDivisionButton.addEventListener('click',()=>showLesson('divide','explanations'));
 document.querySelector('#explanationBackButton').addEventListener('click',()=>history.back());
 document.querySelector('#backToMapButton').addEventListener('click',()=>history.back());
-document.querySelector('#resultMapButton').addEventListener('click',()=>history.back());
+resultMapButton.addEventListener('click',()=>history.back());
 resultPrimaryButton.addEventListener('click',runResultAction);
 document.querySelector('#resetProgressButton').addEventListener('click',resetProgress);
 soundToggleButton.addEventListener('click',toggleSound);
