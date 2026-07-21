@@ -36,7 +36,7 @@ a { color: inherit; }
   display: flex; align-items: center; gap: 12px;
   text-decoration: none; font-weight: 800; letter-spacing: .06em;
 }
-.brand img { width: 58px; height: 58px; object-fit: cover; border-radius: 14px; }
+.brand img { width: 58px; height: 58px; object-fit: contain; border-radius: 14px; }
 .brand span { color: var(--ink); font-size: 1.04rem; }
 .nav { display: flex; gap: 20px; align-items: center; }
 .nav a { text-decoration: none; color: var(--muted); font-weight: 700; }
@@ -132,7 +132,7 @@ h1 {
   display: flex; align-items: center; justify-content: space-between; gap: 20px;
 }
 .footer-brand { display: flex; align-items: center; gap: 12px; }
-.footer-brand img { width: 54px; height: 54px; object-fit: cover; border-radius: 12px; }
+.footer-brand img { width: 54px; height: 54px; object-fit: contain; border-radius: 12px; }
 .footer-note { color: var(--muted); font-size: .92rem; }
 
 .material-page { padding: 52px 0 70px; }
@@ -242,7 +242,7 @@ h1 {
 .game-visual:before { content:""; position:absolute; width:180px; height:180px; border-radius:50%; background:rgba(123,69,181,.18); right:-55px; top:-60px; }
 .mini-card { position:absolute; width:150px; aspect-ratio:4/5; border-radius:22px; display:flex; align-items:center; justify-content:center; box-shadow:0 16px 28px rgba(22,56,95,.19); border:3px solid #fff; font-weight:900; color:var(--ink); font-size:1.5rem; }
 .mini-card.back { left:10%; top:18%; background:linear-gradient(145deg,#16385f,#2282d0); transform:rotate(-8deg); }
-.mini-card.back img { width:70%; border-radius:18px; }
+.mini-card.back img { width:70%; border-radius:18px; object-fit:contain; }
 .mini-card.picture { left:37%; top:29%; background:#fff; transform:rotate(4deg); }
 .mini-card.picture img { width:90%; height:90%; object-fit:contain; }
 .mini-card.word { right:8%; top:18%; background:#fffaf2; transform:rotate(9deg); }
@@ -427,7 +427,7 @@ h1 {
 }
 .cutting-tile img {
   aspect-ratio: 16 / 10;
-  object-fit: cover;
+  object-fit: contain;
   object-position: center 12%;
   background: #fff;
 }
@@ -1152,7 +1152,7 @@ h1, h2, h3,
 .intro-mascot {
   width: 112px;
   height: 112px;
-  object-fit: cover;
+  object-fit: contain;
   border-radius: 24px;
   transform: rotate(1.5deg);
   box-shadow: 0 12px 24px rgba(23,57,95,.10);
