@@ -4,12 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#182452">
-  <title>EDUKASS — 1. peatükk: üks ja kaks</title>
-  <meta name="description" content="EDUKASSi esimese peatüki prototüüp: ühe ja kahega korrutamine ning jagamine.">
+  <title data-i18n="meta.title">EDUKASS — 1. peatükk: üks ja kaks</title>
+  <meta name="description" content="EDUKASSi esimese peatüki prototüüp: ühe ja kahega korrutamine ning jagamine." data-i18n-content="meta.description">
   <link rel="stylesheet" href="game.css?v=28">
 </head>
 <body class="intro-active">
-  <section class="game-intro is-running" id="introScreen" aria-label="EDUKASSi mängu algus">
+  <section class="game-intro is-running" id="introScreen" aria-label="EDUKASSi mängu algus" data-i18n-aria-label="intro.aria">
     <div class="intro-cosmos" aria-hidden="true">
       <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
     </div>
@@ -31,19 +31,19 @@
       <div class="intro-spark-cloud"><i>✦</i><i>★</i><i>✧</i><i>✦</i><i>★</i></div>
     </div>
     <div class="intro-brand" aria-hidden="true"><b>EDU</b><span>KASS</span></div>
-    <button class="intro-play" id="introPlayButton" type="button" aria-label="Alusta mängu"><span>▶</span></button>
+    <button class="intro-play" id="introPlayButton" type="button" aria-label="Alusta mängu" data-i18n-aria-label="intro.playAria"><span>▶</span></button>
     <div class="intro-light-wash" aria-hidden="true"></div>
   </section>
 
   <header class="topbar">
-    <a class="brand" href="../../" aria-label="Avalehele">
+    <a class="brand" href="../../" aria-label="Avalehele" data-i18n-aria-label="nav.homeAria">
       <span class="brand-cat" aria-hidden="true"><img src="assets/edukass-cat-transparent.png" alt=""></span>
       <span><b>EDU</b>KASS</span>
     </a>
     <div class="top-actions">
-      <span class="prototype-badge">PEATÜKI PROTOTÜÜP</span>
-      <button class="sound-button" id="soundToggleButton" type="button" aria-label="Lülita heli välja" aria-pressed="true">🔊</button>
-      <button class="tiny-button" id="resetProgressButton" type="button">Alusta uuesti</button>
+      <span class="prototype-badge" data-i18n="nav.prototype">PEATÜKI PROTOTÜÜP</span>
+      <button class="sound-button" id="soundToggleButton" type="button" aria-label="Lülita heli välja" aria-pressed="true" data-i18n-aria-label="sound.offAria">🔊</button>
+      <button class="tiny-button" id="resetProgressButton" type="button" data-i18n="action.reset">Alusta uuesti</button>
     </div>
   </header>
 
@@ -51,10 +51,10 @@
     <section id="lessonScreen" class="screen is-active" aria-labelledby="lessonTitle">
       <div class="lesson-card">
         <div class="lesson-copy">
-          <p class="eyebrow" id="lessonEyebrow">PEATÜKK 1 · ÜKS JA KAKS</p>
-          <h1 id="lessonTitle">Avastame arvud 1 ja 2</h1>
+          <p class="eyebrow" id="lessonEyebrow" data-i18n="lesson.eyebrowMultiply">PEATÜKK 1 · ÜKS JA KAKS</p>
+          <h1 id="lessonTitle" data-i18n="lesson.titleMultiply">Avastame arvud 1 ja 2</h1>
 
-          <div class="fact-explorer" aria-label="Interaktiivne selgitus">
+          <div class="fact-explorer" aria-label="Interaktiivne selgitus" data-i18n-aria-label="lesson.explorerAria">
             <div id="multiplicationLesson" class="lesson-section demo-stack">
               <article class="demo-lane demo-one">
                 <div class="demo-equations"><span>×1</span><strong id="demoOneEquation">1 × 4 = 4</strong></div>
@@ -73,8 +73,8 @@
               </article>
             </div>
 
-            <p class="explorer-hint" id="explorerHint">Vajuta arvule.</p>
-            <div class="factor-picker" id="factorPicker" aria-label="Vali arv">
+            <p class="explorer-hint" id="explorerHint" data-i18n="lesson.hintMultiply">Vajuta arvule.</p>
+            <div class="factor-picker" id="factorPicker" aria-label="Vali arv" data-i18n-aria-label="lesson.factorAria">
               <button type="button" data-demo-factor="1">1</button><button type="button" data-demo-factor="2">2</button>
               <button type="button" data-demo-factor="3">3</button><button class="active" type="button" data-demo-factor="4">4</button>
               <button type="button" data-demo-factor="5">5</button><button type="button" data-demo-factor="6">6</button>
@@ -83,7 +83,7 @@
             </div>
           </div>
 
-          <button class="primary-button lesson-button" id="lessonContinueButton" type="button">Ava 1. missioon</button>
+          <button class="primary-button lesson-button" id="lessonContinueButton" type="button" data-i18n="lesson.openMission">Ava 1. missioon</button>
         </div>
 
         <div class="lesson-scene" aria-hidden="true">
@@ -99,26 +99,26 @@
     <section id="explanationScreen" class="screen" aria-labelledby="explanationTitle">
       <div class="explanation-hub">
         <div class="explanation-head">
-          <p class="eyebrow">PEATÜKK 1 · SELGITUSED</p>
-          <h1 id="explanationTitle">Mida kordame?</h1>
+          <p class="eyebrow" data-i18n="explanations.eyebrow">PEATÜKK 1 · SELGITUSED</p>
+          <h1 id="explanationTitle" data-i18n="explanations.title">Mida kordame?</h1>
         </div>
 
-        <div class="explanation-grid" aria-label="Esimese peatüki kõik selgitused">
+        <div class="explanation-grid" aria-label="Esimese peatüki kõik selgitused" data-i18n-aria-label="explanations.listAria">
           <button class="explanation-choice multiplication-choice" id="repeatMultiplicationButton" type="button">
             <span class="explanation-orbit" aria-hidden="true"><span>×</span></span>
-            <span class="explanation-name"><strong>Korrutamine</strong><small>1 ja 2-ga</small></span>
+            <span class="explanation-name"><strong data-i18n="explanations.multiply">Korrutamine</strong><small data-i18n="explanations.oneAndTwo">1 ja 2-ga</small></span>
             <span class="explanation-arrow" aria-hidden="true">→</span>
           </button>
 
           <button class="explanation-choice division-choice" id="repeatDivisionButton" type="button">
             <span class="explanation-orbit" aria-hidden="true"><span>÷</span></span>
-            <span class="explanation-name"><strong>Jagamine</strong><small>2-ga</small></span>
+            <span class="explanation-name"><strong data-i18n="explanations.divide">Jagamine</strong><small data-i18n="explanations.byTwo">2-ga</small></span>
             <span class="explanation-lock" aria-hidden="true">🔒</span>
             <span class="explanation-arrow" aria-hidden="true">→</span>
           </button>
         </div>
 
-        <button class="secondary-button explanation-back" id="explanationBackButton" type="button">Missioonide juurde</button>
+        <button class="secondary-button explanation-back" id="explanationBackButton" type="button" data-i18n="lesson.toMissions">Missioonide juurde</button>
         <img class="explanation-cat" src="assets/edukass-cat-transparent.png" alt="" aria-hidden="true">
       </div>
     </section>
@@ -126,10 +126,10 @@
     <section id="mapScreen" class="screen" aria-labelledby="mapTitle">
       <div class="map-head">
         <div>
-          <p class="eyebrow">PEATÜKK 1 · ÜKS JA KAKS</p>
-          <h1 id="mapTitle">Esimesed 15 missiooni</h1>
+          <p class="eyebrow" data-i18n="lesson.eyebrowMultiply">PEATÜKK 1 · ÜKS JA KAKS</p>
+          <h1 id="mapTitle" data-i18n="map.title">Esimesed 15 missiooni</h1>
         </div>
-        <div class="energy-panel"><span>Täheenergia</span><strong>★ <span id="completedLevelCount">0</span>/15</strong></div>
+        <div class="energy-panel"><span data-i18n="map.energy">Täheenergia</span><strong>★ <span id="completedLevelCount">0</span>/15</strong></div>
       </div>
 
       <div class="chapter-board">
@@ -168,33 +168,33 @@
             <div class="next-planet" id="nextPlanet" aria-hidden="true"><span>2</span></div>
           </div>
 
-          <div class="story-goals" aria-label="Peatüki teekond">
-            <div class="story-goal is-active" data-story-goal="ship" aria-label="Kosmoselaev"><span class="goal-symbol goal-ship" aria-hidden="true"></span><strong id="shipGoalCount">0/5</strong></div>
-            <div class="story-goal" data-story-goal="engine" aria-label="Mootor"><span class="goal-symbol goal-engine" aria-hidden="true"></span><strong id="engineGoalCount">0/5</strong></div>
-            <div class="story-goal" data-story-goal="portal" aria-label="Tähevärav"><span class="goal-symbol goal-portal" aria-hidden="true"></span><strong id="portalGoalCount">0/5</strong></div>
+          <div class="story-goals" aria-label="Peatüki teekond" data-i18n-aria-label="map.routeAria">
+            <div class="story-goal is-active" data-story-goal="ship" aria-label="Kosmoselaev" data-i18n-aria-label="story.ship"><span class="goal-symbol goal-ship" aria-hidden="true"></span><strong id="shipGoalCount">0/5</strong></div>
+            <div class="story-goal" data-story-goal="engine" aria-label="Mootor" data-i18n-aria-label="story.engine"><span class="goal-symbol goal-engine" aria-hidden="true"></span><strong id="engineGoalCount">0/5</strong></div>
+            <div class="story-goal" data-story-goal="portal" aria-label="Tähevärav" data-i18n-aria-label="story.portal"><span class="goal-symbol goal-portal" aria-hidden="true"></span><strong id="portalGoalCount">0/5</strong></div>
           </div>
         </section>
 
-        <div class="chapter-route-head"><span>Korrutamine</span><span>Jagamine</span></div>
-        <div class="level-grid" id="levelGrid" aria-label="Esimese peatüki missioonid"></div>
+        <div class="chapter-route-head"><span data-i18n="map.multiply">Korrutamine</span><span data-i18n="map.divide">Jagamine</span></div>
+        <div class="level-grid" id="levelGrid" aria-label="Esimese peatüki missioonid" data-i18n-aria-label="map.missionsAria"></div>
       </div>
       <div class="map-actions">
-        <button class="secondary-button" id="repeatLessonButton" type="button">Korda selgitust</button>
+        <button class="secondary-button" id="repeatLessonButton" type="button" data-i18n="map.repeatLesson">Korda selgitust</button>
       </div>
     </section>
 
     <section id="battleScreen" class="screen battle-screen" aria-labelledby="battleTitle">
       <div class="battle-top">
-        <button class="back-button" id="backToMapButton" type="button">← Missioonid</button>
+        <button class="back-button" id="backToMapButton" type="button" data-i18n="battle.back">← Missioonid</button>
         <div class="battle-title-wrap"><span id="levelKicker">MISSIOON 1</span><h1 id="battleTitle">Korrutamise valik</h1></div>
-        <div class="progress-pill"><span>Vastused</span><strong>★ <span id="correctCount">0</span>/15</strong></div>
+        <div class="progress-pill"><span data-i18n="battle.answers">Vastused</span><strong>★ <span id="correctCount">0</span>/15</strong></div>
       </div>
 
       <div class="play-grid">
         <div class="scene-column">
           <div class="question-card" id="questionCard">
-            <p class="question-label">Lahenda tehe</p>
-            <div class="mobile-progress-pill" id="mobileProgressPill" aria-label="Tehtud: 0/15"><span aria-hidden="true">★</span><strong><span id="mobileCorrectCount">0</span>/15</strong></div>
+            <p class="question-label" data-i18n="battle.solve">Lahenda tehe</p>
+            <div class="mobile-progress-pill" id="mobileProgressPill" aria-label="Tehtud: 0/15" data-i18n-aria-label="battle.doneAria"><span aria-hidden="true">★</span><strong><span id="mobileCorrectCount">0</span>/15</strong></div>
             <div class="equation"><span id="factorA">2</span><span id="operationSymbol">×</span><span id="factorB">4</span><span>=</span><span class="answer-slot" id="answerDisplay">?</span></div>
             <p class="feedback visually-hidden" id="feedback" aria-live="polite"></p>
           </div>
@@ -224,14 +224,14 @@
           </div>
         </div>
 
-        <aside class="answer-panel" id="answerPanel" aria-label="Vastus">
-          <div class="answer-panel-head"><span id="answerPanelTitle">Vali vastus</span></div>
-          <div class="choice-grid" id="choiceGrid" aria-label="Vastusevariandid"></div>
-          <div class="keypad" id="keypad" aria-label="Vastuse numbriklahvid">
+        <aside class="answer-panel" id="answerPanel" aria-label="Vastus" data-i18n-aria-label="battle.answerAria">
+          <div class="answer-panel-head"><span id="answerPanelTitle" data-i18n="battle.choose">Vali vastus</span></div>
+          <div class="choice-grid" id="choiceGrid" aria-label="Vastusevariandid" data-i18n-aria-label="battle.optionsAria"></div>
+          <div class="keypad" id="keypad" aria-label="Vastuse numbriklahvid" data-i18n-aria-label="battle.keypadAria">
             <button type="button" data-key="1">1</button><button type="button" data-key="2">2</button><button type="button" data-key="3">3</button>
             <button type="button" data-key="4">4</button><button type="button" data-key="5">5</button><button type="button" data-key="6">6</button>
             <button type="button" data-key="7">7</button><button type="button" data-key="8">8</button><button type="button" data-key="9">9</button>
-            <button class="key-clear-all" type="button" data-key="clearAll" aria-label="Tühjenda">C</button><button type="button" data-key="0">0</button><button class="key-clear" type="button" data-key="clear" aria-label="Kustuta number">⌫</button>
+            <button class="key-clear-all" type="button" data-key="clearAll" aria-label="Tühjenda" data-i18n-aria-label="battle.clearAria">C</button><button type="button" data-key="0">0</button><button class="key-clear" type="button" data-key="clear" aria-label="Kustuta number" data-i18n-aria-label="battle.deleteAria">⌫</button>
           </div>
         </aside>
       </div>
@@ -267,19 +267,24 @@
             <span class="cat-joy-sparks" aria-hidden="true"><i>✦</i><i>★</i><i>✦</i></span>
           </div>
         </div>
-        <div class="reward-pill" id="rewardPill">★ +1 TÄHEENERGIA</div>
-        <p class="eyebrow" id="resultEyebrow">MISSIOON LÄBITUD</p>
-        <h1 id="resultTitle">Missioon läbitud</h1>
+        <div class="reward-pill" id="rewardPill" data-i18n="result.rewardFirst">★ +1 TÄHEENERGIA</div>
+        <p class="eyebrow" id="resultEyebrow" data-i18n="result.missionPassed">MISSIOON LÄBITUD</p>
+        <h1 id="resultTitle" data-i18n="result.titlePassed">Missioon läbitud</h1>
         <p id="resultMessage" hidden></p>
-        <div class="result-stats"><span>Vead</span><strong id="mistakeCount">0</strong><span>Aeg</span><strong id="timeCount">00:00</strong></div>
+        <div class="result-stats"><span data-i18n="result.mistakes">Vead</span><strong id="mistakeCount">0</strong><span data-i18n="result.time">Aeg</span><strong id="timeCount">00:00</strong></div>
         <div class="result-actions">
-          <button class="primary-button" id="resultPrimaryButton" type="button">Järgmine missioon</button>
-          <button class="secondary-button" id="resultMapButton" type="button">Missioonide juurde</button>
+          <button class="primary-button" id="resultPrimaryButton" type="button" data-i18n="result.next">Järgmine missioon</button>
+          <button class="secondary-button" id="resultMapButton" type="button" data-i18n="result.toMissions">Missioonide juurde</button>
         </div>
       </div>
     </section>
   </main>
 
-  <script src="game.js?v=28"></script>
+  <script src="locales/et.js?v=1"></script>
+  <script src="chapter-one.config.js?v=2"></script>
+  <script src="i18n.js?v=1"></script>
+  <script src="question-engine.js?v=1"></script>
+  <script src="progress-store.js?v=1"></script>
+  <script src="game.js?v=30"></script>
 </body>
 </html>

@@ -59,10 +59,38 @@ const rewardFxCanvas=document.querySelector('#rewardFxCanvas');
 const introScreen=document.querySelector('#introScreen');
 const introPlayButton=document.querySelector('#introPlayButton');
 
-const STORAGE_KEY='edukass-chapter-one-v18';
-const SOUND_KEY='edukass-sound-enabled';
-const INTRO_SEEN_KEY='edukass-opening-seen-v28';
-const ROUND_LENGTH=15;
+const CHAPTER_CONFIG=window.EDUKASS_CHAPTER_ONE;
+if(!CHAPTER_CONFIG)throw new Error('EDUKASS chapter configuration was not loaded.');
+const I18N_API=window.EDUKASS_I18N;
+if(!I18N_API)throw new Error('EDUKASS language system was not loaded.');
+const QUESTION_ENGINE_API=window.EDUKASS_QUESTION_ENGINE;
+if(!QUESTION_ENGINE_API)throw new Error('EDUKASS question engine was not loaded.');
+const PROGRESS_STORE_API=window.EDUKASS_PROGRESS_STORE;
+if(!PROGRESS_STORE_API)throw new Error('EDUKASS progress store was not loaded.');
+
+const requestedLanguage=new URLSearchParams(location.search).get('lang')||document.documentElement.lang;
+const i18n=I18N_API.create({
+  locales:window.EDUKASS_LOCALES,
+  defaultLanguage:CHAPTER_CONFIG.defaultLanguage,
+  supportedLanguages:CHAPTER_CONFIG.supportedLanguages,
+  requestedLanguage
+});
+i18n.apply(document);
+const t=i18n.t;
+
+const STORAGE_KEY=CHAPTER_CONFIG.storage.progressKey;
+const SOUND_KEY=CHAPTER_CONFIG.storage.soundKey;
+const INTRO_SEEN_KEY=CHAPTER_CONFIG.storage.introKey;
+const ROUND_LENGTH=CHAPTER_CONFIG.roundLength;
+const PRACTICE_TABLE=CHAPTER_CONFIG.practiceTable;
+const LESSON_CONFIG=CHAPTER_CONFIG.lesson;
+const STORY_CONFIG=CHAPTER_CONFIG.story;
+const DIVISION_MISSION_ID=LESSON_CONFIG.divisionMissionId;
+const STORY_SEGMENT_LENGTH=STORY_CONFIG.segmentLength;
+const SHIP_MISSION_ID=STORY_CONFIG.shipMissionId;
+const ENGINE_MISSION_ID=STORY_CONFIG.engineMissionId;
+const FINAL_MISSION_ID=STORY_CONFIG.finalMissionId;
+const PLANET_MISSION_IDS=new Set(STORY_CONFIG.planetMissionIds);
 const ANSWER_DELAYS={exact:480,possiblePrefix:2200,wrong:1050};
 const START_SHOWER_PROGRESS=.08;
 const WRONG_ANSWER_ADVANCE=.105;
@@ -71,25 +99,36 @@ const REWARD_BEFORE_HOLD=1500;
 const INTRO_READY_DELAY=2200;
 const INTRO_EXIT_DELAY=1720;
 
-const LEVELS=[
-  {id:1,title:'Korrutamise valik',short:'Vali ×',mode:'choice',operation:'multiply',seconds:175,accent:'#70d9cf'},
-  {id:2,title:'Alustame kahega',short:'×2 · 1–5',mode:'input',operation:'multiply',seconds:165,accent:'#70d9cf'},
-  {id:3,title:'Jätkame kahega',short:'×2 · 6–10',mode:'input',operation:'multiply',seconds:150,accent:'#69cde0'},
-  {id:4,title:'Kogu kahega korrutamine',short:'×2 · kõik',mode:'input',operation:'multiply',seconds:140,accent:'#63bfe4'},
-  {id:5,title:'Kaks teisel kohal',short:'arv × 2',mode:'input',operation:'multiply',seconds:132,accent:'#6baee5'},
-  {id:6,title:'Vahetame järjekorda',short:'×2 ↔ 2×',mode:'input',operation:'multiply',seconds:125,accent:'#779ce2'},
-  {id:7,title:'Kaks on selge',short:'Täpsus',mode:'input',operation:'multiply',seconds:118,accent:'#858bdd'},
-  {id:8,title:'Kordame keerulisi',short:'Kordus',mode:'input',operation:'multiply',seconds:112,accent:'#927bd5'},
-  {id:9,title:'Valmistume kontrolliks',short:'Segamini',mode:'input',operation:'multiply',seconds:106,accent:'#9d70cd'},
-  {id:10,title:'Korrutamise kontroll',short:'Kontroll ×',mode:'input',operation:'multiply',seconds:100,accent:'#a966c2'},
-  {id:11,title:'Jagamise valik',short:'Vali ÷',mode:'choice',operation:'divide',seconds:175,accent:'#e561a0'},
-  {id:12,title:'Jagame kahega',short:'÷2 · 1–5',mode:'input',operation:'divide',seconds:165,accent:'#e86f91'},
-  {id:13,title:'Jätkame jagamist',short:'÷2 · 6–10',mode:'input',operation:'divide',seconds:150,accent:'#ed7d80'},
-  {id:14,title:'Kogu kahega jagamine',short:'÷2 · kõik',mode:'input',operation:'divide',seconds:135,accent:'#ef8d6e'},
-  {id:15,title:'Korrutamine ja jagamine',short:'× ja ÷',mode:'input',operation:'mixed',seconds:120,accent:'#f39b60'}
-];
+const LEVELS=CHAPTER_CONFIG.missions.map(mission=>({
+  id:mission.id,
+  title:t(mission.titleKey,{},mission.title),
+  short:t(mission.shortKey,{},mission.short),
+  mode:mission.mode,
+  operation:mission.operation,
+  seconds:mission.seconds,
+  accent:mission.accent
+}));
+const LEVEL_IDS=new Set(LEVELS.map(level=>level.id));
 
+const progressStore=PROGRESS_STORE_API.create({
+  storage:localStorage,
+  key:STORAGE_KEY,
+  schemaVersion:CHAPTER_CONFIG.storage.progressSchemaVersion,
+  maxLevel:LEVELS.length
+});
 let progress=loadProgress();
+const questionEngine=QUESTION_ENGINE_API.create({
+  config:CHAPTER_CONFIG,
+  getFactStats:()=>progress.factStats
+});
+const {
+  avoidAdjacentDuplicates,
+  buildChoiceOptions,
+  buildLevelQuestions,
+  equationKey,
+  questionKey,
+  separatorQuestion
+}=questionEngine;
 let currentLevel=null;
 let currentQuestion=null;
 let questionQueue=[];
@@ -103,7 +142,7 @@ let showerProgress=0;
 let motionFrame=null;
 let lastMotionTime=null;
 let autoCheckTimer=null;
-let currentLessonMode='multiply';
+let currentLessonMode=LESSON_CONFIG.initialMode;
 let pendingLevelAfterLesson=null;
 let resultAction='map';
 let soundEnabled=loadSoundPreference();
@@ -138,21 +177,15 @@ function writeNavigationState(view,details={},mode='push'){
 }
 
 function defaultProgress(){
-  return {unlockedLevel:1,completedLevels:[],multiplicationLessonSeen:false,divisionLessonSeen:false,factStats:{}};
+  return progressStore.defaultProgress();
 }
 
 function loadProgress(){
-  try{
-    const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null');
-    if(saved&&Number.isInteger(saved.unlockedLevel)&&Array.isArray(saved.completedLevels)){
-      return {...defaultProgress(),...saved,unlockedLevel:Math.max(1,Math.min(15,saved.unlockedLevel))};
-    }
-  }catch(error){/* Start with an empty chapter. */}
-  return defaultProgress();
+  return progressStore.load();
 }
 
 function saveProgress(){
-  localStorage.setItem(STORAGE_KEY,JSON.stringify(progress));
+  progress=progressStore.save(progress);
 }
 
 function loadSoundPreference(){
@@ -162,7 +195,7 @@ function loadSoundPreference(){
 function updateSoundButton(){
   soundToggleButton.textContent=soundEnabled?'🔊':'🔇';
   soundToggleButton.setAttribute('aria-pressed',String(soundEnabled));
-  soundToggleButton.setAttribute('aria-label',soundEnabled?'Lülita heli välja':'Lülita heli sisse');
+  soundToggleButton.setAttribute('aria-label',soundEnabled?t('sound.offAria'):t('sound.onAria'));
 }
 
 function toggleSound(){
@@ -566,143 +599,12 @@ function showScreen(id,{historyMode='push',historyView=null,historyData={}}={}){
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
-function shuffle(array){
-  const copy=[...array];
-  for(let index=copy.length-1;index>0;index--){
-    const other=Math.floor(Math.random()*(index+1));
-    [copy[index],copy[other]]=[copy[other],copy[index]];
-  }
-  return copy;
-}
-
-function equationKey(question){
-  if(!question)return '';
-  return `${question.operation}:${question.a}:${question.b}`;
-}
-
-function avoidAdjacentDuplicates(questions){
-  const pool=[...questions];
-  const arranged=[];
-  let previousKey='';
-  while(pool.length){
-    const counts=new Map();
-    pool.forEach(question=>counts.set(equationKey(question),(counts.get(equationKey(question))||0)+1));
-    const eligibleKeys=[...counts.entries()]
-      .filter(([key])=>key!==previousKey)
-      .sort((left,right)=>right[1]-left[1]);
-    if(!eligibleKeys.length)break;
-    const highestCount=eligibleKeys[0][1];
-    const strongestKeys=eligibleKeys.filter(([,count])=>count===highestCount).map(([key])=>key);
-    const chosenKey=strongestKeys[Math.floor(Math.random()*strongestKeys.length)];
-    const candidateIndexes=[];
-    pool.forEach((question,index)=>{if(equationKey(question)===chosenKey)candidateIndexes.push(index)});
-    const chosenIndex=candidateIndexes[Math.floor(Math.random()*candidateIndexes.length)];
-    const [question]=pool.splice(chosenIndex,1);
-    arranged.push(question);
-    previousKey=chosenKey;
-  }
-  return [...arranged,...pool];
-}
-
-function mul(a,b){return {a,b,answer:a*b,operation:'multiply',factor:a===2?b:(b===2?a:Math.max(a,b)),table:a===1||b===1?1:2}}
-function div(factor,divisor=2){return {a:factor*divisor,b:divisor,answer:factor,operation:'divide',factor,table:divisor}}
-
-function repeatedMultiplication(factors,orientation='forward',copies=1){
-  const questions=[];
-  for(let copy=0;copy<copies;copy++){
-    factors.forEach((factor,index)=>{
-      const reverse=orientation==='reverse'||(orientation==='mixed'&&(index+copy)%2===1);
-      questions.push(reverse?mul(factor,2):mul(2,factor));
-    });
-  }
-  return questions;
-}
-
-function repeatedDivision(factors,copies=1){
-  const questions=[];
-  for(let copy=0;copy<copies;copy++)factors.forEach(factor=>questions.push(div(factor,2)));
-  return questions;
-}
-
-function weakestFactors(operation,count=5){
-  return [1,2,3,4,5,6,7,8,9,10]
-    .map(factor=>{
-      const key=`${operation}:${factor}`;
-      const stat=progress.factStats[key]||{correct:0,mistakes:0};
-      return {factor,score:(stat.mistakes*4)-stat.correct};
-    })
-    .sort((left,right)=>right.score-left.score||right.factor-left.factor)
-    .slice(0,count)
-    .map(item=>item.factor);
-}
-
-function buildLevelQuestions(levelId){
-  let questions=[];
-  switch(levelId){
-    case 1:
-      questions=[mul(3,1),mul(1,7),mul(9,1),...repeatedMultiplication([1,2,3,4,5,6,7,8,9,10]),mul(2,6),mul(2,9)];
-      break;
-    case 2: questions=repeatedMultiplication([1,2,3,4,5],'forward',3); break;
-    case 3: questions=repeatedMultiplication([6,7,8,9,10],'forward',3); break;
-    case 4: questions=[...repeatedMultiplication([1,2,3,4,5,6,7,8,9,10]),...repeatedMultiplication([6,7,8,9,10])]; break;
-    case 5: questions=[...repeatedMultiplication([1,2,3,4,5,6,7,8,9,10],'reverse'),...repeatedMultiplication([6,7,8,9,10],'reverse')]; break;
-    case 6: questions=[...repeatedMultiplication([1,2,3,4,5,6,7,8,9,10],'mixed'),...repeatedMultiplication([6,7,8,9,10],'mixed')]; break;
-    case 7:
-    case 8: questions=[...repeatedMultiplication([1,2,3,4,5,6,7,8,9,10],'mixed'),...repeatedMultiplication(weakestFactors('multiply'),'mixed')]; break;
-    case 9: questions=[...repeatedMultiplication([1,2,3,4,5,6,7,8,9,10],'mixed'),...repeatedMultiplication([5,6,7,8,9],'mixed')]; break;
-    case 10: questions=[...repeatedMultiplication([1,2,3,4,5,6,7,8,9,10],'mixed'),mul(2,6),mul(7,2),mul(2,8),mul(9,2),mul(2,10)]; break;
-    case 11: questions=[div(3,1),div(8,1),...repeatedDivision([1,2,3,4,5,6,7,8,9,10]),div(6),div(9),div(10)]; break;
-    case 12: questions=repeatedDivision([1,2,3,4,5],3); break;
-    case 13: questions=repeatedDivision([6,7,8,9,10],3); break;
-    case 14: questions=[...repeatedDivision([1,2,3,4,5,6,7,8,9,10]),...repeatedDivision(weakestFactors('divide'))]; break;
-    case 15: questions=[
-      mul(2,4),mul(5,2),mul(2,6),mul(7,2),mul(2,8),mul(9,2),mul(2,10),
-      div(3),div(4),div(5),div(6),div(7),div(8),div(9),div(10)
-    ]; break;
-    default: questions=repeatedMultiplication([1,2,3,4,5], 'forward',3);
-  }
-  return avoidAdjacentDuplicates(shuffle(questions).slice(0,ROUND_LENGTH));
-}
-
-function separatorQuestion(level,lastKey){
-  const candidates=[];
-  for(let factor=1;factor<=10;factor++){
-    if(level.operation==='divide')candidates.push(div(factor));
-    else if(level.operation==='mixed')candidates.push(factor%2===0?div(factor):mul(2,factor));
-    else candidates.push(mul(2,factor));
-  }
-  return shuffle(candidates).find(question=>equationKey(question)!==lastKey)||null;
-}
-
-function questionKey(question){
-  const operation=question.operation==='divide'?'divide':'multiply';
-  return `${operation}:${question.factor}`;
-}
-
 function recordFact(question,isCorrect){
   const key=questionKey(question);
   const stat=progress.factStats[key]||{correct:0,mistakes:0};
   stat[isCorrect?'correct':'mistakes']++;
   progress.factStats[key]=stat;
   saveProgress();
-}
-
-function buildChoiceOptions(question){
-  const answer=question.answer;
-  const step=question.operation==='multiply'&&question.table===2?2:1;
-  const candidates=[answer,answer-step,answer+step,answer-1,answer+1,answer+(step*2),answer-(step*2),answer+3];
-  const unique=[];
-  candidates.forEach(value=>{
-    if(Number.isInteger(value)&&value>=0&&value<=100&&!unique.includes(value))unique.push(value);
-  });
-  let filler=1;
-  while(unique.length<4){
-    const value=answer+filler;
-    if(value<=100&&!unique.includes(value))unique.push(value);
-    filler++;
-  }
-  const wrong=shuffle(unique.filter(value=>value!==answer)).slice(0,3);
-  return shuffle([answer,...wrong]);
 }
 
 function buildStars(){
@@ -727,10 +629,10 @@ function buildStars(){
 }
 
 function updateDemo(factor){
-  const product=factor*2;
+  const product=factor*PRACTICE_TABLE;
   demoOneEquation.textContent=`1 × ${factor} = ${factor}`;
-  demoMultiplyEquation.textContent=`2 × ${factor} = ${product}`;
-  demoDivisionEquation.textContent=`${product} ÷ 2 = ${factor}`;
+  demoMultiplyEquation.textContent=`${PRACTICE_TABLE} × ${factor} = ${product}`;
+  demoDivisionEquation.textContent=`${product} ÷ ${PRACTICE_TABLE} = ${factor}`;
   document.querySelectorAll('[data-demo-factor]').forEach(button=>button.classList.toggle('active',Number(button.dataset.demoFactor)===factor));
 
   const buildRows=rowCount=>{
@@ -749,9 +651,9 @@ function updateDemo(factor){
   };
 
   demoOneStars.replaceChildren(...buildRows(1));
-  demoStars.replaceChildren(...buildRows(2));
+  demoStars.replaceChildren(...buildRows(PRACTICE_TABLE));
   const divisionGroups=[];
-  for(let groupIndex=0;groupIndex<2;groupIndex++){
+  for(let groupIndex=0;groupIndex<PRACTICE_TABLE;groupIndex++){
     const group=document.createElement('span');
     group.className='star-row division-group';
     for(let index=0;index<factor;index++){
@@ -765,70 +667,72 @@ function updateDemo(factor){
 }
 
 function configureDemoPicker(division){
-  factorPicker.setAttribute('aria-label',division?'Vali jagatav':'Vali arv');
-  explorerHint.textContent=division?'Vajuta jagatavale.':'Vajuta arvule.';
+  factorPicker.setAttribute('aria-label',division?t('lesson.dividendAria'):t('lesson.factorAria'));
+  explorerHint.textContent=division?t('lesson.hintDivide'):t('lesson.hintMultiply');
   document.querySelectorAll('[data-demo-factor]').forEach((button,index)=>{
     const factor=index+1;
     button.dataset.demoFactor=String(factor);
-    button.textContent=String(division?factor*2:factor);
-    button.setAttribute('aria-label',division?`Jagatav ${factor*2}`:`Arv ${factor}`);
+    button.textContent=String(division?factor*PRACTICE_TABLE:factor);
+    button.setAttribute('aria-label',division
+      ?t('lesson.dividendValueAria',{value:factor*PRACTICE_TABLE})
+      :t('lesson.numberAria',{value:factor}));
   });
 }
 
-function showLesson(mode='multiply',pendingLevel=null,{historyMode='push'}={}){
+function showLesson(mode=LESSON_CONFIG.initialMode,pendingLevel=null,{historyMode='push'}={}){
   stopRound();
   currentLessonMode=mode;
   pendingLevelAfterLesson=pendingLevel;
-  const division=mode==='divide';
-  lessonEyebrow.textContent=division?'PEATÜKK 1 · JAGAMINE':'PEATÜKK 1 · ÜKS JA KAKS';
-  lessonTitle.textContent=division?'Nüüd jagame kahega':'Avastame arvud 1 ja 2';
+  const division=mode===LESSON_CONFIG.divisionMode;
+  lessonEyebrow.textContent=division?t('lesson.eyebrowDivide'):t('lesson.eyebrowMultiply');
+  lessonTitle.textContent=division?t('lesson.titleDivide'):t('lesson.titleMultiply');
   multiplicationLesson.hidden=division;
   divisionLesson.hidden=!division;
-  lessonSign.textContent=division?'÷2':'×2';
+  lessonSign.textContent=division?`÷${PRACTICE_TABLE}`:`×${PRACTICE_TABLE}`;
   configureDemoPicker(division);
-  updateDemo(4);
-  if(pendingLevel==='explanations')lessonContinueButton.textContent='Selgituste juurde';
-  else if(pendingLevel==='map')lessonContinueButton.textContent='Missioonide juurde';
-  else if(Number.isInteger(pendingLevel))lessonContinueButton.textContent=`Ava ${pendingLevel}. missioon`;
-  else lessonContinueButton.textContent='Ava 1. missioon';
+  updateDemo(LESSON_CONFIG.demoFactor);
+  if(pendingLevel==='explanations')lessonContinueButton.textContent=t('lesson.toExplanations');
+  else if(pendingLevel==='map')lessonContinueButton.textContent=t('lesson.toMissions');
+  else if(Number.isInteger(pendingLevel))lessonContinueButton.textContent=t('lesson.openMission',{number:pendingLevel});
+  else lessonContinueButton.textContent=t('lesson.openMission',{number:1});
   showScreen('lessonScreen',{historyMode,historyView:'lesson',historyData:{mode,pendingLevel}});
 }
 
 function showExplanationHub({historyMode='push'}={}){
   stopRound();
-  const divisionUnlocked=progress.divisionLessonSeen||progress.unlockedLevel>=11;
+  const divisionUnlocked=progress.divisionLessonSeen||progress.unlockedLevel>=DIVISION_MISSION_ID;
   repeatDivisionButton.disabled=!divisionUnlocked;
   repeatDivisionButton.classList.toggle('locked',!divisionUnlocked);
-  repeatDivisionButton.setAttribute('aria-label',divisionUnlocked?'Korda kahega jagamise selgitust':'Jagamise selgitus avaneb pärast 10. missiooni');
+  repeatDivisionButton.setAttribute('aria-label',divisionUnlocked?t('explanations.repeatDivisionAria'):t('explanations.lockedDivisionAria'));
   showScreen('explanationScreen',{historyMode,historyView:'explanations'});
 }
 
 function completedMissionCount(){
-  return new Set(progress.completedLevels.filter(levelId=>levelId>=1&&levelId<=15)).size;
+  return new Set(progress.completedLevels.filter(levelId=>LEVEL_IDS.has(levelId))).size;
 }
 
 function renderStoryProgress(){
   const completed=completedMissionCount();
-  const shipProgress=Math.min(5,completed);
-  const engineProgress=Math.min(5,Math.max(0,completed-5));
-  const portalProgress=Math.min(5,Math.max(0,completed-10));
-  const phase=completed<5?'ship':completed<10?'engine':completed<15?'portal':'complete';
+  const shipProgress=Math.min(STORY_SEGMENT_LENGTH,completed);
+  const engineProgress=Math.min(STORY_SEGMENT_LENGTH,Math.max(0,completed-SHIP_MISSION_ID));
+  const portalProgress=Math.min(STORY_SEGMENT_LENGTH,Math.max(0,completed-ENGINE_MISSION_ID));
+  const phase=completed<SHIP_MISSION_ID?'ship':completed<ENGINE_MISSION_ID?'engine':completed<FINAL_MISSION_ID?'portal':'complete';
 
   storyStage.dataset.phase=phase;
   storyStage.dataset.completed=String(completed);
   storyStage.classList.toggle('has-engine',engineProgress>0);
   storyStage.classList.toggle('has-portal',portalProgress>0);
-  storyStage.classList.toggle('is-complete',completed===15);
+  storyStage.classList.toggle('is-complete',completed===FINAL_MISSION_ID);
   storyStage.classList.toggle('phase-ship',phase==='ship');
   storyStage.classList.toggle('phase-engine',phase==='engine');
   storyStage.classList.toggle('phase-portal',phase==='portal');
   storyStage.style.setProperty('--engine-progress',String(engineProgress));
   storyStage.style.setProperty('--portal-progress',String(portalProgress));
-  storyPhaseKicker.textContent=phase==='ship'?'1. SIHT':phase==='engine'?'2. SIHT':phase==='portal'?'3. SIHT':'PEATÜKK LÄBITUD';
-  storyPhaseTitle.textContent=phase==='ship'?'Leia kosmoselaev':phase==='engine'?'Käivita mootor':phase==='portal'?'Ava tähevärav':'Uus planeet on avatud!';
-  shipGoalCount.textContent=`${shipProgress}/5`;
-  engineGoalCount.textContent=`${engineProgress}/5`;
-  portalGoalCount.textContent=`${portalProgress}/5`;
+  storyPhaseKicker.textContent=phase==='ship'?t('story.goal1'):phase==='engine'?t('story.goal2'):phase==='portal'?t('story.goal3'):t('story.complete');
+  storyPhaseTitle.textContent=phase==='ship'?t('story.findShip'):phase==='engine'?t('story.startEngine'):phase==='portal'?t('story.openPortal'):t('story.newPlanet');
+  shipGoalCount.textContent=`${shipProgress}/${STORY_SEGMENT_LENGTH}`;
+  engineGoalCount.textContent=`${engineProgress}/${STORY_SEGMENT_LENGTH}`;
+  portalGoalCount.textContent=`${portalProgress}/${STORY_SEGMENT_LENGTH}`;
 
   document.querySelectorAll('[data-ship-part]').forEach(part=>part.classList.toggle('is-found',Number(part.dataset.shipPart)<=shipProgress));
   document.querySelectorAll('[data-engine-cell]').forEach(cell=>cell.classList.toggle('is-charged',Number(cell.dataset.engineCell)<=engineProgress));
@@ -836,11 +740,12 @@ function renderStoryProgress(){
   document.querySelectorAll('[data-story-goal]').forEach(goal=>{
     const goalName=goal.dataset.storyGoal;
     const goalPhase=goalName==='ship'?'ship':goalName==='engine'?'engine':'portal';
-    const done=goalName==='ship'?shipProgress===5:goalName==='engine'?engineProgress===5:portalProgress===5;
+    const done=goalName==='ship'?shipProgress===STORY_SEGMENT_LENGTH:goalName==='engine'?engineProgress===STORY_SEGMENT_LENGTH:portalProgress===STORY_SEGMENT_LENGTH;
     goal.classList.toggle('is-done',done);
     goal.classList.toggle('is-active',phase===goalPhase);
     const value=goalName==='ship'?shipProgress:goalName==='engine'?engineProgress:portalProgress;
-    goal.setAttribute('aria-label',`${goalName==='ship'?'Kosmoselaev':goalName==='engine'?'Mootor':'Tähevärav'}: ${value}/5`);
+    const goalLabel=goalName==='ship'?t('story.ship'):goalName==='engine'?t('story.engine'):t('story.portal');
+    goal.setAttribute('aria-label',`${goalLabel}: ${value}/${STORY_SEGMENT_LENGTH}`);
   });
 }
 
@@ -852,13 +757,18 @@ function renderLevelMap(){
     const completed=progress.completedLevels.includes(level.id);
     const unlocked=completed||level.id<=progress.unlockedLevel;
     button.type='button';
-    const celestialType=level.id%3===0||level.id===10||level.id===15?'planet':'star';
+    const celestialType=PLANET_MISSION_IDS.has(level.id)?'planet':'star';
     button.className=`level-object ${celestialType}${completed?' completed':''}${!unlocked?' locked':''}${level.id===progress.unlockedLevel&&!completed?' current':''}`;
     button.disabled=!unlocked;
     button.dataset.level=String(level.id);
     button.style.setProperty('--level-accent',level.accent);
     button.innerHTML=`<span class="celestial-shape"><span class="celestial-number">${completed?'✓':level.id}</span></span><strong class="level-name">${level.short}</strong>`;
-    button.setAttribute('aria-label',`Missioon ${level.id}: ${level.title}${completed?', läbitud':''}${!unlocked?', lukus':''}`);
+    button.setAttribute('aria-label',t('mission.aria',{
+      number:level.id,
+      title:level.title,
+      completed:completed?t('mission.completedSuffix'):'',
+      locked:!unlocked?t('mission.lockedSuffix'):''
+    }));
     if(unlocked)button.addEventListener('click',()=>requestLevel(level.id));
     return button;
   }));
@@ -871,8 +781,8 @@ function showMap({historyMode='push'}={}){
 }
 
 function requestLevel(levelId){
-  if(levelId===11&&!progress.divisionLessonSeen){
-    showLesson('divide',11);
+  if(levelId===DIVISION_MISSION_ID&&!progress.divisionLessonSeen){
+    showLesson(LESSON_CONFIG.divisionMode,DIVISION_MISSION_ID);
     return;
   }
   startLevel(levelId);
@@ -899,7 +809,7 @@ function startLevel(levelId,{historyMode='push'}={}){
   battleFx.stop();
   correctCount.textContent='0';
   mobileCorrectCount.textContent='0';
-  mobileProgressPill.setAttribute('aria-label','Tehtud: 0/15');
+  mobileProgressPill.setAttribute('aria-label',t('battle.doneAria',{correct:0,total:ROUND_LENGTH}));
   feedback.textContent='';
   feedback.className='feedback visually-hidden';
   answerDisplay.textContent='?';
@@ -910,13 +820,13 @@ function startLevel(levelId,{historyMode='push'}={}){
   battleStage.className='battle-stage';
   battleStage.style.setProperty('--level-accent',level.accent);
   showerMeter.hidden=false;
-  levelKicker.textContent=`MISSIOON ${level.id} / 15`;
+  levelKicker.textContent=t('battle.mission',{number:level.id,total:LEVELS.length});
   battleTitle.textContent=level.title;
   const choiceMode=level.mode==='choice';
   answerPanel.classList.toggle('choice-mode',choiceMode);
   choiceGrid.hidden=!choiceMode;
   keypad.hidden=choiceMode;
-  answerPanelTitle.textContent=choiceMode?'Vali vastus':'Sisesta arv';
+  answerPanelTitle.textContent=choiceMode?t('battle.choose'):t('battle.input');
   setShowerPosition();
   showScreen('battleScreen',{historyMode,historyView:'battle',historyData:{levelId}});
   battleStartedAt=Date.now();
@@ -1032,8 +942,8 @@ function finishCorrectQuestion(){
   correct++;
   correctCount.textContent=correct;
   mobileCorrectCount.textContent=correct;
-  mobileProgressPill.setAttribute('aria-label',`Tehtud: ${correct}/15`);
-  feedback.textContent='Õige';
+  mobileProgressPill.setAttribute('aria-label',t('battle.doneAria',{correct,total:ROUND_LENGTH}));
+  feedback.textContent=t('feedback.correct');
   playSound('correct');
   showCorrectAnimation();
   if(correct>=ROUND_LENGTH)cancelAnimationFrame(motionFrame);
@@ -1053,7 +963,7 @@ function handleWrongAnswer(clickedButton=null){
   queueRetry(currentQuestion);
   answerDisplay.textContent=String(currentQuestion.answer);
   answerDisplay.classList.add('revealed-answer');
-  feedback.textContent=`Õige vastus on ${currentQuestion.answer}`;
+  feedback.textContent=t('feedback.correctAnswer',{answer:currentQuestion.answer});
   questionCard.classList.add('is-wrong');
   playSound('wrong');
   if(clickedButton)clickedButton.classList.add('wrong-choice');
@@ -1143,7 +1053,7 @@ function finishAttempt(reason){
   stopRound();
   const elapsed=Math.round((Date.now()-battleStartedAt)/1000);
   const levelPassed=reason==='complete'&&correct===ROUND_LENGTH;
-  const chapterComplete=levelPassed&&currentLevel.id===15;
+  const chapterComplete=levelPassed&&currentLevel.id===FINAL_MISSION_ID;
   const firstCompletion=levelPassed&&!progress.completedLevels.includes(currentLevel.id);
 
   mistakeCount.textContent=mistakes;
@@ -1152,28 +1062,28 @@ function finishAttempt(reason){
   if(levelPassed){
     if(!progress.completedLevels.includes(currentLevel.id))progress.completedLevels.push(currentLevel.id);
     progress.completedLevels.sort((a,b)=>a-b);
-    progress.unlockedLevel=Math.min(15,Math.max(progress.unlockedLevel,currentLevel.id+1));
+    progress.unlockedLevel=Math.min(FINAL_MISSION_ID,Math.max(progress.unlockedLevel,currentLevel.id+1));
     saveProgress();
     configureRewardScene(currentLevel.id,firstCompletion,true);
-    const milestone=currentLevel.id===5||currentLevel.id===10||chapterComplete;
+    const milestone=currentLevel.id===SHIP_MISSION_ID||currentLevel.id===ENGINE_MISSION_ID||chapterComplete;
     resultEyebrow.hidden=false;
-    resultEyebrow.textContent=chapterComplete?'PEATÜKK LÄBITUD':'MISSIOON LÄBITUD';
-    resultTitle.textContent=milestone?'':'Tehtud!';
+    resultEyebrow.textContent=chapterComplete?t('result.chapterPassed'):t('result.missionPassed');
+    resultTitle.textContent=milestone?'':t('result.done');
     resultTitle.hidden=milestone;
     resultMessage.textContent='';
     resultMessage.hidden=true;
-    resultPrimaryButton.textContent=chapterComplete?'Missioonid':'Edasi';
+    resultPrimaryButton.textContent=chapterComplete?t('result.missions'):t('result.next');
     resultMapButton.hidden=chapterComplete;
     resultAction=chapterComplete?'map':'next';
   }else{
     configureRewardScene(currentLevel?.id||1,false,false);
     resultEyebrow.textContent='';
     resultEyebrow.hidden=true;
-    resultTitle.textContent='Proovi uuesti!';
+    resultTitle.textContent=t('result.tryAgainTitle');
     resultTitle.hidden=false;
     resultMessage.textContent='';
     resultMessage.hidden=true;
-    resultPrimaryButton.textContent='Proovi uuesti';
+    resultPrimaryButton.textContent=t('result.tryAgain');
     resultMapButton.hidden=false;
     resultAction='retry';
   }
@@ -1201,12 +1111,12 @@ function finishAttempt(reason){
 }
 
 function setRewardProgressState(levelId,firstCompletion){
-  const shipStep=Math.min(5,levelId);
-  const engineStep=Math.min(5,Math.max(0,levelId-5));
-  const portalStep=Math.min(5,Math.max(0,levelId-10));
-  const previousShip=firstCompletion&&levelId<=5?Math.max(0,shipStep-1):shipStep;
-  const previousEngine=firstCompletion&&levelId>=6&&levelId<=10?Math.max(0,engineStep-1):engineStep;
-  const previousPortal=firstCompletion&&levelId>=11?Math.max(0,portalStep-1):portalStep;
+  const shipStep=Math.min(STORY_SEGMENT_LENGTH,levelId);
+  const engineStep=Math.min(STORY_SEGMENT_LENGTH,Math.max(0,levelId-SHIP_MISSION_ID));
+  const portalStep=Math.min(STORY_SEGMENT_LENGTH,Math.max(0,levelId-ENGINE_MISSION_ID));
+  const previousShip=firstCompletion&&levelId<=SHIP_MISSION_ID?Math.max(0,shipStep-1):shipStep;
+  const previousEngine=firstCompletion&&levelId>SHIP_MISSION_ID&&levelId<=ENGINE_MISSION_ID?Math.max(0,engineStep-1):engineStep;
+  const previousPortal=firstCompletion&&levelId>ENGINE_MISSION_ID?Math.max(0,portalStep-1):portalStep;
 
   const setState=(selector,previous,current)=>{
     rewardScene.querySelectorAll(selector).forEach(element=>{
@@ -1217,8 +1127,8 @@ function setRewardProgressState(levelId,firstCompletion){
     });
   };
 
-  setState('[data-reward-part]',levelId>5?5:previousShip,shipStep);
-  setState('[data-reward-engine]',levelId>10?5:previousEngine,engineStep);
+  setState('[data-reward-part]',levelId>SHIP_MISSION_ID?STORY_SEGMENT_LENGTH:previousShip,shipStep);
+  setState('[data-reward-engine]',levelId>ENGINE_MISSION_ID?STORY_SEGMENT_LENGTH:previousEngine,engineStep);
   setState('[data-reward-portal]',previousPortal,portalStep);
   rewardScene.style.setProperty('--portal-before',String(previousPortal));
   rewardScene.style.setProperty('--portal-after',String(portalStep));
@@ -1237,16 +1147,16 @@ function configureRewardScene(levelId,firstCompletion,levelPassed){
     rewardScene.classList.add('reward-failed');
     return;
   }
-  rewardPill.textContent=firstCompletion?'★ +1 TÄHEENERGIA':'★ TÄHEENERGIA ON KOGUTUD';
+  rewardPill.textContent=firstCompletion?t('result.rewardFirst'):t('result.rewardCollected');
   setRewardProgressState(levelId,firstCompletion);
-  if(levelId>10)rewardScene.classList.add('reward-state-portal');
-  else if(levelId>5)rewardScene.classList.add('reward-state-engine');
+  if(levelId>ENGINE_MISSION_ID)rewardScene.classList.add('reward-state-portal');
+  else if(levelId>SHIP_MISSION_ID)rewardScene.classList.add('reward-state-engine');
   else rewardScene.classList.add('reward-state-ship');
-  if(levelId===15)rewardScene.classList.add('reward-final-launch');
-  else if(levelId===10)rewardScene.classList.add('reward-engine-complete');
-  else if(levelId===5)rewardScene.classList.add('reward-ship-complete');
-  else if(levelId>10)rewardScene.classList.add('reward-portal-step');
-  else if(levelId>5)rewardScene.classList.add('reward-engine-step');
+  if(levelId===FINAL_MISSION_ID)rewardScene.classList.add('reward-final-launch');
+  else if(levelId===ENGINE_MISSION_ID)rewardScene.classList.add('reward-engine-complete');
+  else if(levelId===SHIP_MISSION_ID)rewardScene.classList.add('reward-ship-complete');
+  else if(levelId>ENGINE_MISSION_ID)rewardScene.classList.add('reward-portal-step');
+  else if(levelId>SHIP_MISSION_ID)rewardScene.classList.add('reward-engine-step');
   else rewardScene.classList.add('reward-ship-step');
 }
 
@@ -1286,14 +1196,14 @@ function startRewardCinematic(levelPassed,levelId,firstCompletion=true){
     beginRewardChange();
   }
 
-  if(levelId===15){
+  if(levelId===FINAL_MISSION_ID){
     cue(2150,()=>playSound('portalOpen'));
     cue(1120,()=>rewardFx.sparkBurst(.84,.22,34,['#70d9cf','#e64e89','#fff'],.82));
     cue(2180,()=>rewardFx.shockwave(.82,.5,'#70d9cf',.92));
     cue(3360,()=>rewardFx.sparkBurst(.82,.5,72,['#fff','#70d9cf','#e64e89','#ffd34d'],1.12));
     cue(4380,()=>rewardFx.sparkBurst(.62,.53,52,['#fff','#ffd34d','#ff9a3c'],1.35));
     cue(4540,()=>rewardFx.shockwave(.75,.5,'#fff',1.15));
-  }else if(levelId===10){
+  }else if(levelId===ENGINE_MISSION_ID){
     cue(2200,()=>playSound('engineStart'));
     cue(1460,()=>rewardFx.sparkBurst(.695,.73,20,['#ffd34d','#ff9a3c','#fff'],.6));
     cue(3260,()=>{
@@ -1301,7 +1211,7 @@ function startRewardCinematic(levelPassed,levelId,firstCompletion=true){
       rewardFx.shockwave(.665,.7,'#ffd34d',1.05);
       rewardFx.dustBurst(.665,.88,24);
     });
-  }else if(levelId===5){
+  }else if(levelId===SHIP_MISSION_ID){
     cue(2080,()=>playSound('shipFound'));
     cue(1370,()=>rewardFx.sparkBurst(.66,.17,24,['#fff','#70d9cf','#ffd34d'],.7));
     cue(2820,()=>{
@@ -1309,12 +1219,12 @@ function startRewardCinematic(levelPassed,levelId,firstCompletion=true){
       rewardFx.shockwave(.66,.52,'#fff',1);
     });
   }else{
-    const target=levelId>10?[.84,.5]:levelId>5?[.66,.72]:[.66,.52];
+    const target=levelId>ENGINE_MISSION_ID?[.84,.5]:levelId>SHIP_MISSION_ID?[.66,.72]:[.66,.52];
     cue(1320,()=>rewardFx.sparkBurst(target[0],target[1],42,['#fff','#ffd34d','#70d9cf'],.9));
     cue(1480,()=>rewardFx.shockwave(target[0],target[1],'#70d9cf',.74));
   }
   if(firstCompletion){
-    const revealAfterChange=levelId===15?6500:(levelId===5||levelId===10?5700:3800);
+    const revealAfterChange=levelId===FINAL_MISSION_ID?6500:(levelId===SHIP_MISSION_ID||levelId===ENGINE_MISSION_ID?5700:3800);
     scheduleCinematic(REWARD_BEFORE_HOLD+revealAfterChange,finishRewardReveal);
   }
 }
@@ -1325,9 +1235,9 @@ function runResultAction(){
     return;
   }
   if(resultAction==='next'){
-    const nextLevel=Math.min(15,currentLevel.id+1);
-    if(nextLevel===11&&!progress.divisionLessonSeen){
-      showLesson('divide',11,{historyMode:'replace'});
+    const nextLevel=Math.min(FINAL_MISSION_ID,currentLevel.id+1);
+    if(nextLevel===DIVISION_MISSION_ID&&!progress.divisionLessonSeen){
+      showLesson(LESSON_CONFIG.divisionMode,DIVISION_MISSION_ID,{historyMode:'replace'});
     }else{
       startLevel(nextLevel,{historyMode:'replace'});
     }
@@ -1340,13 +1250,13 @@ function restoreResult(state){
   stopRound();
   currentLevel=LEVELS.find(level=>level.id===state.levelId)||currentLevel;
   resultAction=state.resultAction||'map';
-  resultEyebrow.textContent=state.resultEyebrow||'MISSIOON LÄBITUD';
+  resultEyebrow.textContent=state.resultEyebrow||t('result.missionPassed');
   resultEyebrow.hidden=Boolean(state.eyebrowHidden);
-  resultTitle.textContent=state.resultTitle||'Missioon läbitud';
+  resultTitle.textContent=state.resultTitle||t('result.titlePassed');
   resultMessage.textContent=state.resultMessage||'';
   resultTitle.hidden=Boolean(state.titleHidden);
   resultMessage.hidden=state.messageHidden!==false;
-  resultPrimaryButton.textContent=state.primaryText||'Missioonide juurde';
+  resultPrimaryButton.textContent=state.primaryText||t('result.toMissions');
   resultMapButton.hidden=Boolean(state.mapHidden);
   configureRewardScene(state.levelId,state.firstCompletion!==false,state.levelPassed!==false);
   mistakeCount.textContent=Number.isInteger(state.mistakes)?state.mistakes:0;
@@ -1379,11 +1289,11 @@ function formatTime(seconds){
 }
 
 function resetProgress(){
-  if(!confirm('Kas alustame esimest peatükki uuesti? Läbitud missioonid lukustatakse.'))return;
+  if(!confirm(t('reset.confirm')))return;
   stopRound();
-  localStorage.removeItem(STORAGE_KEY);
+  progressStore.clear();
   progress=defaultProgress();
-  showLesson('multiply',null,{historyMode:'replace'});
+  showLesson(LESSON_CONFIG.initialMode,null,{historyMode:'replace'});
 }
 
 function finishIntro(){
@@ -1421,7 +1331,7 @@ function prepareIntro(){
 
 document.querySelectorAll('[data-demo-factor]').forEach(button=>button.addEventListener('click',()=>updateDemo(Number(button.dataset.demoFactor))));
 lessonContinueButton.addEventListener('click',()=>{
-  if(currentLessonMode==='divide')progress.divisionLessonSeen=true;
+  if(currentLessonMode===LESSON_CONFIG.divisionMode)progress.divisionLessonSeen=true;
   else progress.multiplicationLessonSeen=true;
   saveProgress();
   if(pendingLevelAfterLesson==='explanations'){
@@ -1440,8 +1350,8 @@ lessonContinueButton.addEventListener('click',()=>{
   }
 });
 document.querySelector('#repeatLessonButton').addEventListener('click',showExplanationHub);
-document.querySelector('#repeatMultiplicationButton').addEventListener('click',()=>showLesson('multiply','explanations'));
-repeatDivisionButton.addEventListener('click',()=>showLesson('divide','explanations'));
+document.querySelector('#repeatMultiplicationButton').addEventListener('click',()=>showLesson(LESSON_CONFIG.initialMode,'explanations'));
+repeatDivisionButton.addEventListener('click',()=>showLesson(LESSON_CONFIG.divisionMode,'explanations'));
 document.querySelector('#explanationBackButton').addEventListener('click',()=>history.back());
 document.querySelector('#backToMapButton').addEventListener('click',()=>history.back());
 resultMapButton.addEventListener('click',()=>history.back());
@@ -1474,12 +1384,11 @@ document.addEventListener('keydown',event=>{
 window.addEventListener('popstate',event=>restoreNavigation(event.state));
 
 buildStars();
-updateDemo(4);
 updateSoundButton();
 renderLevelMap();
 if(history.state?.marker===NAVIGATION_MARKER)restoreNavigation(history.state);
 else if(progress.multiplicationLessonSeen)showMap({historyMode:'replace'});
-else showLesson('multiply',null,{historyMode:'replace'});
+else showLesson(LESSON_CONFIG.initialMode,null,{historyMode:'replace'});
 prepareIntro();
 
 window.__EDUKASS_TEST__={
