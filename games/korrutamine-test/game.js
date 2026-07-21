@@ -18,51 +18,48 @@ const choiceGrid=document.querySelector('#choiceGrid');
 const keypad=document.querySelector('#keypad');
 const answerPanel=document.querySelector('#answerPanel');
 const answerPanelTitle=document.querySelector('#answerPanelTitle');
+const attemptStatus=document.querySelector('#attemptStatus');
 const levelGrid=document.querySelector('#levelGrid');
 const completedLevelCount=document.querySelector('#completedLevelCount');
 const levelKicker=document.querySelector('#levelKicker');
 const battleTitle=document.querySelector('#battleTitle');
+const levelGuidance=document.querySelector('#levelGuidance');
 const resultEyebrow=document.querySelector('#resultEyebrow');
 const resultTitle=document.querySelector('#resultTitle');
 const resultMessage=document.querySelector('#resultMessage');
 const resultPrimaryButton=document.querySelector('#resultPrimaryButton');
 const lessonEyebrow=document.querySelector('#lessonEyebrow');
 const lessonTitle=document.querySelector('#lessonTitle');
+const lessonLead=document.querySelector('#lessonLead');
 const multiplicationLesson=document.querySelector('#multiplicationLesson');
 const divisionLesson=document.querySelector('#divisionLesson');
 const lessonContinueButton=document.querySelector('#lessonContinueButton');
 const lessonSign=document.querySelector('#lessonSign');
 const demoMultiplyEquation=document.querySelector('#demoMultiplyEquation');
-const demoOneEquation=document.querySelector('#demoOneEquation');
 const demoDivisionEquation=document.querySelector('#demoDivisionEquation');
 const demoStars=document.querySelector('#demoStars');
-const demoOneStars=document.querySelector('#demoOneStars');
-const demoDivisionStars=document.querySelector('#demoDivisionStars');
-const soundToggleButton=document.querySelector('#soundToggleButton');
 
-const STORAGE_KEY='edukass-chapter-one-v18';
-const SOUND_KEY='edukass-sound-enabled';
+const STORAGE_KEY='edukass-chapter-one-v17';
 const ROUND_LENGTH=15;
 const ANSWER_DELAYS={exact:480,possiblePrefix:2200,wrong:1050};
-const START_SHOWER_PROGRESS=.08;
-const WRONG_ANSWER_ADVANCE=.105;
+const REPEL_AMOUNT=.055;
 
 const LEVELS=[
-  {id:1,title:'Карточки умножения',short:'Выбор ×',mode:'choice',operation:'multiply',seconds:175,accent:'#70d9cf'},
-  {id:2,title:'Двойка начинается',short:'×2 · 1–5',mode:'input',operation:'multiply',seconds:165,accent:'#70d9cf'},
-  {id:3,title:'Продолжаем двойку',short:'×2 · 6–10',mode:'input',operation:'multiply',seconds:150,accent:'#69cde0'},
-  {id:4,title:'Вся таблица на 2',short:'×2 · всё',mode:'input',operation:'multiply',seconds:140,accent:'#63bfe4'},
-  {id:5,title:'Двойка с другой стороны',short:'число × 2',mode:'input',operation:'multiply',seconds:132,accent:'#6baee5'},
-  {id:6,title:'Меняем стороны',short:'×2 ↔ 2×',mode:'input',operation:'multiply',seconds:125,accent:'#779ce2'},
-  {id:7,title:'Уверенная двойка',short:'Точность',mode:'input',operation:'multiply',seconds:118,accent:'#858bdd'},
-  {id:8,title:'Повторяем трудное',short:'Повтор',mode:'input',operation:'multiply',seconds:112,accent:'#927bd5'},
-  {id:9,title:'Подготовка к проверке',short:'Смешиваем',mode:'input',operation:'multiply',seconds:106,accent:'#9d70cd'},
-  {id:10,title:'Проверка умножения',short:'Проверка ×',mode:'input',operation:'multiply',seconds:100,accent:'#a966c2'},
-  {id:11,title:'Карточки деления',short:'Выбор ÷',mode:'choice',operation:'divide',seconds:175,accent:'#e561a0'},
-  {id:12,title:'Делим на 2',short:'÷2 · 1–5',mode:'input',operation:'divide',seconds:165,accent:'#e86f91'},
-  {id:13,title:'Деление продолжается',short:'÷2 · 6–10',mode:'input',operation:'divide',seconds:150,accent:'#ed7d80'},
-  {id:14,title:'Всё деление на 2',short:'÷2 · всё',mode:'input',operation:'divide',seconds:135,accent:'#ef8d6e'},
-  {id:15,title:'Умножение и деление',short:'× и ÷',mode:'input',operation:'mixed',seconds:120,accent:'#f39b60'}
+  {id:1,title:'Карточки умножения',short:'Карточки ×',mode:'choice',operation:'multiply',seconds:null,accent:'#70d9cf',guidance:'Выбери правильный ответ. Для прохождения нужны чистые 15/15.'},
+  {id:2,title:'Двойка начинается',short:'×2 · 1–5',mode:'input',operation:'multiply',seconds:null,accent:'#70d9cf',guidance:'Вводи ответ цифрами. На этом уровне звездопад не торопит.'},
+  {id:3,title:'Продолжаем двойку',short:'×2 · 6–10',mode:'input',operation:'multiply',seconds:125,accent:'#69cde0',guidance:'Новые примеры на 2. Звездопад движется очень медленно.'},
+  {id:4,title:'Вся таблица на 2',short:'×2 · всё',mode:'input',operation:'multiply',seconds:115,accent:'#63bfe4',guidance:'Примеры от 2 × 1 до 2 × 10 в случайном порядке.'},
+  {id:5,title:'Двойка с другой стороны',short:'число × 2',mode:'input',operation:'multiply',seconds:108,accent:'#6baee5',guidance:'Теперь двойка может стоять справа: 7 × 2.'},
+  {id:6,title:'Меняем стороны',short:'×2 ↔ 2×',mode:'input',operation:'multiply',seconds:102,accent:'#779ce2',guidance:'Примеры меняют вид, но ответ остаётся тем же.'},
+  {id:7,title:'Уверенная двойка',short:'точность',mode:'input',operation:'multiply',seconds:96,accent:'#858bdd',guidance:'Система возвращает примеры, которые раньше давались труднее.'},
+  {id:8,title:'Повторяем трудное',short:'повтор',mode:'input',operation:'multiply',seconds:92,accent:'#927bd5',guidance:'Сначала точность, затем скорость.'},
+  {id:9,title:'Подготовка к проверке',short:'подготовка',mode:'input',operation:'multiply',seconds:88,accent:'#9d70cd',guidance:'Все примеры перемешаны. Подсказок уже нет.'},
+  {id:10,title:'Проверка умножения',short:'проверка ×',mode:'input',operation:'multiply',seconds:84,accent:'#a966c2',guidance:'Чистые 15/15 открывают деление.'},
+  {id:11,title:'Карточки деления',short:'Карточки ÷',mode:'choice',operation:'divide',seconds:null,accent:'#e561a0',guidance:'Выбери результат деления. Ошибочная карточка вернётся позже.'},
+  {id:12,title:'Делим на 2',short:'÷2 · 1–5',mode:'input',operation:'divide',seconds:null,accent:'#e86f91',guidance:'Первый ввод деления проходит без таймера.'},
+  {id:13,title:'Деление продолжается',short:'÷2 · 6–10',mode:'input',operation:'divide',seconds:112,accent:'#ed7d80',guidance:'Все примеры делятся без остатка.'},
+  {id:14,title:'Всё деление на 2',short:'÷2 · всё',mode:'input',operation:'divide',seconds:98,accent:'#ef8d6e',guidance:'Повторяем всю открытую часть деления.'},
+  {id:15,title:'Умножение и деление',short:'× и ÷',mode:'input',operation:'mixed',seconds:92,accent:'#f39b60',guidance:'Финал прототипа: умножение и деление встречаются вместе.'}
 ];
 
 let progress=loadProgress();
@@ -72,6 +69,7 @@ let questionQueue=[];
 let currentAnswer='';
 let correct=0;
 let mistakes=0;
+let attemptDirty=false;
 let inputLocked=false;
 let roundActive=false;
 let battleStartedAt=0;
@@ -82,8 +80,6 @@ let autoCheckTimer=null;
 let currentLessonMode='multiply';
 let pendingLevelAfterLesson=null;
 let resultAction='map';
-let soundEnabled=loadSoundPreference();
-let audioContext=null;
 
 function defaultProgress(){
   return {unlockedLevel:1,completedLevels:[],multiplicationLessonSeen:false,divisionLessonSeen:false,factStats:{}};
@@ -101,67 +97,6 @@ function loadProgress(){
 
 function saveProgress(){
   localStorage.setItem(STORAGE_KEY,JSON.stringify(progress));
-}
-
-function loadSoundPreference(){
-  return localStorage.getItem(SOUND_KEY)!=='false';
-}
-
-function updateSoundButton(){
-  soundToggleButton.textContent=soundEnabled?'🔊':'🔇';
-  soundToggleButton.setAttribute('aria-pressed',String(soundEnabled));
-  soundToggleButton.setAttribute('aria-label',soundEnabled?'Выключить звук':'Включить звук');
-}
-
-function toggleSound(){
-  soundEnabled=!soundEnabled;
-  localStorage.setItem(SOUND_KEY,String(soundEnabled));
-  updateSoundButton();
-  if(soundEnabled)playSound('key');
-}
-
-function getAudioContext(){
-  if(!soundEnabled)return null;
-  const AudioContextClass=window.AudioContext||window.webkitAudioContext;
-  if(!AudioContextClass)return null;
-  if(!audioContext)audioContext=new AudioContextClass();
-  if(audioContext.state==='suspended')audioContext.resume();
-  return audioContext;
-}
-
-function playTone(frequency,startOffset,duration,volume,type='sine'){
-  const context=getAudioContext();
-  if(!context)return;
-  const oscillator=context.createOscillator();
-  const gain=context.createGain();
-  const startsAt=context.currentTime+startOffset;
-  const endsAt=startsAt+duration;
-  oscillator.type=type;
-  oscillator.frequency.setValueAtTime(frequency,startsAt);
-  gain.gain.setValueAtTime(.0001,startsAt);
-  gain.gain.exponentialRampToValueAtTime(volume,startsAt+.012);
-  gain.gain.exponentialRampToValueAtTime(.0001,endsAt);
-  oscillator.connect(gain);
-  gain.connect(context.destination);
-  oscillator.start(startsAt);
-  oscillator.stop(endsAt+.02);
-}
-
-function playSound(kind){
-  if(!soundEnabled)return;
-  if(kind==='key')playTone(430,0,.045,.025,'sine');
-  if(kind==='correct'){
-    playTone(620,0,.075,.035,'sine');
-    playTone(820,.085,.09,.035,'sine');
-  }
-  if(kind==='wrong'){
-    playTone(250,0,.11,.032,'triangle');
-    playTone(185,.09,.13,.026,'triangle');
-  }
-  if(kind==='impact'){
-    playTone(165,0,.22,.045,'triangle');
-    playTone(120,.14,.28,.035,'sine');
-  }
 }
 
 function showScreen(id){
@@ -292,40 +227,21 @@ function buildStars(){
 
 function updateDemo(factor){
   const product=factor*2;
-  demoOneEquation.textContent=`1 × ${factor} = ${factor}`;
   demoMultiplyEquation.textContent=`2 × ${factor} = ${product}`;
   demoDivisionEquation.textContent=`${product} ÷ 2 = ${factor}`;
   document.querySelectorAll('[data-demo-factor]').forEach(button=>button.classList.toggle('active',Number(button.dataset.demoFactor)===factor));
-
-  const buildRows=rowCount=>{
-    const rows=[];
-    for(let row=0;row<rowCount;row++){
-      const group=document.createElement('span');
-      group.className='star-row';
-      for(let index=0;index<factor;index++){
-        const star=document.createElement('i');
-        star.textContent='★';
-        group.append(star);
-      }
-      rows.push(group);
-    }
-    return rows;
-  };
-
-  demoOneStars.replaceChildren(...buildRows(1));
-  demoStars.replaceChildren(...buildRows(2));
-  const divisionGroups=[];
-  for(let groupIndex=0;groupIndex<2;groupIndex++){
+  const rows=[];
+  for(let row=0;row<2;row++){
     const group=document.createElement('span');
-    group.className='star-row division-group';
+    group.className='star-row';
     for(let index=0;index<factor;index++){
       const star=document.createElement('i');
       star.textContent='★';
       group.append(star);
     }
-    divisionGroups.push(group);
+    rows.push(group);
   }
-  demoDivisionStars.replaceChildren(...divisionGroups);
+  demoStars.replaceChildren(...rows);
 }
 
 function showLesson(mode='multiply',pendingLevel=null){
@@ -335,12 +251,11 @@ function showLesson(mode='multiply',pendingLevel=null){
   const division=mode==='divide';
   lessonEyebrow.textContent=division?'ГЛАВА 1 · ОБРАТНАЯ СВЯЗЬ':'ГЛАВА 1 · ОДИН И ДВА';
   lessonTitle.textContent=division?'Теперь делим на 2':'Открываем числа 1 и 2';
+  lessonLead.textContent=division?'Уже знакомое умножение помогает понять деление. Десять звёзд можно разделить на две равные части.':'Умножение на 1 — короткое правило. Основная работа этой главы начинается с двойки.';
   multiplicationLesson.hidden=division;
   divisionLesson.hidden=!division;
   lessonSign.textContent=division?'÷2':'×2';
-  if(pendingLevel==='map')lessonContinueButton.textContent='К уровням';
-  else if(Number.isInteger(pendingLevel))lessonContinueButton.textContent=`Открыть ${pendingLevel} уровень`;
-  else lessonContinueButton.textContent='Открыть 1 уровень';
+  lessonContinueButton.textContent=pendingLevel?`Начать уровень ${pendingLevel}`:'Открыть карту главы';
   showScreen('lessonScreen');
 }
 
@@ -351,12 +266,11 @@ function renderLevelMap(){
     const completed=progress.completedLevels.includes(level.id);
     const unlocked=completed||level.id<=progress.unlockedLevel;
     button.type='button';
-    const celestialType=level.id%3===0||level.id===10||level.id===15?'planet':'star';
-    button.className=`level-object ${celestialType}${completed?' completed':''}${!unlocked?' locked':''}${level.id===progress.unlockedLevel&&!completed?' current':''}`;
+    button.className=`level-tile${completed?' completed':''}${!unlocked?' locked':''}${level.id===progress.unlockedLevel&&!completed?' current':''}`;
     button.disabled=!unlocked;
     button.dataset.level=String(level.id);
     button.style.setProperty('--level-accent',level.accent);
-    button.innerHTML=`<span class="celestial-shape"><span class="celestial-number">${completed?'✓':level.id}</span></span><strong class="level-name">${level.short}</strong>`;
+    button.innerHTML=`<span class="level-number">${completed?'✓':level.id}</span><span><strong>${level.short}</strong><small>${level.id===1||level.id===11?'4 варианта':'ввод цифрами'}</small></span>`;
     button.setAttribute('aria-label',`Уровень ${level.id}: ${level.title}${completed?', пройден':''}${!unlocked?', закрыт':''}`);
     if(unlocked)button.addEventListener('click',()=>requestLevel(level.id));
     return button;
@@ -387,22 +301,25 @@ function startLevel(levelId){
   currentAnswer='';
   correct=0;
   mistakes=0;
+  attemptDirty=false;
   inputLocked=false;
   roundActive=true;
-  showerProgress=START_SHOWER_PROGRESS;
+  showerProgress=0;
   correctCount.textContent='0';
+  attemptStatus.textContent='чистая';
+  attemptStatus.className='';
   feedback.textContent='';
-  feedback.className='feedback visually-hidden';
+  feedback.className='feedback';
   answerDisplay.textContent='?';
-  answerDisplay.classList.remove('revealed-answer');
   questionCard.className='question-card';
   heroZone.className='hero-zone';
   starCurtain.className='star-curtain';
-  battleStage.className='battle-stage';
+  battleStage.className=`battle-stage${level.seconds?'':' no-timer'}`;
   battleStage.style.setProperty('--level-accent',level.accent);
-  showerMeter.hidden=false;
+  showerMeter.hidden=!level.seconds;
   levelKicker.textContent=`УРОВЕНЬ ${level.id} ИЗ 15`;
   battleTitle.textContent=level.title;
+  levelGuidance.textContent=level.guidance;
   const choiceMode=level.mode==='choice';
   answerPanel.classList.toggle('choice-mode',choiceMode);
   choiceGrid.hidden=!choiceMode;
@@ -412,7 +329,7 @@ function startLevel(levelId){
   showScreen('battleScreen');
   battleStartedAt=Date.now();
   nextQuestion();
-  startShowerMotion();
+  if(level.seconds)startShowerMotion();
 }
 
 function nextQuestion(){
@@ -422,9 +339,8 @@ function nextQuestion(){
   if(!currentQuestion){finishAttempt('complete');return}
   currentAnswer='';
   answerDisplay.textContent='?';
-  answerDisplay.classList.remove('revealed-answer');
   feedback.textContent='';
-  feedback.className='feedback visually-hidden';
+  feedback.className='feedback';
   questionCard.classList.remove('is-correct','is-wrong');
   factorA.textContent=currentQuestion.a;
   factorB.textContent=currentQuestion.b;
@@ -473,14 +389,11 @@ function setShowerPosition(){
   meterStar.style.top=`calc(${progressValue*100}% - 9px)`;
 }
 
-function advanceShowerAfterMistake(){
+function markAttemptDirty(){
+  attemptDirty=true;
   mistakes++;
-  showerProgress=Math.min(1,showerProgress+WRONG_ANSWER_ADVANCE);
-  setShowerPosition();
-  if(showerProgress>=1){
-    cancelAnimationFrame(motionFrame);
-    setTimeout(triggerImpact,420);
-  }
+  attemptStatus.textContent='есть ошибка';
+  attemptStatus.className='dirty';
 }
 
 function queueRetry(question){
@@ -494,42 +407,44 @@ function showCorrectAnimation(){
   starCurtain.classList.remove('repelled');
   void starCurtain.offsetWidth;
   starCurtain.classList.add('repelled');
+  if(currentLevel.seconds){
+    showerProgress=Math.max(0,showerProgress-REPEL_AMOUNT);
+    setShowerPosition();
+  }
 }
 
 function finishCorrectQuestion(){
   recordFact(currentQuestion,true);
   correct++;
   correctCount.textContent=correct;
-  feedback.textContent='Верно';
-  playSound('correct');
+  feedback.textContent='Верно!';
+  feedback.className='feedback good';
   showCorrectAnimation();
-  if(correct>=ROUND_LENGTH)cancelAnimationFrame(motionFrame);
   setTimeout(()=>{
     starCurtain.classList.remove('repelled');
     heroZone.classList.remove('celebrate');
     questionCard.classList.remove('is-correct');
     inputLocked=false;
-    if(correct>=ROUND_LENGTH)finishAttempt('complete');
-    else nextQuestion();
+    nextQuestion();
   },520);
 }
 
 function handleWrongAnswer(clickedButton=null){
   recordFact(currentQuestion,false);
-  advanceShowerAfterMistake();
+  markAttemptDirty();
   queueRetry(currentQuestion);
-  answerDisplay.textContent=String(currentQuestion.answer);
-  answerDisplay.classList.add('revealed-answer');
-  feedback.textContent=`Правильный ответ ${currentQuestion.answer}`;
+  feedback.textContent=`Правильный ответ: ${currentQuestion.answer}. Этот пример ещё вернётся.`;
+  feedback.className='feedback bad';
   questionCard.classList.add('is-wrong');
-  playSound('wrong');
   if(clickedButton)clickedButton.classList.add('wrong-choice');
+  [...choiceGrid.children].forEach(button=>{
+    if(Number(button.dataset.choice)===currentQuestion.answer)button.classList.add('correct-choice');
+  });
   setTimeout(()=>{
-    if(!roundActive)return;
     questionCard.classList.remove('is-wrong');
     inputLocked=false;
     nextQuestion();
-  },780);
+  },900);
 }
 
 function submitChoice(value,button){
@@ -548,15 +463,12 @@ function enterDigit(value){
   if(!roundActive||inputLocked||currentLevel.mode!=='input')return;
   clearAutoCheck();
   feedback.textContent='';
-  feedback.className='feedback visually-hidden';
+  feedback.className='feedback';
   questionCard.classList.remove('is-wrong');
 
   if(value==='clear')currentAnswer=currentAnswer.slice(0,-1);
   else if(value==='clearAll')currentAnswer='';
-  else if(currentAnswer.length<3){
-    currentAnswer+=value;
-    playSound('key');
-  }
+  else if(currentAnswer.length<3)currentAnswer+=value;
 
   answerDisplay.textContent=currentAnswer||'?';
   scheduleAnswerCheck();
@@ -596,33 +508,32 @@ function triggerImpact(){
   starCurtain.classList.add('impact');
   heroZone.classList.add('impact');
   battleStage.classList.add('is-impact');
-  playSound('impact');
   setTimeout(()=>finishAttempt('impact'),650);
 }
 
 function finishAttempt(reason){
   stopRound();
   const elapsed=Math.round((Date.now()-battleStartedAt)/1000);
-  const levelPassed=reason==='complete'&&correct===ROUND_LENGTH;
-  const chapterComplete=levelPassed&&currentLevel.id===15;
+  const cleanPass=reason==='complete'&&!attemptDirty&&correct===ROUND_LENGTH;
+  const chapterComplete=cleanPass&&currentLevel.id===15;
 
   mistakeCount.textContent=mistakes;
   timeCount.textContent=formatTime(elapsed);
 
-  if(levelPassed){
+  if(cleanPass){
     if(!progress.completedLevels.includes(currentLevel.id))progress.completedLevels.push(currentLevel.id);
     progress.completedLevels.sort((a,b)=>a-b);
     progress.unlockedLevel=Math.min(15,Math.max(progress.unlockedLevel,currentLevel.id+1));
     saveProgress();
-    resultEyebrow.textContent=chapterComplete?'ПЕРВЫЕ 15 УРОВНЕЙ ГОТОВЫ':'УРОВЕНЬ ПРОЙДЕН';
+    resultEyebrow.textContent=chapterComplete?'ПЕРВЫЕ 15 УРОВНЕЙ ГОТОВЫ':'ЧИСТЫЕ 15 ИЗ 15';
     resultTitle.textContent=chapterComplete?'Прототип главы пройден':'Уровень пройден';
-    resultMessage.textContent=chapterComplete?'Первая глава готова.':'15 правильных ответов. Следующий уровень открыт.';
+    resultMessage.textContent=chapterComplete?'Ты уверенно прошёл умножение и первые уровни деления на 2.':'Все 15 ответов верны. Следующий уровень открыт.';
     resultPrimaryButton.textContent=chapterComplete?'Вернуться к карте':currentLevel.id===10?'Перейти к делению':'Следующий уровень';
     resultAction=chapterComplete?'map':'next';
   }else{
-    resultEyebrow.textContent='ПОПРОБУЕМ ЕЩЁ РАЗ';
-    resultTitle.textContent='Звездопад накрыл киску';
-    resultMessage.textContent='Набери 15 правильных ответов раньше звездопада.';
+    resultEyebrow.textContent=reason==='impact'?'ЗВЕЗДОПАД ДОСТИГ КИСУНИСЫ':'ПОПРОБУЕМ ЕЩЁ РАЗ';
+    resultTitle.textContent='Нужна чистая попытка';
+    resultMessage.textContent=reason==='impact'?'Повтори уровень: сначала работаем точно, скорость придёт позже.':`Ты решил все задания, но допустил ошибок: ${mistakes}. Для прохождения нужны чистые 15/15.`;
     resultPrimaryButton.textContent='Повторить уровень';
     resultAction='retry';
   }
@@ -670,21 +581,17 @@ lessonContinueButton.addEventListener('click',()=>{
   if(currentLessonMode==='divide')progress.divisionLessonSeen=true;
   else progress.multiplicationLessonSeen=true;
   saveProgress();
-  if(pendingLevelAfterLesson==='map'){
-    pendingLevelAfterLesson=null;
-    showMap();
-  }else if(Number.isInteger(pendingLevelAfterLesson)){
+  if(pendingLevelAfterLesson){
     const level=pendingLevelAfterLesson;
     pendingLevelAfterLesson=null;
     startLevel(level);
-  }else startLevel(1);
+  }else showMap();
 });
-document.querySelector('#repeatLessonButton').addEventListener('click',()=>showLesson(progress.unlockedLevel>=11?'divide':'multiply','map'));
+document.querySelector('#repeatLessonButton').addEventListener('click',()=>showLesson(progress.unlockedLevel>=11?'divide':'multiply'));
 document.querySelector('#backToMapButton').addEventListener('click',showMap);
 document.querySelector('#resultMapButton').addEventListener('click',showMap);
 resultPrimaryButton.addEventListener('click',runResultAction);
 document.querySelector('#resetProgressButton').addEventListener('click',resetProgress);
-soundToggleButton.addEventListener('click',toggleSound);
 document.querySelectorAll('[data-key]').forEach(button=>button.addEventListener('click',()=>enterDigit(button.dataset.key)));
 
 document.addEventListener('keydown',event=>{
@@ -703,7 +610,6 @@ document.addEventListener('keydown',event=>{
 
 buildStars();
 updateDemo(4);
-updateSoundButton();
 renderLevelMap();
 if(progress.multiplicationLessonSeen)showMap();
 else showLesson('multiply');
@@ -715,7 +621,7 @@ window.__EDUKASS_TEST__={
   requestLevel,
   startLevel,
   showMap,
-  getState:()=>({progress:JSON.parse(JSON.stringify(progress)),currentLevel:currentLevel?.id,currentQuestion:{...currentQuestion},correct,mistakes,showerProgress,roundActive}),
+  getState:()=>({progress:JSON.parse(JSON.stringify(progress)),currentLevel:currentLevel?.id,currentQuestion:{...currentQuestion},correct,mistakes,attemptDirty,roundActive}),
   answerCorrect:()=>{
     if(!currentQuestion)return;
     if(currentLevel.mode==='choice')submitChoice(currentQuestion.answer,[...choiceGrid.children].find(button=>Number(button.dataset.choice)===currentQuestion.answer));

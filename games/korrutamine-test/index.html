@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#182452">
   <title>EDUKASS — Глава 1: один и два</title>
   <meta name="description" content="Рабочий прототип первой главы EDUKASS: умножение и деление на 1 и 2.">
-  <link rel="stylesheet" href="game.css?v=18">
+  <link rel="stylesheet" href="game.css?v=17">
 </head>
 <body>
   <header class="topbar">
@@ -16,7 +16,6 @@
     </a>
     <div class="top-actions">
       <span class="prototype-badge">ПРОТОТИП ГЛАВЫ</span>
-      <button class="sound-button" id="soundToggleButton" type="button" aria-label="Выключить звук" aria-pressed="true">🔊</button>
       <button class="tiny-button" id="resetProgressButton" type="button">Начать заново</button>
     </div>
   </header>
@@ -27,27 +26,37 @@
         <div class="lesson-copy">
           <p class="eyebrow" id="lessonEyebrow">ГЛАВА 1 · ОДИН И ДВА</p>
           <h1 id="lessonTitle">Открываем числа 1 и 2</h1>
+          <p class="lesson-lead" id="lessonLead">Умножение на 1 — короткое правило. Основная работа этой главы начинается с двойки.</p>
+
+          <div id="multiplicationLesson" class="lesson-section">
+            <div class="rule-grid">
+              <article class="rule-card rule-one">
+                <span class="rule-symbol">×1</span>
+                <div><strong>Число не меняется</strong><p>7 × 1 = 7</p></div>
+              </article>
+              <article class="rule-card rule-two">
+                <span class="rule-symbol">×2</span>
+                <div><strong>Две одинаковые части</strong><p>2 × 4 = 4 + 4</p></div>
+              </article>
+            </div>
+          </div>
+
+          <div id="divisionLesson" class="lesson-section" hidden>
+            <div class="rule-grid single-rule">
+              <article class="rule-card rule-two">
+                <span class="rule-symbol">÷2</span>
+                <div><strong>Разделить поровну на две части</strong><p>8 ÷ 2 = 4</p></div>
+              </article>
+            </div>
+          </div>
 
           <div class="fact-explorer" aria-label="Интерактивное объяснение">
-            <div id="multiplicationLesson" class="lesson-section demo-stack">
-              <article class="demo-lane demo-one">
-                <div class="demo-equations"><span>×1</span><strong id="demoOneEquation">1 × 4 = 4</strong></div>
-                <div class="star-array" id="demoOneStars" aria-hidden="true"></div>
-              </article>
-              <article class="demo-lane demo-two">
-                <div class="demo-equations"><span>×2</span><strong id="demoMultiplyEquation">2 × 4 = 8</strong></div>
-                <div class="star-array" id="demoStars" aria-hidden="true"></div>
-              </article>
+            <div class="demo-equations">
+              <strong id="demoMultiplyEquation">2 × 4 = 8</strong>
+              <span id="demoDivisionEquation">8 ÷ 2 = 4</span>
             </div>
-
-            <div id="divisionLesson" class="lesson-section demo-stack" hidden>
-              <article class="demo-lane demo-two">
-                <div class="demo-equations"><span>÷2</span><strong id="demoDivisionEquation">8 ÷ 2 = 4</strong></div>
-                <div class="star-array divided-stars" id="demoDivisionStars" aria-hidden="true"></div>
-              </article>
-            </div>
-
-            <p class="explorer-hint">Нажми на число.</p>
+            <div class="star-array" id="demoStars" aria-hidden="true"></div>
+            <p class="explorer-hint">Нажми на число и посмотри, как меняется пример.</p>
             <div class="factor-picker" id="factorPicker" aria-label="Выбери число">
               <button type="button" data-demo-factor="1">1</button><button type="button" data-demo-factor="2">2</button>
               <button type="button" data-demo-factor="3">3</button><button class="active" type="button" data-demo-factor="4">4</button>
@@ -57,7 +66,13 @@
             </div>
           </div>
 
-          <button class="primary-button lesson-button" id="lessonContinueButton" type="button">Открыть 1 уровень</button>
+          <div class="knowledge-map" aria-label="Открытая часть таблицы умножения">
+            <div class="knowledge-label"><strong>Карта знаний</strong><span>Открываются строки 1 и 2</span></div>
+            <div class="knowledge-row"><b>×1</b><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span></div>
+            <div class="knowledge-row active-row"><b>×2</b><span>2</span><span>4</span><span>6</span><span>8</span><span>10</span><span>12</span><span>14</span><span>16</span><span>18</span><span>20</span></div>
+          </div>
+
+          <button class="primary-button lesson-button" id="lessonContinueButton" type="button">Открыть карту главы</button>
         </div>
 
         <div class="lesson-scene" aria-hidden="true">
@@ -75,6 +90,7 @@
         <div>
           <p class="eyebrow">ГЛАВА 1 · ОДИН И ДВА</p>
           <h1 id="mapTitle">Первые 15 уровней</h1>
+          <p>Пройди каждый уровень без ошибок. Следующий откроется автоматически.</p>
         </div>
         <div class="energy-panel"><span>Пройдено</span><strong><span id="completedLevelCount">0</span>/15</strong></div>
       </div>
@@ -85,22 +101,25 @@
       </div>
       <div class="map-actions">
         <button class="secondary-button" id="repeatLessonButton" type="button">Повторить объяснение</button>
+        <p class="map-tip">Уровни 1 и 11 — выбор из четырёх карточек. На остальных уровнях ответ вводится цифрами.</p>
       </div>
     </section>
 
     <section id="battleScreen" class="screen battle-screen" aria-labelledby="battleTitle">
       <div class="battle-top">
-        <button class="back-button" id="backToMapButton" type="button">← Уровни</button>
+        <button class="back-button" id="backToMapButton" type="button">← Карта</button>
         <div class="battle-title-wrap"><span id="levelKicker">УРОВЕНЬ 1</span><h1 id="battleTitle">Карточки умножения</h1></div>
         <div class="progress-pill"><span>Ответы</span><strong>★ <span id="correctCount">0</span>/15</strong></div>
       </div>
+
+      <div class="level-guidance" id="levelGuidance">Выбери правильный ответ. Для прохождения нужны чистые 15/15.</div>
 
       <div class="play-grid">
         <div class="scene-column">
           <div class="question-card" id="questionCard">
             <p class="question-label">Реши пример</p>
             <div class="equation"><span id="factorA">2</span><span id="operationSymbol">×</span><span id="factorB">4</span><span>=</span><span class="answer-slot" id="answerDisplay">?</span></div>
-            <p class="feedback visually-hidden" id="feedback" aria-live="polite"></p>
+            <p class="feedback" id="feedback" aria-live="polite"></p>
           </div>
 
           <div class="battle-stage" id="battleStage">
@@ -125,6 +144,10 @@
             <button type="button" data-key="7">7</button><button type="button" data-key="8">8</button><button type="button" data-key="9">9</button>
             <button class="key-clear-all" type="button" data-key="clearAll" aria-label="Очистить">C</button><button type="button" data-key="0">0</button><button class="key-clear" type="button" data-key="clear" aria-label="Удалить цифру">⌫</button>
           </div>
+          <div class="attempt-card">
+            <div><span>Попытка</span><strong id="attemptStatus">чистая</strong></div>
+            <p>Любая ошибка означает, что уровень нужно будет повторить.</p>
+          </div>
         </aside>
       </div>
     </section>
@@ -147,6 +170,6 @@
     </section>
   </main>
 
-  <script src="game.js?v=18"></script>
+  <script src="game.js?v=17"></script>
 </body>
 </html>
