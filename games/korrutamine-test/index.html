@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#182452">
   <title>EDUKASS — 1. peatükk: üks ja kaks</title>
   <meta name="description" content="EDUKASSi esimese peatüki prototüüp: ühe ja kahega korrutamine ning jagamine.">
-  <link rel="stylesheet" href="game.css?v=24">
+  <link rel="stylesheet" href="game.css?v=25">
 </head>
 <body>
   <header class="topbar">
@@ -175,13 +175,19 @@
 
           <div class="battle-stage" id="battleStage">
             <div class="space-glow glow-a"></div><div class="space-glow glow-b"></div>
+            <canvas class="battle-fx-canvas" id="battleFxCanvas" aria-hidden="true"></canvas>
+            <div class="danger-vignette" aria-hidden="true"></div>
             <div class="star-curtain" id="starCurtain" aria-hidden="true"></div>
-            <div class="impact-flash" aria-hidden="true"></div>
+            <div class="impact-flash" aria-hidden="true"><i></i></div>
+            <div class="impact-shockwaves" aria-hidden="true"><i></i><i></i><i></i></div>
+            <div class="impact-debris" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
             <div class="shower-meter" id="showerMeter" aria-hidden="true"><span id="distanceFill"></span><i>★</i></div>
             <div class="hero-zone" id="heroZone">
               <div class="hero-cat-crop"><img class="hero-cat" src="assets/edukass-cat-transparent.png" alt="EDUKASS"></div>
               <div class="hero-shadow"></div>
               <div class="hero-spark" aria-hidden="true">✦</div>
+              <div class="hero-alert" aria-hidden="true">!</div>
+              <div class="hero-shield" aria-hidden="true"><i></i><i></i><i></i></div>
             </div>
           </div>
         </div>
@@ -202,6 +208,8 @@
     <section id="resultScreen" class="screen" aria-labelledby="resultTitle">
       <div class="result-card">
         <div class="result-animation reward-scene" id="rewardScene" aria-hidden="true">
+          <canvas class="reward-fx-canvas" id="rewardFxCanvas"></canvas>
+          <div class="reward-aurora"></div>
           <div class="reward-space-stars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
           <div class="reward-speed-lines"><i></i><i></i><i></i><i></i><i></i></div>
           <div class="reward-flash"></div>
@@ -215,6 +223,7 @@
           </div>
           <div class="reward-portal"><i></i><b></b><span>✦</span></div>
           <div class="reward-next-planet"></div>
+          <div class="reward-impact-ground"><i></i><i></i><i></i></div>
           <div class="result-cat-crop"><img class="result-cat" src="assets/edukass-cat-transparent.png" alt=""></div>
         </div>
         <div class="reward-pill" id="rewardPill">★ +1 TÄHEENERGIA</div>
@@ -230,6 +239,6 @@
     </section>
   </main>
 
-  <script src="game.js?v=24"></script>
+  <script src="game.js?v=25"></script>
 </body>
 </html>

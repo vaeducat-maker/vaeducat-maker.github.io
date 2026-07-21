@@ -855,3 +855,118 @@ button{color:inherit;touch-action:manipulation}
   @keyframes energyArcToPortal{0%{transform:translate(-48px,28px) scale(.22);opacity:0}24%{opacity:1}62%{transform:translate(100px,-45px) scale(.95)}100%{transform:translate(222px,0) scale(.08);opacity:0}}
   @keyframes cinematicLaunch{0%,47%{transform:translate(-50%,-50%) rotate(8deg) scale(.8)}58%{transform:translate(-58%,-59%) rotate(5deg) scale(.9);filter:drop-shadow(0 0 28px #ffd34d)}78%{transform:translate(95%,-52%) rotate(74deg) scale(.45)}100%{transform:translate(205%,-51%) rotate(86deg) scale(.05);opacity:0}}
 }
+
+/* v25 game-cinematic layer: anticipation, impact, particles and stronger story beats. */
+.battle-fx-canvas,.reward-fx-canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.battle-fx-canvas{z-index:5}
+.reward-fx-canvas{z-index:20}
+.danger-vignette{position:absolute;z-index:4;inset:-2px;opacity:0;pointer-events:none;background:radial-gradient(circle at 50% 72%,transparent 0 28%,rgba(255,91,83,.12) 58%,rgba(7,8,34,.74) 100%);mix-blend-mode:screen;transition:opacity .6s ease}
+.battle-stage.danger-near .danger-vignette{opacity:.32;animation:vignetteBreathe 1.4s ease-in-out infinite alternate}
+.battle-stage.danger-high .danger-vignette{opacity:.62;animation-duration:.78s}
+.battle-stage.danger-critical .danger-vignette{opacity:1;animation-duration:.34s}
+.battle-stage.danger-near .star-curtain{filter:drop-shadow(0 0 14px rgba(255,211,77,.72)) drop-shadow(0 0 24px rgba(255,94,83,.18))}
+.battle-stage.danger-high .star-curtain{animation:dangerShowerSurge .54s ease-in-out infinite alternate}
+.battle-stage.danger-critical:not(.is-impact){animation:criticalCamera .2s linear infinite}
+.battle-stage.danger-critical:not(.is-impact) .star-curtain{filter:drop-shadow(0 0 18px #ffd34d) drop-shadow(0 0 35px rgba(255,79,89,.65));animation-duration:.2s}
+.battle-stage.danger-high .shower-meter{box-shadow:inset 0 0 0 1px rgba(255,255,255,.52),0 0 21px rgba(255,154,60,.72);animation:meterAlarm .72s ease-in-out infinite alternate}
+.battle-stage.danger-critical .shower-meter{animation-duration:.28s}
+
+.hero-alert{position:absolute;z-index:12;right:4%;top:-15%;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;opacity:0;transform:translateY(18px) scale(.3) rotate(-10deg);color:#17365f;background:#ffd34d;border:4px solid #fff;font-size:1.65rem;font-weight:1000;box-shadow:0 0 0 5px rgba(255,211,77,.15),0 8px 16px rgba(7,13,41,.34)}
+.hero-zone.danger-near .hero-alert{animation:alertPop .62s cubic-bezier(.2,.9,.25,1.35) both}
+.hero-zone.danger-near:not(.impact) .hero-cat{animation:catLooksUp 1.2s ease-in-out infinite alternate;filter:drop-shadow(0 15px 11px rgba(7,13,41,.42)) drop-shadow(0 0 8px rgba(255,211,77,.22))}
+.hero-zone.danger-high:not(.impact) .hero-cat{animation:catNervous .42s ease-in-out infinite alternate}
+.hero-zone.danger-critical:not(.impact) .hero-cat{animation:catPanic .11s linear infinite;filter:drop-shadow(0 13px 9px rgba(7,13,41,.48)) drop-shadow(0 0 16px rgba(255,154,60,.45))}
+.hero-zone.danger-high .hero-shadow{animation:shadowPulse .45s ease-in-out infinite alternate}
+
+.hero-shield{position:absolute;z-index:10;left:50%;top:40%;width:118%;aspect-ratio:1.45;border:5px solid rgba(255,255,255,.9);border-radius:50%;opacity:0;transform:translate(-50%,-50%) scale(.25);background:radial-gradient(ellipse,rgba(255,255,255,.23),rgba(112,217,207,.18) 45%,rgba(115,85,183,.1) 65%,transparent 68%);box-shadow:inset 0 0 35px rgba(255,255,255,.8),0 0 28px rgba(112,217,207,.9)}
+.hero-shield i{position:absolute;left:50%;top:50%;width:2px;height:34%;background:rgba(255,255,255,.8);transform-origin:0 0;opacity:0}
+.hero-shield i:nth-child(1){transform:rotate(22deg)}.hero-shield i:nth-child(2){transform:rotate(137deg)}.hero-shield i:nth-child(3){transform:rotate(252deg)}
+
+.impact-shockwaves{position:absolute;z-index:15;left:50%;top:72%;width:18px;height:18px;pointer-events:none;transform:translate(-50%,-50%)}
+.impact-shockwaves i{position:absolute;inset:0;border:5px solid #fff;border-radius:50%;opacity:0;box-shadow:0 0 22px #ffd34d}
+.impact-debris{position:absolute;z-index:14;left:50%;top:74%;width:1px;height:1px;pointer-events:none}
+.impact-debris i{--angle:0deg;--distance:170px;position:absolute;width:10px;height:19px;border-radius:60% 20% 60% 30%;opacity:0;background:#ffd34d;box-shadow:0 0 11px currentColor;transform:rotate(var(--angle)) translateY(0)}
+.impact-debris i:nth-child(2){--angle:45deg;--distance:210px;background:#fff}.impact-debris i:nth-child(3){--angle:90deg;--distance:155px;background:#ff9a3c}.impact-debris i:nth-child(4){--angle:135deg;--distance:205px;background:#70d9cf}.impact-debris i:nth-child(5){--angle:180deg;--distance:180px;background:#fff}.impact-debris i:nth-child(6){--angle:225deg;--distance:220px;background:#e64e89}.impact-debris i:nth-child(7){--angle:270deg;--distance:160px;background:#ffd34d}.impact-debris i:nth-child(8){--angle:315deg;--distance:200px;background:#70d9cf}
+
+.battle-stage.is-impact{animation:impactCameraEpic 2.05s cubic-bezier(.22,.74,.2,1) both}
+.battle-stage.is-impact .danger-vignette{opacity:1;animation:impactVignette 2.05s ease-out both}
+.battle-stage.is-impact .star-curtain{animation:meteorCollapse 1.05s cubic-bezier(.18,.75,.22,1) both;filter:drop-shadow(0 0 28px #fff) drop-shadow(0 0 52px #ff9a3c)}
+.battle-stage.is-impact .star-curtain span{animation:starImpactEpic 1.05s cubic-bezier(.15,.8,.3,1) both}
+.battle-stage.is-impact .impact-flash{animation:impactFlashEpic 2.05s ease-out both}
+.battle-stage.is-impact .impact-flash i{position:absolute;left:50%;top:72%;width:32px;height:32px;border-radius:50%;transform:translate(-50%,-50%);background:#fff;box-shadow:0 0 35px 18px #fff,0 0 70px 40px #ffd34d,0 0 130px 75px rgba(255,112,72,.72);animation:impactCore 2.05s ease-out both}
+.battle-stage.is-impact .impact-shockwaves i:nth-child(1){animation:shockwave 1s .18s ease-out both}.battle-stage.is-impact .impact-shockwaves i:nth-child(2){animation:shockwave 1.15s .34s ease-out both}.battle-stage.is-impact .impact-shockwaves i:nth-child(3){animation:shockwave 1.3s .5s ease-out both}
+.battle-stage.is-impact .impact-debris i{animation:debrisBurst 1.18s .2s cubic-bezier(.15,.65,.25,1) both}
+.hero-zone.impact .hero-cat{animation:heroImpactEpic 2.05s cubic-bezier(.2,.75,.3,1) both;filter:drop-shadow(0 0 18px rgba(255,255,255,.95)) drop-shadow(0 18px 12px rgba(7,13,41,.5))}
+.hero-zone.impact .hero-alert{animation:alertFly 1s ease-out both}
+.hero-zone.impact .hero-shield{animation:shieldImpact 2.05s ease-out both}
+.hero-zone.impact .hero-shield i{animation:shieldCrack .55s .5s ease-out both}
+.hero-zone.impact .hero-shadow{animation:impactShadow 2.05s ease-out both}
+
+.reward-aurora{position:absolute;z-index:1;inset:-35%;opacity:.22;background:conic-gradient(from 40deg,transparent,#70d9cf,transparent 25%,#e64e89,transparent 55%,#ffd34d,transparent 78%);filter:blur(24px);animation:auroraTurn 8s linear infinite}
+.reward-impact-ground{position:absolute;z-index:4;left:17%;bottom:5%;width:52%;height:18%;opacity:0;border-radius:50%;background:radial-gradient(ellipse,rgba(255,211,77,.72),rgba(255,154,60,.25) 38%,transparent 68%)}
+.reward-impact-ground i{position:absolute;left:50%;top:45%;width:10px;height:10px;border:3px solid #fff;border-radius:50%;opacity:0;transform:translate(-50%,-50%)}
+.reward-failed.is-playing .reward-impact-ground{animation:failedGroundGlow 2.1s ease-in-out infinite}
+.reward-failed.is-playing .reward-impact-ground i:nth-child(1){animation:failedRing 1.2s .05s ease-out infinite}.reward-failed.is-playing .reward-impact-ground i:nth-child(2){animation:failedRing 1.2s .32s ease-out infinite}.reward-failed.is-playing .reward-impact-ground i:nth-child(3){animation:failedRing 1.2s .59s ease-out infinite}
+.reward-failed.is-playing .result-cat{animation:catRecover 2.2s ease-in-out infinite}
+.reward-failed.is-playing .result-cat-crop:after{content:"✦  ✧  ★";position:absolute;left:29%;top:4%;color:#ffd34d;font-size:1.25rem;letter-spacing:.42em;text-shadow:0 0 9px #ff9a3c;animation:dizzyOrbit 2.2s linear infinite}
+
+.reward-ship-found.is-playing{animation:sceneMagnetism 4.4s ease-in-out both}
+.reward-ship-found.is-playing .reward-space-stars{animation:starsRushIn 1.55s ease-out both}
+.reward-engine.is-playing{animation:sceneEngineIgnition 3.25s ease-in-out both}
+.reward-engine.is-playing .reward-aurora{animation:engineAurora 3.2s ease-out both}
+.reward-engine.is-playing .reward-space-stars{animation:engineStarBlast 3.2s ease-out both}
+.reward-launch.is-playing{animation:scenePortalPull 3.9s ease-in-out both}
+.reward-launch.is-playing .reward-aurora{opacity:.56;animation:portalAurora 3.9s ease-in-out both}
+.reward-launch.is-playing .reward-space-stars{animation:warpStars 3.9s ease-in-out both}
+.reward-launch.is-playing .reward-portal{animation:portalBreathe 3.9s ease-in-out both}
+.reward-ship-step.is-playing,.reward-engine-step.is-playing,.reward-portal-step.is-playing{animation:sceneEnergyKick 1.65s ease-out both}
+
+@keyframes vignetteBreathe{to{filter:brightness(1.35);transform:scale(1.035)}}
+@keyframes dangerShowerSurge{to{transform:translateY(8px) scale(1.025)}}
+@keyframes criticalCamera{0%{transform:translate(0,0)}25%{transform:translate(-1px,1px)}50%{transform:translate(1px,-1px)}75%{transform:translate(1px,1px)}100%{transform:translate(-1px,-1px)}}
+@keyframes meterAlarm{to{filter:brightness(1.35);transform:scaleX(1.24)}}
+@keyframes alertPop{0%{opacity:0;transform:translateY(18px) scale(.3) rotate(-10deg)}55%{opacity:1;transform:translateY(-7px) scale(1.18) rotate(7deg)}100%{opacity:1;transform:none}}
+@keyframes catLooksUp{0%{transform:scale(1.25) translateY(-10%) rotate(0)}100%{transform:scale(1.25) translateY(-12%) rotate(-2deg)}}
+@keyframes catNervous{0%{transform:scale(1.25) translate(-.5%,-10%) rotate(-1deg)}100%{transform:scale(1.25) translate(.5%,-9%) rotate(1deg)}}
+@keyframes catPanic{0%{transform:scale(1.25) translate(-1.2%,-9%) rotate(-1deg)}50%{transform:scale(1.25) translate(1.2%,-10%) rotate(1deg)}100%{transform:scale(1.25) translate(-1%,-9%) rotate(0)}}
+@keyframes shadowPulse{to{transform:scaleX(1.18);opacity:.75}}
+@keyframes impactCameraEpic{0%,8%{transform:none;filter:brightness(1)}10%{transform:scale(1.025);filter:brightness(.78)}13%{transform:translate(-8px,5px) scale(1.035);filter:brightness(1.8)}17%{transform:translate(7px,-5px) scale(1.03)}22%{transform:translate(-5px,4px) scale(1.024)}30%{transform:translate(4px,-3px) scale(1.018)}42%{transform:translate(-2px,2px) scale(1.01)}65%{transform:none;filter:brightness(.82)}100%{transform:scale(.985);filter:brightness(.55) saturate(.78)}}
+@keyframes impactVignette{0%,8%{opacity:.75}13%{opacity:0}20%{opacity:1}100%{opacity:.92;background:radial-gradient(circle at 50% 72%,transparent 0 25%,rgba(255,91,83,.17) 50%,rgba(7,8,34,.92) 100%)}}
+@keyframes meteorCollapse{0%,7%{transform:none}20%{transform:translateY(18%) scale(1.08)}36%{transform:translateY(63%) scale(1.2)}100%{transform:translateY(92%) scale(1.45);opacity:0}}
+@keyframes starImpactEpic{0%{opacity:1}35%{transform:translateY(44px) scale(1.5);opacity:1}100%{transform:translateY(130px) scale(.25) rotate(160deg);opacity:0}}
+@keyframes impactFlashEpic{0%,8%{opacity:0}12%{opacity:1}18%{opacity:.08}25%{opacity:.62}42%{opacity:.12}100%{opacity:0}}
+@keyframes impactCore{0%,8%{opacity:0;transform:translate(-50%,-50%) scale(.05)}13%{opacity:1;transform:translate(-50%,-50%) scale(1.45)}22%{opacity:.85;transform:translate(-50%,-50%) scale(.75)}60%{opacity:.25;transform:translate(-50%,-50%) scale(2.8)}100%{opacity:0;transform:translate(-50%,-50%) scale(4.5)}}
+@keyframes shockwave{0%{opacity:.95;transform:translate(-50%,-50%) scale(.15)}100%{opacity:0;transform:translate(-50%,-50%) scale(23)}}
+@keyframes debrisBurst{0%,8%{opacity:0;transform:rotate(var(--angle)) translateY(0) scale(.2)}19%{opacity:1}100%{opacity:0;transform:rotate(var(--angle)) translateY(calc(0px - var(--distance))) rotate(260deg) scale(.65)}}
+@keyframes heroImpactEpic{0%,8%{transform:scale(1.25) translateY(-10%)}11%{transform:scale(1.32) translateY(-17%) scaleY(1.04)}18%{transform:scale(1.2) translateY(-1%) scaleY(.78) rotate(-4deg)}30%{transform:scale(1.22) translateY(-3%) scaleY(.84) rotate(3deg)}54%{transform:scale(1.21) translateY(-2%) scaleY(.82)}78%,100%{transform:scale(1.23) translateY(-4%) scaleY(.88);filter:grayscale(.18) drop-shadow(0 15px 11px rgba(7,13,41,.48))}}
+@keyframes alertFly{0%{opacity:1;transform:none}25%{opacity:1;transform:translate(25px,-30px) scale(1.4) rotate(22deg)}100%{opacity:0;transform:translate(70px,-105px) scale(.4) rotate(120deg)}}
+@keyframes shieldImpact{0%,9%{opacity:0;transform:translate(-50%,-50%) scale(.2)}13%{opacity:1;transform:translate(-50%,-50%) scale(1.12)}21%{opacity:.9;transform:translate(-50%,-50%) scale(.98)}42%{opacity:.7;transform:translate(-50%,-50%) scale(1.04)}72%,100%{opacity:0;transform:translate(-50%,-50%) scale(1.26)}}
+@keyframes shieldCrack{0%{opacity:0;height:0}45%{opacity:1;height:34%}100%{opacity:0;height:43%}}
+@keyframes impactShadow{0%,9%{transform:none}18%{transform:scaleX(1.5);opacity:.75}100%{transform:scaleX(1.1);opacity:.35}}
+@keyframes auroraTurn{to{transform:rotate(360deg)}}
+@keyframes failedGroundGlow{0%,100%{opacity:.28;transform:scale(.82)}50%{opacity:.72;transform:scale(1.08)}}
+@keyframes failedRing{0%{opacity:.8;transform:translate(-50%,-50%) scale(.2)}100%{opacity:0;transform:translate(-50%,-50%) scale(8)}}
+@keyframes catRecover{0%,100%{transform:scale(1.42) translateY(-9%) rotate(-2deg)}25%{transform:scale(1.42) translateY(-7%) rotate(3deg)}50%{transform:scale(1.42) translateY(-10%) rotate(-3deg)}75%{transform:scale(1.42) translateY(-8%) rotate(2deg)}}
+@keyframes dizzyOrbit{to{transform:rotate(360deg)}}
+@keyframes sceneMagnetism{0%{filter:brightness(.72) saturate(.8)}35%{filter:brightness(1.18) saturate(1.18)}48%{transform:scale(1.012)}100%{filter:none;transform:none}}
+@keyframes starsRushIn{0%{transform:scale(1.55);opacity:.15}100%{transform:none;opacity:1}}
+@keyframes sceneEngineIgnition{0%,33%{filter:brightness(.58) saturate(.72)}42%{transform:translateX(-4px);filter:brightness(.72)}45%{transform:translateX(5px)}48%{transform:translateX(-3px)}55%{transform:scale(1.018);filter:brightness(1.72) saturate(1.35)}100%{transform:none;filter:none}}
+@keyframes engineAurora{0%,35%{opacity:.08}58%{opacity:.85;transform:rotate(115deg) scale(1.12)}100%{opacity:.32;transform:rotate(150deg)}}
+@keyframes engineStarBlast{0%,48%{transform:none}64%{transform:translateY(-15px) scale(1.16);opacity:1}100%{transform:translateY(-38px) scale(1.3);opacity:.45}}
+@keyframes scenePortalPull{0%,38%{filter:brightness(.62) saturate(.8)}50%{transform:scale(1.02);filter:brightness(1.45) saturate(1.4)}72%{transform:translateX(-5px) scale(1.025)}100%{transform:none;filter:brightness(1.08)}}
+@keyframes portalAurora{0%{transform:rotate(-80deg) scale(.4);opacity:0}50%{transform:rotate(160deg) scale(1.1);opacity:.78}100%{transform:rotate(410deg) scale(1.5);opacity:.16}}
+@keyframes warpStars{0%,45%{transform:none}62%{transform:scaleX(1.5);filter:blur(1px)}100%{transform:translateX(-38px) scaleX(2.4);opacity:.28;filter:blur(2px)}}
+@keyframes portalBreathe{0%{filter:brightness(.55)}45%{filter:brightness(1.55) drop-shadow(0 0 22px #70d9cf)}70%{transform:translateY(-50%) scale(1.13)}100%{transform:translateY(-50%) scale(1);filter:brightness(1.18)}}
+@keyframes sceneEnergyKick{0%,58%{filter:brightness(.76)}72%{transform:scale(1.012);filter:brightness(1.35)}100%{transform:none;filter:none}}
+
+@media(max-width:620px){
+  .hero-alert{right:-2%;top:-12%;width:36px;height:36px;border-width:3px;font-size:1.35rem}
+  .impact-debris i{--distance:120px}
+  .impact-debris i:nth-child(2),.impact-debris i:nth-child(4),.impact-debris i:nth-child(6),.impact-debris i:nth-child(8){--distance:145px}
+  .hero-shield{width:128%}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .battle-fx-canvas,.reward-fx-canvas{display:none}
+  .battle-stage.danger-critical:not(.is-impact),.battle-stage.is-impact,.hero-zone.impact .hero-cat,.reward-scene.is-playing{animation-duration:.01ms!important;animation-iteration-count:1!important}
+}
