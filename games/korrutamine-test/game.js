@@ -51,6 +51,7 @@ const ROUND_LENGTH=15;
 const ANSWER_DELAYS={exact:480,possiblePrefix:2200,wrong:1050};
 const START_SHOWER_PROGRESS=.08;
 const WRONG_ANSWER_ADVANCE=.105;
+const NAVIGATION_MARKER='edukass-game-v21';
 
 const LEVELS=[
   {id:1,title:'Карточки умножения',short:'Выбор ×',mode:'choice',operation:'multiply',seconds:175,accent:'#70d9cf'},
@@ -89,6 +90,26 @@ let pendingLevelAfterLesson=null;
 let resultAction='map';
 let soundEnabled=loadSoundPreference();
 let audioContext=null;
+
+function navigationState(view,details={}){
+  return {marker:NAVIGATION_MARKER,view,...details};
+}
+
+function navigationHash(view,details={}){
+  if(view==='map')return '#missions';
+  if(view==='explanations')return '#explanations';
+  if(view==='lesson')return `#explanation-${details.mode==='divide'?'division':'multiplication'}`;
+  if(view==='battle')return `#mission-${details.levelId}`;
+  if(view==='result')return '#mission-result';
+  return '';
+}
+
+function writeNavigationState(view,details={},mode='push'){
+  const state=navigationState(view,details);
+  const url=`${location.pathname}${location.search}${navigationHash(view,details)}`;
+  if(mode==='replace')history.replaceState(state,'',url);
+  else history.pushState(state,'',url);
+}
 
 function defaultProgress(){
   return {unlockedLevel:1,completedLevels:[],multiplicationLessonSeen:false,divisionLessonSeen:false,factStats:{}};
@@ -169,8 +190,9 @@ function playSound(kind){
   }
 }
 
-function showScreen(id){
+function showScreen(id,{historyMode='push',historyView=null,historyData={}}={}){
   screens.forEach(screen=>screen.classList.toggle('is-active',screen.id===id));
+  if(historyMode!=='none'&&historyView)writeNavigationState(historyView,historyData,historyMode);
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
@@ -344,7 +366,7 @@ function configureDemoPicker(division){
   });
 }
 
-function showLesson(mode='multiply',pendingLevel=null){
+function showLesson(mode='multiply',pendingLevel=null,{historyMode='push'}={}){
   stopRound();
   currentLessonMode=mode;
   pendingLevelAfterLesson=pendingLevel;
@@ -360,16 +382,16 @@ function showLesson(mode='multiply',pendingLevel=null){
   else if(pendingLevel==='map')lessonContinueButton.textContent='К миссиям';
   else if(Number.isInteger(pendingLevel))lessonContinueButton.textContent=`Открыть миссию ${pendingLevel}`;
   else lessonContinueButton.textContent='Открыть миссию 1';
-  showScreen('lessonScreen');
+  showScreen('lessonScreen',{historyMode,historyView:'lesson',historyData:{mode,pendingLevel}});
 }
 
-function showExplanationHub(){
+function showExplanationHub({historyMode='push'}={}){
   stopRound();
   const divisionUnlocked=progress.divisionLessonSeen||progress.unlockedLevel>=11;
   repeatDivisionButton.disabled=!divisionUnlocked;
   repeatDivisionButton.classList.toggle('locked',!divisionUnlocked);
   repeatDivisionButton.setAttribute('aria-label',divisionUnlocked?'Повторить объяснение деления на 2':'Объяснение деления откроется после миссии 10');
-  showScreen('explanationScreen');
+  showScreen('explanationScreen',{historyMode,historyView:'explanations'});
 }
 
 function renderLevelMap(){
@@ -391,10 +413,10 @@ function renderLevelMap(){
   }));
 }
 
-function showMap(){
+function showMap({historyMode='push'}={}){
   stopRound();
   renderLevelMap();
-  showScreen('mapScreen');
+  showScreen('mapScreen',{historyMode,historyView:'map'});
 }
 
 function requestLevel(levelId){
@@ -405,7 +427,7 @@ function requestLevel(levelId){
   startLevel(levelId);
 }
 
-function startLevel(levelId){
+function startLevel(levelId,{historyMode='push'}={}){
   const level=LEVELS.find(item=>item.id===levelId);
   if(!level)return;
   clearAutoCheck();
@@ -439,7 +461,7 @@ function startLevel(levelId){
   keypad.hidden=choiceMode;
   answerPanelTitle.textContent=choiceMode?'Выбери ответ':'Введи число';
   setShowerPosition();
-  showScreen('battleScreen');
+  showScreen('battleScreen',{historyMode,historyView:'battle',historyData:{levelId}});
   battleStartedAt=Date.now();
   nextQuestion();
   startShowerMotion();
@@ -658,24 +680,59 @@ function finishAttempt(reason){
     resultPrimaryButton.textContent='Повторить миссию';
     resultAction='retry';
   }
-  showScreen('resultScreen');
+  showScreen('resultScreen',{
+    historyMode:'replace',
+    historyView:'result',
+    historyData:{
+      levelId:currentLevel.id,
+      resultAction,
+      resultEyebrow:resultEyebrow.textContent,
+      resultTitle:resultTitle.textContent,
+      resultMessage:resultMessage.textContent,
+      primaryText:resultPrimaryButton.textContent,
+      mistakes,
+      elapsed
+    }
+  });
 }
 
 function runResultAction(){
   if(resultAction==='retry'){
-    startLevel(currentLevel.id);
+    startLevel(currentLevel.id,{historyMode:'replace'});
     return;
   }
   if(resultAction==='next'){
     const nextLevel=Math.min(15,currentLevel.id+1);
     if(nextLevel===11&&!progress.divisionLessonSeen){
-      showLesson('divide',11);
+      showLesson('divide',11,{historyMode:'replace'});
     }else{
-      startLevel(nextLevel);
+      startLevel(nextLevel,{historyMode:'replace'});
     }
     return;
   }
-  showMap();
+  history.back();
+}
+
+function restoreResult(state){
+  stopRound();
+  currentLevel=LEVELS.find(level=>level.id===state.levelId)||currentLevel;
+  resultAction=state.resultAction||'map';
+  resultEyebrow.textContent=state.resultEyebrow||'МИССИЯ ЗАВЕРШЕНА';
+  resultTitle.textContent=state.resultTitle||'Миссия пройдена';
+  resultMessage.textContent=state.resultMessage||'';
+  resultPrimaryButton.textContent=state.primaryText||'К миссиям';
+  mistakeCount.textContent=Number.isInteger(state.mistakes)?state.mistakes:0;
+  timeCount.textContent=formatTime(Number.isInteger(state.elapsed)?state.elapsed:0);
+  showScreen('resultScreen',{historyMode:'none'});
+}
+
+function restoreNavigation(state){
+  if(!state||state.marker!==NAVIGATION_MARKER)return;
+  if(state.view==='map')showMap({historyMode:'none'});
+  else if(state.view==='explanations')showExplanationHub({historyMode:'none'});
+  else if(state.view==='lesson')showLesson(state.mode,state.pendingLevel,{historyMode:'none'});
+  else if(state.view==='battle')startLevel(state.levelId,{historyMode:'none'});
+  else if(state.view==='result')restoreResult(state);
 }
 
 function stopRound(){
@@ -694,7 +751,7 @@ function resetProgress(){
   stopRound();
   localStorage.removeItem(STORAGE_KEY);
   progress=defaultProgress();
-  showLesson('multiply');
+  showLesson('multiply',null,{historyMode:'replace'});
 }
 
 document.querySelectorAll('[data-demo-factor]').forEach(button=>button.addEventListener('click',()=>updateDemo(Number(button.dataset.demoFactor))));
@@ -704,22 +761,25 @@ lessonContinueButton.addEventListener('click',()=>{
   saveProgress();
   if(pendingLevelAfterLesson==='explanations'){
     pendingLevelAfterLesson=null;
-    showExplanationHub();
+    history.back();
   }else if(pendingLevelAfterLesson==='map'){
     pendingLevelAfterLesson=null;
-    showMap();
+    history.back();
   }else if(Number.isInteger(pendingLevelAfterLesson)){
     const level=pendingLevelAfterLesson;
     pendingLevelAfterLesson=null;
-    startLevel(level);
-  }else startLevel(1);
+    startLevel(level,{historyMode:'replace'});
+  }else{
+    writeNavigationState('map',{},'replace');
+    startLevel(1);
+  }
 });
 document.querySelector('#repeatLessonButton').addEventListener('click',showExplanationHub);
 document.querySelector('#repeatMultiplicationButton').addEventListener('click',()=>showLesson('multiply','explanations'));
 repeatDivisionButton.addEventListener('click',()=>showLesson('divide','explanations'));
-document.querySelector('#explanationBackButton').addEventListener('click',showMap);
-document.querySelector('#backToMapButton').addEventListener('click',showMap);
-document.querySelector('#resultMapButton').addEventListener('click',showMap);
+document.querySelector('#explanationBackButton').addEventListener('click',()=>history.back());
+document.querySelector('#backToMapButton').addEventListener('click',()=>history.back());
+document.querySelector('#resultMapButton').addEventListener('click',()=>history.back());
 resultPrimaryButton.addEventListener('click',runResultAction);
 document.querySelector('#resetProgressButton').addEventListener('click',resetProgress);
 soundToggleButton.addEventListener('click',toggleSound);
@@ -739,12 +799,15 @@ document.addEventListener('keydown',event=>{
   }
 });
 
+window.addEventListener('popstate',event=>restoreNavigation(event.state));
+
 buildStars();
 updateDemo(4);
 updateSoundButton();
 renderLevelMap();
-if(progress.multiplicationLessonSeen)showMap();
-else showLesson('multiply');
+if(history.state?.marker===NAVIGATION_MARKER)restoreNavigation(history.state);
+else if(progress.multiplicationLessonSeen)showMap({historyMode:'replace'});
+else showLesson('multiply',null,{historyMode:'replace'});
 
 window.__EDUKASS_TEST__={
   LEVELS,
