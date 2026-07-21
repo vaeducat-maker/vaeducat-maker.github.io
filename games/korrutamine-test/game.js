@@ -44,6 +44,14 @@ const factorPicker=document.querySelector('#factorPicker');
 const mobileCorrectCount=document.querySelector('#mobileCorrectCount');
 const mobileProgressPill=document.querySelector('#mobileProgressPill');
 const repeatDivisionButton=document.querySelector('#repeatDivisionButton');
+const storyStage=document.querySelector('#storyStage');
+const storyPhaseKicker=document.querySelector('#storyPhaseKicker');
+const storyPhaseTitle=document.querySelector('#storyPhaseTitle');
+const shipGoalCount=document.querySelector('#shipGoalCount');
+const engineGoalCount=document.querySelector('#engineGoalCount');
+const portalGoalCount=document.querySelector('#portalGoalCount');
+const rewardScene=document.querySelector('#rewardScene');
+const rewardPill=document.querySelector('#rewardPill');
 
 const STORAGE_KEY='edukass-chapter-one-v18';
 const SOUND_KEY='edukass-sound-enabled';
@@ -51,7 +59,7 @@ const ROUND_LENGTH=15;
 const ANSWER_DELAYS={exact:480,possiblePrefix:2200,wrong:1050};
 const START_SHOWER_PROGRESS=.08;
 const WRONG_ANSWER_ADVANCE=.105;
-const NAVIGATION_MARKER='edukass-game-v22';
+const NAVIGATION_MARKER='edukass-game-v23';
 
 const LEVELS=[
   {id:1,title:'Korrutamise valik',short:'Vali ×',mode:'choice',operation:'multiply',seconds:175,accent:'#70d9cf'},
@@ -187,6 +195,16 @@ function playSound(kind){
   if(kind==='impact'){
     playTone(165,0,.22,.045,'triangle');
     playTone(120,.14,.28,.035,'sine');
+  }
+  if(kind==='reward'){
+    playTone(620,0,.08,.03,'sine');
+    playTone(820,.09,.1,.035,'sine');
+    playTone(1040,.2,.14,.035,'sine');
+  }
+  if(kind==='launch'){
+    playTone(330,0,.12,.028,'sine');
+    playTone(520,.12,.16,.034,'sine');
+    playTone(780,.28,.2,.04,'sine');
   }
 }
 
@@ -394,8 +412,43 @@ function showExplanationHub({historyMode='push'}={}){
   showScreen('explanationScreen',{historyMode,historyView:'explanations'});
 }
 
+function completedMissionCount(){
+  return new Set(progress.completedLevels.filter(levelId=>levelId>=1&&levelId<=15)).size;
+}
+
+function renderStoryProgress(){
+  const completed=completedMissionCount();
+  const shipProgress=Math.min(5,completed);
+  const engineProgress=Math.min(5,Math.max(0,completed-5));
+  const portalProgress=Math.min(5,Math.max(0,completed-10));
+  const phase=completed<5?'ship':completed<10?'engine':completed<15?'portal':'complete';
+
+  storyStage.dataset.phase=phase;
+  storyStage.dataset.completed=String(completed);
+  storyStage.classList.toggle('has-engine',engineProgress>0);
+  storyStage.classList.toggle('has-portal',portalProgress>0);
+  storyStage.classList.toggle('is-complete',completed===15);
+  storyPhaseKicker.textContent=phase==='ship'?'1. SIHT':phase==='engine'?'2. SIHT':phase==='portal'?'3. SIHT':'PEATÜKK LÄBITUD';
+  storyPhaseTitle.textContent=phase==='ship'?'Leia kosmoselaev':phase==='engine'?'Käivita mootor':phase==='portal'?'Ava tähevärav':'Uus planeet on avatud!';
+  shipGoalCount.textContent=`${shipProgress}/5`;
+  engineGoalCount.textContent=`${engineProgress}/5`;
+  portalGoalCount.textContent=`${portalProgress}/5`;
+
+  document.querySelectorAll('[data-ship-part]').forEach(part=>part.classList.toggle('is-found',Number(part.dataset.shipPart)<=shipProgress));
+  document.querySelectorAll('[data-engine-cell]').forEach(cell=>cell.classList.toggle('is-charged',Number(cell.dataset.engineCell)<=engineProgress));
+  document.querySelectorAll('[data-portal-spark]').forEach(spark=>spark.classList.toggle('is-lit',Number(spark.dataset.portalSpark)<=portalProgress));
+  document.querySelectorAll('[data-story-goal]').forEach(goal=>{
+    const goalName=goal.dataset.storyGoal;
+    const goalPhase=goalName==='ship'?'ship':goalName==='engine'?'engine':'portal';
+    const done=goalName==='ship'?shipProgress===5:goalName==='engine'?engineProgress===5:portalProgress===5;
+    goal.classList.toggle('is-done',done);
+    goal.classList.toggle('is-active',phase===goalPhase);
+  });
+}
+
 function renderLevelMap(){
-  completedLevelCount.textContent=progress.completedLevels.length;
+  completedLevelCount.textContent=completedMissionCount();
+  renderStoryProgress();
   levelGrid.replaceChildren(...LEVELS.map(level=>{
     const button=document.createElement('button');
     const completed=progress.completedLevels.includes(level.id);
@@ -659,6 +712,7 @@ function finishAttempt(reason){
   const elapsed=Math.round((Date.now()-battleStartedAt)/1000);
   const levelPassed=reason==='complete'&&correct===ROUND_LENGTH;
   const chapterComplete=levelPassed&&currentLevel.id===15;
+  const firstCompletion=levelPassed&&!progress.completedLevels.includes(currentLevel.id);
 
   mistakeCount.textContent=mistakes;
   timeCount.textContent=formatTime(elapsed);
@@ -668,12 +722,29 @@ function finishAttempt(reason){
     progress.completedLevels.sort((a,b)=>a-b);
     progress.unlockedLevel=Math.min(15,Math.max(progress.unlockedLevel,currentLevel.id+1));
     saveProgress();
-    resultEyebrow.textContent=chapterComplete?'ESIMESED 15 MISSIOONI LÄBITUD':'MISSIOON LÄBITUD';
-    resultTitle.textContent=chapterComplete?'Esimene peatükk läbitud':'Missioon läbitud';
-    resultMessage.textContent=chapterComplete?'Esimene peatükk on valmis.':'15 õiget vastust. Järgmine missioon on avatud.';
-    resultPrimaryButton.textContent=chapterComplete?'Tagasi missioonide juurde':currentLevel.id===10?'Jagamise juurde':'Järgmine missioon';
+    configureRewardScene(currentLevel.id,firstCompletion,true);
+    resultEyebrow.textContent=chapterComplete?'ESIMENE PEATÜKK LÄBITUD':'MISSIOON LÄBITUD';
+    if(currentLevel.id===5){
+      resultTitle.textContent='Kosmoselaev leitud!';
+      resultMessage.textContent='Nüüd käivitame mootori.';
+      resultPrimaryButton.textContent='Käivita mootor';
+    }else if(currentLevel.id===10){
+      resultTitle.textContent='Mootor töötab!';
+      resultMessage.textContent='Järgmine siht: tähevärav.';
+      resultPrimaryButton.textContent='Jagamise juurde';
+    }else if(chapterComplete){
+      resultTitle.textContent='Tähevärav on avatud!';
+      resultMessage.textContent='Uus planeet ootab.';
+      resultPrimaryButton.textContent='Vaata uut planeeti';
+    }else{
+      resultTitle.textContent=firstCompletion?'Täheenergia +1':'Missioon läbitud';
+      resultMessage.textContent=currentLevel.id<5?'Laev ilmub täht-tähelt.':currentLevel.id<10?'Mootor kogub jõudu.':'Tähevärav avaneb.';
+      resultPrimaryButton.textContent='Järgmine missioon';
+    }
     resultAction=chapterComplete?'map':'next';
+    playSound(chapterComplete?'launch':'reward');
   }else{
+    configureRewardScene(currentLevel?.id||1,false,false);
     resultEyebrow.textContent='PROOVIME VEEL';
     resultTitle.textContent='Tähesadu jõudis kiisuni';
     resultMessage.textContent='Kogu 15 õiget vastust enne, kui tähesadu kiisuni jõuab.';
@@ -690,10 +761,28 @@ function finishAttempt(reason){
       resultTitle:resultTitle.textContent,
       resultMessage:resultMessage.textContent,
       primaryText:resultPrimaryButton.textContent,
+      levelPassed,
+      firstCompletion,
       mistakes,
       elapsed
     }
   });
+}
+
+function configureRewardScene(levelId,firstCompletion,levelPassed){
+  rewardScene.className='result-animation reward-scene';
+  rewardPill.hidden=!levelPassed;
+  if(!levelPassed){
+    rewardScene.classList.add('reward-failed');
+    return;
+  }
+  rewardPill.textContent=firstCompletion?'★ +1 TÄHEENERGIA':'★ TÄHEENERGIA ON KOGUTUD';
+  if(levelId===15)rewardScene.classList.add('reward-launch');
+  else if(levelId===10)rewardScene.classList.add('reward-engine');
+  else if(levelId===5)rewardScene.classList.add('reward-ship-found');
+  else if(levelId>10)rewardScene.classList.add('reward-portal-step');
+  else if(levelId>5)rewardScene.classList.add('reward-engine-step');
+  else rewardScene.classList.add('reward-ship-step');
 }
 
 function runResultAction(){
@@ -721,6 +810,7 @@ function restoreResult(state){
   resultTitle.textContent=state.resultTitle||'Missioon läbitud';
   resultMessage.textContent=state.resultMessage||'';
   resultPrimaryButton.textContent=state.primaryText||'Missioonide juurde';
+  configureRewardScene(state.levelId,state.firstCompletion!==false,state.levelPassed!==false);
   mistakeCount.textContent=Number.isInteger(state.mistakes)?state.mistakes:0;
   timeCount.textContent=formatTime(Number.isInteger(state.elapsed)?state.elapsed:0);
   showScreen('resultScreen',{historyMode:'none'});

@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#182452">
   <title>EDUKASS — 1. peatükk: üks ja kaks</title>
   <meta name="description" content="EDUKASSi esimese peatüki prototüüp: ühe ja kahega korrutamine ning jagamine.">
-  <link rel="stylesheet" href="game.css?v=22">
+  <link rel="stylesheet" href="game.css?v=23">
 </head>
 <body>
   <header class="topbar">
@@ -103,10 +103,46 @@
           <p class="eyebrow">PEATÜKK 1 · ÜKS JA KAKS</p>
           <h1 id="mapTitle">Esimesed 15 missiooni</h1>
         </div>
-        <div class="energy-panel"><span>Läbitud</span><strong><span id="completedLevelCount">0</span>/15</strong></div>
+        <div class="energy-panel"><span>Täheenergia</span><strong>★ <span id="completedLevelCount">0</span>/15</strong></div>
       </div>
 
       <div class="chapter-board">
+        <section class="story-progress" aria-labelledby="storyPhaseTitle">
+          <div class="story-stage" id="storyStage">
+            <div class="story-status">
+              <span id="storyPhaseKicker">1. SIHT</span>
+              <strong id="storyPhaseTitle">Leia kosmoselaev</strong>
+            </div>
+
+            <div class="story-cat-crop" aria-hidden="true"><img src="assets/edukass-cat-transparent.png" alt=""></div>
+
+            <div class="story-ship" id="storyShip" aria-hidden="true">
+              <span class="ship-part ship-body" data-ship-part="1"></span>
+              <span class="ship-part ship-window" data-ship-part="2"></span>
+              <span class="ship-part ship-wing ship-wing-left" data-ship-part="3"></span>
+              <span class="ship-part ship-wing ship-wing-right" data-ship-part="4"></span>
+              <span class="ship-part ship-antenna" data-ship-part="5"></span>
+              <span class="ship-engine">
+                <i data-engine-cell="1"></i><i data-engine-cell="2"></i><i data-engine-cell="3"></i><i data-engine-cell="4"></i><i data-engine-cell="5"></i>
+              </span>
+              <span class="ship-flame"></span>
+            </div>
+
+            <div class="story-portal" id="storyPortal" aria-hidden="true">
+              <span class="portal-ring"></span>
+              <i data-portal-spark="1">★</i><i data-portal-spark="2">✦</i><i data-portal-spark="3">★</i><i data-portal-spark="4">✦</i><i data-portal-spark="5">★</i>
+            </div>
+
+            <div class="next-planet" id="nextPlanet" aria-hidden="true"><span>2</span></div>
+          </div>
+
+          <div class="story-goals" aria-label="Peatüki eesmärgid">
+            <div class="story-goal is-active" data-story-goal="ship"><span>Leia laev</span><strong id="shipGoalCount">0/5</strong></div>
+            <div class="story-goal" data-story-goal="engine"><span>Käivita mootor</span><strong id="engineGoalCount">0/5</strong></div>
+            <div class="story-goal" data-story-goal="portal"><span>Ava tähevärav</span><strong id="portalGoalCount">0/5</strong></div>
+          </div>
+        </section>
+
         <div class="chapter-route-head"><span>Korrutamine</span><span>Jagamine</span></div>
         <div class="level-grid" id="levelGrid" aria-label="Esimese peatüki missioonid"></div>
       </div>
@@ -159,10 +195,19 @@
 
     <section id="resultScreen" class="screen" aria-labelledby="resultTitle">
       <div class="result-card">
-        <div class="result-animation" aria-hidden="true">
-          <div class="crystal">★</div>
+        <div class="result-animation reward-scene" id="rewardScene" aria-hidden="true">
+          <div class="reward-space-stars">✦　★　✧　✦　★</div>
+          <div class="crystal" id="rewardStar">★</div>
+          <div class="reward-ship">
+            <span class="reward-ship-body"><i></i></span>
+            <span class="reward-ship-wing reward-ship-wing-left"></span>
+            <span class="reward-ship-wing reward-ship-wing-right"></span>
+            <span class="reward-ship-flame"></span>
+          </div>
+          <div class="reward-portal"><i></i><span>✦</span></div>
           <div class="result-cat-crop"><img class="result-cat" src="assets/edukass-cat-transparent.png" alt=""></div>
         </div>
+        <div class="reward-pill" id="rewardPill">★ +1 TÄHEENERGIA</div>
         <p class="eyebrow" id="resultEyebrow">MISSIOON LÄBITUD</p>
         <h1 id="resultTitle">Missioon läbitud</h1>
         <p id="resultMessage">15 õiget vastust.</p>
@@ -175,6 +220,6 @@
     </section>
   </main>
 
-  <script src="game.js?v=22"></script>
+  <script src="game.js?v=23"></script>
 </body>
 </html>
