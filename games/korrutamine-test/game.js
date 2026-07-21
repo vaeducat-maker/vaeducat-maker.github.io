@@ -53,6 +53,7 @@ const engineGoalCount=document.querySelector('#engineGoalCount');
 const portalGoalCount=document.querySelector('#portalGoalCount');
 const rewardScene=document.querySelector('#rewardScene');
 const rewardPill=document.querySelector('#rewardPill');
+const resultScreen=document.querySelector('#resultScreen');
 const battleFxCanvas=document.querySelector('#battleFxCanvas');
 const rewardFxCanvas=document.querySelector('#rewardFxCanvas');
 
@@ -62,7 +63,7 @@ const ROUND_LENGTH=15;
 const ANSWER_DELAYS={exact:480,possiblePrefix:2200,wrong:1050};
 const START_SHOWER_PROGRESS=.08;
 const WRONG_ANSWER_ADVANCE=.105;
-const NAVIGATION_MARKER='edukass-game-v25';
+const NAVIGATION_MARKER='edukass-game-v26';
 
 const LEVELS=[
   {id:1,title:'Korrutamise valik',short:'Vali ×',mode:'choice',operation:'multiply',seconds:175,accent:'#70d9cf'},
@@ -309,6 +310,13 @@ function playSound(kind){
     playSweep(460,760,0,.32,.024,'sine');
     playTone(920,.26,.18,.027,'sine');
     playTone(1180,.42,.22,.021,'sine');
+  }
+  if(kind==='rewardReveal'){
+    playSweep(260,920,.18,.82,.038,'sine');
+    playNoise(.28,.62,.028,2800,'highpass');
+    playTone(740,1.03,.09,.038,'triangle');
+    playTone(1040,1.12,.18,.042,'sine');
+    playChord([523,659,784],1.28,.52,.028);
   }
   if(kind==='shipFound'){
     [0,.18,.36,.54,.72].forEach((offset,index)=>{
@@ -1126,27 +1134,67 @@ function finishAttempt(reason){
       elapsed
     }
   });
-  startRewardCinematic(levelPassed,currentLevel.id);
+  startRewardCinematic(levelPassed,currentLevel.id,firstCompletion);
+}
+
+function setRewardProgressState(levelId,firstCompletion){
+  const shipStep=Math.min(5,levelId);
+  const engineStep=Math.min(5,Math.max(0,levelId-5));
+  const portalStep=Math.min(5,Math.max(0,levelId-10));
+  const previousShip=firstCompletion&&levelId<=5?Math.max(0,shipStep-1):shipStep;
+  const previousEngine=firstCompletion&&levelId>=6&&levelId<=10?Math.max(0,engineStep-1):engineStep;
+  const previousPortal=firstCompletion&&levelId>=11?Math.max(0,portalStep-1):portalStep;
+
+  const setState=(selector,previous,current)=>{
+    rewardScene.querySelectorAll(selector).forEach(element=>{
+      element.classList.remove('is-earned','is-new-reward');
+      const step=Number(element.dataset.rewardPart||element.dataset.rewardEngine||element.dataset.rewardPortal);
+      if(step<=previous)element.classList.add('is-earned');
+      else if(firstCompletion&&step===current)element.classList.add('is-new-reward');
+    });
+  };
+
+  setState('[data-reward-part]',levelId>5?5:previousShip,shipStep);
+  setState('[data-reward-engine]',levelId>10?5:previousEngine,engineStep);
+  setState('[data-reward-portal]',previousPortal,portalStep);
+  rewardScene.style.setProperty('--portal-before',String(previousPortal));
+  rewardScene.style.setProperty('--portal-after',String(portalStep));
 }
 
 function configureRewardScene(levelId,firstCompletion,levelPassed){
   rewardScene.className='result-animation reward-scene';
   rewardScene.dataset.level=String(levelId);
+  rewardScene.classList.toggle('first-completion',Boolean(firstCompletion&&levelPassed));
+  rewardScene.classList.toggle('reward-replay',Boolean(!firstCompletion&&levelPassed));
+  resultScreen.classList.remove('reward-cinematic-locked','reward-reveal-complete');
+  resultPrimaryButton.disabled=false;
+  resultMapButton.disabled=false;
   rewardPill.hidden=!levelPassed;
   if(!levelPassed){
     rewardScene.classList.add('reward-failed');
     return;
   }
   rewardPill.textContent=firstCompletion?'★ +1 TÄHEENERGIA':'★ TÄHEENERGIA ON KOGUTUD';
-  if(levelId===15)rewardScene.classList.add('reward-launch');
-  else if(levelId===10)rewardScene.classList.add('reward-engine');
-  else if(levelId===5)rewardScene.classList.add('reward-ship-found');
+  setRewardProgressState(levelId,firstCompletion);
+  if(levelId>10)rewardScene.classList.add('reward-state-portal');
+  else if(levelId>5)rewardScene.classList.add('reward-state-engine');
+  else rewardScene.classList.add('reward-state-ship');
+  if(levelId===15)rewardScene.classList.add('reward-final-launch');
+  else if(levelId===10)rewardScene.classList.add('reward-engine-complete');
+  else if(levelId===5)rewardScene.classList.add('reward-ship-complete');
   else if(levelId>10)rewardScene.classList.add('reward-portal-step');
   else if(levelId>5)rewardScene.classList.add('reward-engine-step');
   else rewardScene.classList.add('reward-ship-step');
 }
 
-function startRewardCinematic(levelPassed,levelId){
+function finishRewardReveal(){
+  resultScreen.classList.remove('reward-cinematic-locked');
+  resultScreen.classList.add('reward-reveal-complete');
+  resultPrimaryButton.disabled=false;
+  resultMapButton.disabled=false;
+}
+
+function startRewardCinematic(levelPassed,levelId,firstCompletion=true){
   clearCinematicTimers();
   rewardFx.stop();
   rewardScene.classList.remove('is-playing');
@@ -1158,34 +1206,43 @@ function startRewardCinematic(levelPassed,levelId){
     return;
   }
 
+  if(firstCompletion){
+    resultScreen.classList.add('reward-cinematic-locked');
+    resultPrimaryButton.disabled=true;
+    resultMapButton.disabled=true;
+    playSound('rewardReveal');
+  }else{
+    resultScreen.classList.add('reward-reveal-complete');
+  }
+
   if(levelId===15){
-    playSound('portalOpen');
-    scheduleCinematic(120,()=>rewardFx.sparkBurst(.82,.5,34,['#70d9cf','#e64e89','#fff'],.82));
-    scheduleCinematic(760,()=>rewardFx.shockwave(.82,.5,'#70d9cf',.92));
-    scheduleCinematic(1580,()=>rewardFx.sparkBurst(.82,.5,72,['#fff','#70d9cf','#e64e89','#ffd34d'],1.12));
-    scheduleCinematic(2260,()=>rewardFx.sparkBurst(.62,.53,52,['#fff','#ffd34d','#ff9a3c'],1.35));
-    scheduleCinematic(2420,()=>rewardFx.shockwave(.75,.5,'#fff',1.15));
+    scheduleCinematic(1050,()=>playSound('portalOpen'));
+    scheduleCinematic(1050,()=>rewardFx.sparkBurst(.84,.22,34,['#70d9cf','#e64e89','#fff'],.82));
+    scheduleCinematic(1760,()=>rewardFx.shockwave(.82,.5,'#70d9cf',.92));
+    scheduleCinematic(2580,()=>rewardFx.sparkBurst(.82,.5,72,['#fff','#70d9cf','#e64e89','#ffd34d'],1.12));
+    scheduleCinematic(3260,()=>rewardFx.sparkBurst(.62,.53,52,['#fff','#ffd34d','#ff9a3c'],1.35));
+    scheduleCinematic(3420,()=>rewardFx.shockwave(.75,.5,'#fff',1.15));
   }else if(levelId===10){
-    playSound('engineStart');
-    [180,380,580,780,980].forEach((delay,index)=>scheduleCinematic(delay,()=>rewardFx.sparkBurst(.665,.68+(index*.008),13,['#ffd34d','#ff9a3c','#fff'],.48)));
-    scheduleCinematic(1160,()=>{
+    scheduleCinematic(1050,()=>playSound('engineStart'));
+    scheduleCinematic(1040,()=>rewardFx.sparkBurst(.695,.73,20,['#ffd34d','#ff9a3c','#fff'],.6));
+    scheduleCinematic(2200,()=>{
       rewardFx.sparkBurst(.665,.72,68,['#fff','#ffd34d','#ff9a3c','#e64e89'],1.25);
       rewardFx.shockwave(.665,.7,'#ffd34d',1.05);
       rewardFx.dustBurst(.665,.88,24);
     });
   }else if(levelId===5){
-    playSound('shipFound');
-    [[.66,.26],[.57,.58],[.75,.58],[.66,.72],[.66,.4]].forEach((point,index)=>scheduleCinematic(140+(index*190),()=>rewardFx.sparkBurst(point[0],point[1],18,['#fff','#70d9cf','#ffd34d'],.62)));
-    scheduleCinematic(1460,()=>{
+    scheduleCinematic(1080,()=>playSound('shipFound'));
+    scheduleCinematic(1050,()=>rewardFx.sparkBurst(.66,.17,24,['#fff','#70d9cf','#ffd34d'],.7));
+    scheduleCinematic(2240,()=>{
       rewardFx.sparkBurst(.66,.52,66,['#fff','#70d9cf','#ffd34d','#e64e89'],1.2);
       rewardFx.shockwave(.66,.52,'#fff',1);
     });
   }else{
-    playSound('storyStep');
     const target=levelId>10?[.84,.5]:levelId>5?[.66,.72]:[.66,.52];
-    scheduleCinematic(720,()=>rewardFx.sparkBurst(target[0],target[1],36,['#fff','#ffd34d','#70d9cf'],.85));
-    scheduleCinematic(780,()=>rewardFx.shockwave(target[0],target[1],'#70d9cf',.7));
+    scheduleCinematic(1020,()=>rewardFx.sparkBurst(target[0],target[1],42,['#fff','#ffd34d','#70d9cf'],.9));
+    scheduleCinematic(1080,()=>rewardFx.shockwave(target[0],target[1],'#70d9cf',.74));
   }
+  if(firstCompletion)scheduleCinematic(levelId===15?5050:(levelId===5||levelId===10?4050:2100),finishRewardReveal);
 }
 
 function runResultAction(){
@@ -1220,7 +1277,7 @@ function restoreResult(state){
   mistakeCount.textContent=Number.isInteger(state.mistakes)?state.mistakes:0;
   timeCount.textContent=formatTime(Number.isInteger(state.elapsed)?state.elapsed:0);
   showScreen('resultScreen',{historyMode:'none'});
-  startRewardCinematic(state.levelPassed!==false,state.levelId);
+  startRewardCinematic(state.levelPassed!==false,state.levelId,state.firstCompletion!==false);
 }
 
 function restoreNavigation(state){

@@ -970,3 +970,112 @@ button{color:inherit;touch-action:manipulation}
   .battle-fx-canvas,.reward-fx-canvas{display:none}
   .battle-stage.danger-critical:not(.is-impact),.battle-stage.is-impact,.hero-zone.impact .hero-cat,.reward-scene.is-playing{animation-duration:.01ms!important;animation-iteration-count:1!important}
 }
+
+/* v26: every first-time reward starts from the previous state and changes on screen. */
+.hero-cat-crop{isolation:isolate}
+.hero-cat-fear{position:absolute;inset:0;opacity:0;transform:scale(1.12) translateY(-2%);transition:opacity .18s ease}
+.hero-cat-neutral{transition:opacity .18s ease}
+.hero-zone.danger-high .hero-cat-neutral,.hero-zone.danger-critical .hero-cat-neutral,.hero-zone.impact .hero-cat-neutral{opacity:0}
+.hero-zone.danger-high .hero-cat-fear,.hero-zone.danger-critical .hero-cat-fear,.hero-zone.impact .hero-cat-fear{opacity:1}
+.hero-zone.danger-high:not(.impact) .hero-cat-fear{animation:catFearBrace .36s ease-in-out infinite alternate}
+.hero-zone.danger-critical:not(.impact) .hero-cat-fear{animation:catFearPanic .1s linear infinite}
+.hero-zone.impact .hero-cat-fear{animation:heroFearImpact 2.05s cubic-bezier(.2,.75,.3,1) both}
+
+.reward-scene .result-cat-crop{left:1%;bottom:-1px;width:218px;height:248px;overflow:visible}
+.reward-scene .result-cat{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;transform:scale(1.18);transform-origin:50% 75%;filter:drop-shadow(0 13px 9px rgba(7,13,41,.46));opacity:0}
+.reward-scene .result-cat-neutral{opacity:1}
+.reward-scene.first-completion .result-cat-neutral{opacity:0}
+.reward-scene.first-completion .result-cat-surprise{opacity:1;animation:catRewardWatch .95s ease-in-out both}
+.reward-scene.first-completion.is-playing .result-cat-surprise{animation:catRewardSurpriseOut 1.34s ease-in-out both}
+.reward-scene.first-completion.is-playing .result-cat-joy{animation:catRewardJoyIn 2.2s .86s cubic-bezier(.18,.82,.22,1.18) both}
+.cat-joy-sparks{position:absolute;z-index:7;left:38%;top:14%;width:54%;height:38%;opacity:0;pointer-events:none}
+.cat-joy-sparks i{position:absolute;color:#fff7a8;font-style:normal;font-size:1.25rem;text-shadow:0 0 8px #ffd34d,0 0 15px #ff9a3c}
+.cat-joy-sparks i:nth-child(1){left:6%;top:18%}.cat-joy-sparks i:nth-child(2){right:7%;top:0;font-size:1.6rem}.cat-joy-sparks i:nth-child(3){right:0;bottom:4%}
+.reward-scene.first-completion.is-playing .cat-joy-sparks{animation:joySparkCloud 1.5s 1.02s ease-out both}
+.reward-scene.first-completion.is-playing .cat-joy-sparks i{animation:joySparkPop .58s ease-in-out infinite alternate}
+.reward-scene.first-completion.is-playing .cat-joy-sparks i:nth-child(2){animation-delay:.15s}.reward-scene.first-completion.is-playing .cat-joy-sparks i:nth-child(3){animation-delay:.3s}
+
+.reward-ship-antenna{position:absolute;z-index:5;left:47px;top:-13px;width:10px;height:27px;border:3px solid #17365f;border-bottom:0;border-radius:8px 8px 0 0;background:#70d9cf;transform-origin:50% 100%}
+.reward-ship-antenna i{position:absolute;left:50%;top:-8px;width:13px;height:13px;border:3px solid #17365f;border-radius:50%;background:#ffd34d;transform:translateX(-50%);box-shadow:0 0 9px rgba(255,211,77,.85)}
+
+.reward-scene.reward-state-ship [data-reward-part],
+.reward-scene.reward-state-engine [data-reward-part],
+.reward-scene.reward-state-portal [data-reward-part]{opacity:0;filter:grayscale(1) brightness(.48)}
+.reward-scene [data-reward-part].is-earned{opacity:1;filter:none}
+.reward-scene [data-reward-part].is-new-reward{opacity:0;filter:none}
+.reward-scene.is-playing .reward-ship-body.is-new-reward{animation:rewardBodyArrives .52s .82s cubic-bezier(.18,.9,.2,1.25) forwards}
+.reward-scene.is-playing .reward-ship-body i.is-new-reward{animation:rewardWindowArrives .48s .84s cubic-bezier(.18,.9,.2,1.3) forwards}
+.reward-scene.is-playing .reward-ship-wing-left.is-new-reward{animation:rewardLeftWingArrives .58s .78s cubic-bezier(.18,.88,.2,1.22) forwards}
+.reward-scene.is-playing .reward-ship-wing-right.is-new-reward{animation:rewardRightWingArrives .58s .78s cubic-bezier(.18,.88,.2,1.22) forwards}
+.reward-scene.is-playing .reward-ship-antenna.is-new-reward{animation:rewardAntennaArrives .55s .78s cubic-bezier(.18,.9,.2,1.25) forwards}
+
+.reward-state-engine .reward-ship-body,.reward-state-engine .reward-ship-wing,.reward-state-engine .reward-ship-antenna,
+.reward-state-portal .reward-ship-body,.reward-state-portal .reward-ship-wing,.reward-state-portal .reward-ship-antenna{opacity:1;filter:none}
+.reward-state-engine .reward-engine-cells i,.reward-state-portal .reward-engine-cells i{background:#35415f;box-shadow:inset 0 1px 2px rgba(255,255,255,.08)}
+.reward-state-engine .reward-engine-cells i.is-earned,.reward-state-portal .reward-engine-cells i.is-earned{background:#ffd34d;box-shadow:0 0 9px #ff9a3c,0 0 15px rgba(255,211,77,.62)}
+.reward-state-engine .reward-engine-cells i.is-new-reward{background:#35415f;box-shadow:none}
+.reward-state-engine.is-playing .reward-engine-cells i.is-new-reward{animation:rewardCellIgnites .54s .86s cubic-bezier(.18,.9,.2,1.28) forwards}
+.reward-state-engine.is-playing .crystal{opacity:1;animation:energyArcToEngine 1.35s ease-in-out both}
+.reward-state-engine.is-playing .reward-ship{animation:rewardShipReceivesCell 1.58s ease-out both}
+.reward-engine-complete.is-playing .reward-ship{animation:engineWakeV26 3.1s 1.16s ease-in-out both}
+.reward-engine-complete.is-playing .reward-ship-flame{animation:engineIgnitionV26 3.1s 1.16s ease-in-out both}
+.reward-engine-complete.is-playing .reward-flash{animation:engineLight 1.4s 2.12s ease-out both}
+
+.reward-portal-runes{position:absolute;z-index:5;inset:-9px -15px;pointer-events:none}
+.reward-portal-runes em{position:absolute;color:#536081;font-style:normal;font-size:1.1rem;opacity:0;text-shadow:none}
+.reward-portal-runes em:nth-child(1){left:7%;top:10%}.reward-portal-runes em:nth-child(2){right:0;top:27%}.reward-portal-runes em:nth-child(3){right:7%;bottom:14%}.reward-portal-runes em:nth-child(4){left:29%;bottom:-2%}.reward-portal-runes em:nth-child(5){left:-2%;top:53%}
+.reward-state-portal .reward-portal{opacity:1;transform:translateY(-50%) scale(calc(.2 + (var(--portal-before) * .16)))}
+.reward-state-portal .reward-portal-runes em.is-earned{opacity:1;color:#ffd34d;text-shadow:0 0 9px #ff9a3c,0 0 16px #70d9cf}
+.reward-state-portal .reward-portal-runes em.is-new-reward{opacity:0}
+.reward-state-portal.is-playing .reward-portal{animation:rewardPortalGrows 1.55s .02s ease-in-out both}
+.reward-state-portal.is-playing .reward-portal-runes em.is-new-reward{animation:rewardRuneArrives .62s .79s cubic-bezier(.18,.9,.2,1.35) forwards}
+.reward-state-portal.is-playing .reward-portal>i{animation:portalTurn 1.55s linear infinite}
+.reward-state-portal.is-playing .crystal{opacity:1;animation:energyArcToPortal 1.35s ease-in-out both}
+.reward-state-portal .reward-ship-flame{opacity:1;animation:engineBurn .25s ease-in-out infinite alternate}
+
+.reward-ship-complete.is-playing .reward-ship{animation:finishedShipLiftV26 3s 1.22s ease-in-out both}
+.reward-ship-complete.is-playing .reward-flash{animation:cinematicFlash .64s 1.25s ease-out}
+.reward-engine-complete.is-playing{animation:sceneEngineIgnition 4.25s 1.05s ease-in-out both}
+.reward-final-launch .reward-next-planet{opacity:0}
+.reward-final-launch.is-playing .reward-portal>i{animation:portalCinematic 3.7s 1.15s ease-in-out both}
+.reward-final-launch.is-playing .reward-portal>b{animation:portalCoreOpen 3.7s 1.15s ease-in-out both}
+.reward-final-launch.is-playing .reward-flash{animation:finalPortalFlash 3.7s 1.15s ease-in-out both}
+.reward-final-launch.is-playing .reward-ship{animation:cinematicLaunch 3.7s 1.15s ease-in-out both}
+.reward-final-launch.is-playing .reward-ship-flame{animation:launchFlame 3.7s 1.15s ease-in-out both}
+.reward-final-launch.is-playing .reward-speed-lines{opacity:1}
+.reward-final-launch.is-playing .reward-speed-lines i{animation:speedLine .48s 3.2s linear 4}
+.reward-final-launch.is-playing .reward-next-planet{animation:planetReveal 3.7s 1.15s ease-in-out both}
+
+.reward-cinematic-locked .reward-pill,.reward-cinematic-locked .result-card>.eyebrow,.reward-cinematic-locked .result-card>h1:not([hidden]),
+.reward-cinematic-locked .result-card>.result-stats,.reward-cinematic-locked .result-card>.result-actions{opacity:0;visibility:hidden;transform:translateY(8px);pointer-events:none}
+.reward-reveal-complete .reward-pill,.reward-reveal-complete .result-card>.eyebrow,.reward-reveal-complete .result-card>h1:not([hidden]),
+.reward-reveal-complete .result-card>.result-stats,.reward-reveal-complete .result-card>.result-actions{animation:rewardUiReveal .38s ease-out both}
+
+@keyframes catFearBrace{from{transform:scale(1.12) translate(-.5%,-1%) rotate(-1deg)}to{transform:scale(1.12) translate(.5%,-3%) rotate(1deg)}}
+@keyframes catFearPanic{0%{transform:scale(1.12) translate(-1.2%,-1%) rotate(-1deg)}50%{transform:scale(1.12) translate(1.2%,-3%) rotate(1deg)}100%{transform:scale(1.12) translate(-1%,-1%)}}
+@keyframes heroFearImpact{0%,8%{transform:scale(1.12) translateY(-2%)}14%{transform:scale(1.18) translateY(-8%)}22%{transform:scale(1.08) translateY(7%) scaleY(.82) rotate(-3deg)}54%{transform:scale(1.07) translateY(5%) scaleY(.85) rotate(2deg)}100%{transform:scale(1.08) translateY(4%) scaleY(.88)}}
+@keyframes catRewardWatch{from{transform:scale(1.14) translateY(3%)}to{transform:scale(1.2) translateY(-1%) rotate(-1deg)}}
+@keyframes catRewardSurpriseOut{0%,66%{opacity:1;transform:scale(1.16) translateY(1%)}78%{opacity:1;transform:scale(1.24) translateY(-4%)}100%{opacity:0;transform:scale(1.08) translateY(4%)}}
+@keyframes catRewardJoyIn{0%,8%{opacity:0;transform:scale(.88) translateY(10%)}28%{opacity:1;transform:scale(1.27) translateY(-5%)}43%{transform:scale(1.17) translateY(0)}72%{transform:scale(1.23) translateY(-3%) rotate(-1deg)}100%{opacity:1;transform:scale(1.2) translateY(-1%) rotate(1deg)}}
+@keyframes joySparkCloud{0%{opacity:0;transform:scale(.3)}30%{opacity:1;transform:scale(1.15)}100%{opacity:.72;transform:scale(1)}}
+@keyframes joySparkPop{to{transform:translateY(-8px) rotate(22deg) scale(1.35);filter:brightness(1.4)}}
+@keyframes rewardBodyArrives{0%{opacity:0;transform:translateY(-100px) rotate(-18deg) scale(.45)}70%{opacity:1;transform:translateY(5px) rotate(3deg) scale(1.08)}100%{opacity:1;transform:none}}
+@keyframes rewardWindowArrives{0%{opacity:0;transform:scale(.05)}70%{opacity:1;transform:scale(1.25)}100%{opacity:1;transform:scale(1)}}
+@keyframes rewardLeftWingArrives{0%{opacity:0;transform:translate(-145px,24px) rotate(-78deg) scale(.5)}72%{opacity:1;transform:translate(4px,-2px) rotate(-8deg) scale(1.08)}100%{opacity:1;transform:rotate(-15deg)}}
+@keyframes rewardRightWingArrives{0%{opacity:0;transform:translate(145px,24px) scaleX(-1) rotate(-78deg) scale(.5)}72%{opacity:1;transform:translate(-4px,-2px) scaleX(-1) rotate(-8deg) scale(1.08)}100%{opacity:1;transform:scaleX(-1) rotate(-15deg)}}
+@keyframes rewardAntennaArrives{0%{opacity:0;transform:translateY(-80px) rotate(38deg) scale(.45)}70%{opacity:1;transform:translateY(3px) rotate(-7deg) scale(1.12)}100%{opacity:1;transform:none}}
+@keyframes rewardCellIgnites{0%{background:#35415f;box-shadow:none;transform:scale(.72)}45%{background:#fff;box-shadow:0 0 18px #fff;transform:scale(1.35)}100%{background:#ffd34d;box-shadow:0 0 9px #ff9a3c,0 0 18px #ffd34d;transform:scale(1)}}
+@keyframes rewardShipReceivesCell{0%,62%{transform:translate(-50%,-50%) rotate(8deg)}72%{transform:translate(-50%,-54%) rotate(5deg) scale(1.07);filter:drop-shadow(0 0 27px #ffd34d)}100%{transform:translate(-50%,-51%) rotate(8deg)}}
+@keyframes engineWakeV26{0%{transform:translate(-50%,-50%) rotate(8deg)}10%,18%,26%{transform:translate(-51%,-50%) rotate(7deg)}14%,22%,30%{transform:translate(-49%,-50%) rotate(9deg)}46%{transform:translate(-50%,-60%) rotate(4deg) scale(1.08);filter:drop-shadow(0 0 32px #ffd34d)}100%{transform:translate(-50%,-55%) rotate(5deg) scale(1.04);filter:drop-shadow(0 0 20px #ff9a3c)}}
+@keyframes engineIgnitionV26{0%,20%{opacity:0;transform:scaleY(.08)}34%{opacity:1;transform:scaleY(1.9)}48%{transform:scaleY(.68)}100%{opacity:1;transform:scaleY(1.3);filter:drop-shadow(0 0 18px #ff9a3c)}}
+@keyframes rewardPortalGrows{0%,52%{transform:translateY(-50%) scale(calc(.2 + (var(--portal-before) * .16)))}78%{transform:translateY(-50%) scale(calc(.24 + (var(--portal-after) * .17)));filter:brightness(1.55) drop-shadow(0 0 24px #70d9cf)}100%{transform:translateY(-50%) scale(calc(.2 + (var(--portal-after) * .16)));filter:brightness(1.1)}}
+@keyframes rewardRuneArrives{0%{opacity:0;transform:translate(-70px,-45px) rotate(-120deg) scale(.2);color:#fff}65%{opacity:1;transform:translate(3px,2px) rotate(12deg) scale(1.55);color:#fff}100%{opacity:1;transform:none;color:#ffd34d;text-shadow:0 0 9px #ff9a3c,0 0 16px #70d9cf}}
+@keyframes finishedShipLiftV26{0%{transform:translate(-50%,-50%) rotate(8deg)}18%{transform:translate(-50%,-58%) rotate(2deg) scale(1.09);filter:drop-shadow(0 0 31px #70d9cf)}48%{transform:translate(-50%,-63%) rotate(6deg) scale(1.05)}100%{transform:translate(-50%,-58%) rotate(4deg) scale(1.08);filter:drop-shadow(0 0 22px #ffd34d)}}
+@keyframes rewardUiReveal{from{opacity:0;visibility:visible;transform:translateY(8px)}to{opacity:1;visibility:visible;transform:none}}
+
+@media(max-width:700px){
+  .reward-scene .result-cat-crop{left:-5%;width:160px;height:200px}
+  .reward-ship-antenna{left:47px}
+  .reward-state-portal .reward-portal{transform:translateY(-50%) scale(calc(.16 + (var(--portal-before) * .11)))}
+  @keyframes rewardPortalGrows{0%,52%{transform:translateY(-50%) scale(calc(.16 + (var(--portal-before) * .11)))}78%{transform:translateY(-50%) scale(calc(.2 + (var(--portal-after) * .12)));filter:brightness(1.55) drop-shadow(0 0 22px #70d9cf)}100%{transform:translateY(-50%) scale(calc(.16 + (var(--portal-after) * .11)));filter:brightness(1.1)}}
+}
