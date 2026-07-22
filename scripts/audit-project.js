@@ -88,11 +88,15 @@ for(const script of expectedScripts){
 }
 check(scriptOrderValid,'game dependencies load in the required order');
 check(gameIndex.includes('data-i18n='),'HTML contains translation keys');
+check(gameIndex.includes('id="shareGameButton"')&&gameIndex.includes('id="shareDialog"'),'game contains the share control and fallback dialog');
 
 const gameCode=fs.readFileSync(path.join(root,'games/korrutamine-test/game.js'),'utf8');
 check(!/switch\s*\(\s*levelId\s*\)/.test(gameCode),'game.js contains no mission-number switch');
 check(!gameCode.includes("title:'Korrutamise valik'"),'game.js contains no embedded mission list');
 check(gameCode.includes('window.__EDUKASS_TEST__'),'test interface remains available');
+check(gameCode.includes("const SHARE_URL='https://edukass.ee/games/korrutamine-test/'"),'share control uses the permanent EDUKASS game URL');
+const siteShareCode=fs.readFileSync(path.join(root,'site-share.js'),'utf8');
+check(gameIndex.includes('shareGameButton')&&siteShareCode.includes('shareMathGameButton'),'share controls are available both on the site and inside the game');
 
 for(const jsFile of walk(root,file=>file.endsWith('.js'))){
   const result=spawnSync(process.execPath,['--check',jsFile],{cwd:root,encoding:'utf8'});

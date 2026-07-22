@@ -51,6 +51,11 @@ button{color:inherit;touch-action:manipulation}
 .brand-cat img{width:100%;display:block;transform:scale(1.55) translateY(-8%);transform-origin:50% 5%}
 .top-actions{display:flex;align-items:center;gap:8px}
 .tiny-button{border:1px solid var(--line);background:#fff;border-radius:999px;min-height:40px;padding:0 14px;font-weight:900;cursor:pointer}
+.share-button{display:inline-flex;align-items:center;justify-content:center;gap:7px;color:var(--purple);border-color:#d8d1f1;background:#f7f5ff;letter-spacing:.05em}
+.share-button svg{width:19px;height:19px;fill:currentColor;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
+.share-button svg path{fill:none}
+.share-button:hover{background:#efebff;transform:translateY(-1px)}
+.share-button:focus-visible,.share-close:focus-visible,.share-copy-button:focus-visible{outline:4px solid var(--yellow);outline-offset:3px}
 .sound-button{width:42px;height:42px;border:1px solid var(--line);border-radius:50%;background:#fff;display:grid;place-items:center;font-size:1.05rem;cursor:pointer;box-shadow:0 5px 12px rgba(23,54,95,.08)}
 .sound-button:active{transform:translateY(1px)}
 .visually-hidden{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
@@ -212,9 +217,22 @@ button{color:inherit;touch-action:manipulation}
 .result-stats span{color:var(--muted);font-weight:800}
 .result-stats strong{font-size:1.2rem}
 .result-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
-.retry-dialog,.final-dialog{border:0;border-radius:30px;padding:0;width:min(560px,calc(100% - 22px));box-shadow:0 30px 90px rgba(23,54,95,.35)}
-.retry-dialog::backdrop,.final-dialog::backdrop{background:rgba(16,39,67,.68);backdrop-filter:blur(5px)}
+.retry-dialog,.final-dialog,.share-dialog{border:0;border-radius:30px;padding:0;width:min(560px,calc(100% - 22px));box-shadow:0 30px 90px rgba(23,54,95,.35)}
+.retry-dialog::backdrop,.final-dialog::backdrop,.share-dialog::backdrop{background:rgba(16,39,67,.68);backdrop-filter:blur(5px)}
 .retry-content,.final-content{text-align:center;padding:34px}
+.share-content{position:relative;padding:34px;text-align:center;background:linear-gradient(180deg,#fff,#f6fbfd)}
+.share-close{position:absolute;right:15px;top:13px;width:40px;height:40px;border:0;border-radius:50%;background:#edf4f7;color:var(--ink);font-size:1.65rem;line-height:1;cursor:pointer}
+.share-symbol{width:76px;height:76px;margin:0 auto 15px;border-radius:24px;display:grid;place-items:center;color:#fff;background:linear-gradient(145deg,var(--purple),#9b7ce2);box-shadow:0 12px 24px rgba(115,85,183,.25)}
+.share-symbol svg{width:38px;height:38px;fill:currentColor;stroke:currentColor;stroke-width:1.6;stroke-linecap:round}
+.share-symbol svg path{fill:none}
+.share-content .eyebrow{margin-bottom:5px}
+.share-content h2{margin:0 0 9px;font-size:2rem}
+.share-content>p:not(.eyebrow):not(.share-status):not(.share-note){margin:0 auto 20px;color:var(--muted);line-height:1.45}
+.share-link-row{display:flex;gap:8px;align-items:stretch}
+.share-link-row input{min-width:0;flex:1;border:1px solid var(--line);border-radius:15px;padding:0 13px;background:#fff;color:var(--ink);font-weight:800}
+.share-copy-button{min-height:48px;display:inline-flex;align-items:center;justify-content:center;gap:7px;white-space:nowrap}
+.share-status{min-height:22px;margin:9px 0 0;color:#23857d;font-weight:900}
+.share-note{margin:9px 0 0;color:var(--muted);font-size:.82rem;font-weight:800}
 .retry-visual{width:150px;height:120px;margin:0 auto 12px;position:relative}
 .retry-visual>span{position:absolute;z-index:3;right:0;top:0;color:var(--yellow);font-size:3.2rem;animation:twinkle 1s ease-in-out infinite alternate}
 .retry-cat-crop{position:absolute;width:125px;height:112px;left:0;bottom:0;overflow:hidden}
@@ -256,7 +274,7 @@ button{color:inherit;touch-action:manipulation}
 @media(max-width:620px){
   .topbar{height:58px;padding-top:5px;padding-bottom:5px}
   .brand-cat{width:45px;height:45px}
-  .top-actions .tiny-button:last-child{display:none}
+  .reset-progress-button{display:none!important}
   .app-shell{width:calc(100% - 12px);padding:8px 0 24px}
   .story-card{border-radius:24px}
   .story-copy{padding:28px 20px}
@@ -334,6 +352,35 @@ button{color:inherit;touch-action:manipulation}
 
 @media(prefers-reduced-motion:reduce){
   *,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+
+/* v37 final cascade overrides */
+.result-stats{width:min(300px,100%);margin:14px auto!important;display:grid!important;grid-template-columns:1fr auto!important;gap:6px 28px!important;text-align:left;padding:14px 22px!important}
+.result-stats strong{text-align:right}.result-actions{margin-top:12px!important}
+.intro-play{width:auto!important;aspect-ratio:auto!important;min-width:clamp(138px,20vw,210px)!important;height:clamp(58px,8vw,76px)!important;padding:0 26px!important;border-radius:999px!important;font-size:clamp(1rem,2.4vw,1.35rem)!important}
+@media(max-width:700px){.intro-play{width:auto!important;min-width:140px!important;height:58px!important}.intro-brand{top:max(7%,env(safe-area-inset-top))!important;font-size:2.55rem!important}}
+
+/* Version 37: complete return, reward and install flow. */
+.install-button{color:var(--ink);background:#e8fbf8;border-color:#a9e5df;font-size:.76rem}
+.lesson-button{display:inline-flex;flex-direction:column;justify-content:center;line-height:1.05;padding-block:9px}
+.lesson-button span{font-size:.72rem;letter-spacing:.1em;opacity:.8}.lesson-button strong{font-size:1.08rem}
+.result-stats{width:min(300px,100%);margin-inline:auto;display:grid!important;grid-template-columns:1fr auto;gap:6px 28px!important;text-align:left;padding:14px 22px!important}
+.result-stats strong{text-align:right}
+.result-actions{margin-top:12px!important}
+.intro-brand small{display:block;margin-top:.38rem;color:#fff7a8;font-size:clamp(.72rem,1.8vw,1.15rem);letter-spacing:.16em;text-align:center}
+.intro-math{position:absolute;z-index:9;inset:0;pointer-events:none;font-weight:1000;color:#fff7a8;text-shadow:0 0 16px rgba(255,211,77,.8)}
+.intro-math span{position:absolute;opacity:0;padding:.45em .75em;border:2px solid rgba(255,255,255,.4);border-radius:999px;background:rgba(24,36,82,.6);font-size:clamp(1rem,2.5vw,1.65rem)}
+.intro-math span:first-child{left:8%;top:23%;animation:introMathFloat .65s 1.35s ease-out forwards}.intro-math span:last-child{right:7%;top:25%;animation:introMathFloat .65s 1.62s ease-out forwards}
+.intro-play{width:auto!important;aspect-ratio:auto!important;min-width:clamp(138px,20vw,210px);height:clamp(58px,8vw,76px);padding:0 26px!important;border-radius:999px!important;font-size:clamp(1rem,2.4vw,1.35rem)!important;font-weight:1000;letter-spacing:.08em}
+.install-phone{width:94px;height:150px;margin:0 auto 14px;padding:18px 10px;border:5px solid var(--ink);border-radius:19px;background:linear-gradient(150deg,#182452,#7355b7);display:grid;place-items:center;box-shadow:0 12px 24px rgba(23,54,95,.22)}
+.install-phone span{width:54px;height:54px;border-radius:14px;display:grid;place-items:center;background:#fff;color:var(--ink);font-size:.72rem;font-weight:1000;line-height:.9;text-align:center;box-shadow:0 0 0 4px rgba(112,217,207,.45)}
+@keyframes introMathFloat{from{opacity:0;transform:translateY(14px) scale(.86)}to{opacity:1;transform:none}}
+@media(max-width:700px){
+  .intro-brand{top:max(7%,env(safe-area-inset-top))!important;font-size:2.55rem!important}
+  .intro-brand small{font-size:.64rem;letter-spacing:.11em}
+  .intro-math span{font-size:.8rem}.intro-math span:first-child{left:4%;top:25%}.intro-math span:last-child{right:4%;top:31%}
+  .intro-play{bottom:max(4%,env(safe-area-inset-bottom))!important;min-width:140px;height:58px}
+  .install-button{max-width:132px;white-space:normal;line-height:1.05;padding:5px 9px}
 }
 
 /* Chapter 1: lesson and route */
@@ -629,7 +676,7 @@ button{color:inherit;touch-action:manipulation}
 
 @media(max-width:700px){
   .top-actions{gap:5px}
-  .top-actions .tiny-button:last-child{display:inline-grid;place-items:center;min-height:38px;padding:0 9px;font-size:.72rem}
+  .share-button{min-height:38px;padding:0 10px;font-size:.72rem}
   .sound-button{width:40px;height:40px}
   .story-stage{height:235px}
   .story-status{left:10px;top:10px;max-width:190px;padding:8px 10px}
@@ -655,8 +702,16 @@ button{color:inherit;touch-action:manipulation}
   .topbar{padding-left:8px;padding-right:8px;gap:7px}
   .brand{gap:5px;font-size:.82rem}
   .brand-cat{width:42px;height:42px}
-  .top-actions .tiny-button:last-child{padding:0 6px;font-size:.65rem}
+  .share-button{padding:0 7px;font-size:.65rem;gap:4px}
+  .share-button svg{width:17px;height:17px}
   .sound-button{width:37px;height:37px}
+}
+
+@media(max-width:520px){
+  .share-content{padding:30px 18px 24px}
+  .share-link-row{display:grid}
+  .share-link-row input{min-height:46px;text-align:center;font-size:.78rem}
+  .share-copy-button{width:100%}
 }
 
 /* v24: the chapter story is shown through motion, not explanatory copy. */
@@ -1225,4 +1280,14 @@ body.intro-active{overflow:hidden}
   .game-intro *{animation-duration:.01ms!important;animation-delay:0ms!important;animation-iteration-count:1!important}
   .game-intro .intro-cat-crop,.game-intro .intro-rocket,.game-intro .intro-brand,.game-intro .intro-play{opacity:1}
   .game-intro .intro-play{pointer-events:auto;transform:translate(-50%,0) scale(1)}
+}
+
+/* v37 must remain last in the cascade. */
+.result-stats{width:min(300px,100%);margin:14px auto!important;display:grid!important;grid-template-columns:1fr auto!important;gap:6px 28px!important;text-align:left;padding:14px 22px!important}
+.result-stats strong{text-align:right}.result-actions{margin-top:12px!important}
+.intro-play{width:auto!important;aspect-ratio:auto!important;min-width:clamp(138px,20vw,210px)!important;height:clamp(58px,8vw,76px)!important;padding:0 26px!important;border-radius:999px!important;font-size:clamp(1rem,2.4vw,1.35rem)!important}
+@media(max-width:700px){
+  .intro-play{width:auto!important;min-width:140px!important;height:58px!important}
+  .intro-brand{top:max(7%,env(safe-area-inset-top))!important;font-size:2.55rem!important}
+  .install-button{width:40px;min-width:40px;padding:0;font-size:1rem}.install-button span{display:none}
 }

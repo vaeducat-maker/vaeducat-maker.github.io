@@ -1123,6 +1123,41 @@ h1, h2, h3,
   background: #17365f;
   color: #fff;
 }
+.math-prototype-actions {
+  flex: 0 0 auto;
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 8px;
+  align-items: center;
+}
+.math-share-button {
+  gap: 7px;
+  border: 1px solid #d8d1f1;
+  background: #fff;
+  color: #7355b7;
+  font: inherit;
+  font-weight: 900;
+  cursor: pointer;
+}
+.math-share-button:hover { background: #f6f2ff; }
+.math-share-button:focus-visible { outline: 4px solid #ffd34d; outline-offset: 3px; }
+.math-share-button svg {
+  width: 19px;
+  height: 19px;
+  fill: currentColor;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+}
+.math-share-button svg path { fill: none; }
+.math-share-status {
+  grid-column: 1 / -1;
+  min-height: 18px;
+  color: #23857d!important;
+  font-size: .72rem!important;
+  letter-spacing: .02em!important;
+  text-align: center;
+}
 
 .intro-strip {
   padding: 30px 0;
@@ -1201,6 +1236,7 @@ h1, h2, h3,
   .showcase-section { padding: 12px 0 18px; }
   .math-prototype-strip { padding: 0 0 16px; }
   .math-prototype-inner { align-items: flex-start; flex-direction: column; gap: 14px; padding: 19px; border-radius: 20px; }
+  .math-prototype-actions { width: 100%; grid-template-columns: minmax(0,1fr) auto; }
   .math-prototype-button { width: 100%; text-align: center; }
   .showcase-grid { gap: 12px; }
   .showcase-card {

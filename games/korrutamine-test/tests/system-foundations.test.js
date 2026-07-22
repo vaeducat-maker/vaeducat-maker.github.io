@@ -46,6 +46,8 @@ const i18n=i18nApi.create({
 assert.equal(i18n.language,'et');
 assert.equal(i18n.t('lesson.openMission',{number:11}),'Ava 11. missioon');
 assert.equal(i18n.t('feedback.correctAnswer',{answer:18}),'Õige vastus on 18');
+assert.equal(i18n.t('share.button'),'JAGA');
+assert.equal(i18n.t('share.copied'),'Link kopeeritud!');
 assert.equal(i18n.t('missing.key',{},'Varutekst'),'Varutekst');
 
 const unsupported=i18nApi.create({

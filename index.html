@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>EDUKASS — õppematerjalid ja mängud</title>
   <meta name="description" content="EDUKASS — autori õppematerjalid ja tasuta õppemängud lastele.">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=36">
 </head>
 <body>
 <header class="site-header">
@@ -77,7 +77,19 @@
         <h2>Matemaatika: 1. peatükk „Üks ja kaks“</h2>
         <p>Harjuta 15 järjestikuses missioonis 1 ja 2-ga korrutamist ning jagamist.</p>
       </div>
-      <a class="button math-prototype-button" href="games/korrutamine-test/">Ava prototüüp</a>
+      <div class="math-prototype-actions">
+        <a class="button math-prototype-button" href="games/korrutamine-test/">Ava prototüüp</a>
+        <button class="button math-share-button" id="shareMathGameButton" type="button" aria-label="Jaga matemaatikamängu">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="18" cy="5" r="2.5"></circle>
+            <circle cx="6" cy="12" r="2.5"></circle>
+            <circle cx="18" cy="19" r="2.5"></circle>
+            <path d="m8.2 10.8 7.6-4.5M8.2 13.2l7.6 4.5"></path>
+          </svg>
+          JAGA
+        </button>
+        <span class="math-share-status" id="mathShareStatus" role="status" aria-live="polite"></span>
+      </div>
     </div>
   </section>
 
@@ -160,5 +172,6 @@
     <div class="footer-note">© 2026 EDUKASS · edukass.ee</div>
   </div>
 </footer>
+<script src="site-share.js?v=1"></script>
 </body>
 </html>

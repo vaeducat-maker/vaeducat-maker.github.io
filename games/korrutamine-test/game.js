@@ -58,6 +58,15 @@ const battleFxCanvas=document.querySelector('#battleFxCanvas');
 const rewardFxCanvas=document.querySelector('#rewardFxCanvas');
 const introScreen=document.querySelector('#introScreen');
 const introPlayButton=document.querySelector('#introPlayButton');
+const introPlayLabel=document.querySelector('#introPlayLabel');
+const installGameButton=document.querySelector('#installGameButton');
+const installDialog=document.querySelector('#installDialog');
+const confirmInstallButton=document.querySelector('#confirmInstallButton');
+const shareGameButton=document.querySelector('#shareGameButton');
+const shareDialog=document.querySelector('#shareDialog');
+const shareUrlInput=document.querySelector('#shareUrlInput');
+const copyShareLinkButton=document.querySelector('#copyShareLinkButton');
+const shareStatus=document.querySelector('#shareStatus');
 
 const CHAPTER_CONFIG=window.EDUKASS_CHAPTER_ONE;
 if(!CHAPTER_CONFIG)throw new Error('EDUKASS chapter configuration was not loaded.');
@@ -98,6 +107,7 @@ const NAVIGATION_MARKER='edukass-game-v28';
 const REWARD_BEFORE_HOLD=1500;
 const INTRO_READY_DELAY=2200;
 const INTRO_EXIT_DELAY=1720;
+const SHARE_URL='https://edukass.ee/games/korrutamine-test/';
 
 const LEVELS=CHAPTER_CONFIG.missions.map(mission=>({
   id:mission.id,
@@ -155,6 +165,10 @@ let cinematicTimers=[];
 let lastQuestionEquationKey='';
 let introReadyTimer=null;
 let introExitTimer=null;
+let deferredInstallPrompt=null;
+let roundPaused=false;
+let pausedAt=0;
+let totalPausedTime=0;
 
 function navigationState(view,details={}){
   return {marker:NAVIGATION_MARKER,view,...details};
@@ -208,6 +222,51 @@ function toggleSound(){
   }
   updateSoundButton();
   if(soundEnabled)playSound('key');
+}
+
+function openShareFallback(){
+  shareUrlInput.value=SHARE_URL;
+  shareStatus.textContent='';
+  if(typeof shareDialog.showModal==='function')shareDialog.showModal();
+  else window.prompt(t('share.copyFailed'),SHARE_URL);
+}
+
+async function shareGame(){
+  if(typeof navigator.share!=='function'){
+    openShareFallback();
+    return;
+  }
+  try{
+    await navigator.share({
+      title:t('share.title'),
+      text:t('share.nativeText'),
+      url:SHARE_URL
+    });
+  }catch(error){
+    if(error?.name!=='AbortError')openShareFallback();
+  }
+}
+
+async function copyShareLink(){
+  let copied=false;
+  try{
+    if(navigator.clipboard&&window.isSecureContext){
+      await navigator.clipboard.writeText(SHARE_URL);
+      copied=true;
+    }
+  }catch(error){
+    copied=false;
+  }
+  if(!copied){
+    shareUrlInput.focus();
+    shareUrlInput.select();
+    try{
+      copied=document.execCommand('copy');
+    }catch(error){
+      copied=false;
+    }
+  }
+  shareStatus.textContent=copied?t('share.copied'):t('share.copyFailed');
 }
 
 function getAudioContext(){
@@ -686,6 +745,7 @@ function showLesson(mode=LESSON_CONFIG.initialMode,pendingLevel=null,{historyMod
   const division=mode===LESSON_CONFIG.divisionMode;
   lessonEyebrow.textContent=division?t('lesson.eyebrowDivide'):t('lesson.eyebrowMultiply');
   lessonTitle.textContent=division?t('lesson.titleDivide'):t('lesson.titleMultiply');
+  lessonTitle.hidden=!division;
   multiplicationLesson.hidden=division;
   divisionLesson.hidden=!division;
   lessonSign.textContent=division?`÷${PRACTICE_TABLE}`:`×${PRACTICE_TABLE}`;
@@ -693,8 +753,8 @@ function showLesson(mode=LESSON_CONFIG.initialMode,pendingLevel=null,{historyMod
   updateDemo(LESSON_CONFIG.demoFactor);
   if(pendingLevel==='explanations')lessonContinueButton.textContent=t('lesson.toExplanations');
   else if(pendingLevel==='map')lessonContinueButton.textContent=t('lesson.toMissions');
-  else if(Number.isInteger(pendingLevel))lessonContinueButton.textContent=t('lesson.openMission',{number:pendingLevel});
-  else lessonContinueButton.textContent=t('lesson.openMission',{number:1});
+  else if(Number.isInteger(pendingLevel))lessonContinueButton.innerHTML=`<span>${pendingLevel}. MISSIOON</span><strong>ALUSTA!</strong>`;
+  else lessonContinueButton.innerHTML='<span>1. MISSIOON</span><strong>ALUSTA!</strong>';
   showScreen('lessonScreen',{historyMode,historyView:'lesson',historyData:{mode,pendingLevel}});
 }
 
@@ -801,6 +861,9 @@ function startLevel(levelId,{historyMode='push'}={}){
   mistakes=0;
   inputLocked=false;
   roundActive=true;
+  roundPaused=false;
+  pausedAt=0;
+  totalPausedTime=0;
   showerProgress=START_SHOWER_PROGRESS;
   dangerStage=0;
   lastDangerBeat=0;
@@ -872,6 +935,11 @@ function startShowerMotion(){
 
 function moveShower(timestamp){
   if(!roundActive||!currentLevel?.seconds)return;
+  if(roundPaused||inputLocked){
+    lastMotionTime=null;
+    motionFrame=requestAnimationFrame(moveShower);
+    return;
+  }
   if(lastMotionTime==null)lastMotionTime=timestamp;
   const delta=(timestamp-lastMotionTime)/1000;
   lastMotionTime=timestamp;
@@ -1051,7 +1119,7 @@ function triggerImpact(){
 
 function finishAttempt(reason){
   stopRound();
-  const elapsed=Math.round((Date.now()-battleStartedAt)/1000);
+  const elapsed=Math.round((Date.now()-battleStartedAt-totalPausedTime)/1000);
   const levelPassed=reason==='complete'&&correct===ROUND_LENGTH;
   const chapterComplete=levelPassed&&currentLevel.id===FINAL_MISSION_ID;
   const firstCompletion=levelPassed&&!progress.completedLevels.includes(currentLevel.id);
@@ -1066,10 +1134,10 @@ function finishAttempt(reason){
     saveProgress();
     configureRewardScene(currentLevel.id,firstCompletion,true);
     const milestone=currentLevel.id===SHIP_MISSION_ID||currentLevel.id===ENGINE_MISSION_ID||chapterComplete;
-    resultEyebrow.hidden=false;
-    resultEyebrow.textContent=chapterComplete?t('result.chapterPassed'):t('result.missionPassed');
-    resultTitle.textContent=milestone?'':t('result.done');
-    resultTitle.hidden=milestone;
+    resultEyebrow.hidden=true;
+    resultEyebrow.textContent='';
+    resultTitle.textContent=t('result.done');
+    resultTitle.hidden=false;
     resultMessage.textContent='';
     resultMessage.hidden=true;
     resultPrimaryButton.textContent=chapterComplete?t('result.missions'):t('result.next');
@@ -1250,8 +1318,8 @@ function restoreResult(state){
   stopRound();
   currentLevel=LEVELS.find(level=>level.id===state.levelId)||currentLevel;
   resultAction=state.resultAction||'map';
-  resultEyebrow.textContent=state.resultEyebrow||t('result.missionPassed');
-  resultEyebrow.hidden=Boolean(state.eyebrowHidden);
+  resultEyebrow.textContent='';
+  resultEyebrow.hidden=true;
   resultTitle.textContent=state.resultTitle||t('result.titlePassed');
   resultMessage.textContent=state.resultMessage||'';
   resultTitle.hidden=Boolean(state.titleHidden);
@@ -1317,6 +1385,8 @@ function launchIntro(quick=false){
 
 function prepareIntro(){
   const returning=localStorage.getItem(INTRO_SEEN_KEY)==='true';
+  const hasProgress=completedMissionCount()>0||progress.unlockedLevel>1;
+  introPlayLabel.textContent=hasProgress?t('intro.continue'):t('intro.start');
   introScreen.classList.toggle('is-returning',returning);
   introPlayButton.disabled=!returning;
   if(returning){
@@ -1327,6 +1397,33 @@ function prepareIntro(){
       introPlayButton.disabled=false;
     },INTRO_READY_DELAY);
   }
+}
+
+function openInstallHelp(){
+  if(deferredInstallPrompt){
+    deferredInstallPrompt.prompt();
+    deferredInstallPrompt.userChoice.finally(()=>{deferredInstallPrompt=null;installGameButton.hidden=true});
+    return;
+  }
+  if(typeof installDialog.showModal==='function')installDialog.showModal();
+}
+
+function pauseRoundForVisibility(){
+  if(!roundActive)return;
+  roundPaused=true;
+  pausedAt=Date.now();
+  clearAutoCheck();
+  cancelAnimationFrame(motionFrame);
+  lastMotionTime=null;
+}
+
+function resumeRoundFromVisibility(){
+  if(!roundActive||!roundPaused)return;
+  if(pausedAt)totalPausedTime+=Date.now()-pausedAt;
+  pausedAt=0;
+  roundPaused=false;
+  if(currentAnswer&&!inputLocked)scheduleAnswerCheck();
+  startShowerMotion();
 }
 
 document.querySelectorAll('[data-demo-factor]').forEach(button=>button.addEventListener('click',()=>updateDemo(Number(button.dataset.demoFactor))));
@@ -1353,11 +1450,22 @@ document.querySelector('#repeatLessonButton').addEventListener('click',showExpla
 document.querySelector('#repeatMultiplicationButton').addEventListener('click',()=>showLesson(LESSON_CONFIG.initialMode,'explanations'));
 repeatDivisionButton.addEventListener('click',()=>showLesson(LESSON_CONFIG.divisionMode,'explanations'));
 document.querySelector('#explanationBackButton').addEventListener('click',()=>history.back());
-document.querySelector('#backToMapButton').addEventListener('click',()=>history.back());
-resultMapButton.addEventListener('click',()=>history.back());
+document.querySelector('#backToMapButton').addEventListener('click',()=>showMap());
+resultMapButton.addEventListener('click',()=>showMap());
 resultPrimaryButton.addEventListener('click',runResultAction);
 document.querySelector('#resetProgressButton').addEventListener('click',resetProgress);
 soundToggleButton.addEventListener('click',toggleSound);
+shareGameButton.addEventListener('click',shareGame);
+copyShareLinkButton.addEventListener('click',copyShareLink);
+shareDialog.addEventListener('click',event=>{
+  if(event.target===shareDialog)shareDialog.close();
+});
+installGameButton.addEventListener('click',openInstallHelp);
+confirmInstallButton.addEventListener('click',openInstallHelp);
+installDialog.addEventListener('click',event=>{if(event.target===installDialog)installDialog.close()});
+window.addEventListener('beforeinstallprompt',event=>{event.preventDefault();deferredInstallPrompt=event;installGameButton.hidden=false;confirmInstallButton.hidden=false});
+window.addEventListener('appinstalled',()=>{installGameButton.hidden=true;if(installDialog.open)installDialog.close()});
+document.addEventListener('visibilitychange',()=>document.hidden?pauseRoundForVisibility():resumeRoundFromVisibility());
 introPlayButton.addEventListener('click',event=>{
   event.stopPropagation();
   launchIntro();
@@ -1390,6 +1498,8 @@ if(history.state?.marker===NAVIGATION_MARKER)restoreNavigation(history.state);
 else if(progress.multiplicationLessonSeen)showMap({historyMode:'replace'});
 else showLesson(LESSON_CONFIG.initialMode,null,{historyMode:'replace'});
 prepareIntro();
+if(!matchMedia('(display-mode: standalone)').matches)installGameButton.hidden=false;
+if('serviceWorker' in navigator)navigator.serviceWorker.register('./service-worker.js').catch(()=>{});
 
 window.__EDUKASS_TEST__={
   LEVELS,
