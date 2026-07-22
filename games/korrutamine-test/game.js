@@ -1335,7 +1335,11 @@ function restoreResult(state){
 
 function restoreNavigation(state){
   if(!state||state.marker!==NAVIGATION_MARKER)return;
-  if(state.view==='map')showMap({historyMode:'none'});
+  if(state.view==='guard'){
+    if(progress.multiplicationLessonSeen)showMap({historyMode:'push'});
+    else showLesson(LESSON_CONFIG.initialMode,null,{historyMode:'push'});
+  }
+  else if(state.view==='map')showMap({historyMode:'none'});
   else if(state.view==='explanations')showExplanationHub({historyMode:'none'});
   else if(state.view==='lesson')showLesson(state.mode,state.pendingLevel,{historyMode:'none'});
   else if(state.view==='battle')startLevel(state.levelId,{historyMode:'none'});
@@ -1402,7 +1406,7 @@ function prepareIntro(){
 function openInstallHelp(){
   if(deferredInstallPrompt){
     deferredInstallPrompt.prompt();
-    deferredInstallPrompt.userChoice.finally(()=>{deferredInstallPrompt=null;installGameButton.hidden=true});
+    deferredInstallPrompt.userChoice.finally(()=>{deferredInstallPrompt=null});
     return;
   }
   if(typeof installDialog.showModal==='function')installDialog.showModal();
@@ -1463,8 +1467,8 @@ shareDialog.addEventListener('click',event=>{
 installGameButton.addEventListener('click',openInstallHelp);
 confirmInstallButton.addEventListener('click',openInstallHelp);
 installDialog.addEventListener('click',event=>{if(event.target===installDialog)installDialog.close()});
-window.addEventListener('beforeinstallprompt',event=>{event.preventDefault();deferredInstallPrompt=event;installGameButton.hidden=false;confirmInstallButton.hidden=false});
-window.addEventListener('appinstalled',()=>{installGameButton.hidden=true;if(installDialog.open)installDialog.close()});
+window.addEventListener('beforeinstallprompt',event=>{event.preventDefault();deferredInstallPrompt=event;confirmInstallButton.hidden=false});
+window.addEventListener('appinstalled',()=>{deferredInstallPrompt=null;if(installDialog.open)installDialog.close()});
 document.addEventListener('visibilitychange',()=>document.hidden?pauseRoundForVisibility():resumeRoundFromVisibility());
 introPlayButton.addEventListener('click',event=>{
   event.stopPropagation();
@@ -1495,10 +1499,12 @@ buildStars();
 updateSoundButton();
 renderLevelMap();
 if(history.state?.marker===NAVIGATION_MARKER)restoreNavigation(history.state);
-else if(progress.multiplicationLessonSeen)showMap({historyMode:'replace'});
-else showLesson(LESSON_CONFIG.initialMode,null,{historyMode:'replace'});
+else{
+  history.replaceState(navigationState('guard'),'',`${location.pathname}${location.search}`);
+  if(progress.multiplicationLessonSeen)showMap({historyMode:'push'});
+  else showLesson(LESSON_CONFIG.initialMode,null,{historyMode:'push'});
+}
 prepareIntro();
-if(!matchMedia('(display-mode: standalone)').matches)installGameButton.hidden=false;
 if('serviceWorker' in navigator)navigator.serviceWorker.register('./service-worker.js').catch(()=>{});
 
 window.__EDUKASS_TEST__={
