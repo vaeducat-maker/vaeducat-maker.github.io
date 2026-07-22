@@ -1314,6 +1314,23 @@ body.intro-active{overflow:hidden}
   .install-button-icon{font-size:1.55rem!important}
 }
 
+/* v39: mobile breathing room and safe intro composition. */
+@media(max-width:700px){
+  .topbar{
+    height:78px;
+    padding-top:12px;
+    padding-bottom:12px;
+  }
+  .intro-math span{
+    max-width:calc(100vw - 32px);
+    padding:.42em .62em!important;
+    font-size:1.08rem!important;
+    white-space:nowrap;
+  }
+  .intro-math span:first-child{left:16px!important;top:29%}
+  .intro-math span:last-child{right:16px!important;top:38%}
+}
+
 @media(max-height:500px) and (min-width:701px){
   .intro-brand{top:2.5%!important}
   .intro-brand small{font-size:clamp(1.55rem,8vh,2.4rem)!important}
