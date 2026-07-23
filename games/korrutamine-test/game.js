@@ -751,10 +751,7 @@ function showLesson(mode=LESSON_CONFIG.initialMode,pendingLevel=null,{historyMod
   lessonSign.textContent=division?`÷${PRACTICE_TABLE}`:`×${PRACTICE_TABLE}`;
   configureDemoPicker(division);
   updateDemo(LESSON_CONFIG.demoFactor);
-  if(pendingLevel==='explanations')lessonContinueButton.textContent=t('lesson.toExplanations');
-  else if(pendingLevel==='map')lessonContinueButton.textContent=t('lesson.toMissions');
-  else if(Number.isInteger(pendingLevel))lessonContinueButton.innerHTML=`<span>${pendingLevel}. MISSIOON</span><strong>ALUSTA!</strong>`;
-  else lessonContinueButton.innerHTML='<span>1. MISSIOON</span><strong>ALUSTA!</strong>';
+  lessonContinueButton.textContent=t('lesson.toExplanations');
   showScreen('lessonScreen',{historyMode,historyView:'lesson',historyData:{mode,pendingLevel}});
 }
 

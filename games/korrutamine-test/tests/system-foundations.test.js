@@ -53,8 +53,12 @@ assert.equal(i18n.t('lesson.toExplanations'),'MÄNGI!');
 assert.equal(i18n.t('missing.key',{},'Varutekst'),'Varutekst');
 
 const gameCode=fs.readFileSync(path.join(gameRoot,'game.js'),'utf8');
+const gameHtml=fs.readFileSync(path.join(gameRoot,'index.html'),'utf8');
 assert.match(gameCode,/currentLessonMode===LESSON_CONFIG\.divisionMode\?DIVISION_MISSION_ID:1/);
 assert.match(gameCode,/startLevel\(level,\{historyMode:'replace'\}\)/);
+assert.match(gameCode,/lessonContinueButton\.textContent=t\('lesson\.toExplanations'\)/);
+assert.doesNotMatch(gameCode,/lessonContinueButton\.innerHTML=.*MISSIOON/);
+assert.match(gameHtml,/id="lessonContinueButton"[^>]*>MÄNGI!<\/button>/);
 
 const unsupported=i18nApi.create({
   locales:{et},
