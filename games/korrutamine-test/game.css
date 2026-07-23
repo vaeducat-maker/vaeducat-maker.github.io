@@ -1314,25 +1314,121 @@ body.intro-active{overflow:hidden}
   .install-button-icon{font-size:1.55rem!important}
 }
 
-/* v39: mobile breathing room and safe intro composition. */
-@media(max-width:700px){
-  .topbar{
-    height:78px;
-    padding-top:12px;
-    padding-bottom:12px;
-  }
-  .intro-math span{
-    max-width:calc(100vw - 32px);
-    padding:.42em .62em!important;
-    font-size:1.08rem!important;
-    white-space:nowrap;
-  }
-  .intro-math span:first-child{left:16px!important;top:29%}
-  .intro-math span:last-child{right:16px!important;top:38%}
-}
-
 @media(max-height:500px) and (min-width:701px){
   .intro-brand{top:2.5%!important}
   .intro-brand small{font-size:clamp(1.55rem,8vh,2.4rem)!important}
   .intro-math span{font-size:1.15rem!important}.intro-math span:first-child{top:22%}.intro-math span:last-child{top:25%}
+}
+
+/* v39: mobile spacing and safe intro bounds. */
+@media(max-width:700px){
+  .topbar{
+    height:auto;
+    min-height:82px;
+    padding-top:12px;
+    padding-bottom:12px;
+  }
+  .intro-math span{
+    max-width:calc(100vw - 24px);
+    padding:.4em .58em!important;
+    font-size:1.05rem!important;
+    white-space:nowrap;
+  }
+  .intro-math span:first-child{left:12px;top:29%}
+  .intro-math span:last-child{left:auto;right:12px;top:38%}
+}
+
+@media(max-width:390px){
+  .topbar{min-height:88px;padding-left:10px;padding-right:10px;gap:8px}
+  .brand{gap:6px}
+  .brand-cat{width:46px;height:46px}
+  .intro-math span{font-size:1rem!important}
+}
+
+/* v40: fixed mobile chrome and one-screen play/intro layouts. */
+.topbar{
+  position:sticky;
+  top:0;
+  isolation:isolate;
+}
+
+@media(max-width:700px){
+  .topbar{
+    min-height:68px;
+    padding:7px max(8px,env(safe-area-inset-right)) 7px max(8px,env(safe-area-inset-left));
+    gap:6px;
+  }
+  .brand{flex:0 0 auto;gap:5px;font-size:.78rem}
+  .brand-cat{width:39px;height:39px;border-radius:12px}
+  .top-actions{min-width:0;margin-left:auto;gap:4px}
+  .install-button{
+    width:auto!important;
+    max-width:132px!important;
+    min-height:42px!important;
+    padding:5px 8px!important;
+    gap:4px!important;
+    font-size:.64rem!important;
+  }
+  .install-button-icon{font-size:1.25rem!important}
+  .share-button{min-height:42px;padding:0 7px;font-size:.62rem;gap:3px}
+  .share-button svg{width:16px;height:16px}
+  .sound-button{width:38px;height:38px;font-size:.92rem}
+  .app-shell{padding-top:8px;padding-bottom:max(18px,env(safe-area-inset-bottom))}
+
+  .battle-top{min-height:38px;margin-bottom:5px}
+  .back-button{min-height:36px}
+  .battle-stage{height:clamp(285px,40dvh,355px);min-height:285px}
+  .question-card{padding-top:25px}
+  .keypad{gap:5px}
+  .keypad button{min-height:40px}
+
+  .intro-brand{
+    top:max(2.6%,env(safe-area-inset-top))!important;
+    width:94vw;
+    font-size:1.55rem!important;
+  }
+  .intro-brand small{
+    margin-top:.22rem;
+    font-size:clamp(1.55rem,8.2vw,2.45rem)!important;
+    line-height:.88;
+  }
+  .intro-math span{
+    max-width:calc(50vw - 18px);
+    padding:.34em .48em!important;
+    font-size:clamp(.8rem,3.7vw,1rem)!important;
+  }
+  .intro-math span:first-child{left:12px;top:27%}
+  .intro-math span:last-child{right:12px;top:34%}
+  .intro-scene{top:52%;height:47vh}
+  .intro-cat-crop{left:-2%;bottom:-1%;width:170px;height:195px}
+  .intro-ignition{left:35%;bottom:16%;width:50px}
+  .intro-rocket{left:74%;top:52%;transform:translate(-50%,-44%) rotate(7deg) scale(.78)}
+  .intro-play{
+    bottom:max(calc(env(safe-area-inset-bottom) + 14px),2.2%)!important;
+    min-width:136px!important;
+    height:54px!important;
+  }
+}
+
+@media(max-width:390px){
+  .topbar{min-height:66px;padding-left:7px;padding-right:7px}
+  .brand{font-size:.72rem}
+  .brand-cat{width:36px;height:36px}
+  .install-button{max-width:118px!important;font-size:.58rem!important;padding:4px 6px!important}
+  .install-button-icon{font-size:1.12rem!important}
+  .share-button{padding:0 5px;font-size:.58rem}
+  .sound-button{width:35px;height:35px}
+}
+
+@media(max-width:700px) and (max-height:720px){
+  .intro-brand{top:max(1.5%,env(safe-area-inset-top))!important;font-size:1.35rem!important}
+  .intro-brand small{font-size:clamp(1.35rem,7.4vw,2rem)!important}
+  .intro-math span:first-child{top:24%}
+  .intro-math span:last-child{top:31%}
+  .intro-scene{top:53%;height:43vh}
+  .intro-cat-crop{width:145px;height:168px}
+  .intro-rocket{transform:translate(-50%,-44%) rotate(7deg) scale(.68)}
+  .intro-play{height:50px!important;min-width:128px!important}
+  .battle-stage{height:clamp(250px,36dvh,300px);min-height:250px}
+  .keypad button{min-height:36px}
 }

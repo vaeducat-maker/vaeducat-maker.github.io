@@ -1436,8 +1436,9 @@ lessonContinueButton.addEventListener('click',()=>{
   else progress.multiplicationLessonSeen=true;
   saveProgress();
   if(pendingLevelAfterLesson==='explanations'){
+    const level=currentLessonMode===LESSON_CONFIG.divisionMode?DIVISION_MISSION_ID:1;
     pendingLevelAfterLesson=null;
-    history.back();
+    startLevel(level,{historyMode:'replace'});
   }else if(pendingLevelAfterLesson==='map'){
     pendingLevelAfterLesson=null;
     history.back();

@@ -47,7 +47,7 @@
       'lesson.numberAria':'Arv {value}',
       'lesson.dividendValueAria':'Jagatav {value}',
       'lesson.openMission':'Ava {number}. missioon',
-      'lesson.toExplanations':'Selgituste juurde',
+      'lesson.toExplanations':'MÄNGI!',
       'lesson.toMissions':'← KAARDILE',
       'explanations.eyebrow':'PEATÜKK 1 · SELGITUSED',
       'explanations.title':'Mida kordame?',

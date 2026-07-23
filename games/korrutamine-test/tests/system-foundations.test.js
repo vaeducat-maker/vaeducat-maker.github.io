@@ -1,4 +1,5 @@
 const assert=require('node:assert/strict');
+const fs=require('node:fs');
 const path=require('node:path');
 
 const gameRoot=path.resolve(__dirname,'..');
@@ -48,7 +49,12 @@ assert.equal(i18n.t('lesson.openMission',{number:11}),'Ava 11. missioon');
 assert.equal(i18n.t('feedback.correctAnswer',{answer:18}),'Õige vastus on 18');
 assert.equal(i18n.t('share.button'),'JAGA');
 assert.equal(i18n.t('share.copied'),'Link kopeeritud!');
+assert.equal(i18n.t('lesson.toExplanations'),'MÄNGI!');
 assert.equal(i18n.t('missing.key',{},'Varutekst'),'Varutekst');
+
+const gameCode=fs.readFileSync(path.join(gameRoot,'game.js'),'utf8');
+assert.match(gameCode,/currentLessonMode===LESSON_CONFIG\.divisionMode\?DIVISION_MISSION_ID:1/);
+assert.match(gameCode,/startLevel\(level,\{historyMode:'replace'\}\)/);
 
 const unsupported=i18nApi.create({
   locales:{et},
