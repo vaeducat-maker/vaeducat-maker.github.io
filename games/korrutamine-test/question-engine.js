@@ -5,37 +5,44 @@
 })(typeof globalThis!=='undefined'?globalThis:this,function(){
   'use strict';
 
-  function fixedMultiplication(a,b){
-    return {
+  function withStatsTable(question,statsTable){
+    if(Number.isInteger(statsTable))question.statsTable=statsTable;
+    return question;
+  }
+
+  function fixedMultiplication(a,b,statsTable){
+    return withStatsTable({
       a,
       b,
       answer:a*b,
       operation:'multiply',
       factor:a===2?b:(b===2?a:Math.max(a,b)),
       table:a===1||b===1?1:2
-    };
+    },statsTable);
   }
 
-  function multiplication(table,factor,reverse=false){
-    return {
+  function multiplication(table,factor,reverse=false,statsTable){
+    return withStatsTable({
       a:reverse?factor:table,
       b:reverse?table:factor,
       answer:table*factor,
       operation:'multiply',
       factor,
+      // Keep the v28 value for existing questions. New tables can carry the
+      // explicit statsTable without changing the first chapter's behaviour.
       table:table===1||factor===1?1:table
-    };
+    },statsTable);
   }
 
-  function division(factor,divisor=2){
-    return {
+  function division(factor,divisor=2,statsTable){
+    return withStatsTable({
       a:factor*divisor,
       b:divisor,
       answer:factor,
       operation:'divide',
       factor,
       table:divisor
-    };
+    },statsTable);
   }
 
   function create({config,getFactStats=()=>({}),random=Math.random}){
@@ -80,29 +87,38 @@
       return [...arranged,...pool];
     }
 
-    function repeatedMultiplication(factors,orientation='forward',copies=1,table=practiceTable){
+    function repeatedMultiplication(factors,orientation='forward',copies=1,table=practiceTable,statsTable){
       const questions=[];
       for(let copy=0;copy<copies;copy++){
         factors.forEach((factor,index)=>{
           const reverse=orientation==='reverse'||(orientation==='mixed'&&(index+copy)%2===1);
-          questions.push(multiplication(table,factor,reverse));
+          questions.push(multiplication(table,factor,reverse,statsTable));
         });
       }
       return questions;
     }
 
-    function repeatedDivision(factors,copies=1,divisor=practiceTable){
+    function repeatedDivision(factors,copies=1,divisor=practiceTable,statsTable){
       const questions=[];
-      for(let copy=0;copy<copies;copy++)factors.forEach(factor=>questions.push(division(factor,divisor)));
+      for(let copy=0;copy<copies;copy++)factors.forEach(factor=>questions.push(division(factor,divisor,statsTable)));
       return questions;
     }
 
-    function weakestFactors(operation,count=5){
+    function statsKey(operation,factor,statsTable){
+      return Number.isInteger(statsTable)
+        ?`${operation}:${statsTable}:${factor}`
+        :`${operation}:${factor}`;
+    }
+
+    function statFor(operation,factor,statsTable){
       const factStats=getFactStats()||{};
-      return practiceFactors
+      return factStats[statsKey(operation,factor,statsTable)]||{correct:0,mistakes:0};
+    }
+
+    function weakestFactors(operation,count=5,{factors=practiceFactors,statsTable}={}){
+      return factors
         .map(factor=>{
-          const key=`${operation}:${factor}`;
-          const stat=factStats[key]||{correct:0,mistakes:0};
+          const stat=statFor(operation,factor,statsTable);
           return {factor,score:(stat.mistakes*4)-stat.correct};
         })
         .sort((left,right)=>right.score-left.score||right.factor-left.factor)
@@ -112,19 +128,51 @@
 
     function buildFixedQuestions(questionSpecs){
       return questionSpecs.map(question=>question.operation==='divide'
-        ?division(question.factor,question.divisor)
-        :fixedMultiplication(question.a,question.b));
+        ?division(question.factor,question.divisor,question.statsTable)
+        :fixedMultiplication(question.a,question.b,question.statsTable));
+    }
+
+    function buildAdaptiveFamilies(group){
+      const families=group.families||[];
+      const candidates=[];
+      families.forEach((family,familyIndex)=>{
+        const operation=family.operation;
+        const factors=family.factors||practiceFactors;
+        factors.forEach((factor,factorIndex)=>{
+          const stat=statFor(operation,factor,family.statsTable);
+          const table=operation==='divide'?(family.divisor||practiceTable):(family.table||practiceTable);
+          candidates.push({
+            family,
+            familyIndex,
+            factor,
+            factorIndex,
+            table,
+            score:(stat.mistakes*4)-stat.correct
+          });
+        });
+      });
+      return candidates
+        .sort((left,right)=>right.score-left.score||right.factor-left.factor||right.table-left.table||right.familyIndex-left.familyIndex)
+        .slice(0,group.count||5)
+        .map((item,index)=>{
+          const family=item.family;
+          if(family.operation==='divide')return division(item.factor,family.divisor||practiceTable,family.statsTable);
+          const orientation=family.orientation||'forward';
+          const reverse=orientation==='reverse'||(orientation==='mixed'&&(item.factorIndex+index)%2===1);
+          return multiplication(family.table||practiceTable,item.factor,reverse,family.statsTable);
+        });
     }
 
     function buildQuestionGroup(group){
       if(group.type==='fixed')return buildFixedQuestions(group.questions);
-      if(group.type==='multiplication')return repeatedMultiplication(group.factors,group.orientation,group.copies,group.table||practiceTable);
-      if(group.type==='division')return repeatedDivision(group.factors,group.copies,group.divisor||practiceTable);
+      if(group.type==='multiplication')return repeatedMultiplication(group.factors,group.orientation,group.copies,group.table||practiceTable,group.statsTable);
+      if(group.type==='division')return repeatedDivision(group.factors,group.copies,group.divisor||practiceTable,group.statsTable);
       if(group.type==='adaptive'){
-        const factors=weakestFactors(group.operation,group.count);
+        if(Array.isArray(group.families))return buildAdaptiveFamilies(group);
+        const factors=weakestFactors(group.operation,group.count,{factors:group.factors||practiceFactors,statsTable:group.statsTable});
         return group.operation==='divide'
-          ?repeatedDivision(factors,group.copies,group.divisor||practiceTable)
-          :repeatedMultiplication(factors,group.orientation,group.copies,group.table||practiceTable);
+          ?repeatedDivision(factors,group.copies,group.divisor||practiceTable,group.statsTable)
+          :repeatedMultiplication(factors,group.orientation,group.copies,group.table||practiceTable,group.statsTable);
       }
       return [];
     }
@@ -141,23 +189,19 @@
     }
 
     function separatorQuestion(level,lastKey){
-      const candidates=[];
-      practiceFactors.forEach(factor=>{
-        if(level.operation==='divide')candidates.push(division(factor,practiceTable));
-        else if(level.operation==='mixed')candidates.push(factor%2===0?division(factor,practiceTable):multiplication(practiceTable,factor));
-        else candidates.push(multiplication(practiceTable,factor));
-      });
+      const candidates=buildQuestionPool(level.id);
       return shuffle(candidates).find(question=>equationKey(question)!==lastKey)||null;
     }
 
     function questionKey(question){
       const operation=question.operation==='divide'?'divide':'multiply';
-      return `${operation}:${question.factor}`;
+      return statsKey(operation,question.factor,question.statsTable);
     }
 
     function buildChoiceOptions(question){
       const answer=question.answer;
-      const step=question.operation==='multiply'?question.table:1;
+      const choiceTable=Number.isInteger(question.statsTable)?question.statsTable:question.table;
+      const step=question.operation==='multiply'?choiceTable:1;
       const candidates=[answer,answer-step,answer+step,answer-1,answer+1,answer+(step*2),answer-(step*2),answer+3];
       const unique=[];
       candidates.forEach(value=>{

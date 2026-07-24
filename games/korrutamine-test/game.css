@@ -1445,3 +1445,129 @@ body.intro-active{overflow:hidden}
     bottom:max(calc(env(safe-area-inset-bottom) + 68px),11%)!important;
   }
 }
+
+/* v43: chapter 2 “Kolm” — continuous map, three moons and map-fragment rewards. */
+.explanation-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.chapter-route-head{grid-template-columns:1fr;justify-items:center;text-align:center;margin:4px 0 12px}
+.chapter-route-head span:last-child{color:#fff;text-align:center}
+.chapter-divider{grid-column:1/-1;position:relative;display:flex;align-items:center;gap:14px;min-height:46px;margin:8px 2px 0;padding:8px 14px;border-radius:16px;background:rgba(255,255,255,.1);color:#fff;font-size:.82rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase;scroll-margin-top:100px}
+.chapter-divider:first-child{margin-top:0}
+.chapter-divider span{position:relative;z-index:2;white-space:nowrap}
+.chapter-divider i{height:2px;flex:1;border-radius:999px;background:linear-gradient(90deg,rgba(255,255,255,.65),transparent)}
+.chapter-divider-2{background:linear-gradient(90deg,rgba(143,125,226,.34),rgba(112,217,207,.12))}
+.level-object[data-chapter="2"] .celestial-shape{box-shadow:inset -10px -12px 0 rgba(23,54,95,.18),0 0 0 1px rgba(143,125,226,.2)}
+
+.chapter-two-goal{display:none}
+.chapter-two-active .chapter-two-goal{display:flex}
+.chapter-two-active .story-goals{grid-template-columns:repeat(4,minmax(0,1fr))}
+.goal-vault{width:25px!important;height:22px!important;border:3px solid currentColor;border-radius:5px!important;background:transparent!important;clip-path:none!important}
+.goal-vault:before{content:"";position:absolute;left:3px;right:3px;top:-10px;height:12px;border:3px solid currentColor;border-bottom:0;border-radius:10px 10px 0 0}
+.goal-vault:after{content:"✦";position:absolute;inset:0;display:grid;place-items:center;font-size:.68rem}
+
+.story-two{display:none;position:absolute;inset:0;z-index:4;overflow:hidden}
+.story-stage.chapter-two .story-two{display:block}
+.story-stage.chapter-two .story-ship,
+.story-stage.chapter-two .story-portal,
+.story-stage.chapter-two .next-planet,
+.story-stage.chapter-two .story-energy-stream{display:none}
+.story-stage.chapter-two .story-cat-crop{left:1%;bottom:-18px;animation:storyCatWatch 1.8s ease-in-out infinite alternate}
+.three-planet{position:absolute;right:8%;top:48%;width:132px;height:132px;border-radius:50%;transform:translateY(-50%);background:radial-gradient(circle at 30% 24%,#fff 0 4%,#8f7de2 8% 42%,#4f4b9a 70%,#25265f 72%);box-shadow:0 0 0 13px rgba(255,255,255,.06),0 0 42px rgba(143,125,226,.46)}
+.three-planet:after{content:"";position:absolute;left:-27px;right:-27px;top:54px;height:28px;border:7px solid rgba(112,217,207,.7);border-top-color:transparent;border-radius:50%;transform:rotate(-11deg)}
+.three-moon{--moon-progress:0;position:absolute;width:54px;height:54px;border-radius:50%;opacity:calc(.1 + (var(--moon-progress) * .14));filter:grayscale(calc(1 - (var(--moon-progress) * .2)));transition:.35s ease;background:radial-gradient(circle at 30% 25%,#fff 0 7%,#ffd34d 12% 48%,#ff9a3c 75%);box-shadow:0 0 calc(3px + (var(--moon-progress) * 4px)) rgba(255,211,77,.8)}
+.three-moon i{position:absolute;inset:-8px;border:2px dashed rgba(255,255,255,.38);border-radius:50%;animation:portalTurn 8s linear infinite}
+.three-moon.is-awake{filter:none}
+.three-moon.is-aligned{opacity:1;animation:moonAligned 1.25s ease-in-out infinite alternate}
+.moon-one{right:29%;top:12%}.moon-two{right:43%;top:42%}.moon-three{right:27%;bottom:8%}
+.three-vault{position:absolute;right:50%;bottom:16%;width:72px;height:52px;border:4px solid #17365f;border-radius:10px;background:linear-gradient(135deg,#ffd34d,#ff9a3c);opacity:.18;transform:translateY(12px) scale(.84);transition:.45s ease;box-shadow:0 10px 18px rgba(5,10,34,.35)}
+.three-vault:before{content:"";position:absolute;left:12px;right:12px;top:-28px;height:30px;border:5px solid #17365f;border-bottom:0;border-radius:24px 24px 0 0}
+.three-vault i{position:absolute;top:17px;width:12px;height:16px;border-radius:5px;background:#273158}
+.three-vault i:first-child{left:19px}.three-vault i:last-child{right:19px}
+.three-vault.has-first-lock{opacity:.65;transform:translateY(5px) scale(.94)}
+.three-vault.has-first-lock i:first-child{background:#70d9cf;box-shadow:0 0 10px #70d9cf}
+.three-vault.has-second-lock{opacity:1;transform:none}
+.three-vault.has-second-lock i:last-child{background:#70d9cf;box-shadow:0 0 10px #70d9cf}
+.three-vault.is-open{transform:translateY(8px) rotateX(16deg);filter:brightness(1.15)}
+.three-map-fragment{position:absolute;right:55%;bottom:31%;font-size:3.4rem;color:#ffd34d;opacity:0;transform:translateY(25px) scale(.25) rotate(-20deg);text-shadow:0 0 18px #ff9a3c,0 0 28px #70d9cf;transition:.65s cubic-bezier(.18,.9,.2,1.3)}
+.three-map-fragment.is-found{opacity:1;transform:none;animation:mapFragmentFloat 1.4s ease-in-out infinite alternate}
+@keyframes moonAligned{to{transform:translateY(-5px) scale(1.06);box-shadow:0 0 28px rgba(255,211,77,.92)}}
+@keyframes mapFragmentFloat{to{transform:translateY(-7px) rotate(4deg)}}
+
+.reward-three-zone{display:none;position:absolute;inset:0;z-index:4}
+.reward-chapter-two .reward-three-zone{display:block}
+.reward-chapter-two .reward-ship,
+.reward-chapter-two .reward-portal,
+.reward-chapter-two .reward-next-planet{display:none}
+.reward-chapter-two .crystal{left:31%;top:53%;z-index:12;animation:none}
+.reward-three-planet{position:absolute;right:5%;top:50%;width:105px;height:105px;border-radius:50%;transform:translateY(-50%);background:radial-gradient(circle at 30% 24%,#fff 0 4%,#8f7de2 8% 44%,#4b478e 72%);box-shadow:0 0 0 10px rgba(255,255,255,.05),0 0 34px rgba(143,125,226,.45)}
+.reward-three-moon{position:absolute;width:42px;height:42px;border-radius:50%;opacity:.12;filter:grayscale(1);background:radial-gradient(circle at 30% 25%,#fff 0 7%,#ffd34d 12% 48%,#ff9a3c 76%);box-shadow:0 0 14px rgba(255,211,77,.35)}
+.reward-three-moon-one{right:28%;top:12%}.reward-three-moon-two{right:41%;top:43%}.reward-three-moon-three{right:27%;bottom:10%}
+.reward-three-moon.is-earned{opacity:1;filter:none}
+.reward-three-moon.is-new-reward{opacity:0;filter:none}
+.reward-chapter-two.is-playing .reward-three-moon.is-new-reward{animation:rewardMoonArrives 1.15s 1.02s cubic-bezier(.18,.9,.2,1.35) forwards}
+.reward-three-vault{position:absolute;right:47%;bottom:14%;width:58px;height:42px;border:3px solid #17365f;border-radius:8px;background:linear-gradient(135deg,#ffd34d,#ff9a3c);opacity:.12;filter:grayscale(1)}
+.reward-three-vault:before{content:"";position:absolute;left:10px;right:10px;top:-22px;height:23px;border:4px solid #17365f;border-bottom:0;border-radius:18px 18px 0 0}
+.reward-three-vault i{position:absolute;top:13px;width:9px;height:13px;border-radius:4px;background:#29345f}.reward-three-vault i:first-child{left:15px}.reward-three-vault i:last-child{right:15px}
+.reward-three-vault.is-earned{opacity:1;filter:none}
+.reward-three-vault.is-new-reward{opacity:0;filter:none}
+.reward-chapter-two.is-playing .reward-three-vault.is-new-reward{animation:rewardVaultArrives 1.1s 1.05s cubic-bezier(.18,.9,.2,1.3) forwards}
+.reward-three-vault.has-second-lock i:last-child{background:#70d9cf;box-shadow:0 0 8px #70d9cf}
+.reward-three-vault.is-open{transform:translateY(5px) rotateX(15deg)}
+.reward-three-map{position:absolute;right:54%;bottom:33%;font-size:3rem;color:#ffd34d;opacity:0;filter:drop-shadow(0 0 12px #ff9a3c)}
+.reward-three-map.is-earned{opacity:1}.reward-three-map.is-new-reward{opacity:0}
+.reward-chapter-two.is-playing .reward-three-map.is-new-reward{animation:rewardMapArrives 1.35s 1.1s cubic-bezier(.18,.9,.2,1.35) forwards}
+.reward-three-runes{position:absolute;right:14%;left:39%;top:12%;bottom:9%;display:grid;grid-template-columns:repeat(6,1fr);align-content:end;gap:6px;pointer-events:none}
+.reward-three-runes i{width:9px;height:9px;justify-self:center;border-radius:50%;background:#3d486c;box-shadow:inset 0 1px 2px rgba(255,255,255,.1);opacity:.45}
+.reward-three-runes i.is-earned{background:#ffd34d;opacity:1;box-shadow:0 0 8px #ff9a3c,0 0 14px rgba(112,217,207,.65)}
+.reward-three-runes i.is-new-reward{opacity:.12;background:#3d486c}
+.reward-chapter-two.is-playing .reward-three-runes i.is-new-reward{animation:rewardThreeRune 1s 1.04s cubic-bezier(.18,.9,.2,1.35) forwards}
+.reward-chapter-two.is-playing .crystal{animation:rewardEnergyToThree 1.35s .2s ease-in-out both}
+.reward-three-final.is-playing .reward-three-zone{animation:threeFinalGlow 3.2s 1.1s ease-in-out both}
+@keyframes rewardMoonArrives{0%{opacity:0;transform:translate(-80px,45px) scale(.2) rotate(-35deg)}70%{opacity:1;transform:scale(1.18)}100%{opacity:1;transform:none}}
+@keyframes rewardVaultArrives{0%{opacity:0;transform:translateY(55px) scale(.4)}75%{opacity:1;transform:translateY(-5px) scale(1.08)}100%{opacity:1;transform:none}}
+@keyframes rewardMapArrives{0%{opacity:0;transform:translateY(45px) scale(.18) rotate(-40deg)}75%{opacity:1;transform:translateY(-8px) scale(1.12)}100%{opacity:1;transform:none}}
+@keyframes rewardThreeRune{0%{opacity:0;transform:scale(.1)}65%{opacity:1;transform:scale(1.65);background:#fff}100%{opacity:1;transform:scale(1);background:#ffd34d;box-shadow:0 0 9px #ff9a3c,0 0 15px #70d9cf}}
+@keyframes rewardEnergyToThree{0%{opacity:0;transform:translate(-25px,18px) scale(.45)}28%{opacity:1}78%{transform:translate(150px,-22px) scale(.25);opacity:1}100%{transform:translate(205px,-5px) scale(.05);opacity:0}}
+@keyframes threeFinalGlow{45%{filter:brightness(1)}72%{filter:brightness(1.75) drop-shadow(0 0 20px #ffd34d)}100%{filter:brightness(1.15)}}
+
+@media(max-width:700px){
+  .chapter-two-active .story-goals{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .chapter-divider{font-size:.7rem;padding:7px 10px}
+  .three-planet{right:-3%;width:108px;height:108px}
+  .three-moon{width:43px;height:43px}.moon-one{right:27%;top:10%}.moon-two{right:41%;top:42%}.moon-three{right:25%;bottom:9%}
+  .three-vault{right:44%;bottom:13%;transform:scale(.8)}
+  .three-map-fragment{right:50%;bottom:29%;font-size:2.7rem}
+  .reward-three-planet{right:-2%;width:88px;height:88px}
+  .reward-three-moon{width:34px;height:34px}.reward-three-moon-one{right:25%}.reward-three-moon-two{right:39%}.reward-three-moon-three{right:24%}
+  .reward-three-vault{right:42%;transform:scale(.82)}
+  .reward-three-map{right:49%;font-size:2.5rem}
+  .reward-three-runes{left:36%;right:7%;gap:4px}
+  .reward-chapter-two .crystal{left:24%;font-size:3.5rem}
+}
+/* v43 reward-state sequencing: the second lock and final opening appear only after the held “before” frame. */
+.reward-three-vault i.is-earned{background:#70d9cf;box-shadow:0 0 8px #70d9cf}
+.reward-three-vault i.is-new-reward{background:#29345f;box-shadow:none}
+.reward-chapter-two.is-playing .reward-three-vault i.is-new-reward{animation:rewardLockIgnites .8s 1.18s cubic-bezier(.18,.9,.2,1.35) forwards}
+.reward-three-final.is-playing .reward-three-vault{animation:rewardVaultOpens 1.05s 1.2s cubic-bezier(.18,.9,.2,1.2) forwards}
+@keyframes rewardLockIgnites{0%{background:#29345f;box-shadow:none;transform:scale(.65)}55%{background:#fff;box-shadow:0 0 15px #fff;transform:scale(1.35)}100%{background:#70d9cf;box-shadow:0 0 8px #70d9cf;transform:none}}
+@keyframes rewardVaultOpens{0%{transform:none;filter:none}58%{transform:translateY(-4px) scale(1.08);filter:brightness(1.4)}100%{transform:translateY(5px) rotateX(15deg);filter:brightness(1.15)}}
+/* v43: four explanations stay readable in a 2×2 grid on phones and compact landscape screens. */
+@media(max-width:880px){
+  .explanation-grid{grid-template-columns:repeat(2,minmax(0,1fr));max-width:none;gap:14px}
+  .explanation-choice{min-height:154px;padding:13px 10px 33px;flex-direction:column;justify-content:center;gap:7px;text-align:center}
+  .explanation-orbit{width:72px;height:72px}
+  .explanation-orbit:after{left:-9px;right:-9px;top:27px;height:17px;border-width:4px}
+  .explanation-orbit span{font-size:2.2rem}
+  .explanation-name strong{font-size:1.08rem;line-height:1.05;overflow-wrap:normal}
+  .explanation-name small{margin-top:4px;font-size:.78rem}
+  .explanation-arrow{right:10px;top:auto;bottom:9px;transform:none;font-size:1.35rem}
+  .explanation-lock{right:10px;top:9px;font-size:1rem}
+  .explanation-play{right:8px;bottom:8px;padding:5px 9px;font-size:.68rem}
+}
+@media(max-width:420px){
+  .explanation-hub{padding-left:14px;padding-right:14px}
+  .explanation-grid{gap:11px}
+  .explanation-choice{min-height:146px;padding-left:7px;padding-right:7px}
+  .explanation-orbit{width:64px;height:64px}
+  .explanation-orbit:after{top:24px}
+  .explanation-name strong{font-size:.98rem}
+}

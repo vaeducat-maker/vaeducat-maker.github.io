@@ -13,6 +13,7 @@
         completedLevels:[],
         multiplicationLessonSeen:false,
         divisionLessonSeen:false,
+        lessonSeen:{},
         factStats:{}
       };
     }
@@ -27,6 +28,14 @@
           version=1;
           continue;
         }
+        if(version===1){
+          const lessonSeen={...(migrated.lessonSeen||{})};
+          if(migrated.multiplicationLessonSeen)lessonSeen['multiply-2']=true;
+          if(migrated.divisionLessonSeen)lessonSeen['divide-2']=true;
+          migrated={...migrated,lessonSeen,saveVersion:2};
+          version=2;
+          continue;
+        }
         return null;
       }
       if(version>schemaVersion)return null;
@@ -36,10 +45,18 @@
     function normalize(saved){
       const migrated=migrate(saved);
       if(!migrated||!Number.isInteger(migrated.unlockedLevel)||!Array.isArray(migrated.completedLevels))return defaultProgress();
+      const completedLevels=[...new Set(migrated.completedLevels)]
+        .filter(level=>Number.isInteger(level)&&level>=1&&level<=maxLevel)
+        .sort((a,b)=>a-b);
+      const lessonSeen=migrated.lessonSeen&&typeof migrated.lessonSeen==='object'?{...migrated.lessonSeen}:{};
+      if(migrated.multiplicationLessonSeen)lessonSeen['multiply-2']=true;
+      if(migrated.divisionLessonSeen)lessonSeen['divide-2']=true;
       return {
         ...defaultProgress(),
         ...migrated,
         saveVersion:schemaVersion,
+        completedLevels,
+        lessonSeen,
         unlockedLevel:Math.max(1,Math.min(maxLevel,migrated.unlockedLevel))
       };
     }
