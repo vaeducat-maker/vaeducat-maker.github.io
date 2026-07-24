@@ -63,6 +63,8 @@ const portalGoalCount=document.querySelector('#portalGoalCount');
 const vaultGoalCount=document.querySelector('#vaultGoalCount');
 const storyTwo=document.querySelector('#storyTwo');
 const storyThreeVault=document.querySelector('#storyThreeVault');
+const storyThreeDoor=document.querySelector('#storyThreeDoor');
+const storyThreeStairs=document.querySelector('#storyThreeStairs');
 const storyMapFragment=document.querySelector('#storyMapFragment');
 const rewardScene=document.querySelector('#rewardScene');
 const rewardPill=document.querySelector('#rewardPill');
@@ -921,7 +923,8 @@ function renderChapterTwoStory(){
   storyStage.dataset.completed=String(completed);
   storyStage.classList.add('chapter-two');
   storyStage.closest('.story-progress')?.classList.add('chapter-two-active');
-  storyStage.classList.remove('phase-ship','phase-engine','phase-portal','has-engine','has-portal');
+  storyStage.classList.remove('phase-ship','phase-engine','phase-portal','has-engine','has-portal','phase-moon1','phase-moon2','phase-moon3','phase-vault','phase-complete');
+  storyStage.classList.add(`phase-${phase}`);
   storyStage.classList.toggle('is-complete',completed===18);
   storyPhaseKicker.textContent=phase==='complete'?t('story.complete'):t('story.goal1');
   storyPhaseTitle.textContent=phase==='vault'?t('story.openVault'):phase==='complete'?t('story.mapFragment'):t('story.alignMoons');
@@ -948,7 +951,21 @@ function renderChapterTwoStory(){
     moon.classList.toggle('is-awake',value>0);
     moon.classList.toggle('is-aligned',value===5);
   });
-  storyThreeVault.classList.toggle('has-first-lock',vaultProgress>=1);
+  document.querySelectorAll('[data-story-machine]').forEach(machine=>{
+    const machineNumber=Number(machine.dataset.storyMachine);
+    const value=machineNumber===1?firstMoonProgress:machineNumber===2?secondMoonProgress:thirdMoonProgress;
+    machine.style.setProperty('--machine-progress',String(value));
+    machine.classList.toggle('is-awake',value>0);
+    machine.classList.toggle('is-complete',value===5);
+  });
+  storyTwo.style.setProperty('--first-progress',String(firstMoonProgress));
+  storyTwo.style.setProperty('--second-progress',String(secondMoonProgress));
+  storyTwo.style.setProperty('--third-progress',String(thirdMoonProgress));
+  storyThreeDoor.classList.toggle('is-revealed',secondMoonProgress===5);
+  storyThreeDoor.classList.toggle('is-open',thirdMoonProgress===5||vaultProgress>0);
+  storyThreeStairs.classList.toggle('is-visible',thirdMoonProgress===5||vaultProgress>0);
+  storyThreeVault.classList.toggle('is-visible',vaultProgress>=2);
+  storyThreeVault.classList.toggle('has-first-lock',vaultProgress>=2);
   storyThreeVault.classList.toggle('has-second-lock',vaultProgress>=2);
   storyThreeVault.classList.toggle('is-open',vaultProgress>=3);
   storyMapFragment.classList.toggle('is-found',vaultProgress>=3);
@@ -1004,18 +1021,30 @@ function renderLevelMap(){
   levelGrid.replaceChildren(...nodes);
 }
 
-function focusCurrentMission(){
-  const current=levelGrid.querySelector(`[data-level="${progress.unlockedLevel}"]`);
+function focusCurrentMission({reveal=true}={}){
+  const currentMissionId=Math.max(1,Math.min(LAST_MISSION_ID,progress.unlockedLevel));
+  const current=levelGrid.querySelector(`[data-level="${currentMissionId}"]`);
   if(!current||!missionRouteScroll)return;
-  const targetTop=levelGrid.offsetTop+current.offsetTop-(missionRouteScroll.clientHeight-current.offsetHeight)/2;
-  missionRouteScroll.scrollTop=Math.max(0,targetTop);
+  // Put the current row slightly below the middle. That keeps the last completed
+  // mission and the first available mission in the same opening view.
+  const routeHeight=missionRouteScroll.clientHeight;
+  const targetTop=levelGrid.offsetTop+current.offsetTop-Math.max(10,(routeHeight-current.offsetHeight)*.44);
+  const maxScroll=Math.max(0,missionRouteScroll.scrollHeight-routeHeight);
+  missionRouteScroll.scrollTop=Math.max(0,Math.min(maxScroll,targetTop));
+  if(reveal)missionRouteScroll.classList.remove('is-positioning');
 }
 
 function showMap({historyMode='push'}={}){
   stopRound();
   renderLevelMap();
+  missionRouteScroll.classList.add('is-positioning');
   showScreen('mapScreen',{historyMode,historyView:'map'});
-  requestAnimationFrame(focusCurrentMission);
+  window.scrollTo({top:0,behavior:'auto'});
+  // Position once synchronously before the browser paints, then correct once
+  // after layout settles. The route stays hidden during both calculations, so
+  // the child never sees it jump from a random place.
+  focusCurrentMission({reveal:false});
+  requestAnimationFrame(()=>requestAnimationFrame(()=>focusCurrentMission({reveal:true})));
 }
 
 function requestLevel(levelId){
@@ -1370,7 +1399,6 @@ function setChapterTwoRewardProgress(levelId,firstCompletion){
     {selector:'.reward-three-moon-one',step:5},
     {selector:'.reward-three-moon-two',step:10},
     {selector:'.reward-three-moon-three',step:15},
-    {selector:'.reward-three-vault',step:16},
     {selector:'.reward-three-map',step:18}
   ];
   milestones.forEach(({selector,step:milestoneStep})=>{
@@ -1383,13 +1411,13 @@ function setChapterTwoRewardProgress(levelId,firstCompletion){
   const vault=rewardScene.querySelector('.reward-three-vault');
   if(vault){
     const firstLock=vault.querySelector('i:first-child');
-    const secondLock=vault.querySelector('i:last-child');
+    const secondLock=vault.querySelector('i:nth-child(2)');
     [firstLock,secondLock].forEach(lock=>lock?.classList.remove('is-earned','is-new-reward'));
-    if(firstLock&&(previous>=16||step>=16))firstLock.classList.add('is-earned');
-    if(secondLock){
-      if(previous>=17)secondLock.classList.add('is-earned');
-      else if(firstCompletion&&step===17)secondLock.classList.add('is-new-reward');
-    }
+    [firstLock,secondLock].forEach(lock=>{
+      if(!lock)return;
+      if(previous>=17)lock.classList.add('is-earned');
+      else if(firstCompletion&&step===17)lock.classList.add('is-new-reward');
+    });
     vault.classList.toggle('is-open',previous>=18||(!firstCompletion&&step>=18));
   }
   rewardScene.style.setProperty('--three-step',String(step));
@@ -1442,6 +1470,10 @@ function configureRewardScene(levelId,firstCompletion,levelPassed){
     else if(chapterStep<=10)rewardScene.classList.add('reward-three-phase-two');
     else if(chapterStep<=15)rewardScene.classList.add('reward-three-phase-three');
     else rewardScene.classList.add('reward-three-phase-vault');
+    rewardScene.classList.add(`reward-three-step-${chapterStep}`);
+    if(levelId===31)rewardScene.classList.add('reward-three-descent-scene');
+    if(levelId===32)rewardScene.classList.add('reward-three-chamber-scene');
+    if(levelId===33)rewardScene.classList.add('reward-three-map-scene');
     if(levelId===CHAPTER_TWO_STORY.firstMoonMissionId)rewardScene.classList.add('reward-three-milestone-one');
     if(levelId===CHAPTER_TWO_STORY.secondMoonMissionId)rewardScene.classList.add('reward-three-milestone-two');
     if(levelId===CHAPTER_TWO_STORY.thirdMoonMissionId)rewardScene.classList.add('reward-three-milestone-three');

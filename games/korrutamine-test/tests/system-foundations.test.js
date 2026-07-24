@@ -75,6 +75,14 @@ assert.match(gameHtml,/id="repeatThreeDivisionButton"/);
 assert.match(gameHtml,/MISSIOONID 1–33/);
 assert.match(gameHtml,/id="missionRouteScroll"/);
 assert.match(gameCode,/missionRouteScroll\.scrollTop=/);
+assert.match(gameCode,/missionRouteScroll\.classList\.add\('is-positioning'\)/);
+assert.match(gameCode,/requestAnimationFrame\(\(\)=>requestAnimationFrame\(\(\)=>focusCurrentMission/);
+assert.match(gameCode,/currentMissionId=Math\.max\(1,Math\.min\(LAST_MISSION_ID,progress\.unlockedLevel\)\)/);
+assert.match(gameHtml,/id="storyThreeDoor"/);
+assert.match(gameHtml,/data-story-machine="1"/);
+assert.match(gameHtml,/class="reward-three-descent"/);
+assert.match(gameHtml,/class="reward-three-chamber"/);
+assert.match(gameHtml,/data-reward-three="18"/);
 
 const unsupported=i18nApi.create({
   locales:{et},

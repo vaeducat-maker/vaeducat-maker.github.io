@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#182452">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="icon" href="assets/icon-192.png?v=44">
-  <link rel="apple-touch-icon" href="assets/icon-192.png?v=44">
+  <link rel="icon" href="assets/icon-192.png?v=45">
+  <link rel="apple-touch-icon" href="assets/icon-192.png?v=45">
   <title data-i18n="meta.title">EDUKASS — Korrutustabeli treener</title>
   <meta name="description" content="EDUKASSi korrutustabeli treener: korrutamise ja jagamise missioonid lastele." data-i18n-content="meta.description">
   <meta property="og:type" content="website">
@@ -17,7 +17,7 @@
   <meta property="og:image" content="https://edukass.ee/games/korrutamine-test/assets/share-korrutustabel.png?v=40">
   <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="stylesheet" href="game.css?v=44">
+  <link rel="stylesheet" href="game.css?v=45">
 </head>
 <body class="intro-active">
   <section class="game-intro is-running" id="introScreen" aria-label="EDUKASSi mängu algus" data-i18n-aria-label="intro.aria">
@@ -203,12 +203,30 @@
 
 
             <div class="story-two" id="storyTwo" aria-hidden="true">
-              <span class="three-planet"></span>
-              <span class="three-moon moon-one" data-story-moon="1"><i></i></span>
-              <span class="three-moon moon-two" data-story-moon="2"><i></i></span>
-              <span class="three-moon moon-three" data-story-moon="3"><i></i></span>
-              <span class="three-vault" id="storyThreeVault"><i></i><i></i></span>
-              <span class="three-map-fragment" id="storyMapFragment">✦</span>
+              <span class="three-nebula three-nebula-a"></span>
+              <span class="three-nebula three-nebula-b"></span>
+              <span class="three-distant-signal"><i></i></span>
+              <span class="three-moon moon-one" data-story-moon="1"><i></i><b></b></span>
+              <span class="three-moon moon-two" data-story-moon="2"><i></i><b></b></span>
+              <span class="three-moon moon-three" data-story-moon="3"><i></i><b></b></span>
+              <span class="three-ground"></span>
+              <span class="three-platform">
+                <i class="three-platform-ring"></i>
+                <i class="three-platform-core"></i>
+                <i class="three-platform-line line-one"></i>
+                <i class="three-platform-line line-two"></i>
+                <i class="three-platform-line line-three"></i>
+              </span>
+              <span class="three-machine machine-one" data-story-machine="1"><i></i><b></b><em></em></span>
+              <span class="three-machine machine-two" data-story-machine="2"><i></i><b></b><em></em></span>
+              <span class="three-machine machine-three" data-story-machine="3"><i></i><b></b><em></em></span>
+              <span class="three-beam beam-one"></span>
+              <span class="three-beam beam-two"></span>
+              <span class="three-beam beam-three"></span>
+              <span class="three-hidden-door" id="storyThreeDoor"><i></i><b></b></span>
+              <span class="three-stairs" id="storyThreeStairs"><i></i><i></i><i></i><i></i></span>
+              <span class="three-vault" id="storyThreeVault"><i></i><i></i><b></b></span>
+              <span class="three-map-fragment" id="storyMapFragment"><i></i><b></b><em></em></span>
             </div>
           </div>
 
@@ -308,18 +326,35 @@
           <div class="reward-next-planet"></div>
 
           <div class="reward-three-zone" aria-hidden="true">
-            <span class="reward-three-planet"></span>
-            <span class="reward-three-moon reward-three-moon-one"><i></i></span>
-            <span class="reward-three-moon reward-three-moon-two"><i></i></span>
-            <span class="reward-three-moon reward-three-moon-three"><i></i></span>
-            <span class="reward-three-vault"><i></i><i></i></span>
-            <span class="reward-three-map">✦</span>
-            <span class="reward-three-runes">
+            <span class="reward-three-nebula reward-three-nebula-a"></span>
+            <span class="reward-three-nebula reward-three-nebula-b"></span>
+            <span class="reward-three-distant-signal"><i></i></span>
+            <span class="reward-three-moon reward-three-moon-one"><i></i><b></b></span>
+            <span class="reward-three-moon reward-three-moon-two"><i></i><b></b></span>
+            <span class="reward-three-moon reward-three-moon-three"><i></i><b></b></span>
+            <span class="reward-three-ground"></span>
+            <span class="reward-three-platform"><i></i><b></b><em></em></span>
+            <span class="reward-three-machine reward-machine-one"><i></i><b></b><em></em></span>
+            <span class="reward-three-machine reward-machine-two"><i></i><b></b><em></em></span>
+            <span class="reward-three-machine reward-machine-three"><i></i><b></b><em></em></span>
+            <span class="reward-three-beam reward-beam-one"></span>
+            <span class="reward-three-beam reward-beam-two"></span>
+            <span class="reward-three-beam reward-beam-three"></span>
+            <span class="reward-energy-path reward-path-one">
               <i data-reward-three="1"></i><i data-reward-three="2"></i><i data-reward-three="3"></i><i data-reward-three="4"></i><i data-reward-three="5"></i>
-              <i data-reward-three="6"></i><i data-reward-three="7"></i><i data-reward-three="8"></i><i data-reward-three="9"></i><i data-reward-three="10"></i>
-              <i data-reward-three="11"></i><i data-reward-three="12"></i><i data-reward-three="13"></i><i data-reward-three="14"></i><i data-reward-three="15"></i>
-              <i data-reward-three="16"></i><i data-reward-three="17"></i><i data-reward-three="18"></i>
             </span>
+            <span class="reward-energy-path reward-path-two">
+              <i data-reward-three="6"></i><i data-reward-three="7"></i><i data-reward-three="8"></i><i data-reward-three="9"></i><i data-reward-three="10"></i>
+            </span>
+            <span class="reward-energy-path reward-path-three">
+              <i data-reward-three="11"></i><i data-reward-three="12"></i><i data-reward-three="13"></i><i data-reward-three="14"></i><i data-reward-three="15"></i>
+            </span>
+            <span class="reward-three-door"><i></i><b></b></span>
+            <span class="reward-three-stairs"><i></i><i></i><i></i><i></i></span>
+            <span class="reward-three-descent"><i></i><b></b></span>
+            <span class="reward-three-chamber"><i></i><b></b><em></em></span>
+            <span class="reward-three-vault"><i data-reward-three="16"></i><i data-reward-three="17"></i><b></b></span>
+            <span class="reward-three-map" data-reward-three="18"><i></i><b></b><em></em></span>
           </div>
           <div class="reward-impact-ground"><i></i><i></i><i></i></div>
           <div class="result-cat-crop">
@@ -372,7 +407,7 @@
   <dialog class="share-dialog install-dialog" id="installDialog" aria-labelledby="installDialogTitle">
     <form method="dialog" class="share-content">
       <button class="share-close" type="submit" aria-label="Sulge">×</button>
-      <div class="install-phone" aria-hidden="true"><img src="assets/icon-192.png?v=44" alt=""></div>
+      <div class="install-phone" aria-hidden="true"><img src="assets/icon-192.png?v=45" alt=""></div>
       <p class="eyebrow">EDUKASS</p>
       <h2 id="installDialogTitle">LISA TELEFONI EKRAANILE</h2>
       <p id="installHelpText">Mängu ikoon ilmub sinu telefoni. Kui automaatne lisamine ei avane, vali brauseri menüüst „Lisa avakuvale”.</p>
@@ -380,11 +415,11 @@
     </form>
   </dialog>
 
-  <script src="locales/et.js?v=44"></script>
-  <script src="chapter-one.config.js?v=44"></script>
-  <script src="i18n.js?v=44"></script>
-  <script src="question-engine.js?v=44"></script>
-  <script src="progress-store.js?v=44"></script>
-  <script src="game.js?v=44"></script>
+  <script src="locales/et.js?v=45"></script>
+  <script src="chapter-one.config.js?v=45"></script>
+  <script src="i18n.js?v=45"></script>
+  <script src="question-engine.js?v=45"></script>
+  <script src="progress-store.js?v=45"></script>
+  <script src="game.js?v=45"></script>
 </body>
 </html>
