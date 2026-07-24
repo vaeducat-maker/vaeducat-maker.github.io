@@ -66,6 +66,7 @@ const storyThreeVault=document.querySelector('#storyThreeVault');
 const storyThreeDoor=document.querySelector('#storyThreeDoor');
 const storyThreeStairs=document.querySelector('#storyThreeStairs');
 const storyMapFragment=document.querySelector('#storyMapFragment');
+const storyShipConsole=document.querySelector('#storyShipConsole');
 const rewardScene=document.querySelector('#rewardScene');
 const rewardPill=document.querySelector('#rewardPill');
 const resultScreen=document.querySelector('#resultScreen');
@@ -436,6 +437,12 @@ function playSound(kind){
     playSweep(460,760,0,.32,.024,'sine');
     playTone(920,.26,.18,.027,'sine');
     playTone(1180,.42,.22,.021,'sine');
+  }
+  if(kind==='artifactReceive'){
+    playTone(523,0,.12,.025,'sine');
+    playTone(659,.12,.14,.028,'sine');
+    playTone(784,.28,.2,.03,'sine');
+    playTone(1047,.48,.24,.022,'sine');
   }
   if(kind==='rewardReveal'){
     playSweep(260,920,.18,.82,.038,'sine');
@@ -927,7 +934,11 @@ function renderChapterTwoStory(){
   storyStage.classList.add(`phase-${phase}`);
   storyStage.classList.toggle('is-complete',completed===18);
   storyPhaseKicker.textContent=phase==='complete'?t('story.complete'):t('story.goal1');
-  storyPhaseTitle.textContent=phase==='vault'?t('story.openVault'):phase==='complete'?t('story.mapFragment'):t('story.alignMoons');
+  storyPhaseTitle.textContent=phase==='moon1'?t('story.activateFirstTower')
+    :phase==='moon2'?t('story.powerSecondTower')
+    :phase==='moon3'?t('story.splitLight')
+    :phase==='vault'?t('story.openVault')
+    :t('story.routeFound');
 
   const values={ship:firstMoonProgress,engine:secondMoonProgress,portal:thirdMoonProgress,vault:vaultProgress};
   const labels={ship:t('story.moon1'),engine:t('story.moon2'),portal:t('story.moon3'),vault:t('story.vault')};
@@ -944,27 +955,44 @@ function renderChapterTwoStory(){
     goal.classList.toggle('is-active',active);
     goal.setAttribute('aria-label',`${labels[name]}: ${value}/${max}`);
   });
+
   document.querySelectorAll('[data-story-step]').forEach(piece=>{
     const step=Number(piece.dataset.storyStep);
     piece.classList.toggle('is-earned',step<=completed);
   });
+
   document.querySelectorAll('[data-story-moon]').forEach(moon=>{
     const moonNumber=Number(moon.dataset.storyMoon);
     const value=moonNumber===1?firstMoonProgress:moonNumber===2?secondMoonProgress:thirdMoonProgress;
     moon.style.setProperty('--moon-progress',String(value));
-    // The moon itself is a story event, not a progress meter. It first becomes
-    // visible when its orbit has been assembled and locks into place on step 5.
     moon.classList.toggle('is-awake',value>=4);
     moon.classList.toggle('is-aligned',value===5);
   });
-  document.querySelectorAll('[data-story-machine]').forEach(machine=>{
-    const machineNumber=Number(machine.dataset.storyMachine);
-    const value=machineNumber===1?firstMoonProgress:machineNumber===2?secondMoonProgress:thirdMoonProgress;
-    machine.style.setProperty('--machine-progress',String(value));
-    machine.classList.toggle('is-built',value>=3);
-    machine.classList.toggle('is-awake',value>=4);
-    machine.classList.toggle('is-complete',value===5);
-  });
+
+  const machines=[...document.querySelectorAll('[data-story-machine]')];
+  machines.forEach(machine=>machine.classList.remove('is-visible','is-built','is-awake','is-complete','is-powered'));
+  const firstTower=machines.find(machine=>Number(machine.dataset.storyMachine)===1);
+  const secondTower=machines.find(machine=>Number(machine.dataset.storyMachine)===2);
+  const thirdTower=machines.find(machine=>Number(machine.dataset.storyMachine)===3);
+  firstTower?.classList.toggle('is-visible',firstMoonProgress>=4);
+  firstTower?.classList.toggle('is-built',firstMoonProgress>=4);
+  firstTower?.classList.toggle('is-complete',firstMoonProgress===5);
+  secondTower?.classList.toggle('is-visible',secondMoonProgress>=2);
+  secondTower?.classList.toggle('is-built',secondMoonProgress>=2);
+  secondTower?.classList.toggle('is-powered',secondMoonProgress>=4);
+  secondTower?.classList.toggle('is-complete',secondMoonProgress===5);
+  thirdTower?.classList.toggle('is-visible',thirdMoonProgress>=4);
+  thirdTower?.classList.toggle('is-built',thirdMoonProgress>=4);
+  thirdTower?.classList.toggle('is-complete',thirdMoonProgress===5);
+
+  const crystalBud=storyTwo.querySelector('.three-crystal-bud');
+  crystalBud?.classList.toggle('has-crystal',completed===8);
+  crystalBud?.classList.toggle('is-empty',completed>=9);
+  storyTwo.querySelector('.three-socket-charge')?.classList.toggle('is-charged',completed>=9);
+  storyTwo.querySelector('.three-light-splitter')?.classList.toggle('is-active',thirdMoonProgress>=1);
+  storyTwo.querySelector('.three-split-rays')?.classList.toggle('is-active',thirdMoonProgress>=2);
+  storyTwo.querySelector('.three-underground-channels')?.classList.toggle('is-active',thirdMoonProgress>=3);
+
   storyTwo.style.setProperty('--first-progress',String(firstMoonProgress));
   storyTwo.style.setProperty('--second-progress',String(secondMoonProgress));
   storyTwo.style.setProperty('--third-progress',String(thirdMoonProgress));
@@ -974,11 +1002,13 @@ function renderChapterTwoStory(){
   storyThreeStairs.classList.toggle('is-descended',vaultProgress>=1);
   storyThreeVault.classList.toggle('is-visible',vaultProgress>=2);
   storyThreeVault.classList.toggle('has-first-lock',vaultProgress>=2);
-  storyThreeVault.classList.toggle('has-second-lock',vaultProgress>=3);
+  storyThreeVault.classList.toggle('has-second-lock',vaultProgress>=2);
+  storyThreeVault.classList.toggle('has-third-lock',vaultProgress>=2);
   storyThreeVault.classList.toggle('is-open',vaultProgress>=3);
-  storyMapFragment.classList.toggle('is-found',vaultProgress>=3);
+  storyMapFragment.classList.remove('is-found');
+  storyShipConsole?.classList.toggle('is-visible',vaultProgress>=2);
+  storyShipConsole?.classList.toggle('is-installed',vaultProgress>=3);
 }
-
 function renderStoryProgress(){
   const chapter=activeMapChapter();
   if(chapter.id===2)renderChapterTwoStory();
@@ -1429,12 +1459,22 @@ function finishAttempt(reason){
 function setChapterTwoRewardProgress(levelId,firstCompletion){
   const step=Math.max(1,Math.min(18,levelId-FINAL_MISSION_ID));
   const previous=firstCompletion?Math.max(0,step-1):step;
+  rewardScene.dataset.threeStep=String(step);
+  rewardScene.dataset.threeBefore=String(previous);
+
   rewardScene.querySelectorAll('[data-reward-three]').forEach(element=>{
     element.classList.remove('is-earned','is-new-reward');
     const itemStep=Number(element.dataset.rewardThree);
     if(itemStep<=previous)element.classList.add('is-earned');
     else if(firstCompletion&&itemStep===step)element.classList.add('is-new-reward');
   });
+
+  const carry=rewardScene.querySelector('.reward-crystal-carry');
+  if(carry){
+    carry.classList.remove('is-earned','is-new-reward');
+    if(firstCompletion&&step===8)carry.classList.add('is-new-reward');
+    else if((firstCompletion&&step===9)||(!firstCompletion&&step===8))carry.classList.add('is-earned');
+  }
 
   const milestones=[
     {selector:'.reward-three-moon-one',step:5},
@@ -1449,12 +1489,23 @@ function setChapterTwoRewardProgress(levelId,firstCompletion){
     if(milestoneStep<=previous)element.classList.add('is-earned');
     else if(firstCompletion&&milestoneStep===step)element.classList.add('is-new-reward');
   });
+
+  const towerTwo=rewardScene.querySelector('.reward-machine-two');
+  if(towerTwo){
+    towerTwo.classList.toggle('is-present',previous>=7||(!firstCompletion&&step>=7));
+    towerTwo.classList.toggle('is-powered',previous>=9||(!firstCompletion&&step>=9));
+  }
   const vault=rewardScene.querySelector('.reward-three-vault');
   if(vault)vault.classList.toggle('is-open',previous>=18||(!firstCompletion&&step>=18));
+  const consolePanel=rewardScene.querySelector('.reward-three-console');
+  if(consolePanel){
+    consolePanel.classList.toggle('is-visible',previous>=17||step>=17);
+    consolePanel.classList.toggle('is-installed',previous>=18||(!firstCompletion&&step>=18));
+  }
+
   rewardScene.style.setProperty('--three-step',String(step));
   rewardScene.style.setProperty('--three-before',String(previous));
 }
-
 function setRewardProgressState(levelId,firstCompletion){
   const shipStep=Math.min(STORY_SEGMENT_LENGTH,levelId);
   const engineStep=Math.min(STORY_SEGMENT_LENGTH,Math.max(0,levelId-SHIP_MISSION_ID));
@@ -1546,7 +1597,10 @@ function startRewardCinematic(levelPassed,levelId,firstCompletion=true){
   const cue=(delay,callback)=>scheduleCinematic(changeOffset+delay,callback);
   const beginRewardChange=()=>{
     rewardScene.classList.add('is-playing');
-    if(firstCompletion)playSound('rewardReveal');
+    if(firstCompletion){
+      if(levelId>FINAL_MISSION_ID)playSound(levelId===23||levelId===33?'artifactReceive':'storyStep');
+      else playSound('rewardReveal');
+    }
   };
 
   if(firstCompletion){
@@ -1564,7 +1618,6 @@ function startRewardCinematic(levelPassed,levelId,firstCompletion=true){
     const target=levelId<=20?[.62,.3]:levelId<=25?[.75,.43]:levelId<=30?[.63,.68]:[.78,.55];
     cue(1280,()=>rewardFx.sparkBurst(target[0],target[1],milestone?64:38,['#fff','#8f7de2','#70d9cf','#ffd34d'],milestone?1.15:.82));
     cue(1460,()=>rewardFx.shockwave(target[0],target[1],milestone?'#ffd34d':'#70d9cf',milestone?.98:.7));
-    if(milestone)cue(2050,()=>playSound(levelId===CHAPTER_TWO_STORY.finalMissionId?'portalOpen':'storyStep'));
     if(levelId===CHAPTER_TWO_STORY.finalMissionId){
       cue(2950,()=>rewardFx.sparkBurst(.78,.52,82,['#fff','#ffd34d','#8f7de2','#e64e89'],1.3));
       cue(3180,()=>rewardFx.shockwave(.78,.52,'#fff',1.12));

@@ -2017,3 +2017,184 @@ body.intro-active{overflow:hidden}
   .reward-chapter-two.is-playing .reward-story-piece.is-new-reward,
   .reward-chapter-two.is-playing .reward-three-machine.is-new-reward{animation:none!important;opacity:1;filter:none;translate:0 0;scale:1}
 }
+
+/* v47: chapter-two story is a causal chain. Every first completion shows the
+   old state first, then the event, then the cat's joy. Loose prizes are used
+   immediately instead of accumulating around the mascot. */
+.reward-scene.first-completion:not(.is-playing) .result-cat-neutral{opacity:1!important}
+.reward-scene.first-completion:not(.is-playing) .result-cat-surprise,
+.reward-scene.first-completion:not(.is-playing) .result-cat-joy{opacity:0!important;animation:none!important}
+.reward-scene.first-completion.is-playing .result-cat-neutral{opacity:0!important}
+.reward-scene.first-completion.is-playing .result-cat-surprise{opacity:1;animation:catRewardSurpriseOut 2.05s ease-in-out both}
+.reward-chapter-two .crystal{display:none!important}
+
+/* Map story: one visible problem, one consequence, one next step. */
+#storyTwo .three-story-piece{position:absolute;z-index:9;opacity:0;filter:brightness(.55) saturate(.65);transition:.35s ease}
+#storyTwo .three-story-piece.is-earned{opacity:1;filter:none}
+#storyTwo .three-landing-signal{right:60%;bottom:13%;width:22px;height:54px}
+#storyTwo .three-landing-signal i{position:absolute;left:9px;bottom:0;width:5px;height:38px;border-radius:4px;background:linear-gradient(#70d9cf,#29406f);box-shadow:0 0 10px rgba(112,217,207,.85)}
+#storyTwo .three-landing-signal b{position:absolute;left:2px;top:0;width:19px;height:19px;border-radius:50%;background:#ffd34d;box-shadow:0 0 11px #ffd34d,0 0 24px rgba(255,154,60,.72)}
+#storyTwo .three-buried-cable{right:44%;bottom:12%;width:112px;height:34px;transform:rotate(-7deg)}
+#storyTwo .three-buried-cable i,#storyTwo .three-buried-cable b,#storyTwo .three-buried-cable em{position:absolute;left:0;height:4px;border-radius:99px;background:linear-gradient(90deg,#ffd34d,#70d9cf 70%,transparent);box-shadow:0 0 8px rgba(112,217,207,.72)}
+#storyTwo .three-buried-cable i{top:4px;width:100%}#storyTwo .three-buried-cable b{top:15px;width:78%}#storyTwo .three-buried-cable em{top:26px;width:54%}
+#storyTwo .three-control-console{right:47%;bottom:13%;width:58px;height:42px;border:3px solid #17365f;border-radius:9px;background:linear-gradient(160deg,#8f7de2,#3d447d);box-shadow:0 0 18px rgba(112,217,207,.42)}
+#storyTwo .three-control-console i{position:absolute;left:7px;right:7px;top:7px;height:12px;border-radius:5px;background:#15204f;box-shadow:inset 0 0 0 2px #70d9cf}
+#storyTwo .three-control-console b,#storyTwo .three-control-console em{position:absolute;bottom:7px;width:8px;height:8px;border-radius:50%;background:#ffd34d;box-shadow:0 0 7px #ffd34d}#storyTwo .three-control-console b{left:13px}#storyTwo .three-control-console em{right:13px;background:#70d9cf;box-shadow:0 0 7px #70d9cf}
+
+#storyTwo .three-machine{opacity:0!important;filter:grayscale(.75) brightness(.65)!important;transition:.45s ease}
+#storyTwo .three-machine.is-visible,#storyTwo .three-machine.is-built{opacity:1!important;filter:none!important}
+#storyTwo .three-machine.is-powered .three-power-socket,#storyTwo .three-machine.is-complete .three-power-socket{background:#fff;box-shadow:0 0 9px #fff,0 0 18px #70d9cf}
+#storyTwo .three-machine.is-complete>b{box-shadow:0 0 16px #ffd34d,0 0 28px rgba(112,217,207,.72)}
+#storyTwo .machine-one{right:45%;bottom:17%}
+#storyTwo .machine-two{right:25%;bottom:23%}
+#storyTwo .machine-three{right:7%;bottom:15%}
+#storyTwo .three-power-socket{position:absolute;z-index:4;left:50%;bottom:9px;width:14px;height:14px;border:3px solid #17365f;border-radius:50%;transform:translateX(-50%);background:#252d5a;box-shadow:inset 0 0 0 2px rgba(255,255,255,.12)}
+
+#storyTwo .three-path-cave{right:25%;bottom:12%;width:112px;height:5px;border-radius:99px;transform:rotate(-13deg);background:linear-gradient(90deg,#ffd34d,#70d9cf 68%,transparent);box-shadow:0 0 9px rgba(112,217,207,.72)}
+#storyTwo .three-crystal-cave{right:13%;bottom:13%;width:66px;height:49px;border-radius:52% 52% 15% 15%;background:linear-gradient(180deg,#5f52a6,#28275f);box-shadow:inset 0 0 0 3px rgba(112,217,207,.42),0 0 16px rgba(143,125,226,.6)}
+#storyTwo .three-crystal-cave:before{content:"";position:absolute;left:14px;right:14px;bottom:8px;height:23px;border-radius:50% 50% 9px 9px;background:#15183f;box-shadow:inset 0 0 10px rgba(112,217,207,.52)}
+#storyTwo .three-crystal-cave i,#storyTwo .three-crystal-cave b{position:absolute;top:7px;width:15px;height:25px;clip-path:polygon(50% 0,100% 100%,0 100%);background:linear-gradient(#fff,#70d9cf 48%,#8f7de2);filter:drop-shadow(0 0 7px #70d9cf)}
+#storyTwo .three-crystal-cave i{left:9px;transform:rotate(-19deg)}#storyTwo .three-crystal-cave b{right:9px;transform:rotate(19deg)}
+#storyTwo .three-crystal-bud{right:14%;bottom:20%;width:42px;height:42px}
+#storyTwo .three-crystal-bud i,#storyTwo .three-crystal-bud em{position:absolute;bottom:0;width:24px;height:35px;border-radius:60% 60% 15% 15%;background:linear-gradient(#8f7de2,#4f4b91);box-shadow:0 0 10px rgba(143,125,226,.65);transition:.45s ease}
+#storyTwo .three-crystal-bud i{left:0;transform:rotate(-20deg);transform-origin:100% 100%}#storyTwo .three-crystal-bud em{right:0;transform:rotate(20deg);transform-origin:0 100%}
+#storyTwo .three-crystal-bud b{position:absolute;z-index:3;left:50%;top:-6px;width:19px;height:29px;clip-path:polygon(50% 0,100% 75%,50% 100%,0 75%);transform:translateX(-50%) scale(0);background:linear-gradient(135deg,#fff,#70d9cf 40%,#8f7de2);box-shadow:0 0 13px #70d9cf,0 0 23px rgba(143,125,226,.65);transition:.45s cubic-bezier(.18,.9,.2,1.2)}
+#storyTwo .three-crystal-bud.has-crystal i{transform:rotate(-52deg)}#storyTwo .three-crystal-bud.has-crystal em{transform:rotate(52deg)}#storyTwo .three-crystal-bud.has-crystal b{transform:translateX(-50%) scale(1)}
+#storyTwo .three-crystal-bud.is-empty i{transform:rotate(-55deg);opacity:.55}#storyTwo .three-crystal-bud.is-empty em{transform:rotate(55deg);opacity:.55}#storyTwo .three-crystal-bud.is-empty b{opacity:0;transform:translateX(-50%) translate(78px,38px) scale(.25)}
+#storyTwo .three-socket-charge{right:26%;bottom:27%;width:18px;height:18px;border:3px solid #17365f;border-radius:50%;background:#252d5a}
+#storyTwo .three-socket-charge.is-charged{background:#fff;box-shadow:0 0 10px #fff,0 0 20px #70d9cf}
+
+#storyTwo .three-light-splitter{right:45%;bottom:13%;width:42px;height:52px;border:3px solid #17365f;border-radius:11px;background:linear-gradient(#8f7de2,#34396f)}
+#storyTwo .three-light-splitter i{position:absolute;left:50%;top:7px;width:12px;height:12px;border-radius:50%;transform:translateX(-50%);background:#ffd34d;box-shadow:0 0 9px #ffd34d}
+#storyTwo .three-light-splitter b{position:absolute;left:7px;right:7px;bottom:8px;height:4px;background:linear-gradient(90deg,#70d9cf 0 28%,transparent 28% 36%,#70d9cf 36% 64%,transparent 64% 72%,#70d9cf 72%)}
+#storyTwo .three-split-rays{right:23%;bottom:12%;width:135px;height:70px}
+#storyTwo .three-split-rays i,#storyTwo .three-split-rays b,#storyTwo .three-split-rays em{position:absolute;left:0;bottom:12px;width:122px;height:4px;border-radius:99px;transform-origin:0 50%;background:linear-gradient(90deg,#fff,#70d9cf 34%,transparent);box-shadow:0 0 8px rgba(112,217,207,.75)}
+#storyTwo .three-split-rays i{transform:rotate(-24deg)}#storyTwo .three-split-rays b{transform:rotate(0)}#storyTwo .three-split-rays em{transform:rotate(24deg)}
+#storyTwo .three-underground-channels{right:5%;bottom:7%;width:150px;height:57px;border-bottom:4px solid rgba(112,217,207,.65);border-radius:50%;transform:rotate(-8deg);box-shadow:0 8px 10px rgba(112,217,207,.22)}
+#storyTwo .three-underground-channels i,#storyTwo .three-underground-channels b,#storyTwo .three-underground-channels em{position:absolute;bottom:7px;width:56px;height:4px;border-radius:99px;background:linear-gradient(90deg,#70d9cf,transparent);box-shadow:0 0 8px #70d9cf}
+#storyTwo .three-underground-channels i{left:0;transform:rotate(-10deg)}#storyTwo .three-underground-channels b{left:43px;transform:rotate(2deg)}#storyTwo .three-underground-channels em{right:0;transform:rotate(14deg)}
+#storyTwo .three-ship-console{position:absolute;z-index:12;right:51%;bottom:17%;width:76px;height:54px;opacity:0;transform:translateY(15px) scale(.8);border:3px solid #17365f;border-radius:10px;background:linear-gradient(150deg,#8f7de2,#29345f);box-shadow:0 0 18px rgba(112,217,207,.42);transition:.45s ease}
+#storyTwo .three-ship-console.is-visible{opacity:.72;transform:none}
+#storyTwo .three-ship-console i{position:absolute;left:8px;right:8px;top:7px;height:27px;border-radius:5px;background:#10173d;box-shadow:inset 0 0 0 2px rgba(112,217,207,.55)}
+#storyTwo .three-ship-console b{position:absolute;left:17px;top:14px;width:19px;height:22px;opacity:0;clip-path:polygon(18% 0,100% 15%,77% 50%,100% 88%,34% 100%,0 64%);background:linear-gradient(135deg,#fff,#ffd34d 35%,#70d9cf 72%);box-shadow:0 0 8px #ffd34d}
+#storyTwo .three-ship-console em{position:absolute;left:39px;top:20px;width:25px;height:3px;border-radius:99px;background:linear-gradient(90deg,#ffd34d,#70d9cf,transparent);opacity:0}
+#storyTwo .three-ship-console strong{position:absolute;right:8px;bottom:7px;width:8px;height:8px;border-radius:50%;background:#29345f}
+#storyTwo .three-ship-console.is-installed{opacity:1;box-shadow:0 0 22px rgba(112,217,207,.72)}
+#storyTwo .three-ship-console.is-installed b,#storyTwo .three-ship-console.is-installed em{opacity:1}
+#storyTwo .three-ship-console.is-installed strong{background:#70d9cf;box-shadow:0 0 8px #70d9cf}
+#storyTwo .three-map-fragment{display:none!important}
+#storyTwo .three-vault i:nth-child(1){left:14px}#storyTwo .three-vault i:nth-child(2){left:30px}#storyTwo .three-vault i:nth-child(3){right:14px}
+#storyTwo .three-vault.has-third-lock i:nth-child(3){background:#70d9cf;box-shadow:0 0 10px #70d9cf}
+
+/* Reward scene: the current item is absent during the hold, then appears and
+   is immediately used in the next causal beat. */
+.reward-chapter-two .reward-story-piece,
+.reward-chapter-two .reward-three-machine[data-reward-three],
+.reward-chapter-two .reward-crystal-carry{position:absolute;z-index:9;opacity:0;filter:brightness(.55) saturate(.65)}
+.reward-chapter-two .reward-story-piece.is-earned,
+.reward-chapter-two .reward-three-machine[data-reward-three].is-earned,
+.reward-chapter-two .reward-crystal-carry.is-earned{opacity:1;filter:none}
+.reward-chapter-two .reward-story-piece.is-new-reward,
+.reward-chapter-two .reward-three-machine[data-reward-three].is-new-reward,
+.reward-chapter-two .reward-crystal-carry.is-new-reward{opacity:0;filter:brightness(.6) saturate(.7)}
+.reward-chapter-two.is-playing .reward-story-piece.is-new-reward,
+.reward-chapter-two.is-playing .reward-three-machine[data-reward-three].is-new-reward{animation:storyPieceReveal 1.55s .72s cubic-bezier(.18,.9,.2,1.22) forwards}
+
+.reward-chapter-two .reward-landing-signal{right:58%;bottom:14%;width:22px;height:54px}
+.reward-chapter-two .reward-landing-signal i{position:absolute;left:9px;bottom:0;width:5px;height:38px;border-radius:4px;background:linear-gradient(#70d9cf,#29406f);box-shadow:0 0 10px rgba(112,217,207,.85)}
+.reward-chapter-two .reward-landing-signal b{position:absolute;left:2px;top:0;width:19px;height:19px;border-radius:50%;background:#ffd34d;box-shadow:0 0 11px #ffd34d,0 0 24px rgba(255,154,60,.72)}
+.reward-chapter-two .reward-buried-cable{right:44%;bottom:12%;width:112px;height:34px;transform:rotate(-7deg)}
+.reward-chapter-two .reward-buried-cable i,.reward-chapter-two .reward-buried-cable b,.reward-chapter-two .reward-buried-cable em{position:absolute;left:0;height:4px;border-radius:99px;background:linear-gradient(90deg,#ffd34d,#70d9cf 70%,transparent);box-shadow:0 0 8px rgba(112,217,207,.72)}
+.reward-chapter-two .reward-buried-cable i{top:4px;width:100%}.reward-chapter-two .reward-buried-cable b{top:15px;width:78%}.reward-chapter-two .reward-buried-cable em{top:26px;width:54%}
+.reward-chapter-two .reward-control-console{right:47%;bottom:13%;width:58px;height:42px;border:3px solid #17365f;border-radius:9px;background:linear-gradient(160deg,#8f7de2,#3d447d);box-shadow:0 0 18px rgba(112,217,207,.42)}
+.reward-chapter-two .reward-control-console i{position:absolute;left:7px;right:7px;top:7px;height:12px;border-radius:5px;background:#15204f;box-shadow:inset 0 0 0 2px #70d9cf}
+.reward-chapter-two .reward-control-console b,.reward-chapter-two .reward-control-console em{position:absolute;bottom:7px;width:8px;height:8px;border-radius:50%;background:#ffd34d;box-shadow:0 0 7px #ffd34d}.reward-chapter-two .reward-control-console b{left:13px}.reward-chapter-two .reward-control-console em{right:13px;background:#70d9cf;box-shadow:0 0 7px #70d9cf}
+.reward-chapter-two .reward-machine-one{right:47%;bottom:17%}.reward-chapter-two .reward-machine-two{right:26%;bottom:23%}.reward-chapter-two .reward-machine-three{right:7%;bottom:15%}
+.reward-chapter-two .reward-machine-two{opacity:0!important;filter:grayscale(.8) brightness(.62)!important}
+.reward-chapter-two .reward-machine-two.is-present{opacity:1!important}
+.reward-chapter-two .reward-machine-two.is-powered{filter:none!important}
+.reward-chapter-two .reward-power-socket{position:absolute;z-index:4;left:50%;bottom:9px;width:14px;height:14px;border:3px solid #17365f;border-radius:50%;transform:translateX(-50%);background:#252d5a}
+.reward-chapter-two .reward-machine-two.is-powered .reward-power-socket{background:#fff;box-shadow:0 0 9px #fff,0 0 18px #70d9cf}
+
+.reward-chapter-two .reward-path-cave{right:25%;bottom:12%;width:112px;height:5px;border-radius:99px;transform:rotate(-13deg);background:linear-gradient(90deg,#ffd34d,#70d9cf 68%,transparent);box-shadow:0 0 9px rgba(112,217,207,.72)}
+.reward-chapter-two .reward-crystal-cave{right:12%;bottom:13%;width:66px;height:49px;border-radius:52% 52% 15% 15%;background:linear-gradient(180deg,#5f52a6,#28275f);box-shadow:inset 0 0 0 3px rgba(112,217,207,.42),0 0 16px rgba(143,125,226,.6)}
+.reward-chapter-two .reward-crystal-cave:before{content:"";position:absolute;left:14px;right:14px;bottom:8px;height:23px;border-radius:50% 50% 9px 9px;background:#15183f;box-shadow:inset 0 0 10px rgba(112,217,207,.52)}
+.reward-chapter-two .reward-crystal-cave i,.reward-chapter-two .reward-crystal-cave b{position:absolute;top:7px;width:15px;height:25px;clip-path:polygon(50% 0,100% 100%,0 100%);background:linear-gradient(#fff,#70d9cf 48%,#8f7de2);filter:drop-shadow(0 0 7px #70d9cf)}
+.reward-chapter-two .reward-crystal-cave i{left:9px;transform:rotate(-19deg)}.reward-chapter-two .reward-crystal-cave b{right:9px;transform:rotate(19deg)}
+.reward-chapter-two .reward-crystal-bud{right:14%;bottom:20%;width:42px;height:42px}
+.reward-chapter-two .reward-crystal-bud i,.reward-chapter-two .reward-crystal-bud em{position:absolute;bottom:0;width:24px;height:35px;border-radius:60% 60% 15% 15%;background:linear-gradient(#8f7de2,#4f4b91);box-shadow:0 0 10px rgba(143,125,226,.65)}
+.reward-chapter-two .reward-crystal-bud i{left:0;transform:rotate(-20deg);transform-origin:100% 100%}.reward-chapter-two .reward-crystal-bud em{right:0;transform:rotate(20deg);transform-origin:0 100%}
+.reward-chapter-two.is-playing .reward-crystal-bud.is-new-reward i{animation:budLeftOpen 1.6s .55s ease-out forwards}.reward-chapter-two.is-playing .reward-crystal-bud.is-new-reward em{animation:budRightOpen 1.6s .55s ease-out forwards}
+.reward-chapter-two .reward-crystal-carry{z-index:15;left:29%;top:36%;width:28px;height:42px;clip-path:polygon(50% 0,100% 75%,50% 100%,0 75%);background:linear-gradient(135deg,#fff,#70d9cf 40%,#8f7de2);box-shadow:0 0 14px #70d9cf,0 0 28px rgba(143,125,226,.7)}
+.reward-chapter-two.is-playing .reward-crystal-carry.is-new-reward{animation:crystalPrizeReceived 2.5s .85s cubic-bezier(.18,.9,.2,1.18) forwards}
+.reward-three-step-9.is-playing .reward-crystal-carry.is-earned{animation:crystalIntoSocket 2.25s .6s ease-in-out forwards}
+.reward-chapter-two .reward-socket-charge{right:27%;bottom:28%;width:18px;height:18px;border:3px solid #17365f;border-radius:50%;background:#252d5a}
+.reward-three-step-9.is-playing .reward-socket-charge.is-new-reward{animation:socketPowerOn 1.2s 1.55s ease-out forwards}
+
+.reward-chapter-two .reward-light-splitter{right:45%;bottom:13%;width:42px;height:52px;border:3px solid #17365f;border-radius:11px;background:linear-gradient(#8f7de2,#34396f)}
+.reward-chapter-two .reward-light-splitter i{position:absolute;left:50%;top:7px;width:12px;height:12px;border-radius:50%;transform:translateX(-50%);background:#ffd34d;box-shadow:0 0 9px #ffd34d}
+.reward-chapter-two .reward-light-splitter b{position:absolute;left:7px;right:7px;bottom:8px;height:4px;background:linear-gradient(90deg,#70d9cf 0 28%,transparent 28% 36%,#70d9cf 36% 64%,transparent 64% 72%,#70d9cf 72%)}
+.reward-chapter-two .reward-split-rays{right:23%;bottom:12%;width:135px;height:70px}
+.reward-chapter-two .reward-split-rays i,.reward-chapter-two .reward-split-rays b,.reward-chapter-two .reward-split-rays em{position:absolute;left:0;bottom:12px;width:122px;height:4px;border-radius:99px;transform-origin:0 50%;background:linear-gradient(90deg,#fff,#70d9cf 34%,transparent);box-shadow:0 0 8px rgba(112,217,207,.75)}
+.reward-chapter-two .reward-split-rays i{transform:rotate(-24deg)}.reward-chapter-two .reward-split-rays b{transform:rotate(0)}.reward-chapter-two .reward-split-rays em{transform:rotate(24deg)}
+.reward-chapter-two .reward-underground-channels{right:5%;bottom:7%;width:150px;height:57px;border-bottom:4px solid rgba(112,217,207,.65);border-radius:50%;transform:rotate(-8deg);box-shadow:0 8px 10px rgba(112,217,207,.22)}
+.reward-chapter-two .reward-underground-channels i,.reward-chapter-two .reward-underground-channels b,.reward-chapter-two .reward-underground-channels em{position:absolute;bottom:7px;width:56px;height:4px;border-radius:99px;background:linear-gradient(90deg,#70d9cf,transparent);box-shadow:0 0 8px #70d9cf}
+.reward-chapter-two .reward-underground-channels i{left:0;transform:rotate(-10deg)}.reward-chapter-two .reward-underground-channels b{left:43px;transform:rotate(2deg)}.reward-chapter-two .reward-underground-channels em{right:0;transform:rotate(14deg)}
+
+.reward-chapter-two .reward-three-vault>i:nth-child(1){left:13px}.reward-chapter-two .reward-three-vault>i:nth-child(2){left:33px}.reward-chapter-two .reward-three-vault>i:nth-child(3){right:13px}
+.reward-three-chamber-scene.is-playing .reward-three-vault.is-new-reward>i:nth-child(1){animation:rewardLockIgnites .55s 2.1s forwards}
+.reward-three-chamber-scene.is-playing .reward-three-vault.is-new-reward>i:nth-child(2){animation:rewardLockIgnites .55s 2.4s forwards}
+.reward-three-chamber-scene.is-playing .reward-three-vault.is-new-reward>i:nth-child(3){animation:rewardLockIgnites .55s 2.7s forwards}
+.reward-chapter-two .reward-three-console{position:absolute;z-index:13;right:9%;bottom:16%;width:80px;height:58px;opacity:0;border:3px solid #17365f;border-radius:10px;background:linear-gradient(150deg,#8f7de2,#29345f);box-shadow:0 0 18px rgba(112,217,207,.42)}
+.reward-chapter-two .reward-three-console.is-visible{opacity:.72}
+.reward-chapter-two .reward-three-console i{position:absolute;left:8px;right:8px;top:7px;height:29px;border-radius:5px;background:#10173d;box-shadow:inset 0 0 0 2px rgba(112,217,207,.55)}
+.reward-chapter-two .reward-three-console b{position:absolute;left:18px;top:14px;width:20px;height:23px;opacity:0;clip-path:polygon(18% 0,100% 15%,77% 50%,100% 88%,34% 100%,0 64%);background:linear-gradient(135deg,#fff,#ffd34d 35%,#70d9cf 72%);box-shadow:0 0 8px #ffd34d}
+.reward-chapter-two .reward-three-console em{position:absolute;left:41px;top:21px;width:26px;height:3px;border-radius:99px;background:linear-gradient(90deg,#ffd34d,#70d9cf,transparent);opacity:0}
+.reward-chapter-two .reward-three-console strong{position:absolute;right:8px;bottom:7px;width:8px;height:8px;border-radius:50%;background:#29345f}
+.reward-chapter-two .reward-three-console.is-installed{opacity:1;box-shadow:0 0 22px rgba(112,217,207,.72)}
+.reward-chapter-two .reward-three-console.is-installed b,.reward-chapter-two .reward-three-console.is-installed em{opacity:1}.reward-chapter-two .reward-three-console.is-installed strong{background:#70d9cf;box-shadow:0 0 8px #70d9cf}
+.reward-three-map-scene.is-playing .reward-three-map.is-new-reward{animation:mapReceiveAndInstall 4.25s 1.3s cubic-bezier(.18,.9,.2,1.12) forwards}
+.reward-three-map-scene.is-playing .reward-three-console{animation:consoleReceivesMap 4.25s 1.3s ease-out forwards}
+.reward-three-map-scene.is-playing .reward-three-distant-signal{animation:nextWorldSignal 2.1s 4.65s ease-out both}
+
+@keyframes budLeftOpen{to{transform:rotate(-58deg)}}
+@keyframes budRightOpen{to{transform:rotate(58deg)}}
+@keyframes crystalPrizeReceived{0%{opacity:0;transform:translate(110px,70px) scale(.15) rotate(-35deg)}35%{opacity:1;transform:translate(72px,14px) scale(1.18) rotate(7deg)}68%{transform:translate(25px,8px) scale(.95) rotate(-4deg)}100%{opacity:1;transform:none}}
+@keyframes crystalIntoSocket{0%{opacity:1;transform:none}35%{transform:translate(45px,-20px) scale(1.12)}80%{opacity:1;transform:translate(180px,58px) scale(.32)}100%{opacity:0;transform:translate(205px,74px) scale(.08)}}
+@keyframes socketPowerOn{0%{opacity:0;transform:scale(.2);background:#252d5a}65%{opacity:1;transform:scale(1.55);background:#fff;box-shadow:0 0 18px #fff,0 0 30px #70d9cf}100%{opacity:1;transform:none;background:#fff;box-shadow:0 0 10px #fff,0 0 20px #70d9cf}}
+@keyframes mapReceiveAndInstall{0%{opacity:0;transform:translateY(55px) scale(.15) rotate(-50deg)}28%{opacity:1;transform:translateY(-22px) scale(1.18) rotate(8deg)}52%{opacity:1;transform:translate(-105px,5px) scale(.95) rotate(-3deg)}78%{opacity:1;transform:translate(90px,58px) scale(.42)}100%{opacity:0;transform:translate(178px,82px) scale(.12)}}
+@keyframes consoleReceivesMap{0%,74%{opacity:.72;filter:none}82%{opacity:1;filter:brightness(1.8);box-shadow:0 0 32px #70d9cf}100%{opacity:1;filter:none;box-shadow:0 0 22px rgba(112,217,207,.72)}}
+
+@media(max-width:700px){
+  #storyTwo .three-landing-signal{right:57%}#storyTwo .three-buried-cable{right:40%;width:96px}#storyTwo .three-control-console{right:43%}
+  #storyTwo .machine-one{right:42%}#storyTwo .machine-two{right:21%}#storyTwo .machine-three{right:2%}
+  #storyTwo .three-path-cave{right:18%;width:92px}#storyTwo .three-crystal-cave{right:3%}#storyTwo .three-crystal-bud{right:5%}#storyTwo .three-socket-charge{right:22%}
+  #storyTwo .three-light-splitter{right:39%}#storyTwo .three-split-rays{right:12%;width:115px}#storyTwo .three-underground-channels{right:-9%;width:132px}
+  #storyTwo .three-ship-console{right:44%;transform:scale(.82)}
+  .reward-chapter-two .reward-landing-signal{right:54%}.reward-chapter-two .reward-buried-cable{right:37%;width:94px}.reward-chapter-two .reward-control-console{right:40%}
+  .reward-chapter-two .reward-machine-one{right:41%}.reward-chapter-two .reward-machine-two{right:18%}.reward-chapter-two .reward-machine-three{right:-1%}
+  .reward-chapter-two .reward-path-cave{right:14%;width:90px}.reward-chapter-two .reward-crystal-cave{right:0}.reward-chapter-two .reward-crystal-bud{right:2%}.reward-chapter-two .reward-socket-charge{right:19%}
+  .reward-chapter-two .reward-light-splitter{right:36%}.reward-chapter-two .reward-split-rays{right:8%;width:112px}.reward-chapter-two .reward-underground-channels{right:-12%;width:130px}
+  .reward-chapter-two .reward-crystal-carry{left:24%;top:37%}
+  .reward-chapter-two .reward-three-console{right:2%;transform:scale(.82)}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .reward-three-step-9.is-playing .reward-crystal-carry.is-earned,
+  .reward-three-map-scene.is-playing .reward-three-map.is-new-reward{animation:none!important;opacity:0!important}
+  .reward-three-map-scene.is-playing .reward-three-console{animation:none!important;opacity:1!important}
+}
+
+/* v47 acceptance guards: absolutely no new chapter-two object is visible
+   before the 1.5-second "before" hold has finished. */
+.reward-chapter-two.first-completion:not(.is-playing) .is-new-reward{opacity:0!important;animation:none!important}
+.reward-chapter-two .reward-machine-two{opacity:0;filter:grayscale(.8) brightness(.62)}
+.reward-chapter-two .reward-machine-two.is-present,
+.reward-chapter-two .reward-machine-two.is-earned{opacity:1}
+.reward-chapter-two .reward-machine-two.is-new-reward{opacity:0}
+.reward-three-map-scene.is-playing .reward-three-console b{animation:consoleMapAppears .65s 4.55s ease-out forwards}
+.reward-three-map-scene.is-playing .reward-three-console em{animation:consoleRouteAppears .75s 4.7s ease-out forwards}
+.reward-three-map-scene.is-playing .reward-three-console strong{animation:consoleLampOn .5s 4.85s ease-out forwards}
+@keyframes consoleMapAppears{from{opacity:0;transform:scale(.2)}to{opacity:1;transform:none}}
+@keyframes consoleRouteAppears{from{opacity:0;transform:scaleX(.1);transform-origin:0 50%}to{opacity:1;transform:none}}
+@keyframes consoleLampOn{to{background:#70d9cf;box-shadow:0 0 8px #70d9cf}}

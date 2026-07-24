@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#182452">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="icon" href="assets/icon-192.png?v=46">
-  <link rel="apple-touch-icon" href="assets/icon-192.png?v=46">
+  <link rel="icon" href="assets/icon-192.png?v=47">
+  <link rel="apple-touch-icon" href="assets/icon-192.png?v=47">
   <title data-i18n="meta.title">EDUKASS — Korrutustabeli treener</title>
   <meta name="description" content="EDUKASSi korrutustabeli treener: korrutamise ja jagamise missioonid lastele." data-i18n-content="meta.description">
   <meta property="og:type" content="website">
@@ -17,7 +17,7 @@
   <meta property="og:image" content="https://edukass.ee/games/korrutamine-test/assets/share-korrutustabel.png?v=40">
   <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="stylesheet" href="game.css?v=46">
+  <link rel="stylesheet" href="game.css?v=47">
 </head>
 <body class="intro-active">
   <section class="game-intro is-running" id="introScreen" aria-label="EDUKASSi mängu algus" data-i18n-aria-label="intro.aria">
@@ -217,25 +217,31 @@
                 <i class="three-platform-line line-two"></i>
                 <i class="three-platform-line line-three"></i>
               </span>
-              <span class="three-story-piece three-beacon-one" data-story-step="1"><i></i><b></b></span>
-              <span class="three-story-piece three-rune-one" data-story-step="2"><i></i><b></b><em></em></span>
-              <span class="three-story-piece three-orbit-one" data-story-step="4"><i></i></span>
-              <span class="three-story-piece three-path-two" data-story-step="6"><i></i></span>
-              <span class="three-story-piece three-rune-two" data-story-step="7"><i></i><b></b><em></em></span>
-              <span class="three-story-piece three-orbit-two" data-story-step="9"><i></i></span>
-              <span class="three-story-piece three-prism" data-story-step="11"><i></i></span>
-              <span class="three-story-piece three-split-channels" data-story-step="12"><i></i><b></b><em></em></span>
-              <span class="three-story-piece three-orbit-three" data-story-step="14"><i></i></span>
+
+              <span class="three-story-piece three-landing-signal" data-story-step="1"><i></i><b></b></span>
+              <span class="three-story-piece three-buried-cable" data-story-step="2"><i></i><b></b><em></em></span>
+              <span class="three-story-piece three-control-console" data-story-step="3"><i></i><b></b><em></em></span>
               <span class="three-machine machine-one" data-story-machine="1"><i></i><b></b><em></em></span>
-              <span class="three-machine machine-two" data-story-machine="2"><i></i><b></b><em></em></span>
-              <span class="three-machine machine-three" data-story-machine="3"><i></i><b></b><em></em></span>
+
+              <span class="three-story-piece three-path-cave" data-story-step="6"><i></i></span>
+              <span class="three-story-piece three-crystal-cave" data-story-step="7"><i></i><b></b></span>
+              <span class="three-machine machine-two" data-story-machine="2"><i></i><b></b><em></em><span class="three-power-socket"></span></span>
+              <span class="three-story-piece three-crystal-bud" data-story-step="8"><i></i><b></b><em></em></span>
+              <span class="three-story-piece three-socket-charge" data-story-step="9"><i></i></span>
+
+              <span class="three-story-piece three-light-splitter" data-story-step="11"><i></i><b></b></span>
+              <span class="three-story-piece three-split-rays" data-story-step="12"><i></i><b></b><em></em></span>
+              <span class="three-story-piece three-underground-channels" data-story-step="13"><i></i><b></b><em></em></span>
+              <span class="three-machine machine-three" data-story-machine="3" data-story-step="14"><i></i><b></b><em></em></span>
+
               <span class="three-beam beam-one"></span>
               <span class="three-beam beam-two"></span>
               <span class="three-beam beam-three"></span>
               <span class="three-hidden-door" id="storyThreeDoor"><i></i><b></b></span>
               <span class="three-stairs" id="storyThreeStairs"><i></i><i></i><i></i><i></i></span>
-              <span class="three-vault" id="storyThreeVault"><i></i><i></i><b></b></span>
+              <span class="three-vault" id="storyThreeVault"><i></i><i></i><i></i><b></b></span>
               <span class="three-map-fragment" id="storyMapFragment"><i></i><b></b><em></em></span>
+              <span class="three-ship-console" id="storyShipConsole"><i></i><b></b><em></em><strong></strong></span>
             </div>
           </div>
 
@@ -343,18 +349,24 @@
             <span class="reward-three-moon reward-three-moon-three"><i></i><b></b></span>
             <span class="reward-three-ground"></span>
             <span class="reward-three-platform"><i></i><b></b><em></em></span>
-            <span class="reward-story-piece reward-beacon-one" data-reward-three="1"><i></i><b></b></span>
-            <span class="reward-story-piece reward-rune-one" data-reward-three="2"><i></i><b></b><em></em></span>
-            <span class="reward-story-piece reward-orbit-one" data-reward-three="4"><i></i></span>
-            <span class="reward-story-piece reward-path-two" data-reward-three="6"><i></i></span>
-            <span class="reward-story-piece reward-rune-two" data-reward-three="7"><i></i><b></b><em></em></span>
-            <span class="reward-story-piece reward-orbit-two" data-reward-three="9"><i></i></span>
-            <span class="reward-story-piece reward-prism" data-reward-three="11"><i></i></span>
-            <span class="reward-story-piece reward-split-channels" data-reward-three="12"><i></i><b></b><em></em></span>
-            <span class="reward-story-piece reward-orbit-three" data-reward-three="14"><i></i></span>
-            <span class="reward-three-machine reward-machine-one" data-reward-three="3"><i></i><b></b><em></em></span>
-            <span class="reward-three-machine reward-machine-two" data-reward-three="8"><i></i><b></b><em></em></span>
-            <span class="reward-three-machine reward-machine-three" data-reward-three="13"><i></i><b></b><em></em></span>
+
+            <span class="reward-story-piece reward-landing-signal" data-reward-three="1"><i></i><b></b></span>
+            <span class="reward-story-piece reward-buried-cable" data-reward-three="2"><i></i><b></b><em></em></span>
+            <span class="reward-story-piece reward-control-console" data-reward-three="3"><i></i><b></b><em></em></span>
+            <span class="reward-three-machine reward-machine-one" data-reward-three="4"><i></i><b></b><em></em></span>
+
+            <span class="reward-story-piece reward-path-cave" data-reward-three="6"><i></i></span>
+            <span class="reward-story-piece reward-crystal-cave" data-reward-three="7"><i></i><b></b></span>
+            <span class="reward-three-machine reward-machine-two" data-reward-three="7"><i></i><b></b><em></em><span class="reward-power-socket"></span></span>
+            <span class="reward-story-piece reward-crystal-bud" data-reward-three="8"><i></i><b></b><em></em></span>
+            <span class="reward-crystal-carry" data-reward-three="8"><i></i></span>
+            <span class="reward-story-piece reward-socket-charge" data-reward-three="9"><i></i></span>
+
+            <span class="reward-story-piece reward-light-splitter" data-reward-three="11"><i></i><b></b></span>
+            <span class="reward-story-piece reward-split-rays" data-reward-three="12"><i></i><b></b><em></em></span>
+            <span class="reward-story-piece reward-underground-channels" data-reward-three="13"><i></i><b></b><em></em></span>
+            <span class="reward-three-machine reward-machine-three" data-reward-three="14"><i></i><b></b><em></em></span>
+
             <span class="reward-three-beam reward-beam-one"></span>
             <span class="reward-three-beam reward-beam-two"></span>
             <span class="reward-three-beam reward-beam-three"></span>
@@ -362,8 +374,9 @@
             <span class="reward-three-stairs"><i></i><i></i><i></i><i></i></span>
             <span class="reward-three-descent" data-reward-three="16"><i></i><b></b></span>
             <span class="reward-three-chamber"><i></i><b></b><em></em></span>
-            <span class="reward-three-vault" data-reward-three="17"><i></i><i></i><b></b></span>
+            <span class="reward-three-vault" data-reward-three="17"><i></i><i></i><i></i><b></b></span>
             <span class="reward-three-map" data-reward-three="18"><i></i><b></b><em></em></span>
+            <span class="reward-three-console"><i></i><b></b><em></em><strong></strong></span>
           </div>
           <div class="reward-impact-ground"><i></i><i></i><i></i></div>
           <div class="result-cat-crop">
@@ -416,7 +429,7 @@
   <dialog class="share-dialog install-dialog" id="installDialog" aria-labelledby="installDialogTitle">
     <form method="dialog" class="share-content">
       <button class="share-close" type="submit" aria-label="Sulge">×</button>
-      <div class="install-phone" aria-hidden="true"><img src="assets/icon-192.png?v=46" alt=""></div>
+      <div class="install-phone" aria-hidden="true"><img src="assets/icon-192.png?v=47" alt=""></div>
       <p class="eyebrow">EDUKASS</p>
       <h2 id="installDialogTitle">LISA TELEFONI EKRAANILE</h2>
       <p id="installHelpText">Mängu ikoon ilmub sinu telefoni. Kui automaatne lisamine ei avane, vali brauseri menüüst „Lisa avakuvale”.</p>
@@ -424,11 +437,11 @@
     </form>
   </dialog>
 
-  <script src="locales/et.js?v=46"></script>
-  <script src="chapter-one.config.js?v=46"></script>
-  <script src="i18n.js?v=46"></script>
-  <script src="question-engine.js?v=46"></script>
-  <script src="progress-store.js?v=46"></script>
-  <script src="game.js?v=46"></script>
+  <script src="locales/et.js?v=47"></script>
+  <script src="chapter-one.config.js?v=47"></script>
+  <script src="i18n.js?v=47"></script>
+  <script src="question-engine.js?v=47"></script>
+  <script src="progress-store.js?v=47"></script>
+  <script src="game.js?v=47"></script>
 </body>
 </html>
