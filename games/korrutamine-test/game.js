@@ -19,6 +19,7 @@ const keypad=document.querySelector('#keypad');
 const answerPanel=document.querySelector('#answerPanel');
 const answerPanelTitle=document.querySelector('#answerPanelTitle');
 const levelGrid=document.querySelector('#levelGrid');
+const missionRouteScroll=document.querySelector('#missionRouteScroll');
 const completedLevelCount=document.querySelector('#completedLevelCount');
 const mapEnergyTotal=document.querySelector('#mapEnergyTotal');
 const mapEyebrow=document.querySelector('#mapEyebrow');
@@ -1004,9 +1005,10 @@ function renderLevelMap(){
 }
 
 function focusCurrentMission(){
-  if(progress.unlockedLevel<=5)return;
   const current=levelGrid.querySelector(`[data-level="${progress.unlockedLevel}"]`);
-  if(current)current.scrollIntoView({block:'center',inline:'nearest',behavior:'auto'});
+  if(!current||!missionRouteScroll)return;
+  const targetTop=levelGrid.offsetTop+current.offsetTop-(missionRouteScroll.clientHeight-current.offsetHeight)/2;
+  missionRouteScroll.scrollTop=Math.max(0,targetTop);
 }
 
 function showMap({historyMode='push'}={}){

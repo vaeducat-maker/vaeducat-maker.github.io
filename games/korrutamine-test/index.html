@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#182452">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="icon" href="assets/icon-192.png?v=43">
-  <link rel="apple-touch-icon" href="assets/icon-192.png?v=43">
+  <link rel="icon" href="assets/icon-192.png?v=44">
+  <link rel="apple-touch-icon" href="assets/icon-192.png?v=44">
   <title data-i18n="meta.title">EDUKASS — Korrutustabeli treener</title>
   <meta name="description" content="EDUKASSi korrutustabeli treener: korrutamise ja jagamise missioonid lastele." data-i18n-content="meta.description">
   <meta property="og:type" content="website">
@@ -17,7 +17,7 @@
   <meta property="og:image" content="https://edukass.ee/games/korrutamine-test/assets/share-korrutustabel.png?v=40">
   <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="stylesheet" href="game.css?v=43">
+  <link rel="stylesheet" href="game.css?v=44">
 </head>
 <body class="intro-active">
   <section class="game-intro is-running" id="introScreen" aria-label="EDUKASSi mängu algus" data-i18n-aria-label="intro.aria">
@@ -220,8 +220,10 @@
           </div>
         </section>
 
-        <div class="chapter-route-head"><span id="mapRouteLabel" data-i18n="map.routeLabel">KOSMOSETEE · MISSIOONID 1–33</span></div>
-        <div class="level-grid" id="levelGrid" aria-label="Esimese ja teise peatüki missioonid" data-i18n-aria-label="map.missionsAria"></div>
+        <div class="mission-route-scroll" id="missionRouteScroll" tabindex="0" aria-label="Missioonide keritav rada">
+          <div class="chapter-route-head"><span id="mapRouteLabel" data-i18n="map.routeLabel">KOSMOSETEE · MISSIOONID 1–33</span></div>
+          <div class="level-grid" id="levelGrid" aria-label="Esimese ja teise peatüki missioonid" data-i18n-aria-label="map.missionsAria"></div>
+        </div>
       </div>
       <div class="map-actions">
         <button class="secondary-button" id="repeatLessonButton" type="button" data-i18n="map.repeatLesson">Korda selgitust</button>
@@ -370,7 +372,7 @@
   <dialog class="share-dialog install-dialog" id="installDialog" aria-labelledby="installDialogTitle">
     <form method="dialog" class="share-content">
       <button class="share-close" type="submit" aria-label="Sulge">×</button>
-      <div class="install-phone" aria-hidden="true"><img src="assets/icon-192.png?v=43" alt=""></div>
+      <div class="install-phone" aria-hidden="true"><img src="assets/icon-192.png?v=44" alt=""></div>
       <p class="eyebrow">EDUKASS</p>
       <h2 id="installDialogTitle">LISA TELEFONI EKRAANILE</h2>
       <p id="installHelpText">Mängu ikoon ilmub sinu telefoni. Kui automaatne lisamine ei avane, vali brauseri menüüst „Lisa avakuvale”.</p>
@@ -378,11 +380,11 @@
     </form>
   </dialog>
 
-  <script src="locales/et.js?v=43"></script>
-  <script src="chapter-one.config.js?v=43"></script>
-  <script src="i18n.js?v=43"></script>
-  <script src="question-engine.js?v=43"></script>
-  <script src="progress-store.js?v=43"></script>
-  <script src="game.js?v=43"></script>
+  <script src="locales/et.js?v=44"></script>
+  <script src="chapter-one.config.js?v=44"></script>
+  <script src="i18n.js?v=44"></script>
+  <script src="question-engine.js?v=44"></script>
+  <script src="progress-store.js?v=44"></script>
+  <script src="game.js?v=44"></script>
 </body>
 </html>

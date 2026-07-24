@@ -73,6 +73,8 @@ assert.match(gameHtml,/id="lessonContinueButton"[^>]*>MÄNGI!<\/button>/);
 assert.match(gameHtml,/id="repeatThreeMultiplicationButton"/);
 assert.match(gameHtml,/id="repeatThreeDivisionButton"/);
 assert.match(gameHtml,/MISSIOONID 1–33/);
+assert.match(gameHtml,/id="missionRouteScroll"/);
+assert.match(gameCode,/missionRouteScroll\.scrollTop=/);
 
 const unsupported=i18nApi.create({
   locales:{et},
@@ -124,6 +126,28 @@ assert.equal(versionOneMigrated.saveVersion,2);
 assert.equal(versionOneMigrated.lessonSeen['multiply-3'],true);
 assert.equal(versionOneMigrated.lessonSeen['multiply-2'],true);
 assert.equal(versionOneMigrated.lessonSeen['divide-2'],true);
+
+// Regression: v42 stored unlockedLevel=15 even after mission 15 was complete,
+// because 15 used to be the final mission. The expanded build must unlock 16.
+const completedV42=Array.from({length:15},(_,index)=>index+1);
+const v42Storage=memoryStorage({
+  [config.storage.progressKey]:JSON.stringify({
+    saveVersion:2,
+    unlockedLevel:15,
+    completedLevels:completedV42,
+    lessonSeen:{'multiply-2':true,'divide-2':true},
+    factStats:{}
+  })
+});
+const v42Store=progressStoreApi.create({
+  storage:v42Storage,
+  key:config.storage.progressKey,
+  schemaVersion:2,
+  maxLevel:33
+});
+const expandedFromV42=v42Store.load();
+assert.equal(expandedFromV42.unlockedLevel,16);
+assert.deepEqual(expandedFromV42.completedLevels,completedV42);
 
 const saved=legacyStore.save({...migrated,unlockedLevel:16,lessonSeen:{...migrated.lessonSeen,'multiply-3':true}});
 assert.equal(saved.saveVersion,2);

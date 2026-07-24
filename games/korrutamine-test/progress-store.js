@@ -51,13 +51,25 @@
       const lessonSeen=migrated.lessonSeen&&typeof migrated.lessonSeen==='object'?{...migrated.lessonSeen}:{};
       if(migrated.multiplicationLessonSeen)lessonSeen['multiply-2']=true;
       if(migrated.divisionLessonSeen)lessonSeen['divide-2']=true;
+
+      // Older builds capped unlockedLevel at their former final mission.
+      // Derive the first unfinished mission from the completed sequence so a
+      // player who finished mission 15 in v42 immediately receives mission 16.
+      const completedSet=new Set(completedLevels);
+      let firstUnfinished=1;
+      while(firstUnfinished<maxLevel&&completedSet.has(firstUnfinished))firstUnfinished++;
+      const unlockedLevel=Math.max(
+        1,
+        Math.min(maxLevel,Math.max(migrated.unlockedLevel,firstUnfinished))
+      );
+
       return {
         ...defaultProgress(),
         ...migrated,
         saveVersion:schemaVersion,
         completedLevels,
         lessonSeen,
-        unlockedLevel:Math.max(1,Math.min(maxLevel,migrated.unlockedLevel))
+        unlockedLevel
       };
     }
 
