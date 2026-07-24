@@ -14,7 +14,9 @@
         multiplicationLessonSeen:false,
         divisionLessonSeen:false,
         lessonSeen:{},
-        factStats:{}
+        factStats:{},
+        chapterTwoStoryVersion:0,
+        chapterTwoStorySeenLevels:[]
       };
     }
 
@@ -49,6 +51,10 @@
         .filter(level=>Number.isInteger(level)&&level>=1&&level<=maxLevel)
         .sort((a,b)=>a-b);
       const lessonSeen=migrated.lessonSeen&&typeof migrated.lessonSeen==='object'?{...migrated.lessonSeen}:{};
+      const chapterTwoStorySeenLevels=[...new Set(Array.isArray(migrated.chapterTwoStorySeenLevels)?migrated.chapterTwoStorySeenLevels:[])]
+        .filter(level=>Number.isInteger(level)&&level>=16&&level<=maxLevel)
+        .sort((a,b)=>a-b);
+      const chapterTwoStoryVersion=Number.isInteger(migrated.chapterTwoStoryVersion)?migrated.chapterTwoStoryVersion:0;
       if(migrated.multiplicationLessonSeen)lessonSeen['multiply-2']=true;
       if(migrated.divisionLessonSeen)lessonSeen['divide-2']=true;
 
@@ -69,6 +75,8 @@
         saveVersion:schemaVersion,
         completedLevels,
         lessonSeen,
+        chapterTwoStoryVersion,
+        chapterTwoStorySeenLevels,
         unlockedLevel
       };
     }

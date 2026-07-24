@@ -120,6 +120,7 @@ const SHIP_MISSION_ID=STORY_CONFIG.shipMissionId;
 const ENGINE_MISSION_ID=STORY_CONFIG.engineMissionId;
 const FINAL_MISSION_ID=STORY_CONFIG.finalMissionId;
 const CHAPTER_TWO_STORY=STORY_CONFIG.chapterTwo||{};
+const CHAPTER_TWO_STORY_VERSION=Number(CHAPTER_TWO_STORY.version)||1;
 const LAST_MISSION_ID=CHAPTER_CONFIG.missions[CHAPTER_CONFIG.missions.length-1].id;
 const CHAPTER_END_IDS=new Set(CHAPTERS.map(chapter=>chapter.endMissionId));
 const PLANET_MISSION_IDS=new Set(STORY_CONFIG.planetMissionIds);
@@ -151,6 +152,8 @@ const progressStore=PROGRESS_STORE_API.create({
   maxLevel:LEVELS.length
 });
 let progress=loadProgress();
+let pendingChapterTwoStoryRevealLevelId=null;
+synchronizeChapterTwoStoryProgress();
 const questionEngine=QUESTION_ENGINE_API.create({
   config:CHAPTER_CONFIG,
   getFactStats:()=>progress.factStats
@@ -226,6 +229,41 @@ function loadProgress(){
 
 function saveProgress(){
   progress=progressStore.save(progress);
+}
+
+function synchronizeChapterTwoStoryProgress(){
+  if(progress.chapterTwoStoryVersion===CHAPTER_TWO_STORY_VERSION&&Array.isArray(progress.chapterTwoStorySeenLevels))return;
+  progress.chapterTwoStoryVersion=CHAPTER_TWO_STORY_VERSION;
+  progress.chapterTwoStorySeenLevels=[];
+  saveProgress();
+}
+
+function chapterTwoStorySeenSet(){
+  return new Set(Array.isArray(progress.chapterTwoStorySeenLevels)?progress.chapterTwoStorySeenLevels:[]);
+}
+
+function chapterTwoStorySeenSteps(){
+  return new Set([...chapterTwoStorySeenSet()]
+    .filter(levelId=>levelId>=CHAPTER_TWO_STORY.startMissionId&&levelId<=CHAPTER_TWO_STORY.finalMissionId)
+    .map(levelId=>levelId-FINAL_MISSION_ID));
+}
+
+function hasChapterTwoStoryReveal(levelId){
+  return chapterTwoStorySeenSet().has(levelId);
+}
+
+function markChapterTwoStoryReveal(levelId){
+  if(levelId<=FINAL_MISSION_ID||hasChapterTwoStoryReveal(levelId))return;
+  progress.chapterTwoStorySeenLevels=[...chapterTwoStorySeenSet(),levelId].sort((a,b)=>a-b);
+  progress.chapterTwoStoryVersion=CHAPTER_TWO_STORY_VERSION;
+  saveProgress();
+}
+
+function chapterTwoStorySeenCount(startMissionId,endMissionId){
+  const seen=chapterTwoStorySeenSet();
+  let count=0;
+  for(let missionId=startMissionId;missionId<=endMissionId;missionId++)if(seen.has(missionId))count++;
+  return count;
 }
 
 function loadSoundPreference(){
@@ -919,10 +957,11 @@ function renderChapterOneStory(completed){
 }
 
 function renderChapterTwoStory(){
-  const firstMoonProgress=completedInRange(16,20);
-  const secondMoonProgress=completedInRange(21,25);
-  const thirdMoonProgress=completedInRange(26,30);
-  const vaultProgress=completedInRange(31,33);
+  const seenSteps=chapterTwoStorySeenSteps();
+  const firstMoonProgress=chapterTwoStorySeenCount(16,20);
+  const secondMoonProgress=chapterTwoStorySeenCount(21,25);
+  const thirdMoonProgress=chapterTwoStorySeenCount(26,30);
+  const vaultProgress=chapterTwoStorySeenCount(31,33);
   const completed=firstMoonProgress+secondMoonProgress+thirdMoonProgress+vaultProgress;
   const phase=firstMoonProgress<5?'moon1':secondMoonProgress<5?'moon2':thirdMoonProgress<5?'moon3':vaultProgress<3?'vault':'complete';
 
@@ -958,7 +997,7 @@ function renderChapterTwoStory(){
 
   document.querySelectorAll('[data-story-step]').forEach(piece=>{
     const step=Number(piece.dataset.storyStep);
-    piece.classList.toggle('is-earned',step<=completed);
+    piece.classList.toggle('is-earned',seenSteps.has(step));
   });
 
   document.querySelectorAll('[data-story-moon]').forEach(moon=>{
@@ -986,9 +1025,9 @@ function renderChapterTwoStory(){
   thirdTower?.classList.toggle('is-complete',thirdMoonProgress===5);
 
   const crystalBud=storyTwo.querySelector('.three-crystal-bud');
-  crystalBud?.classList.toggle('has-crystal',completed===8);
-  crystalBud?.classList.toggle('is-empty',completed>=9);
-  storyTwo.querySelector('.three-socket-charge')?.classList.toggle('is-charged',completed>=9);
+  crystalBud?.classList.toggle('has-crystal',seenSteps.has(8)&&!seenSteps.has(9));
+  crystalBud?.classList.toggle('is-empty',seenSteps.has(9));
+  storyTwo.querySelector('.three-socket-charge')?.classList.toggle('is-charged',seenSteps.has(9));
   storyTwo.querySelector('.three-light-splitter')?.classList.toggle('is-active',thirdMoonProgress>=1);
   storyTwo.querySelector('.three-split-rays')?.classList.toggle('is-active',thirdMoonProgress>=2);
   storyTwo.querySelector('.three-underground-channels')?.classList.toggle('is-active',thirdMoonProgress>=3);
@@ -1006,8 +1045,8 @@ function renderChapterTwoStory(){
   storyThreeVault.classList.toggle('has-third-lock',vaultProgress>=2);
   storyThreeVault.classList.toggle('is-open',vaultProgress>=3);
   storyMapFragment.classList.remove('is-found');
-  storyShipConsole?.classList.toggle('is-visible',vaultProgress>=2);
-  storyShipConsole?.classList.toggle('is-installed',vaultProgress>=3);
+  storyShipConsole?.classList.toggle('is-visible',seenSteps.has(17));
+  storyShipConsole?.classList.toggle('is-installed',seenSteps.has(18));
 }
 function renderStoryProgress(){
   const chapter=activeMapChapter();
@@ -1402,6 +1441,9 @@ function finishAttempt(reason){
   const levelPassed=reason==='complete'&&correct===ROUND_LENGTH;
   const gameComplete=levelPassed&&currentLevel.id===LAST_MISSION_ID;
   const firstCompletion=levelPassed&&!progress.completedLevels.includes(currentLevel.id);
+  const firstRewardReveal=levelPassed&&(currentLevel.id>FINAL_MISSION_ID
+    ?!hasChapterTwoStoryReveal(currentLevel.id)
+    :firstCompletion);
 
   mistakeCount.textContent=mistakes;
   timeCount.textContent=formatTime(elapsed);
@@ -1411,7 +1453,8 @@ function finishAttempt(reason){
     progress.completedLevels.sort((a,b)=>a-b);
     progress.unlockedLevel=Math.min(LAST_MISSION_ID,Math.max(progress.unlockedLevel,currentLevel.id+1));
     saveProgress();
-    configureRewardScene(currentLevel.id,firstCompletion,true);
+    pendingChapterTwoStoryRevealLevelId=currentLevel.id>FINAL_MISSION_ID&&firstRewardReveal?currentLevel.id:null;
+    configureRewardScene(currentLevel.id,firstRewardReveal,true);
     resultEyebrow.hidden=true;
     resultEyebrow.textContent='';
     resultTitle.textContent=t('result.done');
@@ -1422,6 +1465,7 @@ function finishAttempt(reason){
     resultMapButton.hidden=gameComplete;
     resultAction=gameComplete?'map':'next';
   }else{
+    pendingChapterTwoStoryRevealLevelId=null;
     configureRewardScene(currentLevel?.id||1,false,false);
     resultEyebrow.textContent='';
     resultEyebrow.hidden=true;
@@ -1449,31 +1493,32 @@ function finishAttempt(reason){
       mapHidden:resultMapButton.hidden,
       levelPassed,
       firstCompletion,
+      firstRewardReveal,
       mistakes,
       elapsed
     }
   });
-  startRewardCinematic(levelPassed,currentLevel.id,firstCompletion);
+  startRewardCinematic(levelPassed,currentLevel.id,firstRewardReveal);
 }
 
-function setChapterTwoRewardProgress(levelId,firstCompletion){
+function setChapterTwoRewardProgress(levelId,firstRewardReveal){
   const step=Math.max(1,Math.min(18,levelId-FINAL_MISSION_ID));
-  const previous=firstCompletion?Math.max(0,step-1):step;
+  const seenSteps=chapterTwoStorySeenSteps();
   rewardScene.dataset.threeStep=String(step);
-  rewardScene.dataset.threeBefore=String(previous);
+  rewardScene.dataset.threeBefore=[...seenSteps].sort((a,b)=>a-b).join(',');
 
   rewardScene.querySelectorAll('[data-reward-three]').forEach(element=>{
     element.classList.remove('is-earned','is-new-reward');
     const itemStep=Number(element.dataset.rewardThree);
-    if(itemStep<=previous)element.classList.add('is-earned');
-    else if(firstCompletion&&itemStep===step)element.classList.add('is-new-reward');
+    if(seenSteps.has(itemStep))element.classList.add('is-earned');
+    else if(firstRewardReveal&&itemStep===step)element.classList.add('is-new-reward');
   });
 
   const carry=rewardScene.querySelector('.reward-crystal-carry');
   if(carry){
     carry.classList.remove('is-earned','is-new-reward');
-    if(firstCompletion&&step===8)carry.classList.add('is-new-reward');
-    else if((firstCompletion&&step===9)||(!firstCompletion&&step===8))carry.classList.add('is-earned');
+    if(firstRewardReveal&&step===8)carry.classList.add('is-new-reward');
+    else if((seenSteps.has(8)&&!seenSteps.has(9))||(firstRewardReveal&&step===9&&seenSteps.has(8)))carry.classList.add('is-earned');
   }
 
   const milestones=[
@@ -1486,25 +1531,25 @@ function setChapterTwoRewardProgress(levelId,firstCompletion){
     const element=rewardScene.querySelector(selector);
     if(!element)return;
     element.classList.remove('is-earned','is-new-reward');
-    if(milestoneStep<=previous)element.classList.add('is-earned');
-    else if(firstCompletion&&milestoneStep===step)element.classList.add('is-new-reward');
+    if(seenSteps.has(milestoneStep))element.classList.add('is-earned');
+    else if(firstRewardReveal&&milestoneStep===step)element.classList.add('is-new-reward');
   });
 
   const towerTwo=rewardScene.querySelector('.reward-machine-two');
   if(towerTwo){
-    towerTwo.classList.toggle('is-present',previous>=7||(!firstCompletion&&step>=7));
-    towerTwo.classList.toggle('is-powered',previous>=9||(!firstCompletion&&step>=9));
+    towerTwo.classList.toggle('is-present',seenSteps.has(7));
+    towerTwo.classList.toggle('is-powered',seenSteps.has(9));
   }
   const vault=rewardScene.querySelector('.reward-three-vault');
-  if(vault)vault.classList.toggle('is-open',previous>=18||(!firstCompletion&&step>=18));
+  if(vault)vault.classList.toggle('is-open',seenSteps.has(18));
   const consolePanel=rewardScene.querySelector('.reward-three-console');
   if(consolePanel){
-    consolePanel.classList.toggle('is-visible',previous>=17||step>=17);
-    consolePanel.classList.toggle('is-installed',previous>=18||(!firstCompletion&&step>=18));
+    consolePanel.classList.toggle('is-visible',seenSteps.has(17));
+    consolePanel.classList.toggle('is-installed',seenSteps.has(18));
   }
 
   rewardScene.style.setProperty('--three-step',String(step));
-  rewardScene.style.setProperty('--three-before',String(previous));
+  rewardScene.style.setProperty('--three-before',[...seenSteps].sort((a,b)=>a-b).join(','));
 }
 function setRewardProgressState(levelId,firstCompletion){
   const shipStep=Math.min(STORY_SEGMENT_LENGTH,levelId);
@@ -1575,6 +1620,10 @@ function configureRewardScene(levelId,firstCompletion,levelPassed){
 }
 
 function finishRewardReveal(){
+  if(pendingChapterTwoStoryRevealLevelId!=null){
+    markChapterTwoStoryReveal(pendingChapterTwoStoryRevealLevelId);
+    pendingChapterTwoStoryRevealLevelId=null;
+  }
   resultScreen.classList.remove('reward-cinematic-locked');
   resultScreen.classList.add('reward-reveal-complete');
   resultPrimaryButton.disabled=false;
@@ -1689,11 +1738,16 @@ function restoreResult(state){
   resultMessage.hidden=state.messageHidden!==false;
   resultPrimaryButton.textContent=state.primaryText||t('result.toMissions');
   resultMapButton.hidden=Boolean(state.mapHidden);
-  configureRewardScene(state.levelId,state.firstCompletion!==false,state.levelPassed!==false);
+  const levelPassed=state.levelPassed!==false;
+  const firstRewardReveal=state.levelId>FINAL_MISSION_ID
+    ?levelPassed&&!hasChapterTwoStoryReveal(state.levelId)&&(state.firstRewardReveal!==false)
+    :state.firstCompletion!==false;
+  pendingChapterTwoStoryRevealLevelId=state.levelId>FINAL_MISSION_ID&&firstRewardReveal?state.levelId:null;
+  configureRewardScene(state.levelId,firstRewardReveal,levelPassed);
   mistakeCount.textContent=Number.isInteger(state.mistakes)?state.mistakes:0;
   timeCount.textContent=formatTime(Number.isInteger(state.elapsed)?state.elapsed:0);
   showScreen('resultScreen',{historyMode:'none'});
-  startRewardCinematic(state.levelPassed!==false,state.levelId,state.firstCompletion!==false);
+  startRewardCinematic(levelPassed,state.levelId,firstRewardReveal);
 }
 
 function restoreNavigation(state){

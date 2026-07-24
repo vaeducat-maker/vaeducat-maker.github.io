@@ -37,6 +37,7 @@ assert.deepEqual(config.lesson.triggers.map(lesson=>[lesson.id,lesson.missionId,
   ['divide-3',26,'divide',3]
 ]);
 assert.deepEqual(config.story.chapterTwo,{
+  version:2,
   startMissionId:16,
   firstMoonMissionId:20,
   secondMoonMissionId:25,
@@ -93,6 +94,9 @@ assert.match(gameHtml,/reward-three-console/);
 assert.match(gameCss,/reward-chapter-two\s+\.crystal\{display:none!important\}/);
 assert.match(gameCss,/first-completion:not\(\.is-playing\).*is-new-reward/);
 assert.match(gameCode,/levelId===23\|\|levelId===33\?'artifactReceive'/);
+assert.match(gameCode,/chapterTwoStorySeenLevels/);
+assert.match(gameCode,/firstRewardReveal/);
+assert.match(gameCode,/markChapterTwoStoryReveal/);
 assert.match(gameHtml,/data-reward-three="3"/);
 assert.match(gameHtml,/data-reward-three="17"/);
 assert.match(gameHtml,/class="reward-three-descent"/);
@@ -135,6 +139,8 @@ assert.deepEqual(migrated.factStats,legacyProgress.factStats);
 assert.equal(migrated.lessonSeen['multiply-2'],true);
 assert.equal(migrated.lessonSeen['divide-2'],true);
 assert.equal(migrated.lessonSeen['multiply-3'],undefined);
+assert.equal(migrated.chapterTwoStoryVersion,0);
+assert.deepEqual(migrated.chapterTwoStorySeenLevels,[]);
 
 const versionOneProgress={...legacyProgress,saveVersion:1,lessonSeen:{'multiply-3':true}};
 const versionOneStorage=memoryStorage({[config.storage.progressKey]:JSON.stringify(versionOneProgress)});
@@ -171,6 +177,28 @@ const v42Store=progressStoreApi.create({
 const expandedFromV42=v42Store.load();
 assert.equal(expandedFromV42.unlockedLevel,16);
 assert.deepEqual(expandedFromV42.completedLevels,completedV42);
+
+
+const storyStorage=memoryStorage({
+  [config.storage.progressKey]:JSON.stringify({
+    saveVersion:2,
+    unlockedLevel:18,
+    completedLevels:[...completedV42,16,17],
+    lessonSeen:{'multiply-2':true,'divide-2':true,'multiply-3':true},
+    factStats:{},
+    chapterTwoStoryVersion:2,
+    chapterTwoStorySeenLevels:[16,17,17,34]
+  })
+});
+const storyStore=progressStoreApi.create({
+  storage:storyStorage,
+  key:config.storage.progressKey,
+  schemaVersion:2,
+  maxLevel:33
+});
+const storyProgress=storyStore.load();
+assert.equal(storyProgress.chapterTwoStoryVersion,2);
+assert.deepEqual(storyProgress.chapterTwoStorySeenLevels,[16,17]);
 
 const saved=legacyStore.save({...migrated,unlockedLevel:16,lessonSeen:{...migrated.lessonSeen,'multiply-3':true}});
 assert.equal(saved.saveVersion,2);

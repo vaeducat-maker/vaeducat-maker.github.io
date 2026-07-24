@@ -82,6 +82,7 @@
       finalMissionId:15,
       planetMissionIds:[3,6,9,10,12,15,18,20,23,25,28,30,33],
       chapterTwo:{
+        version:2,
         startMissionId:16,
         firstMoonMissionId:20,
         secondMoonMissionId:25,
