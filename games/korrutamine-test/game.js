@@ -482,6 +482,62 @@ function playSound(kind){
     playTone(784,.28,.2,.03,'sine');
     playTone(1047,.48,.24,.022,'sine');
   }
+  if(kind==='journeyFly'){
+    playNoise(0,.85,.025,900,'lowpass');
+    playSweep(125,245,0,.8,.04,'sawtooth');
+    playTone(520,.18,.18,.018,'sine');
+  }
+  if(kind==='journeyMeteor'){
+    playNoise(0,.18,.035,3100,'highpass');
+    playSweep(920,280,.03,.22,.026,'triangle');
+    playNoise(.34,.2,.03,2600,'highpass');
+    playSweep(760,230,.36,.24,.025,'triangle');
+    playSweep(130,250,.08,.78,.035,'sawtooth');
+  }
+  if(kind==='journeyLand'){
+    playSweep(230,92,0,.75,.045,'sawtooth');
+    playNoise(.62,.35,.065,720,'lowpass');
+    playPitchDrop(88,46,.66,.48,.07,'sine');
+  }
+  if(kind==='journeyStep'){
+    playTone(360,0,.065,.018,'triangle');
+    playTone(440,.18,.065,.018,'triangle');
+    playTone(520,.36,.08,.018,'triangle');
+  }
+  if(kind==='journeyDiscover'){
+    playTone(520,0,.1,.025,'sine');
+    playTone(720,.13,.12,.027,'sine');
+    playTone(980,.3,.18,.025,'sine');
+  }
+  if(kind==='journeySpark'){
+    playNoise(0,.12,.024,3600,'highpass');
+    playTone(690,.02,.07,.018,'square');
+    playNoise(.22,.1,.023,4200,'highpass');
+    playTone(880,.24,.08,.018,'square');
+  }
+  if(kind==='journeyCase'){
+    playTone(410,0,.08,.022,'triangle');
+    playTone(610,.11,.1,.024,'sine');
+    playTone(820,.25,.13,.022,'sine');
+  }
+  if(kind==='journeyInsert'){
+    playTone(330,0,.09,.025,'triangle');
+    playTone(520,.12,.12,.027,'sine');
+    playChord([523,659,784],.34,.38,.024);
+  }
+  if(kind==='journeyEngine'){
+    playNoise(0,1.25,.075,620,'lowpass');
+    playSweep(78,260,.05,1.35,.055,'sawtooth');
+    playTone(392,.85,.18,.022,'sine');
+    playTone(587,1.08,.22,.026,'sine');
+  }
+  if(kind==='journeyLaunch'){
+    playNoise(0,2.15,.11,760,'lowpass');
+    playSweep(74,390,.03,2.05,.072,'sawtooth');
+    playTone(523,1.25,.18,.025,'sine');
+    playTone(784,1.52,.22,.028,'sine');
+    playChord([523,659,784,1047],1.86,.62,.03);
+  }
   if(kind==='rewardReveal'){
     playSweep(260,920,.18,.82,.038,'sine');
     playNoise(.28,.62,.028,2800,'highpass');
@@ -957,96 +1013,54 @@ function renderChapterOneStory(completed){
 }
 
 function renderChapterTwoStory(){
-  const seenSteps=chapterTwoStorySeenSteps();
-  const firstMoonProgress=chapterTwoStorySeenCount(16,20);
-  const secondMoonProgress=chapterTwoStorySeenCount(21,25);
-  const thirdMoonProgress=chapterTwoStorySeenCount(26,30);
-  const vaultProgress=chapterTwoStorySeenCount(31,33);
-  const completed=firstMoonProgress+secondMoonProgress+thirdMoonProgress+vaultProgress;
-  const phase=firstMoonProgress<5?'moon1':secondMoonProgress<5?'moon2':thirdMoonProgress<5?'moon3':vaultProgress<3?'vault':'complete';
+  const seen=chapterTwoStorySeenSet();
+  let journeyStep=0;
+  for(const levelId of seen){
+    if(levelId>=CHAPTER_TWO_STORY.startMissionId&&levelId<=CHAPTER_TWO_STORY.finalMissionId){
+      journeyStep=Math.max(journeyStep,levelId-FINAL_MISSION_ID);
+    }
+  }
+
+  const flightProgress=chapterTwoStorySeenCount(16,18);
+  const explorationProgress=chapterTwoStorySeenCount(19,25);
+  const returnProgress=chapterTwoStorySeenCount(26,30);
+  const upgradeProgress=chapterTwoStorySeenCount(31,33);
+  const completed=flightProgress+explorationProgress+returnProgress+upgradeProgress;
+  const phase=flightProgress<3?'flight':explorationProgress<7?'exploration':returnProgress<5?'return':upgradeProgress<3?'upgrade':'complete';
 
   storyStage.dataset.phase=phase;
   storyStage.dataset.completed=String(completed);
-  storyStage.classList.add('chapter-two');
+  storyStage.classList.add('chapter-two','journey-story');
   storyStage.closest('.story-progress')?.classList.add('chapter-two-active');
   storyStage.classList.remove('phase-ship','phase-engine','phase-portal','has-engine','has-portal','phase-moon1','phase-moon2','phase-moon3','phase-vault','phase-complete');
   storyStage.classList.add(`phase-${phase}`);
   storyStage.classList.toggle('is-complete',completed===18);
-  storyPhaseKicker.textContent=phase==='complete'?t('story.complete'):t('story.goal1');
-  storyPhaseTitle.textContent=phase==='moon1'?t('story.activateFirstTower')
-    :phase==='moon2'?t('story.powerSecondTower')
-    :phase==='moon3'?t('story.splitLight')
-    :phase==='vault'?t('story.openVault')
-    :t('story.routeFound');
+  storyTwo.dataset.journeyStep=String(journeyStep);
 
-  const values={ship:firstMoonProgress,engine:secondMoonProgress,portal:thirdMoonProgress,vault:vaultProgress};
-  const labels={ship:t('story.moon1'),engine:t('story.moon2'),portal:t('story.moon3'),vault:t('story.vault')};
-  shipGoalCount.textContent=`${firstMoonProgress}/5`;
-  engineGoalCount.textContent=`${secondMoonProgress}/5`;
-  portalGoalCount.textContent=`${thirdMoonProgress}/5`;
-  vaultGoalCount.textContent=`${vaultProgress}/3`;
+  storyPhaseKicker.textContent=phase==='complete'?t('story.complete'):t('story.goal1');
+  storyPhaseTitle.textContent=phase==='flight'?t('story.flyForward')
+    :phase==='exploration'?t('story.findSource')
+    :phase==='return'?t('story.bringSource')
+    :phase==='upgrade'?t('story.powerRocket')
+    :t('story.launchReady');
+
+  const values={ship:flightProgress,engine:explorationProgress,portal:returnProgress,vault:upgradeProgress};
+  const maximums={ship:3,engine:7,portal:5,vault:3};
+  const labels={ship:t('story.flight'),engine:t('story.exploration'),portal:t('story.return'),vault:t('story.upgrade')};
+  shipGoalCount.textContent=`${flightProgress}/3`;
+  engineGoalCount.textContent=`${explorationProgress}/7`;
+  portalGoalCount.textContent=`${returnProgress}/5`;
+  vaultGoalCount.textContent=`${upgradeProgress}/3`;
+
   document.querySelectorAll('[data-story-goal]').forEach(goal=>{
     const name=goal.dataset.storyGoal;
-    const max=name==='vault'?3:5;
     const value=values[name]||0;
-    const active=(phase==='moon1'&&name==='ship')||(phase==='moon2'&&name==='engine')||(phase==='moon3'&&name==='portal')||(phase==='vault'&&name==='vault');
+    const max=maximums[name]||1;
+    const active=(phase==='flight'&&name==='ship')||(phase==='exploration'&&name==='engine')||(phase==='return'&&name==='portal')||(phase==='upgrade'&&name==='vault');
     goal.classList.toggle('is-done',value===max);
     goal.classList.toggle('is-active',active);
     goal.setAttribute('aria-label',`${labels[name]}: ${value}/${max}`);
   });
-
-  document.querySelectorAll('[data-story-step]').forEach(piece=>{
-    const step=Number(piece.dataset.storyStep);
-    piece.classList.toggle('is-earned',seenSteps.has(step));
-  });
-
-  document.querySelectorAll('[data-story-moon]').forEach(moon=>{
-    const moonNumber=Number(moon.dataset.storyMoon);
-    const value=moonNumber===1?firstMoonProgress:moonNumber===2?secondMoonProgress:thirdMoonProgress;
-    moon.style.setProperty('--moon-progress',String(value));
-    moon.classList.toggle('is-awake',value>=4);
-    moon.classList.toggle('is-aligned',value===5);
-  });
-
-  const machines=[...document.querySelectorAll('[data-story-machine]')];
-  machines.forEach(machine=>machine.classList.remove('is-visible','is-built','is-awake','is-complete','is-powered'));
-  const firstTower=machines.find(machine=>Number(machine.dataset.storyMachine)===1);
-  const secondTower=machines.find(machine=>Number(machine.dataset.storyMachine)===2);
-  const thirdTower=machines.find(machine=>Number(machine.dataset.storyMachine)===3);
-  firstTower?.classList.toggle('is-visible',firstMoonProgress>=4);
-  firstTower?.classList.toggle('is-built',firstMoonProgress>=4);
-  firstTower?.classList.toggle('is-complete',firstMoonProgress===5);
-  secondTower?.classList.toggle('is-visible',secondMoonProgress>=2);
-  secondTower?.classList.toggle('is-built',secondMoonProgress>=2);
-  secondTower?.classList.toggle('is-powered',secondMoonProgress>=4);
-  secondTower?.classList.toggle('is-complete',secondMoonProgress===5);
-  thirdTower?.classList.toggle('is-visible',thirdMoonProgress>=4);
-  thirdTower?.classList.toggle('is-built',thirdMoonProgress>=4);
-  thirdTower?.classList.toggle('is-complete',thirdMoonProgress===5);
-
-  const crystalBud=storyTwo.querySelector('.three-crystal-bud');
-  crystalBud?.classList.toggle('has-crystal',seenSteps.has(8)&&!seenSteps.has(9));
-  crystalBud?.classList.toggle('is-empty',seenSteps.has(9));
-  storyTwo.querySelector('.three-socket-charge')?.classList.toggle('is-charged',seenSteps.has(9));
-  storyTwo.querySelector('.three-light-splitter')?.classList.toggle('is-active',thirdMoonProgress>=1);
-  storyTwo.querySelector('.three-split-rays')?.classList.toggle('is-active',thirdMoonProgress>=2);
-  storyTwo.querySelector('.three-underground-channels')?.classList.toggle('is-active',thirdMoonProgress>=3);
-
-  storyTwo.style.setProperty('--first-progress',String(firstMoonProgress));
-  storyTwo.style.setProperty('--second-progress',String(secondMoonProgress));
-  storyTwo.style.setProperty('--third-progress',String(thirdMoonProgress));
-  storyThreeDoor.classList.toggle('is-revealed',secondMoonProgress===5);
-  storyThreeDoor.classList.toggle('is-open',thirdMoonProgress===5||vaultProgress>0);
-  storyThreeStairs.classList.toggle('is-visible',thirdMoonProgress===5||vaultProgress>0);
-  storyThreeStairs.classList.toggle('is-descended',vaultProgress>=1);
-  storyThreeVault.classList.toggle('is-visible',vaultProgress>=2);
-  storyThreeVault.classList.toggle('has-first-lock',vaultProgress>=2);
-  storyThreeVault.classList.toggle('has-second-lock',vaultProgress>=2);
-  storyThreeVault.classList.toggle('has-third-lock',vaultProgress>=2);
-  storyThreeVault.classList.toggle('is-open',vaultProgress>=3);
-  storyMapFragment.classList.remove('is-found');
-  storyShipConsole?.classList.toggle('is-visible',seenSteps.has(17));
-  storyShipConsole?.classList.toggle('is-installed',seenSteps.has(18));
 }
 function renderStoryProgress(){
   const chapter=activeMapChapter();
@@ -1503,53 +1517,8 @@ function finishAttempt(reason){
 
 function setChapterTwoRewardProgress(levelId,firstRewardReveal){
   const step=Math.max(1,Math.min(18,levelId-FINAL_MISSION_ID));
-  const seenSteps=chapterTwoStorySeenSteps();
-  rewardScene.dataset.threeStep=String(step);
-  rewardScene.dataset.threeBefore=[...seenSteps].sort((a,b)=>a-b).join(',');
-
-  rewardScene.querySelectorAll('[data-reward-three]').forEach(element=>{
-    element.classList.remove('is-earned','is-new-reward');
-    const itemStep=Number(element.dataset.rewardThree);
-    if(seenSteps.has(itemStep))element.classList.add('is-earned');
-    else if(firstRewardReveal&&itemStep===step)element.classList.add('is-new-reward');
-  });
-
-  const carry=rewardScene.querySelector('.reward-crystal-carry');
-  if(carry){
-    carry.classList.remove('is-earned','is-new-reward');
-    if(firstRewardReveal&&step===8)carry.classList.add('is-new-reward');
-    else if((seenSteps.has(8)&&!seenSteps.has(9))||(firstRewardReveal&&step===9&&seenSteps.has(8)))carry.classList.add('is-earned');
-  }
-
-  const milestones=[
-    {selector:'.reward-three-moon-one',step:5},
-    {selector:'.reward-three-moon-two',step:10},
-    {selector:'.reward-three-moon-three',step:15},
-    {selector:'.reward-three-map',step:18}
-  ];
-  milestones.forEach(({selector,step:milestoneStep})=>{
-    const element=rewardScene.querySelector(selector);
-    if(!element)return;
-    element.classList.remove('is-earned','is-new-reward');
-    if(seenSteps.has(milestoneStep))element.classList.add('is-earned');
-    else if(firstRewardReveal&&milestoneStep===step)element.classList.add('is-new-reward');
-  });
-
-  const towerTwo=rewardScene.querySelector('.reward-machine-two');
-  if(towerTwo){
-    towerTwo.classList.toggle('is-present',seenSteps.has(7));
-    towerTwo.classList.toggle('is-powered',seenSteps.has(9));
-  }
-  const vault=rewardScene.querySelector('.reward-three-vault');
-  if(vault)vault.classList.toggle('is-open',seenSteps.has(18));
-  const consolePanel=rewardScene.querySelector('.reward-three-console');
-  if(consolePanel){
-    consolePanel.classList.toggle('is-visible',seenSteps.has(17));
-    consolePanel.classList.toggle('is-installed',seenSteps.has(18));
-  }
-
-  rewardScene.style.setProperty('--three-step',String(step));
-  rewardScene.style.setProperty('--three-before',[...seenSteps].sort((a,b)=>a-b).join(','));
+  rewardScene.dataset.journeyStep=String(step);
+  rewardScene.dataset.journeyFirst=firstRewardReveal?'true':'false';
 }
 function setRewardProgressState(levelId,firstCompletion){
   const shipStep=Math.min(STORY_SEGMENT_LENGTH,levelId);
@@ -1593,18 +1562,8 @@ function configureRewardScene(levelId,firstCompletion,levelPassed){
     rewardScene.classList.add('reward-chapter-two');
     setChapterTwoRewardProgress(levelId,firstCompletion);
     const chapterStep=levelId-FINAL_MISSION_ID;
-    if(chapterStep<=5)rewardScene.classList.add('reward-three-phase-one');
-    else if(chapterStep<=10)rewardScene.classList.add('reward-three-phase-two');
-    else if(chapterStep<=15)rewardScene.classList.add('reward-three-phase-three');
-    else rewardScene.classList.add('reward-three-phase-vault');
-    rewardScene.classList.add(`reward-three-step-${chapterStep}`);
-    if(levelId===31)rewardScene.classList.add('reward-three-descent-scene');
-    if(levelId===32)rewardScene.classList.add('reward-three-chamber-scene');
-    if(levelId===33)rewardScene.classList.add('reward-three-map-scene');
-    if(levelId===CHAPTER_TWO_STORY.firstMoonMissionId)rewardScene.classList.add('reward-three-milestone-one');
-    if(levelId===CHAPTER_TWO_STORY.secondMoonMissionId)rewardScene.classList.add('reward-three-milestone-two');
-    if(levelId===CHAPTER_TWO_STORY.thirdMoonMissionId)rewardScene.classList.add('reward-three-milestone-three');
-    if(levelId===CHAPTER_TWO_STORY.finalMissionId)rewardScene.classList.add('reward-three-final');
+    rewardScene.classList.add(`reward-journey-step-${chapterStep}`);
+    if(chapterStep===18)rewardScene.classList.add('reward-journey-final');
     return;
   }
   setRewardProgressState(levelId,firstCompletion);
@@ -1630,6 +1589,27 @@ function finishRewardReveal(){
   resultMapButton.disabled=false;
 }
 
+function chapterTwoSoundForLevel(levelId){
+  if(levelId===16)return 'journeyFly';
+  if(levelId===17)return 'journeyMeteor';
+  if(levelId===18)return 'journeyLand';
+  if([19,20,21,22,28,29,30].includes(levelId))return 'journeyStep';
+  if(levelId===23)return 'journeyDiscover';
+  if(levelId===24||levelId===25)return 'journeySpark';
+  if(levelId===26||levelId===27)return 'journeyCase';
+  if(levelId===31)return 'journeyInsert';
+  if(levelId===32)return 'journeyEngine';
+  return 'journeyLaunch';
+}
+
+function chapterTwoCinematicDuration(levelId){
+  if(levelId===18)return 3600;
+  if(levelId===27||levelId===29||levelId===31)return 3900;
+  if(levelId===32)return 4300;
+  if(levelId===33)return 6400;
+  return 3300;
+}
+
 function startRewardCinematic(levelPassed,levelId,firstCompletion=true){
   clearCinematicTimers();
   rewardFx.stop();
@@ -1642,39 +1622,60 @@ function startRewardCinematic(levelPassed,levelId,firstCompletion=true){
     return;
   }
 
-  const changeOffset=firstCompletion?REWARD_BEFORE_HOLD:0;
+  const chapterTwo=levelId>FINAL_MISSION_ID;
+  const changeOffset=firstCompletion?REWARD_BEFORE_HOLD:(chapterTwo?420:0);
   const cue=(delay,callback)=>scheduleCinematic(changeOffset+delay,callback);
   const beginRewardChange=()=>{
     rewardScene.classList.add('is-playing');
-    if(firstCompletion){
-      if(levelId>FINAL_MISSION_ID)playSound(levelId===23||levelId===33?'artifactReceive':'storyStep');
-      else playSound('rewardReveal');
-    }
+    if(chapterTwo)playSound(chapterTwoSoundForLevel(levelId));
+    else if(firstCompletion)playSound('rewardReveal');
   };
 
-  if(firstCompletion){
+  if(firstCompletion||chapterTwo){
     resultScreen.classList.add('reward-cinematic-locked');
     resultPrimaryButton.disabled=true;
     resultMapButton.disabled=true;
-    scheduleCinematic(REWARD_BEFORE_HOLD,beginRewardChange);
+    scheduleCinematic(changeOffset,beginRewardChange);
   }else{
     resultScreen.classList.add('reward-reveal-complete');
     beginRewardChange();
   }
 
-  if(levelId>FINAL_MISSION_ID){
-    const milestone=[CHAPTER_TWO_STORY.firstMoonMissionId,CHAPTER_TWO_STORY.secondMoonMissionId,CHAPTER_TWO_STORY.thirdMoonMissionId,CHAPTER_TWO_STORY.finalMissionId].includes(levelId);
-    const target=levelId<=20?[.62,.3]:levelId<=25?[.75,.43]:levelId<=30?[.63,.68]:[.78,.55];
-    cue(1280,()=>rewardFx.sparkBurst(target[0],target[1],milestone?64:38,['#fff','#8f7de2','#70d9cf','#ffd34d'],milestone?1.15:.82));
-    cue(1460,()=>rewardFx.shockwave(target[0],target[1],milestone?'#ffd34d':'#70d9cf',milestone?.98:.7));
-    if(levelId===CHAPTER_TWO_STORY.finalMissionId){
-      cue(2950,()=>rewardFx.sparkBurst(.78,.52,82,['#fff','#ffd34d','#8f7de2','#e64e89'],1.3));
-      cue(3180,()=>rewardFx.shockwave(.78,.52,'#fff',1.12));
+  if(chapterTwo){
+    const step=levelId-FINAL_MISSION_ID;
+    if(levelId===18){
+      cue(1800,()=>rewardFx.dustBurst(.68,.85,34,['#d8c8ff','#8f7de2','#ffd34d']));
+      cue(1960,()=>rewardFx.shockwave(.68,.8,'#ffd34d',.7));
     }
-    if(firstCompletion){
-      const revealAfterChange=levelId===CHAPTER_TWO_STORY.finalMissionId?5700:(milestone?4800:3800);
-      scheduleCinematic(REWARD_BEFORE_HOLD+revealAfterChange,finishRewardReveal);
+    if(levelId===23){
+      cue(1500,()=>rewardFx.sparkBurst(.78,.65,34,['#fff','#70d9cf','#8f7de2'],.72));
     }
+    if(levelId===24||levelId===25){
+      cue(900,()=>rewardFx.sparkBurst(.78,.65,levelId===25?52:28,['#fff','#70d9cf','#ffd34d'],levelId===25?.92:.62));
+      if(levelId===25)cue(1700,()=>rewardFx.shockwave(.78,.65,'#70d9cf',.58));
+    }
+    if(levelId===26){
+      cue(1450,()=>rewardFx.sparkBurst(.5,.72,26,['#fff','#ffd34d','#70d9cf'],.62));
+    }
+    if(levelId===27){
+      cue(1950,()=>rewardFx.sparkBurst(.47,.72,30,['#fff','#70d9cf','#8f7de2'],.7));
+    }
+    if(levelId===31){
+      cue(2100,()=>rewardFx.sparkBurst(.72,.61,44,['#fff','#70d9cf','#ffd34d'],.82));
+      cue(2300,()=>rewardFx.shockwave(.72,.61,'#70d9cf',.65));
+    }
+    if(levelId===32){
+      cue(1900,()=>rewardFx.sparkBurst(.66,.56,48,['#fff','#70d9cf','#ffd34d','#ff9a3c'],.9));
+      cue(2200,()=>rewardFx.shockwave(.66,.56,'#ffd34d',.75));
+    }
+    if(levelId===33){
+      cue(1300,()=>rewardFx.sparkBurst(.66,.73,28,['#ffd34d','#ff9a3c','#fff'],.72));
+      cue(2600,()=>rewardFx.sparkBurst(.66,.63,72,['#fff','#ffd34d','#ff9a3c','#70d9cf'],1.18));
+      cue(2850,()=>rewardFx.shockwave(.66,.64,'#fff',1));
+      cue(4300,()=>rewardFx.dustBurst(.66,.88,42,['#fff','#ffd34d','#8f7de2']));
+    }
+    const duration=chapterTwoCinematicDuration(levelId);
+    scheduleCinematic(changeOffset+duration,finishRewardReveal);
     return;
   }
 

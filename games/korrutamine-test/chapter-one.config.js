@@ -82,12 +82,12 @@
       finalMissionId:15,
       planetMissionIds:[3,6,9,10,12,15,18,20,23,25,28,30,33],
       chapterTwo:{
-        version:2,
+        version:3,
         startMissionId:16,
-        firstMoonMissionId:20,
-        secondMoonMissionId:25,
-        thirdMoonMissionId:30,
-        vaultMissionIds:[31,32],
+        flightEndMissionId:18,
+        explorationEndMissionId:25,
+        returnEndMissionId:30,
+        upgradeMissionIds:[31,32],
         finalMissionId:33
       }
     },

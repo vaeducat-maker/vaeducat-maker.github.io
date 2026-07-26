@@ -37,12 +37,12 @@ assert.deepEqual(config.lesson.triggers.map(lesson=>[lesson.id,lesson.missionId,
   ['divide-3',26,'divide',3]
 ]);
 assert.deepEqual(config.story.chapterTwo,{
-  version:2,
+  version:3,
   startMissionId:16,
-  firstMoonMissionId:20,
-  secondMoonMissionId:25,
-  thirdMoonMissionId:30,
-  vaultMissionIds:[31,32],
+  flightEndMissionId:18,
+  explorationEndMissionId:25,
+  returnEndMissionId:30,
+  upgradeMissionIds:[31,32],
   finalMissionId:33
 });
 
@@ -84,24 +84,23 @@ assert.match(gameCode,/currentMissionId-1/);
 assert.match(gameCode,/setTimeout\(reveal,140\)/);
 assert.match(gameCss,/overflow-anchor:none/);
 assert.match(gameCode,/currentMissionId=Math\.max\(1,Math\.min\(LAST_MISSION_ID,progress\.unlockedLevel\)\)/);
-assert.match(gameHtml,/id="storyThreeDoor"/);
-assert.match(gameHtml,/data-story-machine="1"/);
-assert.match(gameHtml,/data-story-step="1"/);
-assert.match(gameHtml,/data-story-step="14"/);
-assert.match(gameHtml,/three-crystal-bud/);
-assert.match(gameHtml,/reward-crystal-carry/);
-assert.match(gameHtml,/reward-three-console/);
-assert.match(gameCss,/reward-chapter-two\s+\.crystal\{display:none!important\}/);
-assert.match(gameCss,/first-completion:not\(\.is-playing\).*is-new-reward/);
-assert.match(gameCode,/levelId===23\|\|levelId===33\?'artifactReceive'/);
+assert.match(gameHtml,/class="map-journey-zone"/);
+assert.match(gameHtml,/class="reward-journey-zone"/);
+assert.match(gameHtml,/class="journey-rocket"/);
+assert.match(gameHtml,/class="journey-stone"/);
+assert.match(gameHtml,/class="journey-case"/);
+assert.match(gameHtml,/class="journey-cockpit"/);
+assert.match(gameCss,/reward-journey-step-1/);
+assert.match(gameCss,/reward-journey-step-18/);
+assert.match(gameCss,/journeyShipCruise/);
+assert.match(gameCss,/journeyFinalTakeoff/);
+assert.match(gameCode,/chapterTwoSoundForLevel/);
+assert.match(gameCode,/chapterTwoCinematicDuration/);
+assert.match(gameCode,/chapterTwo\?420:0/);
+assert.match(gameCode,/playSound\(chapterTwoSoundForLevel\(levelId\)\)/);
 assert.match(gameCode,/chapterTwoStorySeenLevels/);
 assert.match(gameCode,/firstRewardReveal/);
 assert.match(gameCode,/markChapterTwoStoryReveal/);
-assert.match(gameHtml,/data-reward-three="3"/);
-assert.match(gameHtml,/data-reward-three="17"/);
-assert.match(gameHtml,/class="reward-three-descent"/);
-assert.match(gameHtml,/class="reward-three-chamber"/);
-assert.match(gameHtml,/data-reward-three="18"/);
 
 const unsupported=i18nApi.create({
   locales:{et},
