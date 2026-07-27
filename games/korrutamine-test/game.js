@@ -1603,9 +1603,12 @@ function chapterTwoSoundForLevel(levelId){
 }
 
 function chapterTwoCinematicDuration(levelId){
-  if(levelId===16||levelId===17)return 4700;
+  if(levelId===16||levelId===17)return 5500;
   if(levelId===18)return 4300;
+  if(levelId===20||levelId===21)return 4300;
+  if(levelId===22)return 4000;
   if(levelId===27||levelId===29||levelId===31)return 4200;
+  if(levelId===28)return 4400;
   if(levelId===32)return 5200;
   if(levelId===33)return 7200;
   return 3400;

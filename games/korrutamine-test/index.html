@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#182452">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="icon" href="assets/icon-192.png?v=50">
-  <link rel="apple-touch-icon" href="assets/icon-192.png?v=50">
+  <link rel="icon" href="assets/icon-192.png?v=51">
+  <link rel="apple-touch-icon" href="assets/icon-192.png?v=51">
   <title data-i18n="meta.title">EDUKASS — Korrutustabeli treener</title>
   <meta name="description" content="EDUKASSi korrutustabeli treener: korrutamise ja jagamise missioonid lastele." data-i18n-content="meta.description">
   <meta property="og:type" content="website">
@@ -17,7 +17,7 @@
   <meta property="og:image" content="https://edukass.ee/games/korrutamine-test/assets/share-korrutustabel.png?v=40">
   <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="stylesheet" href="game.css?v=50">
+  <link rel="stylesheet" href="game.css?v=51">
 </head>
 <body class="intro-active">
   <section class="game-intro is-running" id="introScreen" aria-label="EDUKASSi mängu algus" data-i18n-aria-label="intro.aria">
@@ -365,6 +365,22 @@
             <span class="journey-horizon"></span>
             <span class="journey-ground"></span>
 
+            <span class="journey-ridge"></span>
+            <span class="journey-ruin"><i></i><b></b><em></em></span>
+            <span class="journey-crater journey-crater-a"><i></i></span>
+            <span class="journey-crater journey-crater-b"><i></i></span>
+            <span class="journey-crater journey-crater-c"><i></i></span>
+            <span class="journey-plant journey-plant-a"><i></i><b></b><em></em></span>
+            <span class="journey-plant journey-plant-b"><i></i><b></b><em></em></span>
+            <span class="journey-plant journey-plant-c"><i></i><b></b><em></em></span>
+            <span class="journey-plant journey-plant-d"><i></i><b></b><em></em></span>
+            <span class="journey-crystal-cluster"><i></i><b></b><em></em></span>
+            <span class="journey-pebbles"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+            <span class="journey-burrow-creature"><i></i><b></b><em></em></span>
+            <span class="journey-floater-creature"><i></i><b></b><em></em></span>
+            <span class="journey-wind-dust"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+            <span class="journey-energy-cracks"><i></i><b></b><em></em><strong></strong></span>
+
             <span class="journey-rocket">
               <i class="journey-rocket-aura"></i>
               <i class="journey-rocket-trail"></i>
@@ -383,6 +399,34 @@
               <img class="journey-cat-neutral" src="assets/edukass-cat-transparent.png" alt="">
               <img class="journey-cat-surprise" src="assets/edukass-cat-reward-surprise.png" alt="">
               <img class="journey-cat-joy" src="assets/edukass-cat-reward-joy.png" alt="">
+            </span>
+
+            <span class="journey-cat-walker">
+              <svg class="journey-cat-rig" viewBox="0 0 220 160" aria-hidden="true">
+                <ellipse class="rig-shadow" cx="109" cy="146" rx="77" ry="10"></ellipse>
+                <g class="rig-tail"><path d="M45 91 C8 72 13 22 48 29 C70 33 72 58 56 68 C43 76 31 65 37 54"></path></g>
+                <ellipse class="rig-body" cx="103" cy="91" rx="62" ry="42"></ellipse>
+                <path class="rig-orange-patch" d="M57 66 C74 49 96 49 110 64 C101 75 83 80 65 78 Z"></path>
+                <g class="rig-leg rig-leg-back-a"><path d="M69 107 L64 142"></path><ellipse cx="61" cy="145" rx="13" ry="7"></ellipse></g>
+                <g class="rig-leg rig-leg-back-b"><path d="M95 111 L91 143"></path><ellipse cx="89" cy="146" rx="13" ry="7"></ellipse></g>
+                <g class="rig-leg rig-leg-front-a"><path d="M127 105 L132 141"></path><ellipse cx="134" cy="145" rx="13" ry="7"></ellipse></g>
+                <g class="rig-leg rig-leg-front-b"><path d="M151 100 L157 139"></path><ellipse cx="160" cy="143" rx="13" ry="7"></ellipse></g>
+                <g class="rig-head">
+                  <circle class="rig-head-shape" cx="157" cy="61" r="38"></circle>
+                  <path class="rig-ear rig-ear-a" d="M130 39 L134 7 L153 31 Z"></path>
+                  <path class="rig-ear rig-ear-b" d="M171 28 L190 7 L191 42 Z"></path>
+                  <ellipse class="rig-muzzle" cx="164" cy="74" rx="27" ry="20"></ellipse>
+                  <path class="rig-face-patch" d="M139 43 C148 30 169 27 184 39 C177 46 168 49 158 50 C150 51 144 48 139 43 Z"></path>
+                  <ellipse class="rig-eye rig-eye-a" cx="151" cy="56" rx="9" ry="12"></ellipse>
+                  <ellipse class="rig-eye rig-eye-b" cx="177" cy="55" rx="9" ry="12"></ellipse>
+                  <circle class="rig-eye-glint rig-eye-glint-a" cx="154" cy="52" r="3"></circle>
+                  <circle class="rig-eye-glint rig-eye-glint-b" cx="180" cy="51" r="3"></circle>
+                  <path class="rig-nose" d="M164 66 L171 70 L164 75 L157 70 Z"></path>
+                  <path class="rig-mouth" d="M164 75 C161 83 154 83 151 78 M164 75 C168 83 176 82 179 76"></path>
+                  <path class="rig-whisker" d="M148 71 L126 67 M149 77 L124 79 M177 71 L201 66 M177 77 L203 80"></path>
+                </g>
+              </svg>
+              <span class="journey-walker-case"><i></i><b></b></span>
             </span>
 
             <span class="journey-stone"><i></i><b></b></span>
@@ -493,7 +537,7 @@
   <dialog class="share-dialog install-dialog" id="installDialog" aria-labelledby="installDialogTitle">
     <form method="dialog" class="share-content">
       <button class="share-close" type="submit" aria-label="Sulge">×</button>
-      <div class="install-phone" aria-hidden="true"><img src="assets/icon-192.png?v=50" alt=""></div>
+      <div class="install-phone" aria-hidden="true"><img src="assets/icon-192.png?v=51" alt=""></div>
       <p class="eyebrow">EDUKASS</p>
       <h2 id="installDialogTitle">LISA TELEFONI EKRAANILE</h2>
       <p id="installHelpText">Mängu ikoon ilmub sinu telefoni. Kui automaatne lisamine ei avane, vali brauseri menüüst „Lisa avakuvale”.</p>
@@ -501,11 +545,11 @@
     </form>
   </dialog>
 
-  <script src="locales/et.js?v=50"></script>
-  <script src="chapter-one.config.js?v=50"></script>
-  <script src="i18n.js?v=50"></script>
-  <script src="question-engine.js?v=50"></script>
-  <script src="progress-store.js?v=50"></script>
-  <script src="game.js?v=50"></script>
+  <script src="locales/et.js?v=51"></script>
+  <script src="chapter-one.config.js?v=51"></script>
+  <script src="i18n.js?v=51"></script>
+  <script src="question-engine.js?v=51"></script>
+  <script src="progress-store.js?v=51"></script>
+  <script src="game.js?v=51"></script>
 </body>
 </html>
