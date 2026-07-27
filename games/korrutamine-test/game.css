@@ -2811,3 +2811,63 @@ body.intro-active{overflow:hidden}
 @media(prefers-reduced-motion:reduce){
   .journey-test-stone,.journey-story-action,.journey-gas-cloud i,.journey-rainbow-rings i,.journey-rainbow-rings b,.journey-rainbow-rings em{animation-duration:.01ms!important;animation-delay:0s!important;animation-iteration-count:1!important}
 }
+
+/* v53 hotfix: chapter-two flight and stone interaction acceptance fixes. */
+/* Missions 16–17 happen in open space. No planetary surface or landscape
+   may appear below the rocket before the landing mission. */
+.reward-journey-step-1 .journey-ground,
+.reward-journey-step-1 .journey-horizon,
+.reward-journey-step-1 .journey-ridge,
+.reward-journey-step-1 .journey-crater,
+.reward-journey-step-1 .journey-plant,
+.reward-journey-step-1 .journey-pebbles,
+.reward-journey-step-1 .journey-ruin,
+.reward-journey-step-1 .journey-energy-cracks,
+.reward-journey-step-1 .journey-spore-pods,
+.reward-journey-step-1 .journey-shell-stones,
+.reward-journey-step-1 .journey-signal-flower,
+.reward-journey-step-2 .journey-ground,
+.reward-journey-step-2 .journey-horizon,
+.reward-journey-step-2 .journey-ridge,
+.reward-journey-step-2 .journey-crater,
+.reward-journey-step-2 .journey-plant,
+.reward-journey-step-2 .journey-pebbles,
+.reward-journey-step-2 .journey-ruin,
+.reward-journey-step-2 .journey-energy-cracks,
+.reward-journey-step-2 .journey-spore-pods,
+.reward-journey-step-2 .journey-shell-stones,
+.reward-journey-step-2 .journey-signal-flower{display:none!important}
+
+/* Reduce the newest decorative layer by about one quarter. The scene keeps
+   its rich-world identity without turning into a catalogue of small objects. */
+.reward-chapter-two .journey-shell-stones{display:none!important}
+.reward-chapter-two .journey-spore-pods i:nth-child(3),
+.reward-chapter-two .journey-pebbles i:nth-child(5),
+.reward-chapter-two .journey-pebbles i:nth-child(6){display:none!important}
+
+/* The stone laboratory must never disappear or become untappable. An older
+   walker rule hid the cat with !important, and the parent had pointer-events
+   disabled. Keep the cat, prompt and all three stones visibly present. */
+.reward-journey-step-7 .journey-cat{display:block!important;left:5%!important;bottom:-3%!important}
+.reward-journey-step-7 .journey-cat-walker{display:none!important}
+.reward-journey-step-7 .journey-stone-lab{display:block!important;pointer-events:auto!important}
+.reward-journey-step-7 .journey-stone-buttons{pointer-events:auto!important}
+.reward-journey-step-7 .journey-test-stone{
+  opacity:1;
+  transform:translateY(0) rotate(var(--stone-turn,-7deg));
+}
+.reward-journey-step-7.is-playing .journey-test-stone{
+  animation:journeyStoneSafeArrival .72s cubic-bezier(.17,.88,.26,1.12) both!important;
+}
+.reward-journey-step-7.is-playing .journey-test-stone-b{animation-delay:.12s!important}
+.reward-journey-step-7.is-playing .journey-test-stone-c{animation-delay:.24s!important}
+.reward-journey-step-7.journey-interaction-ready .journey-test-stone:not(:disabled){
+  pointer-events:auto!important;
+  cursor:pointer;
+  animation:journeyStoneInvite 1.45s ease-in-out infinite alternate!important;
+}
+@keyframes journeyStoneSafeArrival{
+  0%{opacity:0;transform:translateY(42px) scale(.76) rotate(calc(var(--stone-turn,-7deg) - 60deg))}
+  70%{opacity:1;transform:translateY(-5px) scale(1.04) rotate(var(--stone-turn,-7deg))}
+  100%{opacity:1;transform:translateY(0) scale(1) rotate(var(--stone-turn,-7deg))}
+}

@@ -1,6 +1,6 @@
 # EDUKASS — история версий сайта и игр
 
-Текущая сборка сайта: `EDUKASS-site-v52-interactive-rich-story`. Видимый бренд сайта — `EDUKASS`, основной домен — `edukass.ee`.
+Текущая сборка сайта: `EDUKASS-site-v53-interactive-rich-story`. Видимый бренд сайта — `EDUKASS`, основной домен — `edukass.ee`.
 
 
 ## Версия 52 — интерактивное исследование и статичная Киска
