@@ -1,6 +1,6 @@
 # EDUKASS — история версий сайта и игр
 
-Текущая сборка сайта: `EDUKASS-site-v49-journey-story`. Видимый бренд сайта — `EDUKASS`, основной домен — `edukass.ee`.
+Текущая сборка сайта: `EDUKASS-site-v50-visual-upgrade`. Видимый бренд сайта — `EDUKASS`, основной домен — `edukass.ee`.
 
 ## Версия 43 — глава «Kolm», миссии 16–33
 
