@@ -69,6 +69,13 @@ const storyMapFragment=document.querySelector('#storyMapFragment');
 const storyShipConsole=document.querySelector('#storyShipConsole');
 const rewardScene=document.querySelector('#rewardScene');
 const rewardPill=document.querySelector('#rewardPill');
+const journeyStoneLab=document.querySelector('#journeyStoneLab');
+const journeyStonePrompt=document.querySelector('#journeyStonePrompt');
+const journeyStoneButtons=[...document.querySelectorAll('[data-story-stone]')];
+const journeyCaseAction=document.querySelector('#journeyCaseAction');
+const journeyCasePrompt=document.querySelector('#journeyCasePrompt');
+const journeyEngineAction=document.querySelector('#journeyEngineAction');
+const journeyEnginePrompt=document.querySelector('#journeyEnginePrompt');
 const resultScreen=document.querySelector('#resultScreen');
 const battleFxCanvas=document.querySelector('#battleFxCanvas');
 const rewardFxCanvas=document.querySelector('#rewardFxCanvas');
@@ -537,6 +544,27 @@ function playSound(kind){
     playTone(523,1.25,.18,.025,'sine');
     playTone(784,1.52,.22,.028,'sine');
     playChord([523,659,784,1047],1.86,.62,.03);
+  }
+  if(kind==='stoneGas'){
+    playNoise(0,.75,.035,3200,'highpass');
+    playSweep(520,980,.04,.62,.025,'sine');
+    playTone(1180,.38,.2,.018,'sine');
+  }
+  if(kind==='stoneLava'){
+    playNoise(0,.95,.06,620,'lowpass');
+    playPitchDrop(210,62,.04,.9,.06,'sawtooth');
+    playTone(145,.44,.42,.035,'triangle');
+  }
+  if(kind==='stoneRainbow'){
+    playTone(523,0,.12,.028,'sine');
+    playTone(659,.12,.14,.03,'sine');
+    playTone(784,.28,.16,.032,'sine');
+    playTone(988,.46,.22,.03,'sine');
+    playChord([523,659,784,988],.7,.68,.028);
+  }
+  if(kind==='storyTap'){
+    playTone(480,0,.08,.022,'triangle');
+    playTone(760,.1,.12,.024,'sine');
   }
   if(kind==='rewardReveal'){
     playSweep(260,920,.18,.82,.038,'sine');
@@ -1546,6 +1574,7 @@ function setRewardProgressState(levelId,firstCompletion){
 
 function configureRewardScene(levelId,firstCompletion,levelPassed){
   rewardScene.className='result-animation reward-scene';
+  resetJourneyInteraction(levelId);
   rewardScene.dataset.level=String(levelId);
   rewardScene.classList.toggle('first-completion',Boolean(firstCompletion&&levelPassed));
   rewardScene.classList.toggle('reward-replay',Boolean(!firstCompletion&&levelPassed));
@@ -1587,6 +1616,108 @@ function finishRewardReveal(){
   resultScreen.classList.add('reward-reveal-complete');
   resultPrimaryButton.disabled=false;
   resultMapButton.disabled=false;
+}
+
+
+let journeyInteractionLevelId=null;
+let journeyStoneTapCount=0;
+let journeyInteractionComplete=false;
+
+function resetJourneyInteraction(levelId){
+  journeyInteractionLevelId=[22,24,27].includes(levelId)?levelId:null;
+  journeyStoneTapCount=0;
+  journeyInteractionComplete=false;
+  rewardScene.classList.remove('journey-interaction-ready','journey-interaction-complete','journey-case-complete','journey-engine-complete','journey-stones-found');
+  delete rewardScene.dataset.stoneResult;
+  journeyCaseAction.classList.remove('is-opened');
+  journeyEngineAction.classList.remove('is-activated');
+  journeyStoneLab.hidden=true;
+  journeyCaseAction.hidden=true;
+  journeyEngineAction.hidden=true;
+  journeyStoneButtons.forEach((button,index)=>{
+    button.disabled=false;
+    button.className=`journey-test-stone journey-test-stone-${String.fromCharCode(97+index)}`;
+    button.setAttribute('aria-label',t('story.checkStoneAria',{number:index+1}));
+  });
+  journeyCaseAction.disabled=false;
+  journeyEngineAction.disabled=false;
+  if(levelId===22){
+    journeyStoneLab.hidden=false;
+    journeyStonePrompt.textContent=t('story.checkStones');
+  }else if(levelId===24){
+    journeyCaseAction.hidden=false;
+    journeyCasePrompt.textContent=t('story.openCase');
+    journeyCaseAction.setAttribute('aria-label',t('story.openCase'));
+  }else if(levelId===27){
+    journeyEngineAction.hidden=false;
+    journeyEnginePrompt.textContent=t('story.startEngineTap');
+    journeyEngineAction.setAttribute('aria-label',t('story.startEngineTap'));
+  }
+}
+
+function activateJourneyInteraction(levelId){
+  if(journeyInteractionLevelId!==levelId||journeyInteractionComplete)return;
+  rewardScene.classList.add('journey-interaction-ready');
+  if(levelId===22)journeyStoneButtons[0]?.focus({preventScroll:true});
+  else if(levelId===24)journeyCaseAction.focus({preventScroll:true});
+  else if(levelId===27)journeyEngineAction.focus({preventScroll:true});
+}
+
+function completeJourneyInteraction(delay=2600){
+  if(journeyInteractionComplete)return;
+  journeyInteractionComplete=true;
+  rewardScene.classList.remove('journey-interaction-ready');
+  rewardScene.classList.add('journey-interaction-complete');
+  scheduleCinematic(delay,finishRewardReveal);
+}
+
+function handleJourneyStoneTap(event){
+  const button=event.currentTarget;
+  if(journeyInteractionLevelId!==22||journeyInteractionComplete||button.disabled||!rewardScene.classList.contains('journey-interaction-ready'))return;
+  button.disabled=true;
+  const role=journeyStoneTapCount===0?'gas':journeyStoneTapCount===1?'lava':'rainbow';
+  journeyStoneTapCount++;
+  button.classList.add(`is-${role}`);
+  rewardScene.dataset.stoneResult=role;
+  if(role==='gas'){
+    playSound('stoneGas');
+    journeyStonePrompt.textContent=t('story.checkAnotherStone');
+    rewardFx.dustBurst(.31,.57,36,['#fff','#70d9cf','#b9eefa','#8f7de2']);
+  }else if(role==='lava'){
+    playSound('stoneLava');
+    journeyStonePrompt.textContent=t('story.checkLastStone');
+    rewardFx.sparkBurst(.51,.72,48,['#fff','#ffd34d','#ff9a3c','#e64e89'],.9);
+  }else{
+    playSound('stoneRainbow');
+    journeyStonePrompt.textContent=t('story.sourceFound');
+    rewardScene.classList.add('journey-stones-found');
+    rewardFx.sparkBurst(.72,.58,88,['#fff','#ff6b9d','#ffd34d','#70d9cf','#8f7de2'],1.2);
+    rewardFx.shockwave(.72,.58,'#fff',1.05);
+    completeJourneyInteraction(3300);
+  }
+}
+
+function handleJourneyCaseTap(){
+  if(journeyInteractionLevelId!==24||journeyInteractionComplete||journeyCaseAction.disabled||!rewardScene.classList.contains('journey-interaction-ready'))return;
+  journeyCaseAction.disabled=true;
+  journeyCaseAction.classList.add('is-opened');
+  rewardScene.classList.add('journey-case-complete');
+  journeyCasePrompt.textContent=t('story.caseReady');
+  playSound('journeyCase');
+  rewardFx.sparkBurst(.62,.64,54,['#fff','#ffd34d','#70d9cf','#8f7de2'],.9);
+  completeJourneyInteraction(3400);
+}
+
+function handleJourneyEngineTap(){
+  if(journeyInteractionLevelId!==27||journeyInteractionComplete||journeyEngineAction.disabled||!rewardScene.classList.contains('journey-interaction-ready'))return;
+  journeyEngineAction.disabled=true;
+  journeyEngineAction.classList.add('is-activated');
+  rewardScene.classList.add('journey-engine-complete');
+  journeyEnginePrompt.textContent=t('story.engineAwake');
+  playSound('journeyEngine');
+  rewardFx.sparkBurst(.68,.53,72,['#fff','#ffd34d','#70d9cf','#e64e89'],1.08);
+  rewardFx.shockwave(.68,.53,'#70d9cf',.9);
+  completeJourneyInteraction(4600);
 }
 
 function chapterTwoSoundForLevel(levelId){
@@ -1678,8 +1809,12 @@ function startRewardCinematic(levelPassed,levelId,firstCompletion=true){
       cue(2850,()=>rewardFx.shockwave(.66,.64,'#fff',1));
       cue(4300,()=>rewardFx.dustBurst(.66,.88,42,['#fff','#ffd34d','#8f7de2']));
     }
-    const duration=chapterTwoCinematicDuration(levelId);
-    scheduleCinematic(changeOffset+duration,finishRewardReveal);
+    if([22,24,27].includes(levelId)){
+      scheduleCinematic(changeOffset+1050,()=>activateJourneyInteraction(levelId));
+    }else{
+      const duration=chapterTwoCinematicDuration(levelId);
+      scheduleCinematic(changeOffset+duration,finishRewardReveal);
+    }
     return;
   }
 
@@ -1851,6 +1986,10 @@ function resumeRoundFromVisibility(){
   if(currentAnswer&&!inputLocked)scheduleAnswerCheck();
   startShowerMotion();
 }
+
+journeyStoneButtons.forEach(button=>button.addEventListener('click',handleJourneyStoneTap));
+journeyCaseAction.addEventListener('click',handleJourneyCaseTap);
+journeyEngineAction.addEventListener('click',handleJourneyEngineTap);
 
 document.querySelectorAll('[data-demo-factor]').forEach(button=>button.addEventListener('click',()=>updateDemo(Number(button.dataset.demoFactor))));
 lessonContinueButton.addEventListener('click',()=>{

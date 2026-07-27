@@ -37,7 +37,7 @@ assert.deepEqual(config.lesson.triggers.map(lesson=>[lesson.id,lesson.missionId,
   ['divide-3',26,'divide',3]
 ]);
 assert.deepEqual(config.story.chapterTwo,{
-  version:3,
+  version:4,
   startMissionId:16,
   flightEndMissionId:18,
   explorationEndMissionId:25,
@@ -90,23 +90,33 @@ assert.match(gameHtml,/class="journey-rocket"/);
 assert.match(gameHtml,/class="journey-stone"/);
 assert.match(gameHtml,/class="journey-case"/);
 assert.match(gameHtml,/class="journey-cockpit"/);
-assert.match(gameHtml,/class="journey-cat-walker"/);
-assert.match(gameHtml,/class="journey-cat-rig"/);
-assert.match(gameHtml,/class="rig-leg rig-leg-front-a"/);
 assert.match(gameHtml,/class="journey-ridge"/);
 assert.match(gameHtml,/class="journey-ruin"/);
 assert.match(gameHtml,/class="journey-burrow-creature"/);
 assert.match(gameHtml,/class="journey-floater-creature"/);
 assert.match(gameHtml,/class="journey-energy-cracks"/);
+assert.match(gameHtml,/id="journeyStoneLab"/);
+assert.match(gameHtml,/data-story-stone="0"/);
+assert.match(gameHtml,/id="journeyCaseAction"/);
+assert.match(gameHtml,/id="journeyEngineAction"/);
+assert.match(gameHtml,/class="journey-spore-pods"/);
+assert.match(gameHtml,/class="journey-signal-flower"/);
+assert.match(gameCode,/function handleJourneyStoneTap/);
+assert.match(gameCode,/journeyStoneTapCount===0\?'gas'/);
+assert.match(gameCode,/journeyStoneTapCount===1\?'lava':'rainbow'/);
+assert.match(gameCode,/function handleJourneyCaseTap/);
+assert.match(gameCode,/function handleJourneyEngineTap/);
+assert.match(gameCode,/\[22,24,27\]\.includes\(levelId\)/);
+assert.match(gameCss,/journeyStoneGasOut/);
+assert.match(gameCss,/journeyStoneMelt/);
+assert.match(gameCss,/journeyStoneRainbow/);
+assert.match(gameCss,/journey-cat-walker\{display:none!important\}/);
 assert.match(gameCss,/reward-journey-step-1/);
 assert.match(gameCss,/reward-journey-step-18/);
 assert.match(gameCss,/journeyShipCruise/);
 assert.match(gameCss,/journeyFinalTakeoff/);
 assert.match(gameCss,/journeyRocketTrueCruise/);
 assert.match(gameCss,/rotate\(90deg\)/);
-assert.match(gameCss,/journeyRigLegA/);
-assert.match(gameCss,/journeyWalkerReturn/);
-assert.match(gameCss,/reward-journey-step-13 \.journey-cat-rig[^\n]*scaleX\(-1\)/);
 assert.match(gameCss,/journeyCreaturePeek/);
 assert.match(gameCss,/journeyCracksPulseStrong/);
 assert.match(gameCode,/chapterTwoSoundForLevel/);
