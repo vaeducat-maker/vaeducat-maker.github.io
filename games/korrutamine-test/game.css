@@ -1707,8 +1707,8 @@ body.intro-active{overflow:hidden}
 }
 
 .world-crystals{z-index:16;width:72px;height:72px;filter:drop-shadow(0 0 9px rgba(112,217,207,.62))}
-.crystals-one{left:39%;bottom:7%}
-.crystals-two{right:7%;bottom:6%;scale:.86}
+.crystals-one{left:31%;bottom:13%}
+.crystals-two{right:7%;bottom:27%;scale:.72}
 .world-crystals i{
   position:absolute;
   bottom:0;
@@ -1756,25 +1756,27 @@ body.intro-active{overflow:hidden}
   animation:worldWaterSparkle 3.4s ease-in-out infinite alternate;
 }
 
-.world-mushrooms{z-index:14;left:55%;bottom:14%;width:92px;height:70px}
-.world-mushrooms i{position:absolute;bottom:0;width:17px;height:40px;border-radius:50% 50% 8px 8px;background:linear-gradient(90deg,#fff3cc,#ffd98a);transform-origin:50% 100%}
+.world-mushrooms{z-index:14;inset:0}
+.world-mushrooms i{position:absolute;width:17px;height:40px;border-radius:50% 50% 8px 8px;background:linear-gradient(90deg,#fff3cc,#ffd98a);transform-origin:50% 100%}
 .world-mushrooms i:before{content:"";position:absolute;left:50%;top:-12px;width:44px;height:24px;border:3px solid #17365f;border-radius:50% 50% 42% 42%;background:linear-gradient(135deg,#f49ad0,#8f7de2);box-shadow:0 0 12px rgba(230,78,137,.5);transform:translateX(-50%)}
 .world-mushrooms i:after{content:"";position:absolute;left:2px;top:-6px;width:5px;height:5px;border-radius:50%;background:#fff;box-shadow:9px 3px 0 #fff,17px -1px 0 rgba(255,255,255,.8)}
-.world-mushrooms i:nth-child(1){left:11px;height:39px}
-.world-mushrooms i:nth-child(2){left:46px;height:55px;scale:1.12}
-.world-mushrooms i:nth-child(3){right:5px;height:32px;scale:.8}
+.world-mushrooms i:nth-child(1){left:23%;bottom:8%;height:39px;scale:.86}
+.world-mushrooms i:nth-child(2){left:47%;bottom:24%;height:55px;scale:1.05}
+.world-mushrooms i:nth-child(3){right:12%;bottom:23%;height:32px;scale:.78}
 
-.world-grass{z-index:12;left:66%;bottom:16%;width:92px;height:50px}
-.world-grass i{position:absolute;bottom:0;width:9px;height:42px;border-radius:90% 10% 90% 10%;background:linear-gradient(#c9fff1,#70d9cf 55%,#389fa6);box-shadow:0 0 7px rgba(112,217,207,.72);transform-origin:50% 100%}
-.world-grass i:nth-child(1){left:3px;transform:rotate(-22deg)}.world-grass i:nth-child(2){left:18px;height:34px;transform:rotate(10deg)}
-.world-grass i:nth-child(3){left:34px;height:47px;transform:rotate(-8deg)}.world-grass i:nth-child(4){left:52px;height:35px;transform:rotate(18deg)}
-.world-grass i:nth-child(5){left:68px;height:45px;transform:rotate(-15deg)}.world-grass i:nth-child(6){right:0;height:31px;transform:rotate(20deg)}
+.world-grass{z-index:12;inset:0}
+.world-grass i{position:absolute;width:9px;height:42px;border-radius:90% 10% 90% 10%;background:linear-gradient(#c9fff1,#70d9cf 55%,#389fa6);box-shadow:0 0 7px rgba(112,217,207,.72);transform-origin:50% 100%}
+.world-grass i:before,.world-grass i:after{content:"";position:absolute;left:-6px;bottom:1px;width:8px;height:30px;border-radius:90% 10% 90% 10%;background:inherit;transform:rotate(-23deg);transform-origin:50% 100%}
+.world-grass i:after{left:7px;height:26px;transform:rotate(25deg)}
+.world-grass i:nth-child(1){left:13%;bottom:10%;transform:rotate(-8deg)}.world-grass i:nth-child(2){left:29%;bottom:19%;height:34px;transform:rotate(5deg)}
+.world-grass i:nth-child(3){left:42%;bottom:9%;height:47px;transform:rotate(-5deg)}.world-grass i:nth-child(4){left:47%;bottom:29%;height:35px;transform:rotate(8deg);scale:.82}
+.world-grass i:nth-child(5){right:8%;bottom:34%;height:45px;transform:rotate(-7deg);scale:.88}.world-grass i:nth-child(6){right:3%;bottom:27%;height:31px;transform:rotate(9deg);scale:.78}
 
-.world-flowers{z-index:15;right:18%;bottom:18%;width:106px;height:52px}
-.world-flowers i{position:absolute;bottom:0;width:4px;height:29px;border-radius:5px;background:#70d9cf;transform-origin:50% 100%}
+.world-flowers{z-index:15;inset:0}
+.world-flowers i{position:absolute;width:4px;height:29px;border-radius:5px;background:#70d9cf;transform-origin:50% 100%}
 .world-flowers i:before{content:"";position:absolute;left:50%;top:-9px;width:17px;height:17px;border-radius:50%;background:radial-gradient(circle,#fff6a8 0 22%,#e64e89 25% 52%,#f7a5cd 55%);box-shadow:0 0 10px rgba(230,78,137,.68);transform:translateX(-50%)}
-.world-flowers i:nth-child(1){left:3px}.world-flowers i:nth-child(2){left:27px;height:39px}.world-flowers i:nth-child(3){left:51px;height:24px}
-.world-flowers i:nth-child(4){left:75px;height:36px}.world-flowers i:nth-child(5){right:3px;height:27px}
+.world-flowers i:nth-child(1){left:17%;bottom:19%}.world-flowers i:nth-child(2){left:36%;bottom:27%;height:39px}.world-flowers i:nth-child(3){left:48%;bottom:22%;height:24px}
+.world-flowers i:nth-child(4){right:12%;bottom:34%;height:36px}.world-flowers i:nth-child(5){right:3%;bottom:25%;height:27px}
 
 .world-creature{
   z-index:18;
@@ -1786,8 +1788,8 @@ body.intro-active{overflow:hidden}
   box-shadow:0 0 12px rgba(112,217,207,.58),0 7px 8px rgba(18,15,55,.25);
   transform-origin:50% 100%;
 }
-.creature-one{left:55%;bottom:10%}
-.creature-two{right:17%;bottom:10%;background:linear-gradient(145deg,#ffdca2,#f08aaa);box-shadow:0 0 12px rgba(230,78,137,.55),0 7px 8px rgba(18,15,55,.25)}
+.creature-one{left:39%;bottom:17%}
+.creature-two{right:7%;bottom:28%;background:linear-gradient(145deg,#ffdca2,#f08aaa);box-shadow:0 0 12px rgba(230,78,137,.55),0 7px 8px rgba(18,15,55,.25);scale:.88}
 .world-creature:before,.world-creature:after{content:"";position:absolute;top:-10px;width:13px;height:16px;border:3px solid #17365f;background:inherit;border-radius:70% 25% 55% 35%;z-index:-1}
 .world-creature:before{left:4px;transform:rotate(-24deg)}.world-creature:after{right:4px;transform:scaleX(-1) rotate(-24deg)}
 .world-creature i{position:absolute;left:10px;top:9px;width:6px;height:8px;border-radius:50%;background:#fff;box-shadow:16px 0 0 #fff}
@@ -1801,16 +1803,16 @@ body.intro-active{overflow:hidden}
 .world-new-star:before{width:17px;height:2px}.world-new-star:after{width:2px;height:17px}
 .star-a{left:58%;top:15%}.star-b{left:69%;top:26%;transform:scale(.7)}.star-c{right:25%;top:12%;transform:scale(.55)}.star-d{right:5%;top:29%;transform:scale(.8)}
 
-.world-far-crystals{z-index:7;left:68%;bottom:38%;width:62px;height:45px;filter:drop-shadow(0 0 7px rgba(112,217,207,.5))}
+.world-far-crystals{z-index:7;left:17%;bottom:38%;width:62px;height:45px;filter:drop-shadow(0 0 7px rgba(112,217,207,.5))}
 .world-far-crystals i{position:absolute;bottom:0;width:15px;height:37px;clip-path:polygon(50% 0,100% 32%,82% 100%,18% 100%,0 32%);background:linear-gradient(120deg,#e9ffff,#70d9cf,#8f7de2)}
 .world-far-crystals i:nth-child(1){left:22px;height:43px}.world-far-crystals i:nth-child(2){left:7px;height:29px;transform:rotate(-12deg)}.world-far-crystals i:nth-child(3){right:4px;height:32px;transform:rotate(13deg)}
 
-.world-arch{z-index:9;left:52%;bottom:36%;width:74px;height:82px}
+.world-arch{z-index:9;left:58%;bottom:36%;width:74px;height:82px}
 .world-arch i{position:absolute;inset:4px 7px 0;border:9px solid #7355b7;border-bottom:0;border-radius:48% 48% 7px 7px;box-shadow:inset 0 0 11px rgba(112,217,207,.58),0 0 12px rgba(143,125,226,.55)}
 .world-arch i:before{content:"";position:absolute;inset:7px;border:3px dotted #ffd34d;border-bottom:0;border-radius:48% 48% 0 0}
 .world-arch b{position:absolute;left:4px;right:4px;bottom:0;height:11px;border:4px solid #17365f;border-radius:8px;background:linear-gradient(90deg,#7355b7,#70d9cf,#7355b7)}
 
-.world-path{z-index:10;left:59%;right:13%;bottom:30%;height:34%;transform:rotate(-8deg);transform-origin:100% 100%;overflow:hidden}
+.world-path{z-index:10;left:63%;right:12%;bottom:31%;height:31%;transform:rotate(-6deg);transform-origin:100% 100%;overflow:hidden}
 .world-path i{position:absolute;left:0;right:0;bottom:3%;height:44%;border-top:5px solid rgba(255,242,168,.9);border-radius:50%;filter:drop-shadow(0 0 7px #ffd34d);transform:rotate(-7deg)}
 .world-path i:after{content:"";position:absolute;left:7%;right:9%;top:5px;border-top:2px dashed rgba(255,255,255,.9)}
 
@@ -1859,7 +1861,16 @@ body.intro-active{overflow:hidden}
 .reward-chapter-two.is-playing .world-water.is-new-reward{animation:worldWaterReveal 2.55s .12s ease-out forwards}
 .reward-chapter-two.is-playing .world-mushrooms.is-new-reward,
 .reward-chapter-two.is-playing .world-grass.is-new-reward,
-.reward-chapter-two.is-playing .world-flowers.is-new-reward{animation:worldNatureGrow 2.35s .15s cubic-bezier(.18,.84,.2,1.1) forwards}
+.reward-chapter-two.is-playing .world-flowers.is-new-reward{animation:worldScatterReveal .18s .12s linear forwards}
+.reward-chapter-two.is-playing .world-mushrooms.is-new-reward i,
+.reward-chapter-two.is-playing .world-grass.is-new-reward i,
+.reward-chapter-two.is-playing .world-flowers.is-new-reward i{animation:worldNatureGrow 2.35s .15s cubic-bezier(.18,.84,.2,1.1) both}
+.reward-chapter-two.is-playing .world-mushrooms.is-new-reward i:nth-child(2),
+.reward-chapter-two.is-playing .world-grass.is-new-reward i:nth-child(2n),
+.reward-chapter-two.is-playing .world-flowers.is-new-reward i:nth-child(2n){animation-delay:.38s}
+.reward-chapter-two.is-playing .world-mushrooms.is-new-reward i:nth-child(3),
+.reward-chapter-two.is-playing .world-grass.is-new-reward i:nth-child(3n),
+.reward-chapter-two.is-playing .world-flowers.is-new-reward i:nth-child(3){animation-delay:.62s}
 .reward-chapter-two.is-playing .world-path.is-new-reward{animation:worldPathReveal 2.45s .14s ease-out forwards}
 .reward-chapter-two.is-playing .world-tower.is-new-reward{animation:worldTowerRise 2.5s .12s cubic-bezier(.18,.84,.2,1.08) forwards}
 .reward-chapter-two.is-playing .tower-window.is-new-reward{animation:worldLightIgnite 2.3s .16s ease-out forwards}
@@ -1882,7 +1893,7 @@ body.intro-active{overflow:hidden}
 @keyframes worldWaterFlow{to{transform:translateX(245%)}}
 @keyframes worldWaterSparkle{to{opacity:.82;transform:translateX(12px)}}
 @keyframes worldMoonBreathe{to{filter:brightness(1.14);box-shadow:0 0 0 12px rgba(255,255,255,.08),0 0 37px rgba(255,211,77,.72)}}
-@keyframes worldCrystalLife{to{filter:brightness(1.25);transform:translateY(-2px) scaleY(1.025)}}
+@keyframes worldCrystalLife{to{filter:brightness(1.25);translate:0 -2px;scale:1 1.025}}
 @keyframes worldMushroomSway{to{rotate:2deg;translate:0 -1px}}
 @keyframes worldGrassSway{to{rotate:8deg}}
 @keyframes worldFlowerBreathe{to{filter:brightness(1.22);translate:0 -2px;scale:1.04}}
@@ -1892,6 +1903,7 @@ body.intro-active{overflow:hidden}
 @keyframes worldPathPulse{to{filter:brightness(1.2) drop-shadow(0 0 7px rgba(255,211,77,.55))}}
 @keyframes worldCompletePulse{to{opacity:.78;filter:brightness(1.18)}}
 @keyframes worldSoftReveal{0%{opacity:0;filter:brightness(.7);transform:translateY(12px) scale(.75)}65%{opacity:1;filter:brightness(1.25);transform:translateY(-3px) scale(1.05)}100%{opacity:1;filter:none;transform:none}}
+@keyframes worldScatterReveal{to{opacity:1}}
 @keyframes worldRocketLand{0%{opacity:0;transform:translate(-65%,-130%) rotate(-25deg) scale(.7)}58%{opacity:1;transform:translate(0,-9%) rotate(2deg) scale(1.03)}78%{transform:translateY(2%) scale(.98)}100%{opacity:1;transform:none}}
 @keyframes worldCatArrive{0%{opacity:0;transform:scale(.35) translateY(30%)}68%{opacity:1;transform:scale(1.07) translateY(-3%)}100%{opacity:1;transform:none}}
 @keyframes worldCrystalGrow{0%{opacity:0;transform:scaleY(.05) scaleX(.55);filter:brightness(.6)}68%{opacity:1;transform:scaleY(1.08) scaleX(1.03);filter:brightness(1.45)}100%{opacity:1;transform:none;filter:none}}
@@ -1908,16 +1920,17 @@ body.intro-active{overflow:hidden}
 @media(max-width:700px){
   .world-rocket{left:3%;bottom:1%;width:52px;min-width:0}
   .world-cat{left:13%;bottom:-8%;width:84px;min-width:0}
-  .crystals-one{left:38%;scale:.72;transform-origin:50% 100%}
-  .crystals-two{right:3%;scale:.62;transform-origin:50% 100%}
-  .world-mushrooms{left:50%;scale:.68;transform-origin:50% 100%}
-  .world-grass{left:62%;scale:.66;transform-origin:50% 100%}
-  .world-flowers{right:11%;scale:.68;transform-origin:50% 100%}
+  .crystals-one{left:29%;bottom:11%;scale:.66;transform-origin:50% 100%}
+  .crystals-two{right:3%;bottom:25%;scale:.55;transform-origin:50% 100%}
+  .world-mushrooms i{scale:.67}
+  .world-mushrooms i:nth-child(2){scale:.78}
+  .world-mushrooms i:nth-child(3){scale:.58}
+  .world-grass i,.world-flowers i{scale:.72}
   .world-creature{scale:.72;transform-origin:50% 100%}
-  .creature-one{left:53%}.creature-two{right:11%}
+  .creature-one{left:38%;bottom:15%}.creature-two{right:5%;bottom:26%;scale:.62}
   .world-moon{right:8%;width:48px;height:48px}
-  .world-far-crystals{left:65%;scale:.68;transform-origin:50% 100%}
-  .world-arch{left:48%;scale:.72;transform-origin:50% 100%}
+  .world-far-crystals{left:15%;scale:.62;transform-origin:50% 100%}
+  .world-arch{left:56%;scale:.66;transform-origin:50% 100%}
   .world-tower{right:7%;scale:.72;transform-origin:50% 100%}
 }
 
@@ -1927,7 +1940,7 @@ body.intro-active{overflow:hidden}
   #mapScreen .world-cat{width:52px;bottom:-12%}
   #mapScreen .world-crystals{scale:.45;transform-origin:50% 100%}
   #mapScreen .world-water{height:43%}
-  #mapScreen .world-mushrooms,#mapScreen .world-grass,#mapScreen .world-flowers{scale:.44;transform-origin:50% 100%}
+  #mapScreen .world-mushrooms i,#mapScreen .world-grass i,#mapScreen .world-flowers i{scale:.44;transform-origin:50% 100%}
   #mapScreen .world-creature{scale:.46;transform-origin:50% 100%}
   #mapScreen .world-moon{width:30px;height:30px}
   #mapScreen .world-far-crystals,#mapScreen .world-arch,#mapScreen .world-tower{scale:.45;transform-origin:50% 100%}

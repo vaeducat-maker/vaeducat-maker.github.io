@@ -45,7 +45,7 @@
       'lesson.table2.titleDivide':'Nüüd jagame kahega',
       'lesson.table3.eyebrowMultiply':'PEATÜKK 2 · KOLM',
       'lesson.table3.eyebrowDivide':'PEATÜKK 2 · JAGAMINE',
-      'lesson.table3.titleMultiply':'Avastame arvu 3',
+      'lesson.table3.titleMultiply':'Nüüd korrutame kolmega',
       'lesson.table3.titleDivide':'Nüüd jagame kolmega',
       'lesson.explorerAria':'Interaktiivne selgitus',
       'lesson.hintMultiply':'Vajuta arvule.',

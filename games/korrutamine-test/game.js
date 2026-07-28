@@ -820,6 +820,9 @@ function showLesson(lessonReference=LESSON_CONFIG.initialLessonId,pendingLevel=n
   lessonTitle.hidden=currentLesson.id==='multiply-2';
   multiplicationLesson.hidden=division;
   divisionLesson.hidden=!division;
+  // The ×1 lane belongs only to the first combined explanation for 1 and 2.
+  // Every later multiplication explanation demonstrates its own table alone.
+  demoOneLabel.closest('.demo-one').hidden=division||currentLessonTable!==2;
   lessonSign.textContent=division?`÷${currentLessonTable}`:`×${currentLessonTable}`;
   configureDemoPicker(division);
   updateDemo(LESSON_CONFIG.demoFactor);
@@ -1385,16 +1388,16 @@ function finishAttempt(reason){
   startRewardCinematic(levelPassed,currentLevel.id,firstCompletion);
 }
 
-function setChapterTwoRewardProgress(levelId,firstCompletion){
+function setChapterTwoRewardProgress(levelId,showReveal){
   const step=Math.max(1,Math.min(CHAPTER_TWO_WORLD_STEP_COUNT,levelId-FINAL_MISSION_ID));
-  const previous=firstCompletion?Math.max(0,step-1):step;
+  const previous=showReveal?Math.max(0,step-1):step;
   rewardLivingWorld.dataset.worldStep=String(previous);
-  rewardLivingWorld.classList.toggle('world-departed',!firstCompletion&&step===CHAPTER_TWO_WORLD_STEP_COUNT);
+  rewardLivingWorld.classList.toggle('world-departed',!showReveal&&step===CHAPTER_TWO_WORLD_STEP_COUNT);
   rewardLivingWorld.querySelectorAll('[data-world-step]').forEach(element=>{
     element.classList.remove('is-earned','is-new-reward');
     const itemStep=Number(element.dataset.worldStep);
     if(itemStep<=previous)element.classList.add('is-earned');
-    else if(firstCompletion&&itemStep===step)element.classList.add('is-new-reward');
+    else if(showReveal&&itemStep===step)element.classList.add('is-new-reward');
   });
   rewardScene.dataset.worldStep=String(step);
 }
@@ -1439,7 +1442,9 @@ function configureRewardScene(levelId,firstCompletion,levelPassed){
   rewardPill.textContent=firstCompletion?t('result.rewardFirst'):t('result.rewardCollected');
   if(levelId>FINAL_MISSION_ID){
     rewardScene.classList.add('reward-chapter-two');
-    setChapterTwoRewardProgress(levelId,firstCompletion);
+    // The world-changing moment must stay visible even when an already completed
+    // mission is replayed. Progress and energy are still awarded only once.
+    setChapterTwoRewardProgress(levelId,true);
     const chapterStep=levelId-FINAL_MISSION_ID;
     rewardScene.classList.add(`reward-world-step-${chapterStep}`);
     if(chapterStep===1)rewardScene.classList.add('reward-world-arrival');
@@ -1478,14 +1483,16 @@ function startRewardCinematic(levelPassed,levelId,firstCompletion=true){
     return;
   }
 
-  const changeOffset=firstCompletion?REWARD_BEFORE_HOLD:0;
+  const chapterTwoReveal=levelId>FINAL_MISSION_ID;
+  const visualReveal=firstCompletion||chapterTwoReveal;
+  const changeOffset=visualReveal?REWARD_BEFORE_HOLD:0;
   const cue=(delay,callback)=>scheduleCinematic(changeOffset+delay,callback);
   const beginRewardChange=()=>{
     rewardScene.classList.add('is-playing');
-    if(firstCompletion)playSound(levelId>FINAL_MISSION_ID?'worldAwaken':'rewardReveal');
+    if(visualReveal)playSound(chapterTwoReveal?'worldAwaken':'rewardReveal');
   };
 
-  if(firstCompletion){
+  if(visualReveal){
     resultScreen.classList.add('reward-cinematic-locked');
     resultPrimaryButton.disabled=true;
     resultMapButton.disabled=true;
@@ -1497,22 +1504,19 @@ function startRewardCinematic(levelPassed,levelId,firstCompletion=true){
 
   if(levelId>FINAL_MISSION_ID){
     const chapterStep=levelId-FINAL_MISSION_ID;
-    const targets=[
-      [.12,.62],[.23,.69],[.43,.69],[.66,.73],[.58,.67],[.70,.75],
-      [.76,.70],[.86,.63],[.55,.75],[.79,.65],[.80,.18],[.73,.43],
-      [.53,.54],[.69,.67],[.84,.39],[.84,.43],[.68,.57],[.18,.48]
-    ];
-    const target=targets[chapterStep-1]||[.68,.58];
-    const major=[1,8,12,15,17,18].includes(chapterStep);
-    cue(1180,()=>rewardFx.sparkBurst(target[0],target[1],major?46:28,['#fff','#8f7de2','#70d9cf','#ffd34d'],major?.9:.64));
-    cue(1440,()=>rewardFx.shockwave(target[0],target[1],chapterStep>=17?'#ffd34d':'#70d9cf',major?.72:.5));
+    const settleAfter=chapterStep===18?3800:2850;
+    cue(settleAfter,()=>{
+      rewardLivingWorld.querySelectorAll('.is-new-reward').forEach(element=>{
+        element.classList.remove('is-new-reward');
+        element.classList.add('is-earned');
+      });
+      if(chapterStep===18)rewardLivingWorld.classList.add('world-departed');
+    });
     if([1,17].includes(chapterStep))cue(2050,()=>playSound('storyStep'));
     if(chapterStep===18){
       cue(2550,()=>playSound('launch'));
-      cue(2900,()=>rewardFx.sparkBurst(.18,.42,62,['#fff','#ffd34d','#70d9cf','#e64e89'],1.05));
-      cue(3150,()=>rewardFx.shockwave(.18,.42,'#fff',.94));
     }
-    if(firstCompletion){
+    if(visualReveal){
       const revealAfterChange=chapterStep===18?5600:(chapterStep===1?4800:4200);
       scheduleCinematic(REWARD_BEFORE_HOLD+revealAfterChange,finishRewardReveal);
     }
