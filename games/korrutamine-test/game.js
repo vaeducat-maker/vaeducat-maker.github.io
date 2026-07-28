@@ -1120,15 +1120,19 @@ function renderLevelMap(){
 function focusCurrentMission(){
   const current=levelGrid.querySelector(`[data-level="${progress.unlockedLevel}"]`);
   if(!current||!missionRouteScroll)return;
-  const targetTop=levelGrid.offsetTop+current.offsetTop-(missionRouteScroll.clientHeight-current.offsetHeight)/2;
-  missionRouteScroll.scrollTop=Math.max(0,targetTop);
+  const routeRect=missionRouteScroll.getBoundingClientRect();
+  const currentRect=current.getBoundingClientRect();
+  const currentTop=missionRouteScroll.scrollTop+currentRect.top-routeRect.top;
+  const targetTop=currentTop-(missionRouteScroll.clientHeight-currentRect.height)/2;
+  const maximumTop=missionRouteScroll.scrollHeight-missionRouteScroll.clientHeight;
+  missionRouteScroll.scrollTop=Math.max(0,Math.min(maximumTop,targetTop));
 }
 
 function showMap({historyMode='push'}={}){
   stopRound();
   renderLevelMap();
   showScreen('mapScreen',{historyMode,historyView:'map'});
-  requestAnimationFrame(focusCurrentMission);
+  requestAnimationFrame(()=>requestAnimationFrame(focusCurrentMission));
 }
 
 function requestLevel(levelId){

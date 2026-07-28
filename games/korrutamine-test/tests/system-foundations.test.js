@@ -98,6 +98,8 @@ assert.match(gameHtml,/id="repeatFourDivisionButton"/);
 assert.match(gameHtml,/MISSIOONID 1–51/);
 assert.match(gameHtml,/id="missionRouteScroll"/);
 assert.match(gameCode,/missionRouteScroll\.scrollTop=/);
+assert.match(gameCode,/currentRect\.top-routeRect\.top/);
+assert.doesNotMatch(gameCode,/levelGrid\.offsetTop\+current\.offsetTop/);
 assert.match(gameHtml,/id="livingWorldTemplate"/);
 assert.match(gameHtml,/data-world-role="crystals-one"/);
 assert.match(gameHtml,/data-world-role="water"/);
