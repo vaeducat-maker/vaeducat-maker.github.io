@@ -25,13 +25,14 @@ assert.equal(config.storage.progressKey,'edukass-chapter-one-v18');
 assert.equal(config.storage.soundKey,'edukass-sound-enabled');
 assert.equal(config.storage.introKey,'edukass-opening-seen-v28');
 assert.equal(config.storage.progressSchemaVersion,2);
-assert.equal(config.missions.length,87);
+assert.equal(config.missions.length,105);
 assert.deepEqual(config.chapters.map(chapter=>[chapter.id,chapter.startMissionId,chapter.endMissionId]),[
   [1,1,15],
   [2,16,33],
   [3,34,51],
   [4,52,69],
-  [5,70,87]
+  [5,70,87],
+  [6,88,105]
 ]);
 assert.deepEqual(config.lesson.triggers.map(lesson=>[lesson.id,lesson.missionId,lesson.mode,lesson.table]),[
   ['multiply-2',1,'multiply',2],
@@ -43,7 +44,9 @@ assert.deepEqual(config.lesson.triggers.map(lesson=>[lesson.id,lesson.missionId,
   ['multiply-5',52,'multiply',5],
   ['divide-5',62,'divide',5],
   ['multiply-6',70,'multiply',6],
-  ['divide-6',80,'divide',6]
+  ['divide-6',80,'divide',6],
+  ['multiply-7',88,'multiply',7],
+  ['divide-7',98,'divide',7]
 ]);
 assert.deepEqual(config.story.chapterTwo,{
   startMissionId:16,
@@ -103,7 +106,7 @@ assert.match(gameHtml,/id="repeatThreeMultiplicationButton"/);
 assert.match(gameHtml,/id="repeatThreeDivisionButton"/);
 assert.match(gameHtml,/id="repeatFourMultiplicationButton"/);
 assert.match(gameHtml,/id="repeatFourDivisionButton"/);
-assert.match(gameHtml,/MISSIOONID 1–87/);
+assert.match(gameHtml,/MISSIOONID 1–105/);
 assert.match(gameHtml,/id="missionRouteScroll"/);
 assert.match(gameCode,/missionRouteScroll\.scrollTop=/);
 assert.match(gameCode,/currentRect\.top-routeRect\.top/);
@@ -116,7 +119,7 @@ assert.match(gameCode,/function renderChapterTwoStory\(\)/);
 assert.match(gameCode,/worldAwaken/);
 assert.match(gameCode,/setChapterTwoRewardProgress\(levelId,true\)/);
 assert.match(gameCode,/const chapterTwoReveal=levelId>FINAL_MISSION_ID/);
-assert.match(gameCode,/const worldReveal=chapterTwoReveal\|\|chapterThreeReveal\|\|chapterFourReveal\|\|chapterFiveReveal/);
+assert.match(gameCode,/const worldReveal=chapterTwoReveal\|\|chapterThreeReveal\|\|chapterFourReveal\|\|chapterFiveReveal\|\|chapterSixReveal/);
 assert.match(gameCode,/const visualReveal=firstCompletion\|\|worldReveal/);
 const chapterTwoCinematicStart=gameCode.indexOf("if(levelId>FINAL_MISSION_ID){",gameCode.indexOf('function startRewardCinematic'));
 const chapterOneCinematicStart=gameCode.indexOf("if(levelId===FINAL_MISSION_ID){",chapterTwoCinematicStart);
@@ -169,6 +172,12 @@ for(const [index,worldStep] of config.story.chapterFive.worldSteps.entries()){
     `North-world layer ${index+1} (${worldStep.role}) is missing from the shared scene.`
   );
 }
+for(const [index,worldStep] of config.story.chapterSix.worldSteps.entries()){
+  assert.equal(worldStep.missionId,88+index);
+}
+assert.match(gameHtml,/id="canopyWorldTemplate"/);
+assert.match(gameCode,/function renderChapterSixStory\(\)/);
+assert.match(gameCode,/setChapterSixRewardProgress\(levelId,true\)/);
 
 const unsupported=i18nApi.create({
   locales:{et},
