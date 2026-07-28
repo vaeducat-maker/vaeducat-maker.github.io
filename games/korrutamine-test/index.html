@@ -17,7 +17,7 @@
   <meta property="og:image" content="https://edukass.ee/games/korrutamine-test/assets/share-korrutustabel.png?v=40">
   <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="stylesheet" href="game.css?v=64">
+  <link rel="stylesheet" href="game.css?v=65">
 </head>
 <body class="intro-active">
   <section class="game-intro is-running" id="introScreen" aria-label="EDUKASSi mängu algus" data-i18n-aria-label="intro.aria">
@@ -77,11 +77,11 @@
           <div class="fact-explorer" aria-label="Interaktiivne selgitus" data-i18n-aria-label="lesson.explorerAria">
             <div id="multiplicationLesson" class="lesson-section demo-stack">
               <article class="demo-lane demo-one">
-                <div class="demo-equations"><span id="demoOneLabel">×1</span><strong id="demoOneEquation">1 × 4 = 4</strong></div>
+                <div class="demo-equations"><span id="demoOneLabel">×1</span><strong id="demoOneEquation">4 × 1 = 4</strong></div>
                 <div class="star-array" id="demoOneStars" aria-hidden="true"></div>
               </article>
               <article class="demo-lane demo-two">
-                <div class="demo-equations"><span id="demoMultiplyLabel">×2</span><strong id="demoMultiplyEquation">2 × 4 = 8</strong></div>
+                <div class="demo-equations"><span id="demoMultiplyLabel">×2</span><strong id="demoMultiplyEquation">4 × 2 = 8</strong></div>
                 <div class="star-array" id="demoStars" aria-hidden="true"></div>
               </article>
             </div>
@@ -161,6 +161,48 @@
           <button class="explanation-choice division-choice" id="repeatFourDivisionButton" type="button">
             <span class="explanation-orbit" aria-hidden="true"><span>÷</span></span>
             <span class="explanation-name"><strong data-i18n="explanations.divide">Jagamine</strong><small data-i18n="explanations.four">4-ga</small></span>
+            <span class="explanation-lock" aria-hidden="true">🔒</span>
+            <span class="explanation-arrow" aria-hidden="true">→</span>
+          </button>
+
+          <button class="explanation-choice multiplication-choice" id="repeatFiveMultiplicationButton" type="button">
+            <span class="explanation-orbit" aria-hidden="true"><span>×</span></span>
+            <span class="explanation-name"><strong data-i18n="explanations.multiply">Korrutamine</strong><small data-i18n="explanations.five">5-ga</small></span>
+            <span class="explanation-lock" aria-hidden="true">🔒</span>
+            <span class="explanation-arrow" aria-hidden="true">→</span>
+          </button>
+
+          <button class="explanation-choice division-choice" id="repeatFiveDivisionButton" type="button">
+            <span class="explanation-orbit" aria-hidden="true"><span>÷</span></span>
+            <span class="explanation-name"><strong data-i18n="explanations.divide">Jagamine</strong><small data-i18n="explanations.five">5-ga</small></span>
+            <span class="explanation-lock" aria-hidden="true">🔒</span>
+            <span class="explanation-arrow" aria-hidden="true">→</span>
+          </button>
+
+          <button class="explanation-choice multiplication-choice" id="repeatSixMultiplicationButton" type="button">
+            <span class="explanation-orbit" aria-hidden="true"><span>×</span></span>
+            <span class="explanation-name"><strong data-i18n="explanations.multiply">Korrutamine</strong><small data-i18n="explanations.six">6-ga</small></span>
+            <span class="explanation-lock" aria-hidden="true">🔒</span>
+            <span class="explanation-arrow" aria-hidden="true">→</span>
+          </button>
+
+          <button class="explanation-choice division-choice" id="repeatSixDivisionButton" type="button">
+            <span class="explanation-orbit" aria-hidden="true"><span>÷</span></span>
+            <span class="explanation-name"><strong data-i18n="explanations.divide">Jagamine</strong><small data-i18n="explanations.six">6-ga</small></span>
+            <span class="explanation-lock" aria-hidden="true">🔒</span>
+            <span class="explanation-arrow" aria-hidden="true">→</span>
+          </button>
+
+          <button class="explanation-choice multiplication-choice" id="repeatSevenMultiplicationButton" type="button">
+            <span class="explanation-orbit" aria-hidden="true"><span>×</span></span>
+            <span class="explanation-name"><strong data-i18n="explanations.multiply">Korrutamine</strong><small data-i18n="explanations.seven">7-ga</small></span>
+            <span class="explanation-lock" aria-hidden="true">🔒</span>
+            <span class="explanation-arrow" aria-hidden="true">→</span>
+          </button>
+
+          <button class="explanation-choice division-choice" id="repeatSevenDivisionButton" type="button">
+            <span class="explanation-orbit" aria-hidden="true"><span>÷</span></span>
+            <span class="explanation-name"><strong data-i18n="explanations.divide">Jagamine</strong><small data-i18n="explanations.seven">7-ga</small></span>
             <span class="explanation-lock" aria-hidden="true">🔒</span>
             <span class="explanation-arrow" aria-hidden="true">→</span>
           </button>
@@ -505,11 +547,11 @@
     </form>
   </dialog>
 
-  <script src="locales/et.js?v=64"></script>
+  <script src="locales/et.js?v=65"></script>
   <script src="chapter-one.config.js?v=64"></script>
   <script src="i18n.js?v=61"></script>
   <script src="question-engine.js?v=61"></script>
   <script src="progress-store.js?v=61"></script>
-  <script src="game.js?v=64"></script>
+  <script src="game.js?v=65"></script>
 </body>
 </html>

@@ -178,6 +178,16 @@ for(const [index,worldStep] of config.story.chapterSix.worldSteps.entries()){
 assert.match(gameHtml,/id="canopyWorldTemplate"/);
 assert.match(gameCode,/function renderChapterSixStory\(\)/);
 assert.match(gameCode,/setChapterSixRewardProgress\(levelId,true\)/);
+for(const table of [5,6,7]){
+  const numberName={5:'Five',6:'Six',7:'Seven'}[table];
+  assert.match(gameHtml,new RegExp(`id="repeat${numberName}MultiplicationButton"`));
+  assert.match(gameHtml,new RegExp(`id="repeat${numberName}DivisionButton"`));
+  assert.match(gameCode,new RegExp(`showLesson\\('multiply-${table}','explanations'\\)`));
+  assert.match(gameCode,new RegExp(`showLesson\\('divide-${table}','explanations'\\)`));
+}
+assert.match(gameCode,/demoMultiplyEquation\.textContent=`\$\{factor\} × \$\{currentLessonTable\} = \$\{product\}`/);
+assert.match(gameCode,/demoStars\.replaceChildren\(\.\.\.buildGroups\(factor,\{value:currentLessonTable\}\)\)/);
+assert.match(gameCode,/demoDivisionEquation\.textContent=`\$\{product\} ÷ \$\{currentLessonTable\} = \$\{factor\}`/);
 
 const unsupported=i18nApi.create({
   locales:{et},

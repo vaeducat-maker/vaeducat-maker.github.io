@@ -56,6 +56,12 @@ const repeatThreeMultiplicationButton=document.querySelector('#repeatThreeMultip
 const repeatThreeDivisionButton=document.querySelector('#repeatThreeDivisionButton');
 const repeatFourMultiplicationButton=document.querySelector('#repeatFourMultiplicationButton');
 const repeatFourDivisionButton=document.querySelector('#repeatFourDivisionButton');
+const repeatFiveMultiplicationButton=document.querySelector('#repeatFiveMultiplicationButton');
+const repeatFiveDivisionButton=document.querySelector('#repeatFiveDivisionButton');
+const repeatSixMultiplicationButton=document.querySelector('#repeatSixMultiplicationButton');
+const repeatSixDivisionButton=document.querySelector('#repeatSixDivisionButton');
+const repeatSevenMultiplicationButton=document.querySelector('#repeatSevenMultiplicationButton');
+const repeatSevenDivisionButton=document.querySelector('#repeatSevenDivisionButton');
 const storyStage=document.querySelector('#storyStage');
 const storyPhaseKicker=document.querySelector('#storyPhaseKicker');
 const storyPhaseTitle=document.querySelector('#storyPhaseTitle');
@@ -809,26 +815,26 @@ function updateDemo(factor){
   demoOneLabel.textContent='×1';
   demoMultiplyLabel.textContent=`×${currentLessonTable}`;
   demoDivisionLabel.textContent=`÷${currentLessonTable}`;
-  demoOneEquation.textContent=`1 × ${factor} = ${factor}`;
-  demoMultiplyEquation.textContent=`${currentLessonTable} × ${factor} = ${product}`;
+  demoOneEquation.textContent=`${factor} × 1 = ${factor}`;
+  demoMultiplyEquation.textContent=`${factor} × ${currentLessonTable} = ${product}`;
   demoDivisionEquation.textContent=`${product} ÷ ${currentLessonTable} = ${factor}`;
   document.querySelectorAll('[data-demo-factor]').forEach(button=>button.classList.toggle('active',Number(button.dataset.demoFactor)===factor));
 
-  const buildGroups=(groupCount,{division=false}={})=>{
+  const buildGroups=(groupCount,{division=false,value=factor}={})=>{
     const groups=[];
     for(let groupIndex=0;groupIndex<groupCount;groupIndex++){
       const group=document.createElement('span');
       group.className=`quantity-group${division?' division-group':''}`;
-      const value=document.createElement('strong');
-      value.textContent=String(factor);
-      group.append(value);
+      const valueLabel=document.createElement('strong');
+      valueLabel.textContent=String(value);
+      group.append(valueLabel);
       groups.push(group);
     }
     return groups;
   };
 
-  demoOneStars.replaceChildren(...buildGroups(1));
-  demoStars.replaceChildren(...buildGroups(currentLessonTable));
+  demoOneStars.replaceChildren(...buildGroups(factor,{value:1}));
+  demoStars.replaceChildren(...buildGroups(factor,{value:currentLessonTable}));
   demoDivisionStars.replaceChildren(...buildGroups(currentLessonTable,{division:true}));
 }
 
@@ -883,6 +889,12 @@ function showExplanationHub({historyMode='push'}={}){
   const divideThree=LESSONS_BY_ID.get('divide-3');
   const multiplyFour=LESSONS_BY_ID.get('multiply-4');
   const divideFour=LESSONS_BY_ID.get('divide-4');
+  const multiplyFive=LESSONS_BY_ID.get('multiply-5');
+  const divideFive=LESSONS_BY_ID.get('divide-5');
+  const multiplySix=LESSONS_BY_ID.get('multiply-6');
+  const divideSix=LESSONS_BY_ID.get('divide-6');
+  const multiplySeven=LESSONS_BY_ID.get('multiply-7');
+  const divideSeven=LESSONS_BY_ID.get('divide-7');
   configureExplanationChoice(repeatMultiplicationButton,multiplyTwo,{
     unlocked:true,
     openAria:'explanations.repeatMultiplicationAria',
@@ -912,6 +924,36 @@ function showExplanationHub({historyMode='push'}={}){
     unlocked:hasSeenLesson(divideFour)||progress.unlockedLevel>=divideFour.missionId,
     openAria:'explanations.repeatFourDivisionAria',
     lockedAria:'explanations.lockedFourDivisionAria'
+  });
+  configureExplanationChoice(repeatFiveMultiplicationButton,multiplyFive,{
+    unlocked:hasSeenLesson(multiplyFive)||progress.unlockedLevel>=multiplyFive.missionId,
+    openAria:'explanations.repeatFiveMultiplicationAria',
+    lockedAria:'explanations.lockedFiveMultiplicationAria'
+  });
+  configureExplanationChoice(repeatFiveDivisionButton,divideFive,{
+    unlocked:hasSeenLesson(divideFive)||progress.unlockedLevel>=divideFive.missionId,
+    openAria:'explanations.repeatFiveDivisionAria',
+    lockedAria:'explanations.lockedFiveDivisionAria'
+  });
+  configureExplanationChoice(repeatSixMultiplicationButton,multiplySix,{
+    unlocked:hasSeenLesson(multiplySix)||progress.unlockedLevel>=multiplySix.missionId,
+    openAria:'explanations.repeatSixMultiplicationAria',
+    lockedAria:'explanations.lockedSixMultiplicationAria'
+  });
+  configureExplanationChoice(repeatSixDivisionButton,divideSix,{
+    unlocked:hasSeenLesson(divideSix)||progress.unlockedLevel>=divideSix.missionId,
+    openAria:'explanations.repeatSixDivisionAria',
+    lockedAria:'explanations.lockedSixDivisionAria'
+  });
+  configureExplanationChoice(repeatSevenMultiplicationButton,multiplySeven,{
+    unlocked:hasSeenLesson(multiplySeven)||progress.unlockedLevel>=multiplySeven.missionId,
+    openAria:'explanations.repeatSevenMultiplicationAria',
+    lockedAria:'explanations.lockedSevenMultiplicationAria'
+  });
+  configureExplanationChoice(repeatSevenDivisionButton,divideSeven,{
+    unlocked:hasSeenLesson(divideSeven)||progress.unlockedLevel>=divideSeven.missionId,
+    openAria:'explanations.repeatSevenDivisionAria',
+    lockedAria:'explanations.lockedSevenDivisionAria'
   });
   showScreen('explanationScreen',{historyMode,historyView:'explanations'});
 }
@@ -2055,6 +2097,12 @@ repeatThreeMultiplicationButton.addEventListener('click',()=>showLesson('multipl
 repeatThreeDivisionButton.addEventListener('click',()=>showLesson('divide-3','explanations'));
 repeatFourMultiplicationButton.addEventListener('click',()=>showLesson('multiply-4','explanations'));
 repeatFourDivisionButton.addEventListener('click',()=>showLesson('divide-4','explanations'));
+repeatFiveMultiplicationButton.addEventListener('click',()=>showLesson('multiply-5','explanations'));
+repeatFiveDivisionButton.addEventListener('click',()=>showLesson('divide-5','explanations'));
+repeatSixMultiplicationButton.addEventListener('click',()=>showLesson('multiply-6','explanations'));
+repeatSixDivisionButton.addEventListener('click',()=>showLesson('divide-6','explanations'));
+repeatSevenMultiplicationButton.addEventListener('click',()=>showLesson('multiply-7','explanations'));
+repeatSevenDivisionButton.addEventListener('click',()=>showLesson('divide-7','explanations'));
 document.querySelector('#explanationBackButton').addEventListener('click',()=>history.back());
 document.querySelector('#backToMapButton').addEventListener('click',()=>showMap());
 resultMapButton.addEventListener('click',()=>showMap());
