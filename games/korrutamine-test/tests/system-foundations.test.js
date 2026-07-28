@@ -25,16 +25,19 @@ assert.equal(config.storage.progressKey,'edukass-chapter-one-v18');
 assert.equal(config.storage.soundKey,'edukass-sound-enabled');
 assert.equal(config.storage.introKey,'edukass-opening-seen-v28');
 assert.equal(config.storage.progressSchemaVersion,2);
-assert.equal(config.missions.length,33);
+assert.equal(config.missions.length,51);
 assert.deepEqual(config.chapters.map(chapter=>[chapter.id,chapter.startMissionId,chapter.endMissionId]),[
   [1,1,15],
-  [2,16,33]
+  [2,16,33],
+  [3,34,51]
 ]);
 assert.deepEqual(config.lesson.triggers.map(lesson=>[lesson.id,lesson.missionId,lesson.mode,lesson.table]),[
   ['multiply-2',1,'multiply',2],
   ['divide-2',11,'divide',2],
   ['multiply-3',16,'multiply',3],
-  ['divide-3',26,'divide',3]
+  ['divide-3',26,'divide',3],
+  ['multiply-4',34,'multiply',4],
+  ['divide-4',44,'divide',4]
 ]);
 assert.deepEqual(config.story.chapterTwo,{
   startMissionId:16,
@@ -74,6 +77,7 @@ assert.equal(i18n.t('share.button'),'JAGA');
 assert.equal(i18n.t('share.copied'),'Link kopeeritud!');
 assert.equal(i18n.t('lesson.toExplanations'),'MÄNGI!');
 assert.equal(i18n.t('chapter.2.title'),'2. PEATÜKK · KOLM');
+assert.equal(i18n.t('chapter.3.title'),'3. PEATÜKK · NELI');
 assert.equal(i18n.t('mission.33.title'),'Peatüki kontroll');
 assert.equal(i18n.t('missing.key',{},'Varutekst'),'Varutekst');
 
@@ -89,7 +93,9 @@ assert.doesNotMatch(gameCode,/lessonContinueButton\.innerHTML=.*MISSIOON/);
 assert.match(gameHtml,/id="lessonContinueButton"[^>]*>MÄNGI!<\/button>/);
 assert.match(gameHtml,/id="repeatThreeMultiplicationButton"/);
 assert.match(gameHtml,/id="repeatThreeDivisionButton"/);
-assert.match(gameHtml,/MISSIOONID 1–33/);
+assert.match(gameHtml,/id="repeatFourMultiplicationButton"/);
+assert.match(gameHtml,/id="repeatFourDivisionButton"/);
+assert.match(gameHtml,/MISSIOONID 1–51/);
 assert.match(gameHtml,/id="missionRouteScroll"/);
 assert.match(gameCode,/missionRouteScroll\.scrollTop=/);
 assert.match(gameHtml,/id="livingWorldTemplate"/);
@@ -100,7 +106,8 @@ assert.match(gameCode,/function renderChapterTwoStory\(\)/);
 assert.match(gameCode,/worldAwaken/);
 assert.match(gameCode,/setChapterTwoRewardProgress\(levelId,true\)/);
 assert.match(gameCode,/const chapterTwoReveal=levelId>FINAL_MISSION_ID/);
-assert.match(gameCode,/const visualReveal=firstCompletion\|\|chapterTwoReveal/);
+assert.match(gameCode,/const worldReveal=chapterTwoReveal\|\|chapterThreeReveal/);
+assert.match(gameCode,/const visualReveal=firstCompletion\|\|worldReveal/);
 const chapterTwoCinematicStart=gameCode.indexOf("if(levelId>FINAL_MISSION_ID){",gameCode.indexOf('function startRewardCinematic'));
 const chapterOneCinematicStart=gameCode.indexOf("if(levelId===FINAL_MISSION_ID){",chapterTwoCinematicStart);
 const chapterTwoCinematic=gameCode.slice(chapterTwoCinematicStart,chapterOneCinematicStart);
@@ -122,6 +129,16 @@ for(const [index,worldStep] of config.story.chapterTwo.worldSteps.entries()){
 }
 assert.ok(fs.existsSync(path.join(gameRoot,'assets','edukass-kolm-world.png')));
 assert.ok(fs.existsSync(path.join(gameRoot,'assets','edukass-world-rocket.png')));
+assert.match(gameHtml,/id="windWorldTemplate"/);
+assert.match(gameCode,/function renderChapterThreeStory\(\)/);
+assert.match(gameCode,/setChapterThreeRewardProgress\(levelId,true\)/);
+for(const [index,worldStep] of config.story.chapterThree.worldSteps.entries()){
+  assert.match(
+    gameHtml,
+    new RegExp(`data-wind-step="${index+1}"[^>]*data-wind-role="${worldStep.role}"`),
+    `Wind-world layer ${index+1} (${worldStep.role}) is missing from the shared scene.`
+  );
+}
 
 const unsupported=i18nApi.create({
   locales:{et},
@@ -166,7 +183,7 @@ const versionOneStore=progressStoreApi.create({
   storage:versionOneStorage,
   key:config.storage.progressKey,
   schemaVersion:2,
-  maxLevel:33
+  maxLevel:51
 });
 const versionOneMigrated=versionOneStore.load();
 assert.equal(versionOneMigrated.saveVersion,2);
@@ -190,7 +207,7 @@ const v42Store=progressStoreApi.create({
   storage:v42Storage,
   key:config.storage.progressKey,
   schemaVersion:2,
-  maxLevel:33
+  maxLevel:51
 });
 const expandedFromV42=v42Store.load();
 assert.equal(expandedFromV42.unlockedLevel,16);
@@ -207,21 +224,21 @@ legacyStore.clear();
 assert.equal(legacyStorage.getItem(config.storage.progressKey),null);
 
 const invalidStorage=memoryStorage({[config.storage.progressKey]:'not json'});
-const invalidStore=progressStoreApi.create({storage:invalidStorage,key:config.storage.progressKey,schemaVersion:2,maxLevel:33});
+const invalidStore=progressStoreApi.create({storage:invalidStorage,key:config.storage.progressKey,schemaVersion:2,maxLevel:51});
 assert.deepEqual(invalidStore.load(),invalidStore.defaultProgress());
 
 const futureStorage=memoryStorage({
   [config.storage.progressKey]:JSON.stringify({saveVersion:3,unlockedLevel:33,completedLevels:[1]})
 });
-const futureStore=progressStoreApi.create({storage:futureStorage,key:config.storage.progressKey,schemaVersion:2,maxLevel:33});
+const futureStore=progressStoreApi.create({storage:futureStorage,key:config.storage.progressKey,schemaVersion:2,maxLevel:51});
 assert.deepEqual(futureStore.load(),futureStore.defaultProgress());
 
 const clampedStorage=memoryStorage({
   [config.storage.progressKey]:JSON.stringify({...legacyProgress,saveVersion:2,unlockedLevel:999,completedLevels:[1,15,33,34,999]})
 });
-const clampedStore=progressStoreApi.create({storage:clampedStorage,key:config.storage.progressKey,schemaVersion:2,maxLevel:33});
+const clampedStore=progressStoreApi.create({storage:clampedStorage,key:config.storage.progressKey,schemaVersion:2,maxLevel:51});
 const clamped=clampedStore.load();
-assert.equal(clamped.unlockedLevel,33);
-assert.deepEqual(clamped.completedLevels,[1,15,33]);
+assert.equal(clamped.unlockedLevel,51);
+assert.deepEqual(clamped.completedLevels,[1,15,33,34]);
 
 console.log('Language, lesson-trigger and progress-version checks passed.');

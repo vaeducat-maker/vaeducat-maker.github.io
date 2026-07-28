@@ -7,7 +7,7 @@ const config=require(path.join(gameRoot,'chapter-one.config.js'));
 const questionEngineApi=require(path.join(gameRoot,'question-engine.js'));
 
 const EXPECTED_FIRST_CHAPTER_SIGNATURE='83fa3e428f49ac63046fb4529460ac1ae51a1a4c3ca595bcd9a36b5b7a720643';
-const EXPECTED_CONTENT_SIGNATURE='90416cb4492cb8a1955f0bb6c37cc0384f04aee15eba4f9d1fcd8c4f4b606d38';
+const EXPECTED_CONTENT_SIGNATURE='96f2c9a9a39d0261442d4ef1fe25d5a6b9dddfe9fa6847105a1b6d9c5e0b9f27';
 const SUPPORTED_GROUP_TYPES=new Set(['fixed','multiplication','division','adaptive']);
 const SUPPORTED_MODES=new Set(['choice','input']);
 const SUPPORTED_OPERATIONS=new Set(['multiply','divide','mixed']);
@@ -78,11 +78,12 @@ function validateConfiguration(){
   assert.equal(config.roundLength,15,'A mission must require exactly 15 correct answers.');
   assert.equal(config.practiceTable,2,'The legacy first chapter must keep table 2 as its default.');
   assert.deepEqual(config.practiceFactors,[1,2,3,4,5,6,7,8,9,10]);
-  assert.equal(config.missions.length,33,'The current build must contain missions 1–33.');
-  assert.deepEqual(config.missions.map(mission=>mission.id),Array.from({length:33},(_,index)=>index+1));
-  assert.deepEqual(config.chapters.map(chapter=>[chapter.id,chapter.startMissionId,chapter.endMissionId]),[[1,1,15],[2,16,33]]);
+  assert.equal(config.missions.length,51,'The current build must contain missions 1–51.');
+  assert.deepEqual(config.missions.map(mission=>mission.id),Array.from({length:51},(_,index)=>index+1));
+  assert.deepEqual(config.chapters.map(chapter=>[chapter.id,chapter.startMissionId,chapter.endMissionId]),[[1,1,15],[2,16,33],[3,34,51]]);
   assert.deepEqual(config.lesson.triggers.map(lesson=>[lesson.id,lesson.missionId,lesson.table]),[
-    ['multiply-2',1,2],['divide-2',11,2],['multiply-3',16,3],['divide-3',26,3]
+    ['multiply-2',1,2],['divide-2',11,2],['multiply-3',16,3],['divide-3',26,3],
+    ['multiply-4',34,4],['divide-4',44,4]
   ]);
 
   for(const mission of config.missions){
@@ -109,8 +110,11 @@ function validateConfiguration(){
   assert.deepEqual(config.missions.slice(15,25).map(mission=>mission.operation),Array(10).fill('multiply'));
   assert.deepEqual(config.missions.slice(25,30).map(mission=>mission.operation),Array(5).fill('divide'));
   assert.deepEqual(config.missions.slice(30,33).map(mission=>mission.operation),Array(3).fill('mixed'));
-  assert.deepEqual(config.missions.filter(mission=>mission.mode==='choice').map(mission=>mission.id),[1,11,16,26]);
-  for(const missionId of [7,8,14,23,29,32]){
+  assert.deepEqual(config.missions.slice(33,43).map(mission=>mission.operation),Array(10).fill('multiply'));
+  assert.deepEqual(config.missions.slice(43,48).map(mission=>mission.operation),Array(5).fill('divide'));
+  assert.deepEqual(config.missions.slice(48,51).map(mission=>mission.operation),Array(3).fill('mixed'));
+  assert.deepEqual(config.missions.filter(mission=>mission.mode==='choice').map(mission=>mission.id),[1,11,16,26,34,44]);
+  for(const missionId of [7,8,14,23,29,32,41,47,50]){
     assert(config.missions[missionId-1].questionGroups.some(group=>group.type==='adaptive'),`Mission ${missionId} must include adaptive practice.`);
   }
 }
@@ -149,7 +153,7 @@ function validateGeneratedRounds(){
             if(question.b===1){
               assert.equal(mission.id,11,`Mission ${mission.id}: division by 1 is only preserved in the approved introductory mission 11.`);
             }else{
-              assert([2,3].includes(question.b),`Mission ${mission.id}: unsupported divisor ${question.b}.`);
+              assert([2,3,4].includes(question.b),`Mission ${mission.id}: unsupported divisor ${question.b}.`);
             }
           }
           if(index>0)assert.notEqual(engine.equationKey(question),engine.equationKey(round[index-1]),`Mission ${mission.id}, seed ${seed}: adjacent duplicate.`);
@@ -191,6 +195,26 @@ function validateChapterTwoPools(){
   assert.equal(pool33.filter(question=>question.operation==='divide').length,7);
 }
 
+function validateChapterThreePools(){
+  const engine=questionEngineApi.create({config,getFactStats:()=>({}),random:seededRandom(1)});
+  const pool35=engine.buildQuestionPool(35);
+  assert(pool35.every(question=>question.operation==='multiply'&&question.statsTable===4&&question.factor<=5));
+  const pool36=engine.buildQuestionPool(36);
+  assert(pool36.every(question=>question.operation==='multiply'&&question.statsTable===4&&question.factor>=6));
+  const pool42=engine.buildQuestionPool(42);
+  assert.equal(pool42.length,15);
+  assert(pool42.filter(question=>question.statsTable===4).length>=9,'Mission 42 must keep table 4 in the majority.');
+  const pool43=engine.buildQuestionPool(43);
+  assert.equal(pool43.filter(question=>question.statsTable===4).length,9,'Mission 43 must emphasize table 4.');
+  const pool49=engine.buildQuestionPool(49);
+  assert.equal(pool49.filter(question=>question.operation==='multiply').length,8);
+  assert.equal(pool49.filter(question=>question.operation==='divide').length,7);
+  assert(pool49.every(question=>question.statsTable===4),'Mission 49 must contain only the ×4/÷4 family.');
+  const pool51=engine.buildQuestionPool(51);
+  assert.equal(pool51.length,15);
+  assert(pool51.filter(question=>question.statsTable===4).length,8,'Mission 51 must keep the new family in the majority.');
+}
+
 function validateAdaptiveRepetition(){
   const factStats={
     'multiply:3':{correct:0,mistakes:100},
@@ -223,5 +247,6 @@ if(process.argv.includes('--print-signature')){
 assert.equal(signature,EXPECTED_CONTENT_SIGNATURE,'Mission content changed. Review the change and update the approved signature intentionally.');
 const checkedRounds=validateGeneratedRounds();
 validateChapterTwoPools();
+validateChapterThreePools();
 validateAdaptiveRepetition();
 console.log(`Mission checks passed: ${config.missions.length} missions, ${checkedRounds} generated rounds.`);

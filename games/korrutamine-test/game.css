@@ -1945,3 +1945,119 @@ body.intro-active{overflow:hidden}
   #mapScreen .world-moon{width:30px;height:30px}
   #mapScreen .world-far-crystals,#mapScreen .world-arch,#mapScreen .world-tower{scale:.45;transform-origin:50% 100%}
 }
+/* Chapter 3 · warm wind world. The scenery is deliberately independent from
+   the number being learned: composition follows the planet, not the table. */
+.wind-world{
+  position:absolute;inset:0;overflow:hidden;border-radius:inherit;pointer-events:none;
+  background:
+    radial-gradient(circle at 72% 19%,rgba(255,236,168,.96) 0 4%,rgba(255,201,135,.28) 4.5% 11%,transparent 12%),
+    radial-gradient(ellipse at 68% 84%,#9d5266 0 17%,transparent 17.5%),
+    radial-gradient(ellipse at 23% 88%,#b96163 0 25%,transparent 25.5%),
+    linear-gradient(180deg,#573d72 0%,#a65b74 43%,#e88b72 72%,#d26e61 100%);
+  box-shadow:inset 0 -2.2rem 4rem rgba(77,34,69,.34),inset 0 1.2rem 4rem rgba(255,210,157,.12);
+}
+.wind-world::before,.wind-world::after{content:"";position:absolute;left:-8%;right:-8%;border-radius:50% 50% 0 0}
+.wind-world::before{height:36%;bottom:-13%;background:linear-gradient(170deg,#d87b66 0 22%,#b75d62 23% 56%,#864a63 57%);box-shadow:0 -1rem 3rem rgba(255,178,118,.18)}
+.wind-world::after{width:52%;height:17%;left:43%;bottom:10%;background:#bd6566;transform:rotate(-4deg);box-shadow:-28rem 3rem 0 3rem #cc7166}
+.wind-life{position:absolute;display:block;opacity:0;visibility:hidden;z-index:4}
+.wind-life.is-earned,.wind-life.is-new-reward{visibility:visible}
+.wind-life.is-earned{opacity:1}
+.reward-chapter-three .reward-three-zone,.reward-chapter-three .reward-ship,.reward-chapter-three .reward-portal,.reward-chapter-three .reward-next-planet,.reward-chapter-three .result-cat-crop{display:none}
+.reward-four-zone{display:none}
+.reward-chapter-three .reward-four-zone{display:block}
+.story-three{display:none}
+.chapter-three .story-two,.chapter-three .story-ship,.chapter-three .story-portal,.chapter-three .next-planet,.chapter-three .story-cat-crop,.chapter-three .story-energy-stream{display:none!important}
+.chapter-three .story-three{display:block}
+.wind-world-map{z-index:3}
+.wind-world-reward{z-index:3}
+
+.wind-rocket{left:9%;bottom:18%;width:18%;z-index:12;filter:drop-shadow(0 12px 10px rgba(72,35,61,.35))}
+.wind-cat{left:26%;bottom:17%;width:10%;z-index:13;filter:drop-shadow(0 8px 8px rgba(72,35,61,.32))}
+.wind-landing-glow{left:8%;bottom:11%;width:23%;height:12%;border-radius:50%;background:radial-gradient(ellipse,rgba(255,235,172,.6),transparent 70%);z-index:8}
+.wind-lines{inset:0;z-index:3}
+.wind-lines i{position:absolute;width:29%;height:3px;border-radius:100%;background:linear-gradient(90deg,transparent,#ffd9a5,transparent);opacity:.52;animation:windSweep 5.4s linear infinite}
+.wind-lines i:nth-child(1){left:5%;top:52%}.wind-lines i:nth-child(2){left:42%;top:69%;animation-delay:-2s}.wind-lines i:nth-child(3){left:65%;top:43%;animation-delay:-3.7s}
+.wind-stone-sails{left:38%;bottom:16%;width:24%;height:31%;z-index:8}
+.wind-stone-sails i{position:absolute;bottom:0;width:17%;height:76%;border-radius:80% 12% 55% 18%;background:linear-gradient(90deg,#713f66,#e49a7b 55%,#ffe0a3);transform-origin:50% 100%;animation:sailBreathe 5s ease-in-out infinite}
+.wind-stone-sails i:nth-child(1){left:4%;height:58%;transform:rotate(-8deg)}.wind-stone-sails i:nth-child(2){left:39%}.wind-stone-sails i:nth-child(3){right:5%;height:67%;transform:rotate(7deg)}
+.wind-wheels{right:8%;bottom:21%;width:22%;height:30%;z-index:9}
+.wind-wheels i{position:absolute;border:5px solid #ffdba1;border-radius:50%;background:conic-gradient(from 20deg,transparent 0 10%,#f6b47e 11% 22%,transparent 23% 36%,#f6b47e 37% 49%,transparent 50% 63%,#f6b47e 64% 76%,transparent 77%);box-shadow:0 0 1.2rem rgba(255,211,144,.52);animation:windWheel 12s linear infinite}
+.wind-wheels i:first-child{width:58%;aspect-ratio:1;left:0;bottom:0}.wind-wheels i:last-child{width:42%;aspect-ratio:1;right:0;top:0;animation-direction:reverse}
+.wind-pods{left:16%;top:25%;width:49%;height:30%;z-index:7}
+.wind-pods i{position:absolute;width:10%;height:24%;border-radius:50% 50% 44% 44%;background:linear-gradient(135deg,#ffe4aa,#df8e78 64%,#81506e);box-shadow:0 0 1rem rgba(255,221,165,.38);animation:podFloat 5.5s ease-in-out infinite}
+.wind-pods i:nth-child(1){left:5%;top:28%}.wind-pods i:nth-child(2){left:54%;top:4%;animation-delay:-1.8s}.wind-pods i:nth-child(3){right:2%;top:48%;animation-delay:-3.1s}
+.wind-islands{right:5%;top:20%;width:45%;height:24%;z-index:5}
+.wind-islands i{position:absolute;width:22%;height:19%;border-radius:50% 50% 65% 35%;background:linear-gradient(#d98c76,#754663);box-shadow:0 10px 0 -7px rgba(255,215,151,.34);animation:islandFloat 7s ease-in-out infinite}
+.wind-islands i:nth-child(1){left:0;top:35%}.wind-islands i:nth-child(2){left:39%;top:4%;animation-delay:-2s}.wind-islands i:nth-child(3){right:0;top:48%;animation-delay:-4s}
+.wind-air-bridge{right:13%;top:34%;width:32%;height:13%;border-top:4px solid rgba(255,219,157,.84);border-radius:50%;transform:rotate(-6deg);filter:drop-shadow(0 0 8px #ffc98b)}
+.wind-plateau-sails{right:26%;bottom:27%;width:24%;height:25%;z-index:7}
+.wind-plateau-sails i{position:absolute;bottom:0;width:36%;height:82%;border-radius:70% 15% 65% 20%;background:linear-gradient(100deg,#8e516b,#f1ad81 62%,#ffdf9c);transform-origin:50% 100%;animation:sailBreathe 6.2s ease-in-out infinite}
+.wind-plateau-sails i:last-child{right:0;height:64%;animation-delay:-2s}
+.wind-trees{left:4%;bottom:11%;width:42%;height:31%;z-index:10}
+.wind-trees i{position:absolute;bottom:0;width:4%;height:55%;border-radius:1rem;background:#75405f;transform-origin:50% 100%;animation:treeSway 5s ease-in-out infinite}
+.wind-trees i::before,.wind-trees i::after{content:"";position:absolute;width:360%;height:28%;left:-130%;border-radius:60%;background:linear-gradient(90deg,#f0a17a,#ffd79a);box-shadow:0 0 .8rem rgba(255,211,146,.4)}
+.wind-trees i::before{top:8%;transform:rotate(-10deg)}.wind-trees i::after{top:29%;transform:rotate(12deg)}
+.wind-trees i:nth-child(1){left:7%}.wind-trees i:nth-child(2){left:52%;height:72%;animation-delay:-1.6s}.wind-trees i:nth-child(3){right:4%;height:46%;animation-delay:-3s}
+.wind-chimes{left:55%;bottom:12%;width:16%;height:26%;z-index:11}
+.wind-chimes::before{content:"";position:absolute;left:10%;right:10%;top:0;height:5%;border-radius:1rem;background:#ffd899}
+.wind-chimes i{position:absolute;top:3%;width:2px;height:64%;background:#f6c589;transform-origin:50% 0;animation:chimeSwing 4s ease-in-out infinite}
+.wind-chimes i::after{content:"";position:absolute;left:50%;bottom:-18%;width:12px;height:22%;border-radius:50% 50% 65% 65%;background:#ffe2a5;transform:translateX(-50%);box-shadow:0 0 .8rem #ffc67e}
+.wind-chimes i:nth-child(1){left:20%}.wind-chimes i:nth-child(2){left:50%;height:78%;animation-delay:-1.2s}.wind-chimes i:nth-child(3){right:20%;animation-delay:-2.4s}
+.wind-gliders{left:23%;top:12%;width:55%;height:28%;z-index:13}
+.wind-gliders i{position:absolute;width:8%;height:12%;border-radius:80% 15% 80% 15%;background:#ffdda0;box-shadow:12px 4px 0 -3px #dc8b79;animation:glideAcross 10s ease-in-out infinite}
+.wind-gliders i:nth-child(2){left:40%;top:35%;animation-delay:-3s}.wind-gliders i:nth-child(3){right:4%;top:9%;animation-delay:-6s}
+.wind-sun-ring{right:7%;top:11%;width:15%;aspect-ratio:1;border:7px solid #ffdc9a;border-radius:50%;box-shadow:0 0 1.5rem rgba(255,215,148,.65),inset 0 0 1rem rgba(255,215,148,.4);animation:ringGlow 5s ease-in-out infinite;z-index:8}
+.wind-sun-ring i{position:absolute;inset:29%;border-radius:50%;background:#ffd28e}.wind-sun-ring b{position:absolute;inset:-16%;border:2px dashed rgba(255,226,171,.5);border-radius:50%;animation:windWheel 18s linear infinite}
+.wind-light-stream{left:36%;top:30%;width:51%;height:30%;z-index:6}
+.wind-light-stream i{position:absolute;left:0;right:0;height:6%;border-radius:50%;background:linear-gradient(90deg,transparent,#ffe2a3,transparent);filter:blur(1px);animation:lightStream 4.5s ease-in-out infinite}
+.wind-light-stream i:last-child{top:42%;animation-delay:-2.2s}
+.wind-observatory{right:10%;bottom:12%;width:19%;height:32%;z-index:10}
+.wind-observatory i{position:absolute;left:24%;bottom:0;width:52%;height:55%;border-radius:45% 45% 16% 16%;background:linear-gradient(90deg,#6f4263,#bd6e71 60%,#eca079)}
+.wind-observatory b{position:absolute;left:10%;top:5%;width:80%;height:47%;border-radius:50% 50% 12% 12%;background:linear-gradient(110deg,#8a4d67,#f5b584);box-shadow:0 0 1rem rgba(255,211,148,.36)}
+.wind-observatory em{position:absolute;left:44%;bottom:22%;width:12%;aspect-ratio:1;border-radius:50%;background:#ffe7aa;box-shadow:0 0 1rem #ffd08c}
+.wind-haze{inset:0;z-index:2}
+.wind-haze i{position:absolute;left:-15%;width:45%;height:3%;border-radius:50%;background:linear-gradient(90deg,transparent,rgba(255,225,174,.48),transparent);animation:windSweep 8s linear infinite}
+.wind-haze i:nth-child(1){top:17%}.wind-haze i:nth-child(2){top:39%;animation-delay:-3s}.wind-haze i:nth-child(3){top:62%;animation-delay:-5.5s}
+.wind-warm-lights{inset:0;z-index:14}
+.wind-warm-lights i{position:absolute;width:7px;aspect-ratio:1;border-radius:50%;background:#ffe8ae;box-shadow:0 0 1rem #ffd187;animation:warmSpark 3.5s ease-in-out infinite}
+.wind-warm-lights i:nth-child(1){left:12%;top:42%}.wind-warm-lights i:nth-child(2){left:38%;top:24%;animation-delay:-.8s}.wind-warm-lights i:nth-child(3){left:60%;top:58%;animation-delay:-1.6s}.wind-warm-lights i:nth-child(4){left:78%;top:31%;animation-delay:-2.4s}.wind-warm-lights i:nth-child(5){left:91%;top:67%;animation-delay:-3s}
+.wind-final-breeze{inset:0;background:radial-gradient(ellipse at 54% 62%,rgba(255,224,165,.16),transparent 62%);animation:ringGlow 6s ease-in-out infinite;z-index:1}
+.wind-departure-trail{left:7%;top:11%;width:38%;height:45%;z-index:16}
+.wind-departure-trail i{position:absolute;left:0;width:70%;height:3px;border-radius:100%;background:linear-gradient(90deg,transparent,#ffe1a0);transform:rotate(-32deg);animation:departureTrail 2.2s ease-out infinite}
+.wind-departure-trail i:nth-child(2){top:12%;animation-delay:-.4s}.wind-departure-trail i:nth-child(3){top:24%;animation-delay:-.8s}
+
+.wind-life.is-new-reward{opacity:0}
+.reward-chapter-three.is-playing .wind-life.is-new-reward{animation:windReveal 1.8s cubic-bezier(.18,.75,.28,1) forwards}
+.reward-chapter-three.is-playing .wind-rocket.is-new-reward{animation:windLanding 2.5s cubic-bezier(.2,.75,.24,1) forwards}
+.reward-chapter-three.is-playing .wind-cat.is-new-reward{animation:catExit 1.3s 1.15s ease-out forwards}
+.reward-chapter-three.is-playing .wind-stone-sails.is-new-reward i,.reward-chapter-three.is-playing .wind-trees.is-new-reward i{animation:growWindObject 1.7s cubic-bezier(.2,.82,.25,1) forwards}
+.reward-chapter-three.is-playing.reward-wind-departure .wind-rocket{animation:windTakeoff 3.2s ease-in forwards}
+.reward-chapter-three.is-playing.reward-wind-departure .wind-cat{animation:catBoard .7s ease-in forwards}
+.wind-departed .wind-rocket,.wind-departed .wind-cat{opacity:0!important}
+
+@keyframes windReveal{0%{opacity:0;transform:translateY(15px) scale(.82);filter:blur(5px)}100%{opacity:1;transform:none;filter:none}}
+@keyframes windLanding{0%{opacity:0;transform:translate(80%,-150%) rotate(8deg) scale(.72)}60%{opacity:1;transform:translate(8%,-15%) rotate(2deg) scale(.94)}100%{opacity:1;transform:none}}
+@keyframes catExit{0%{opacity:0;transform:translateX(-55%) scale(.7)}100%{opacity:1;transform:none}}
+@keyframes growWindObject{0%{opacity:0;transform:scaleY(.08)}100%{opacity:1}}
+@keyframes windTakeoff{0%{opacity:1;transform:none}35%{transform:translateY(-8%)}100%{opacity:0;transform:translate(150%,-170%) rotate(12deg) scale(.7)}}
+@keyframes catBoard{to{opacity:0;transform:translateX(-65%) scale(.6)}}
+@keyframes windSweep{0%{transform:translateX(-60%)}100%{transform:translateX(310%)}}
+@keyframes sailBreathe{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(4deg)}}
+@keyframes windWheel{to{transform:rotate(360deg)}}
+@keyframes podFloat{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-14px) rotate(3deg)}}
+@keyframes islandFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes treeSway{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(3deg)}}
+@keyframes chimeSwing{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(5deg)}}
+@keyframes glideAcross{0%,100%{transform:translate(-12px,4px) rotate(-5deg)}50%{transform:translate(25px,-10px) rotate(4deg)}}
+@keyframes ringGlow{0%,100%{filter:brightness(.92)}50%{filter:brightness(1.22)}}
+@keyframes lightStream{0%,100%{opacity:.25;transform:translateX(-8%)}50%{opacity:.85;transform:translateX(7%)}}
+@keyframes warmSpark{0%,100%{opacity:.25;transform:scale(.7)}50%{opacity:1;transform:scale(1.35)}}
+@keyframes departureTrail{0%{opacity:0;transform:translate(0,0) rotate(-32deg)}30%{opacity:1}100%{opacity:0;transform:translate(120%,-90%) rotate(-32deg)}}
+
+@media (max-width:600px){
+  .wind-rocket{width:22%;left:5%}.wind-cat{width:12%;left:26%}
+  .wind-stone-sails{left:35%;width:27%}.wind-wheels{right:3%;width:26%}
+}
+@media (prefers-reduced-motion:reduce){
+  .wind-world *{animation-duration:.001ms!important;animation-iteration-count:1!important}
+}

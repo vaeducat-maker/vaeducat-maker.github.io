@@ -54,6 +54,8 @@ const repeatMultiplicationButton=document.querySelector('#repeatMultiplicationBu
 const repeatDivisionButton=document.querySelector('#repeatDivisionButton');
 const repeatThreeMultiplicationButton=document.querySelector('#repeatThreeMultiplicationButton');
 const repeatThreeDivisionButton=document.querySelector('#repeatThreeDivisionButton');
+const repeatFourMultiplicationButton=document.querySelector('#repeatFourMultiplicationButton');
+const repeatFourDivisionButton=document.querySelector('#repeatFourDivisionButton');
 const storyStage=document.querySelector('#storyStage');
 const storyPhaseKicker=document.querySelector('#storyPhaseKicker');
 const storyPhaseTitle=document.querySelector('#storyPhaseTitle');
@@ -62,9 +64,12 @@ const engineGoalCount=document.querySelector('#engineGoalCount');
 const portalGoalCount=document.querySelector('#portalGoalCount');
 const vaultGoalCount=document.querySelector('#vaultGoalCount');
 const storyTwo=document.querySelector('#storyTwo');
+const storyThree=document.querySelector('#storyThree');
 const rewardScene=document.querySelector('#rewardScene');
 const rewardLivingWorld=document.querySelector('#rewardLivingWorld');
+const rewardWindWorld=document.querySelector('#rewardWindWorld');
 const livingWorldTemplate=document.querySelector('#livingWorldTemplate');
+const windWorldTemplate=document.querySelector('#windWorldTemplate');
 const rewardPill=document.querySelector('#rewardPill');
 const resultScreen=document.querySelector('#resultScreen');
 const battleFxCanvas=document.querySelector('#battleFxCanvas');
@@ -86,8 +91,15 @@ function mountLivingWorld(container){
   container.append(livingWorldTemplate.content.cloneNode(true));
 }
 
+function mountWindWorld(container){
+  if(!container||!windWorldTemplate)return;
+  container.append(windWorldTemplate.content.cloneNode(true));
+}
+
 mountLivingWorld(storyTwo);
 mountLivingWorld(rewardLivingWorld);
+mountWindWorld(storyThree);
+mountWindWorld(rewardWindWorld);
 
 const CHAPTER_CONFIG=window.EDUKASS_CHAPTER_ONE;
 if(!CHAPTER_CONFIG)throw new Error('EDUKASS chapter configuration was not loaded.');
@@ -127,6 +139,9 @@ const FINAL_MISSION_ID=STORY_CONFIG.finalMissionId;
 const CHAPTER_TWO_STORY=STORY_CONFIG.chapterTwo||{};
 const CHAPTER_TWO_WORLD_STEPS=CHAPTER_TWO_STORY.worldSteps||[];
 const CHAPTER_TWO_WORLD_STEP_COUNT=CHAPTER_TWO_WORLD_STEPS.length;
+const CHAPTER_THREE_STORY=STORY_CONFIG.chapterThree||{};
+const CHAPTER_THREE_WORLD_STEPS=CHAPTER_THREE_STORY.worldSteps||[];
+const CHAPTER_THREE_WORLD_STEP_COUNT=CHAPTER_THREE_WORLD_STEPS.length;
 const LAST_MISSION_ID=CHAPTER_CONFIG.missions[CHAPTER_CONFIG.missions.length-1].id;
 const CHAPTER_END_IDS=new Set(CHAPTERS.map(chapter=>chapter.endMissionId));
 const PLANET_MISSION_IDS=new Set(STORY_CONFIG.planetMissionIds);
@@ -843,6 +858,8 @@ function showExplanationHub({historyMode='push'}={}){
   const divideTwo=LESSONS_BY_ID.get('divide-2');
   const multiplyThree=LESSONS_BY_ID.get('multiply-3');
   const divideThree=LESSONS_BY_ID.get('divide-3');
+  const multiplyFour=LESSONS_BY_ID.get('multiply-4');
+  const divideFour=LESSONS_BY_ID.get('divide-4');
   configureExplanationChoice(repeatMultiplicationButton,multiplyTwo,{
     unlocked:true,
     openAria:'explanations.repeatMultiplicationAria',
@@ -862,6 +879,16 @@ function showExplanationHub({historyMode='push'}={}){
     unlocked:hasSeenLesson(divideThree)||progress.unlockedLevel>=divideThree.missionId,
     openAria:'explanations.repeatThreeDivisionAria',
     lockedAria:'explanations.lockedThreeDivisionAria'
+  });
+  configureExplanationChoice(repeatFourMultiplicationButton,multiplyFour,{
+    unlocked:hasSeenLesson(multiplyFour)||progress.unlockedLevel>=multiplyFour.missionId,
+    openAria:'explanations.repeatFourMultiplicationAria',
+    lockedAria:'explanations.lockedFourMultiplicationAria'
+  });
+  configureExplanationChoice(repeatFourDivisionButton,divideFour,{
+    unlocked:hasSeenLesson(divideFour)||progress.unlockedLevel>=divideFour.missionId,
+    openAria:'explanations.repeatFourDivisionAria',
+    lockedAria:'explanations.lockedFourDivisionAria'
   });
   showScreen('explanationScreen',{historyMode,historyView:'explanations'});
 }
@@ -893,6 +920,8 @@ function renderChapterOneStory(completed){
   storyStage.dataset.completed=String(completed);
   storyStage.classList.remove('chapter-two');
   storyStage.closest('.story-progress')?.classList.remove('chapter-two-active');
+  storyStage.classList.remove('chapter-three');
+  storyStage.closest('.story-progress')?.classList.remove('chapter-three-active');
   storyStage.classList.toggle('has-engine',engineProgress>0);
   storyStage.classList.toggle('has-portal',portalProgress>0);
   storyStage.classList.toggle('is-complete',completed===FINAL_MISSION_ID);
@@ -941,6 +970,8 @@ function renderChapterTwoStory(){
   storyStage.dataset.completed=String(completed);
   storyStage.classList.add('chapter-two');
   storyStage.closest('.story-progress')?.classList.add('chapter-two-active');
+  storyStage.classList.remove('chapter-three');
+  storyStage.closest('.story-progress')?.classList.remove('chapter-three-active');
   storyStage.classList.remove('phase-ship','phase-engine','phase-portal','has-engine','has-portal');
   storyStage.classList.toggle('is-complete',completed===CHAPTER_TWO_WORLD_STEP_COUNT);
   const phaseKickers={
@@ -986,9 +1017,57 @@ function renderChapterTwoStory(){
   });
 }
 
+function renderChapterThreeStory(){
+  const arrivalProgress=completedInRange(34,37);
+  const motionProgress=completedInRange(38,41);
+  const skyProgress=completedInRange(42,46);
+  const lightProgress=completedInRange(47,51);
+  const completed=arrivalProgress+motionProgress+skyProgress+lightProgress;
+  const phase=arrivalProgress<4?'arrival':motionProgress<4?'motion':skyProgress<5?'sky':lightProgress<5?'light':'complete';
+  const completedSet=new Set(progress.completedLevels);
+
+  storyStage.dataset.phase=phase;
+  storyStage.dataset.completed=String(completed);
+  storyStage.classList.remove('chapter-two','phase-ship','phase-engine','phase-portal','has-engine','has-portal');
+  storyStage.classList.add('chapter-three');
+  storyStage.closest('.story-progress')?.classList.remove('chapter-two-active');
+  storyStage.closest('.story-progress')?.classList.add('chapter-three-active');
+  storyStage.classList.toggle('is-complete',completed===CHAPTER_THREE_WORLD_STEP_COUNT);
+  const phaseKickers={arrival:t('story.goal1'),motion:t('story.goal2'),sky:t('story.goal3'),light:t('story.goal4'),complete:t('story.complete')};
+  const phaseTitles={arrival:t('story.windArrival'),motion:t('story.windMotion'),sky:t('story.windSky'),light:t('story.windLight'),complete:t('story.leaveWindWorld')};
+  storyPhaseKicker.textContent=phaseKickers[phase];
+  storyPhaseTitle.textContent=phaseTitles[phase];
+
+  const values={ship:arrivalProgress,engine:motionProgress,portal:skyProgress,vault:lightProgress};
+  const maximums={ship:4,engine:4,portal:5,vault:5};
+  const labels={ship:t('story.windArrival'),engine:t('story.windMotion'),portal:t('story.windSky'),vault:t('story.windLight')};
+  shipGoalCount.textContent=`${arrivalProgress}/4`;
+  engineGoalCount.textContent=`${motionProgress}/4`;
+  portalGoalCount.textContent=`${skyProgress}/5`;
+  vaultGoalCount.textContent=`${lightProgress}/5`;
+  document.querySelectorAll('[data-story-goal]').forEach(goal=>{
+    const name=goal.dataset.storyGoal;
+    const max=maximums[name]||1;
+    const value=values[name]||0;
+    const active=(phase==='arrival'&&name==='ship')||(phase==='motion'&&name==='engine')||(phase==='sky'&&name==='portal')||(phase==='light'&&name==='vault');
+    goal.classList.toggle('is-done',value===max);
+    goal.classList.toggle('is-active',active);
+    goal.setAttribute('aria-label',`${labels[name]}: ${value}/${max}`);
+  });
+  storyThree.dataset.windStep=String(completed);
+  storyThree.classList.toggle('wind-departed',completedSet.has(CHAPTER_THREE_STORY.finalMissionId));
+  storyThree.querySelectorAll('[data-wind-step]').forEach(element=>{
+    const step=Number(element.dataset.windStep);
+    const worldStep=CHAPTER_THREE_WORLD_STEPS[step-1];
+    element.classList.toggle('is-earned',Boolean(worldStep&&completedSet.has(worldStep.missionId)));
+    element.classList.remove('is-new-reward');
+  });
+}
+
 function renderStoryProgress(){
   const chapter=activeMapChapter();
-  if(chapter.id===2)renderChapterTwoStory();
+  if(chapter.id===3)renderChapterThreeStory();
+  else if(chapter.id===2)renderChapterTwoStory();
   else renderChapterOneStory(Math.min(FINAL_MISSION_ID,completedMissionCount()));
 }
 
@@ -996,7 +1075,8 @@ function createChapterDivider(chapter){
   const divider=document.createElement('div');
   divider.className=`chapter-divider chapter-divider-${chapter.id}`;
   divider.dataset.chapter=String(chapter.id);
-  divider.innerHTML=`<span>${t(chapter.titleKey,{},chapter.id===1?'1. PEATÜKK · ÜKS JA KAKS':'2. PEATÜKK · KOLM')}</span><i aria-hidden="true"></i>`;
+  const fallback=chapter.id===1?'1. PEATÜKK · ÜKS JA KAKS':chapter.id===2?'2. PEATÜKK · KOLM':'3. PEATÜKK · NELI';
+  divider.innerHTML=`<span>${t(chapter.titleKey,{},fallback)}</span><i aria-hidden="true"></i>`;
   return divider;
 }
 
@@ -1026,7 +1106,8 @@ function renderLevelMap(){
   completedLevelCount.textContent=completedMissionCount();
   mapEnergyTotal.textContent=LEVELS.length;
   const activeChapter=activeMapChapter();
-  mapEyebrow.textContent=t(activeChapter.titleKey,{},activeChapter.id===1?'1. PEATÜKK · ÜKS JA KAKS':'2. PEATÜKK · KOLM');
+  const fallback=activeChapter.id===1?'1. PEATÜKK · ÜKS JA KAKS':activeChapter.id===2?'2. PEATÜKK · KOLM':'3. PEATÜKK · NELI';
+  mapEyebrow.textContent=t(activeChapter.titleKey,{},fallback);
   renderStoryProgress();
   const nodes=[];
   CHAPTERS.forEach(chapter=>{
@@ -1402,6 +1483,20 @@ function setChapterTwoRewardProgress(levelId,showReveal){
   rewardScene.dataset.worldStep=String(step);
 }
 
+function setChapterThreeRewardProgress(levelId,showReveal){
+  const step=Math.max(1,Math.min(CHAPTER_THREE_WORLD_STEP_COUNT,levelId-CHAPTER_THREE_STORY.startMissionId+1));
+  const previous=showReveal?Math.max(0,step-1):step;
+  rewardWindWorld.dataset.windStep=String(previous);
+  rewardWindWorld.classList.toggle('wind-departed',!showReveal&&step===CHAPTER_THREE_WORLD_STEP_COUNT);
+  rewardWindWorld.querySelectorAll('[data-wind-step]').forEach(element=>{
+    element.classList.remove('is-earned','is-new-reward');
+    const itemStep=Number(element.dataset.windStep);
+    if(itemStep<=previous)element.classList.add('is-earned');
+    else if(showReveal&&itemStep===step)element.classList.add('is-new-reward');
+  });
+  rewardScene.dataset.windStep=String(step);
+}
+
 function setRewardProgressState(levelId,firstCompletion){
   const shipStep=Math.min(STORY_SEGMENT_LENGTH,levelId);
   const engineStep=Math.min(STORY_SEGMENT_LENGTH,Math.max(0,levelId-SHIP_MISSION_ID));
@@ -1440,6 +1535,16 @@ function configureRewardScene(levelId,firstCompletion,levelPassed){
     return;
   }
   rewardPill.textContent=firstCompletion?t('result.rewardFirst'):t('result.rewardCollected');
+  if(levelId>=CHAPTER_THREE_STORY.startMissionId){
+    rewardScene.classList.add('reward-chapter-three');
+    setChapterThreeRewardProgress(levelId,true);
+    const chapterStep=levelId-CHAPTER_THREE_STORY.startMissionId+1;
+    rewardScene.classList.add(`reward-wind-step-${chapterStep}`);
+    if(chapterStep===1)rewardScene.classList.add('reward-wind-arrival');
+    if(chapterStep===17)rewardScene.classList.add('reward-wind-finale');
+    if(chapterStep===18)rewardScene.classList.add('reward-wind-departure');
+    return;
+  }
   if(levelId>FINAL_MISSION_ID){
     rewardScene.classList.add('reward-chapter-two');
     // The world-changing moment must stay visible even when an already completed
@@ -1483,13 +1588,15 @@ function startRewardCinematic(levelPassed,levelId,firstCompletion=true){
     return;
   }
 
-  const chapterTwoReveal=levelId>FINAL_MISSION_ID;
-  const visualReveal=firstCompletion||chapterTwoReveal;
+  const chapterThreeReveal=levelId>=CHAPTER_THREE_STORY.startMissionId;
+  const chapterTwoReveal=levelId>FINAL_MISSION_ID&&!chapterThreeReveal;
+  const worldReveal=chapterTwoReveal||chapterThreeReveal;
+  const visualReveal=firstCompletion||worldReveal;
   const changeOffset=visualReveal?REWARD_BEFORE_HOLD:0;
   const cue=(delay,callback)=>scheduleCinematic(changeOffset+delay,callback);
   const beginRewardChange=()=>{
     rewardScene.classList.add('is-playing');
-    if(visualReveal)playSound(chapterTwoReveal?'worldAwaken':'rewardReveal');
+    if(visualReveal)playSound(worldReveal?'worldAwaken':'rewardReveal');
   };
 
   if(visualReveal){
@@ -1502,15 +1609,18 @@ function startRewardCinematic(levelPassed,levelId,firstCompletion=true){
     beginRewardChange();
   }
 
-  if(levelId>FINAL_MISSION_ID){
-    const chapterStep=levelId-FINAL_MISSION_ID;
+  if(worldReveal){
+    const chapterStep=chapterThreeReveal
+      ?levelId-CHAPTER_THREE_STORY.startMissionId+1
+      :levelId-FINAL_MISSION_ID;
     const settleAfter=chapterStep===18?3800:2850;
     cue(settleAfter,()=>{
-      rewardLivingWorld.querySelectorAll('.is-new-reward').forEach(element=>{
+      const currentWorld=chapterThreeReveal?rewardWindWorld:rewardLivingWorld;
+      currentWorld.querySelectorAll('.is-new-reward').forEach(element=>{
         element.classList.remove('is-new-reward');
         element.classList.add('is-earned');
       });
-      if(chapterStep===18)rewardLivingWorld.classList.add('world-departed');
+      if(chapterStep===18)currentWorld.classList.add(chapterThreeReveal?'wind-departed':'world-departed');
     });
     if([1,17].includes(chapterStep))cue(2050,()=>playSound('storyStep'));
     if(chapterStep===18){
@@ -1712,6 +1822,8 @@ repeatMultiplicationButton.addEventListener('click',()=>showLesson('multiply-2',
 repeatDivisionButton.addEventListener('click',()=>showLesson('divide-2','explanations'));
 repeatThreeMultiplicationButton.addEventListener('click',()=>showLesson('multiply-3','explanations'));
 repeatThreeDivisionButton.addEventListener('click',()=>showLesson('divide-3','explanations'));
+repeatFourMultiplicationButton.addEventListener('click',()=>showLesson('multiply-4','explanations'));
+repeatFourDivisionButton.addEventListener('click',()=>showLesson('divide-4','explanations'));
 document.querySelector('#explanationBackButton').addEventListener('click',()=>history.back());
 document.querySelector('#backToMapButton').addEventListener('click',()=>showMap());
 resultMapButton.addEventListener('click',()=>showMap());
