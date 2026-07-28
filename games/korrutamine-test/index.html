@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#182452">
   <link rel="manifest" href="manifest.webmanifest">
-    <link rel="icon" href="assets/icon-192.png?v=59">
-    <link rel="apple-touch-icon" href="assets/icon-192.png?v=59">
+    <link rel="icon" href="assets/icon-192.png?v=60">
+    <link rel="apple-touch-icon" href="assets/icon-192.png?v=60">
   <title data-i18n="meta.title">EDUKASS — Korrutustabeli treener</title>
   <meta name="description" content="EDUKASSi korrutustabeli treener: korrutamise ja jagamise missioonid lastele." data-i18n-content="meta.description">
   <meta property="og:type" content="website">
@@ -17,7 +17,7 @@
   <meta property="og:image" content="https://edukass.ee/games/korrutamine-test/assets/share-korrutustabel.png?v=40">
   <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="stylesheet" href="game.css?v=59">
+  <link rel="stylesheet" href="game.css?v=60">
 </head>
 <body class="intro-active">
   <section class="game-intro is-running" id="introScreen" aria-label="EDUKASSi mängu algus" data-i18n-aria-label="intro.aria">
@@ -218,6 +218,7 @@
 
             <div class="story-two living-world living-world-map" id="storyTwo" aria-hidden="true"></div>
             <div class="story-three wind-world wind-world-map" id="storyThree" aria-hidden="true"></div>
+            <div class="story-four lumin-world lumin-world-map" id="storyFour" aria-hidden="true"></div>
           </div>
 
           <div class="story-goals" aria-label="Peatüki teekond" data-i18n-aria-label="map.routeAria">
@@ -229,7 +230,7 @@
         </section>
 
         <div class="mission-route-scroll" id="missionRouteScroll" tabindex="0" aria-label="Missioonide keritav rada">
-          <div class="chapter-route-head"><span id="mapRouteLabel" data-i18n="map.routeLabel">KOSMOSETEE · MISSIOONID 1–51</span></div>
+          <div class="chapter-route-head"><span id="mapRouteLabel" data-i18n="map.routeLabel">KOSMOSETEE · MISSIOONID 1–69</span></div>
           <div class="level-grid" id="levelGrid" aria-label="Esimese, teise ja kolmanda peatüki missioonid" data-i18n-aria-label="map.missionsAria"></div>
         </div>
       </div>
@@ -317,6 +318,7 @@
 
           <div class="reward-three-zone living-world living-world-reward" id="rewardLivingWorld" aria-hidden="true"></div>
           <div class="reward-four-zone wind-world wind-world-reward" id="rewardWindWorld" aria-hidden="true"></div>
+          <div class="reward-five-zone lumin-world lumin-world-reward" id="rewardLuminWorld" aria-hidden="true"></div>
           <div class="reward-impact-ground"><i></i><i></i><i></i></div>
           <div class="result-cat-crop">
             <img class="result-cat result-cat-neutral" src="assets/edukass-cat-transparent.png" alt="">
@@ -390,6 +392,29 @@
     <span class="wind-life wind-departure-trail" data-wind-step="18" data-wind-role="departure"><i></i><i></i><i></i></span>
   </template>
 
+  <template id="luminWorldTemplate">
+    <span class="lumin-life lumin-moon" data-lumin-step="2" data-lumin-role="moon"><i></i></span>
+    <span class="lumin-life lumin-ground-veins" data-lumin-step="3" data-lumin-role="ground-veins"><i></i><i></i><i></i></span>
+    <span class="lumin-life lumin-home" data-lumin-step="4" data-lumin-role="lighthouse-home"><i></i><b></b><em></em></span>
+    <span class="lumin-life lumin-home-light" data-lumin-step="5" data-lumin-role="home-light"><i></i><b></b></span>
+    <span class="lumin-life lumin-garden" data-lumin-step="6" data-lumin-role="crystal-garden"><i></i><i></i><i></i></span>
+    <span class="lumin-life lumin-sky-ribbons" data-lumin-step="7" data-lumin-role="sky-ribbons"><i></i><b></b></span>
+    <span class="lumin-life lumin-rift" data-lumin-step="8" data-lumin-role="light-rift"><i></i></span>
+    <span class="lumin-life lumin-extractor" data-lumin-step="9" data-lumin-role="extractor"><i></i><b></b><em></em></span>
+    <span class="lumin-life lumin-storage" data-lumin-step="10" data-lumin-role="storage"><i></i><b></b></span>
+    <span class="lumin-life lumin-road" data-lumin-step="11" data-lumin-role="light-road"><i></i></span>
+    <span class="lumin-life lumin-flowers" data-lumin-step="12" data-lumin-role="night-flowers"><i></i><i></i><i></i></span>
+    <span class="lumin-life lumin-floaters" data-lumin-step="13" data-lumin-role="floating-lights"><i></i><i></i><i></i><i></i></span>
+    <span class="lumin-life lumin-energy-stream" data-lumin-step="14" data-lumin-role="energy-stream"><i></i></span>
+    <span class="lumin-life lumin-resident" data-lumin-step="15" data-lumin-role="lumin"><i></i><b></b><em></em></span>
+    <span class="lumin-life lumin-city-light" data-lumin-step="16" data-lumin-role="city-light"><i></i><i></i><i></i></span>
+    <span class="lumin-life lumin-final-glow" data-lumin-step="17" data-lumin-role="final-glow"></span>
+    <span class="lumin-life lumin-landing-glow" data-lumin-step="1"></span>
+    <img class="lumin-life lumin-rocket" data-lumin-step="1" data-lumin-role="arrival" src="assets/edukass-world-rocket.png" alt="">
+    <img class="lumin-life lumin-cat" data-lumin-step="1" data-lumin-role="arrival" src="assets/edukass-cat-transparent.png" alt="">
+    <span class="lumin-life lumin-departure-trail" data-lumin-step="18" data-lumin-role="departure"><i></i><i></i><i></i></span>
+  </template>
+
   <dialog class="share-dialog" id="shareDialog" aria-labelledby="shareDialogTitle">
     <form method="dialog" class="share-content">
       <button class="share-close" type="submit" aria-label="Sulge" data-i18n-aria-label="share.closeAria">×</button>
@@ -420,7 +445,7 @@
   <dialog class="share-dialog install-dialog" id="installDialog" aria-labelledby="installDialogTitle">
     <form method="dialog" class="share-content">
       <button class="share-close" type="submit" aria-label="Sulge">×</button>
-    <div class="install-phone" aria-hidden="true"><img src="assets/icon-192.png?v=59" alt=""></div>
+    <div class="install-phone" aria-hidden="true"><img src="assets/icon-192.png?v=60" alt=""></div>
       <p class="eyebrow">EDUKASS</p>
       <h2 id="installDialogTitle">LISA TELEFONI EKRAANILE</h2>
       <p id="installHelpText">Mängu ikoon ilmub sinu telefoni. Kui automaatne lisamine ei avane, vali brauseri menüüst „Lisa avakuvale”.</p>
@@ -428,11 +453,11 @@
     </form>
   </dialog>
 
-  <script src="locales/et.js?v=59"></script>
-  <script src="chapter-one.config.js?v=59"></script>
-  <script src="i18n.js?v=59"></script>
-  <script src="question-engine.js?v=59"></script>
-  <script src="progress-store.js?v=59"></script>
-  <script src="game.js?v=59"></script>
+  <script src="locales/et.js?v=60"></script>
+  <script src="chapter-one.config.js?v=60"></script>
+  <script src="i18n.js?v=60"></script>
+  <script src="question-engine.js?v=60"></script>
+  <script src="progress-store.js?v=60"></script>
+  <script src="game.js?v=60"></script>
 </body>
 </html>
