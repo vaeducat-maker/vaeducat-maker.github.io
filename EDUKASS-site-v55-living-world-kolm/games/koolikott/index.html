@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="et">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#16385f">
+  <title>Koolikoti memomäng — EDUKASS</title>
+  <meta name="description" content="Leia pildile õige eestikeelne sõna. Tasuta EDUKASSi memomäng lastele.">
+  <link rel="stylesheet" href="game-v12.css?v=12">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="../../" aria-label="Tagasi EDUKASSi avalehele">
+    <img src="../korrutamine-test/assets/edukass-cat-transparent.png" alt="">
+    <span>EDUKASS</span>
+  </a>
+  <div class="top-links"><a class="home-link" href="../../materials/koolikott/">← Materjali juurde</a><a class="home-link" href="../../">Avalehele</a></div>
+</header>
+
+<main class="app-shell">
+  <section class="intro" aria-labelledby="game-title">
+    <div>
+      <p class="eyebrow">EESTI KEEL · A1 · TASUTA MÄNG</p>
+      <h1 id="game-title"><span>Koolikoti</span> memomäng</h1>
+      <p class="lead">Leia pildile õige eestikeelne sõna. Ava korraga kaks kaarti ja kogu kõik paarid.</p>
+    </div>
+    <div class="mascot-note">
+      <img src="../korrutamine-test/assets/edukass-cat-transparent.png" alt="EDUKASS">
+      <p><strong>Vihje:</strong> pilt ja sõna moodustavad paari.</p>
+    </div>
+  </section>
+
+  <section class="control-panel" aria-label="Mängu seaded">
+    <div class="level-select" role="group" aria-label="Raskusaste">
+      <button class="chip active" data-level="6" type="button">6 paari</button>
+      <button class="chip" data-level="10" type="button">10 paari</button>
+    </div>
+    <div class="actions">
+      <button id="learnButton" class="button secondary" type="button">Õpi sõnu</button>
+      <button id="soundButton" class="icon-button" type="button" aria-pressed="true" title="Heli sisse või välja">🔊 <span>Heli</span></button>
+      <button id="restartButton" class="button primary" type="button">Uus mäng</button>
+    </div>
+  </section>
+
+  <section class="scorebar" aria-live="polite">
+    <div><span>Käigud</span><strong id="moves">0</strong></div>
+    <div><span>Paarid</span><strong><span id="matched">0</span>/<span id="totalPairs">6</span></strong></div>
+    <div><span>Aeg</span><strong id="timer">00:00</strong></div>
+    <div><span>Parim</span><strong id="best">—</strong></div>
+  </section>
+
+  <section class="board-wrap">
+    <div id="board" class="game-board" aria-label="Memomängu kaardid"></div>
+  </section>
+
+  <p class="helper">Puuduta kaarti. Kui pilt ja sõna sobivad, jäävad need avatuks.</p>
+</main>
+
+<dialog id="learnDialog" class="learn-dialog">
+  <form method="dialog">
+    <button class="dialog-close" aria-label="Sulge">×</button>
+    <p class="eyebrow">ENNE MÄNGU</p>
+    <h2>Õpi sõnu</h2>
+    <div id="wordList" class="word-list"></div>
+    <button class="button primary wide" value="close">Alusta mängu</button>
+  </form>
+</dialog>
+
+<dialog id="winDialog" class="win-dialog">
+  <div class="confetti" aria-hidden="true"></div>
+  <div class="win-content">
+    <div class="win-cat">🐱</div>
+    <p class="eyebrow">TUBLI!</p>
+    <h2>Kõik paarid on leitud!</h2>
+    <p id="winSummary"></p>
+    <div class="win-actions">
+      <button id="playAgainButton" class="button primary" type="button">Mängi uuesti</button>
+      <a class="button secondary" href="../../materials/koolikott/">Vaata sõnavaraplakatit</a>
+    </div>
+  </div>
+</dialog>
+
+<footer>
+  <p>EDUKASS · Õppimine algab uudishimust.</p>
+</footer>
+<script src="game.js?v=12"></script>
+</body>
+</html>
