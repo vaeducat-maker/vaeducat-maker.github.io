@@ -73,6 +73,14 @@
     {
       id:'divide-5',missionId:62,chapterId:4,mode:'divide',table:5,
       eyebrowKey:'lesson.table5.eyebrowDivide',titleKey:'lesson.table5.titleDivide'
+    },
+    {
+      id:'multiply-6',missionId:70,chapterId:5,mode:'multiply',table:6,
+      eyebrowKey:'lesson.table6.eyebrowMultiply',titleKey:'lesson.table6.titleMultiply'
+    },
+    {
+      id:'divide-6',missionId:80,chapterId:5,mode:'divide',table:6,
+      eyebrowKey:'lesson.table6.eyebrowDivide',titleKey:'lesson.table6.titleDivide'
     }
   ];
 
@@ -168,13 +176,38 @@
           {missionId:68,role:'final-glow'},
           {missionId:69,role:'departure'}
         ]
+      },
+      chapterFive:{
+        startMissionId:70,
+        finalMissionId:87,
+        worldSteps:[
+          {missionId:70,role:'arrival'},
+          {missionId:71,role:'fjord'},
+          {missionId:72,role:'white-cliffs'},
+          {missionId:73,role:'northern-forest'},
+          {missionId:74,role:'pier'},
+          {missionId:75,role:'cliff-home'},
+          {missionId:76,role:'home-light'},
+          {missionId:77,role:'boat'},
+          {missionId:78,role:'fishing-nets'},
+          {missionId:79,role:'boardwalk'},
+          {missionId:80,role:'moss-berries'},
+          {missionId:81,role:'resident'},
+          {missionId:82,role:'resident-to-pier'},
+          {missionId:83,role:'work-yard'},
+          {missionId:84,role:'boat-return'},
+          {missionId:85,role:'living-village'},
+          {missionId:86,role:'finished-north'},
+          {missionId:87,role:'departure'}
+        ]
       }
     },
     chapters:[
       {id:1,titleKey:'chapter.1.title',shortKey:'chapter.1.short',startMissionId:1,endMissionId:15,accent:'#70d9cf'},
       {id:2,titleKey:'chapter.2.title',shortKey:'chapter.2.short',startMissionId:16,endMissionId:33,accent:'#8f7de2'},
       {id:3,titleKey:'chapter.3.title',shortKey:'chapter.3.short',startMissionId:34,endMissionId:51,accent:'#ed8f72'},
-      {id:4,titleKey:'chapter.4.title',shortKey:'chapter.4.short',startMissionId:52,endMissionId:69,accent:'#f4e75b'}
+      {id:4,titleKey:'chapter.4.title',shortKey:'chapter.4.short',startMissionId:52,endMissionId:69,accent:'#f4e75b'},
+      {id:5,titleKey:'chapter.5.title',shortKey:'chapter.5.short',startMissionId:70,endMissionId:87,accent:'#bd5d3a'}
     ],
     defaultLanguage:'et',
     supportedLanguages:['et'],
@@ -967,6 +1000,78 @@
       {
         id:69,chapterId:4,titleKey:'mission.69.title',shortKey:'mission.69.short',title:'Peatüki kontroll',short:'Kontroll 1–5',mode:'input',operation:'mixed',seconds:TIMER_PROFILE.control,accent:'#f17a76',
         questionGroups:[{type:'multiplication',table:1,statsTable:1,factors:[10],orientation:'forward',copies:1},{type:'multiplication',table:2,factors:[7],orientation:'mixed',copies:1},{type:'multiplication',table:3,statsTable:3,factors:[6,8],orientation:'mixed',copies:1},{type:'multiplication',table:4,statsTable:4,factors:[5,9],orientation:'mixed',copies:1},{type:'multiplication',table:5,statsTable:5,factors:[4,6,7,8,9],orientation:'mixed',copies:1},{type:'division',divisor:2,factors:[9],copies:1},{type:'division',divisor:3,statsTable:3,factors:[7],copies:1},{type:'division',divisor:4,statsTable:4,factors:[8],copies:1},{type:'division',divisor:5,statsTable:5,factors:[6,10],copies:1}]
+      },
+      {
+        id:70,chapterId:5,titleKey:'mission.70.title',shortKey:'mission.70.short',title:'Korrutamise valik',short:'Vali ×6',mode:'choice',operation:'multiply',seconds:TIMER_PROFILE.choice,accent:'#bd5d3a',
+        questionGroups:[{type:'multiplication',table:6,statsTable:6,factors:ONE_TO_TEN,orientation:'forward',copies:1},{type:'multiplication',table:6,statsTable:6,factors:[2,4,6,8,10],orientation:'forward',copies:1}]
+      },
+      {
+        id:71,chapterId:5,titleKey:'mission.71.title',shortKey:'mission.71.short',title:'Alustame kuuega',short:'×6 · 1–5',mode:'input',operation:'multiply',seconds:TIMER_PROFILE.firstHalf,accent:'#b9653d',
+        questionGroups:[{type:'multiplication',table:6,statsTable:6,factors:ONE_TO_FIVE,orientation:'forward',copies:3}]
+      },
+      {
+        id:72,chapterId:5,titleKey:'mission.72.title',shortKey:'mission.72.short',title:'Jätkame kuuega',short:'×6 · 6–10',mode:'input',operation:'multiply',seconds:TIMER_PROFILE.secondHalf,accent:'#b06e42',
+        questionGroups:[{type:'multiplication',table:6,statsTable:6,factors:SIX_TO_TEN,orientation:'forward',copies:3}]
+      },
+      {
+        id:73,chapterId:5,titleKey:'mission.73.title',shortKey:'mission.73.short',title:'Kogu kuuega korrutamine',short:'×6 · kõik',mode:'input',operation:'multiply',seconds:TIMER_PROFILE.fullTable,accent:'#a77647',
+        questionGroups:[{type:'multiplication',table:6,statsTable:6,factors:ONE_TO_TEN,orientation:'forward',copies:1},{type:'multiplication',table:6,statsTable:6,factors:SIX_TO_TEN,orientation:'forward',copies:1}]
+      },
+      {
+        id:74,chapterId:5,titleKey:'mission.74.title',shortKey:'mission.74.short',title:'Kuus teisel kohal',short:'arv × 6',mode:'input',operation:'multiply',seconds:TIMER_PROFILE.reverse,accent:'#9e7e4c',
+        questionGroups:[{type:'multiplication',table:6,statsTable:6,factors:ONE_TO_TEN,orientation:'reverse',copies:1},{type:'multiplication',table:6,statsTable:6,factors:SIX_TO_TEN,orientation:'reverse',copies:1}]
+      },
+      {
+        id:75,chapterId:5,titleKey:'mission.75.title',shortKey:'mission.75.short',title:'Vahetame järjekorda',short:'×6 ↔ 6×',mode:'input',operation:'multiply',seconds:TIMER_PROFILE.reorder,accent:'#958650',
+        questionGroups:[{type:'multiplication',table:6,statsTable:6,factors:ONE_TO_TEN,orientation:'mixed',copies:1},{type:'multiplication',table:6,statsTable:6,factors:SIX_TO_TEN,orientation:'mixed',copies:1}]
+      },
+      {
+        id:76,chapterId:5,titleKey:'mission.76.title',shortKey:'mission.76.short',title:'Viis ja kuus koos',short:'×5 ja ×6',mode:'input',operation:'multiply',seconds:TIMER_PROFILE.firstMix,accent:'#8b8e55',
+        questionGroups:[{type:'multiplication',table:5,statsTable:5,factors:[2,3,4,5,6,7,8],orientation:'mixed',copies:1},{type:'multiplication',table:6,statsTable:6,factors:[1,2,3,4,5,6,7,8],orientation:'mixed',copies:1}]
+      },
+      {
+        id:77,chapterId:5,titleKey:'mission.77.title',shortKey:'mission.77.short',title:'Kuus on selge',short:'Täpsus ×6',mode:'input',operation:'multiply',seconds:TIMER_PROFILE.adaptive,accent:'#81955b',
+        questionGroups:[{type:'multiplication',table:6,statsTable:6,factors:ONE_TO_TEN,orientation:'mixed',copies:1},{type:'adaptive',operation:'multiply',table:6,statsTable:6,factors:[5,6,7,8,9],count:5,orientation:'mixed'}]
+      },
+      {
+        id:78,chapterId:5,titleKey:'mission.78.title',shortKey:'mission.78.short',title:'Kordame kõike',short:'×1–6',mode:'input',operation:'multiply',seconds:TIMER_PROFILE.cumulative,accent:'#779d61',
+        questionGroups:[{type:'multiplication',table:1,statsTable:1,factors:[8],orientation:'forward',copies:1},{type:'multiplication',table:2,factors:[7],orientation:'mixed',copies:1},{type:'multiplication',table:3,statsTable:3,factors:[6],orientation:'mixed',copies:1},{type:'multiplication',table:4,statsTable:4,factors:[5],orientation:'mixed',copies:1},{type:'multiplication',table:5,statsTable:5,factors:[4,9],orientation:'mixed',copies:1},{type:'multiplication',table:6,statsTable:6,factors:[1,2,3,4,5,6,7,8,9],orientation:'mixed',copies:1}]
+      },
+      {
+        id:79,chapterId:5,titleKey:'mission.79.title',shortKey:'mission.79.short',title:'Korrutamise kontroll',short:'Kontroll ×1–6',mode:'input',operation:'multiply',seconds:TIMER_PROFILE.control,accent:'#6da468',
+        questionGroups:[{type:'multiplication',table:1,statsTable:1,factors:[9],orientation:'forward',copies:1},{type:'multiplication',table:2,factors:[7],orientation:'mixed',copies:1},{type:'multiplication',table:3,statsTable:3,factors:[8],orientation:'mixed',copies:1},{type:'multiplication',table:4,statsTable:4,factors:[6],orientation:'mixed',copies:1},{type:'multiplication',table:5,statsTable:5,factors:[4,9],orientation:'mixed',copies:1},{type:'multiplication',table:6,statsTable:6,factors:[2,3,4,5,6,7,8,9,10],orientation:'mixed',copies:1}]
+      },
+      {
+        id:80,chapterId:5,titleKey:'mission.80.title',shortKey:'mission.80.short',title:'Jagamise valik',short:'Vali ÷6',mode:'choice',operation:'divide',seconds:TIMER_PROFILE.choice,accent:'#829867',
+        questionGroups:[{type:'division',divisor:6,statsTable:6,factors:ONE_TO_TEN,copies:1},{type:'division',divisor:6,statsTable:6,factors:[2,4,6,8,10],copies:1}]
+      },
+      {
+        id:81,chapterId:5,titleKey:'mission.81.title',shortKey:'mission.81.short',title:'Jagame kuuega',short:'÷6 · 1–5',mode:'input',operation:'divide',seconds:TIMER_PROFILE.firstHalf,accent:'#988b62',
+        questionGroups:[{type:'division',divisor:6,statsTable:6,factors:ONE_TO_FIVE,copies:3}]
+      },
+      {
+        id:82,chapterId:5,titleKey:'mission.82.title',shortKey:'mission.82.short',title:'Jätkame jagamist',short:'÷6 · 6–10',mode:'input',operation:'divide',seconds:TIMER_PROFILE.secondHalf,accent:'#aa7e5c',
+        questionGroups:[{type:'division',divisor:6,statsTable:6,factors:SIX_TO_TEN,copies:3}]
+      },
+      {
+        id:83,chapterId:5,titleKey:'mission.83.title',shortKey:'mission.83.short',title:'Kogu kuuega jagamine',short:'÷6 · kõik',mode:'input',operation:'divide',seconds:TIMER_PROFILE.divisionFull,accent:'#bb7155',
+        questionGroups:[{type:'division',divisor:6,statsTable:6,factors:ONE_TO_TEN,copies:1},{type:'adaptive',operation:'divide',divisor:6,statsTable:6,factors:ONE_TO_TEN,count:5}]
+      },
+      {
+        id:84,chapterId:5,titleKey:'mission.84.title',shortKey:'mission.84.short',title:'Jagame viie ja kuuega',short:'÷5 ja ÷6',mode:'input',operation:'divide',seconds:TIMER_PROFILE.reorder,accent:'#c5664d',
+        questionGroups:[{type:'division',divisor:5,statsTable:5,factors:[2,3,4,5,6,7,8],copies:1},{type:'division',divisor:6,statsTable:6,factors:[1,2,3,4,5,6,7,8],copies:1}]
+      },
+      {
+        id:85,chapterId:5,titleKey:'mission.85.title',shortKey:'mission.85.short',title:'Korrutamine ja jagamine kuuega',short:'×6 ja ÷6',mode:'input',operation:'mixed',seconds:TIMER_PROFILE.familyMixed,accent:'#ce6147',
+        questionGroups:[{type:'multiplication',table:6,statsTable:6,factors:[1,2,3,4,5,6,7,8],orientation:'mixed',copies:1},{type:'division',divisor:6,statsTable:6,factors:[4,5,6,7,8,9,10],copies:1}]
+      },
+      {
+        id:86,chapterId:5,titleKey:'mission.86.title',shortKey:'mission.86.short',title:'Kõik segamini',short:'Kõik 1–6',mode:'input',operation:'mixed',seconds:TIMER_PROFILE.adaptive,accent:'#d65d40',
+        questionGroups:[{type:'multiplication',table:3,statsTable:3,factors:[7],orientation:'mixed',copies:1},{type:'multiplication',table:4,statsTable:4,factors:[6],orientation:'mixed',copies:1},{type:'multiplication',table:5,statsTable:5,factors:[8],orientation:'mixed',copies:1},{type:'multiplication',table:6,statsTable:6,factors:[4,7],orientation:'mixed',copies:1},{type:'division',divisor:3,statsTable:3,factors:[8],copies:1},{type:'division',divisor:4,statsTable:4,factors:[7],copies:1},{type:'division',divisor:5,statsTable:5,factors:[9],copies:1},{type:'division',divisor:6,statsTable:6,factors:[3,8],copies:1},{type:'adaptive',count:6,families:[{operation:'multiply',table:4,statsTable:4,factors:ONE_TO_TEN,orientation:'mixed'},{operation:'multiply',table:5,statsTable:5,factors:ONE_TO_TEN,orientation:'mixed'},{operation:'multiply',table:6,statsTable:6,factors:ONE_TO_TEN,orientation:'mixed'},{operation:'divide',divisor:4,statsTable:4,factors:ONE_TO_TEN},{operation:'divide',divisor:5,statsTable:5,factors:ONE_TO_TEN},{operation:'divide',divisor:6,statsTable:6,factors:ONE_TO_TEN}]}]
+      },
+      {
+        id:87,chapterId:5,titleKey:'mission.87.title',shortKey:'mission.87.short',title:'Peatüki kontroll',short:'Kontroll 1–6',mode:'input',operation:'mixed',seconds:TIMER_PROFILE.control,accent:'#df5939',
+        questionGroups:[{type:'multiplication',table:1,statsTable:1,factors:[10],orientation:'forward',copies:1},{type:'multiplication',table:2,factors:[7],orientation:'mixed',copies:1},{type:'multiplication',table:3,statsTable:3,factors:[8],orientation:'mixed',copies:1},{type:'multiplication',table:4,statsTable:4,factors:[6],orientation:'mixed',copies:1},{type:'multiplication',table:5,statsTable:5,factors:[9],orientation:'mixed',copies:1},{type:'multiplication',table:6,statsTable:6,factors:[4,5,6,7,8,9],orientation:'mixed',copies:1},{type:'division',divisor:3,statsTable:3,factors:[7],copies:1},{type:'division',divisor:4,statsTable:4,factors:[8],copies:1},{type:'division',divisor:5,statsTable:5,factors:[6],copies:1},{type:'division',divisor:6,statsTable:6,factors:[5,10],copies:1}]
       }
 
     ],

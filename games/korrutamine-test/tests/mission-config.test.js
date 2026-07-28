@@ -7,7 +7,7 @@ const config=require(path.join(gameRoot,'chapter-one.config.js'));
 const questionEngineApi=require(path.join(gameRoot,'question-engine.js'));
 
 const EXPECTED_FIRST_CHAPTER_SIGNATURE='83fa3e428f49ac63046fb4529460ac1ae51a1a4c3ca595bcd9a36b5b7a720643';
-const EXPECTED_CONTENT_SIGNATURE='13405b3646fcd62d941f79ff5dfdc9c161afaf31c2c46cfa88386a0c631588c7';
+const EXPECTED_CONTENT_SIGNATURE='7de6dca56f71ea4de489065ae11eb3014a4ab2453c62c0c014dd8f0f0c038628';
 const SUPPORTED_GROUP_TYPES=new Set(['fixed','multiplication','division','adaptive']);
 const SUPPORTED_MODES=new Set(['choice','input']);
 const SUPPORTED_OPERATIONS=new Set(['multiply','divide','mixed']);
@@ -78,12 +78,13 @@ function validateConfiguration(){
   assert.equal(config.roundLength,15,'A mission must require exactly 15 correct answers.');
   assert.equal(config.practiceTable,2,'The legacy first chapter must keep table 2 as its default.');
   assert.deepEqual(config.practiceFactors,[1,2,3,4,5,6,7,8,9,10]);
-  assert.equal(config.missions.length,69,'The current build must contain missions 1–69.');
-  assert.deepEqual(config.missions.map(mission=>mission.id),Array.from({length:69},(_,index)=>index+1));
-  assert.deepEqual(config.chapters.map(chapter=>[chapter.id,chapter.startMissionId,chapter.endMissionId]),[[1,1,15],[2,16,33],[3,34,51],[4,52,69]]);
+  assert.equal(config.missions.length,87,'The current build must contain missions 1–87.');
+  assert.deepEqual(config.missions.map(mission=>mission.id),Array.from({length:87},(_,index)=>index+1));
+  assert.deepEqual(config.chapters.map(chapter=>[chapter.id,chapter.startMissionId,chapter.endMissionId]),[[1,1,15],[2,16,33],[3,34,51],[4,52,69],[5,70,87]]);
   assert.deepEqual(config.lesson.triggers.map(lesson=>[lesson.id,lesson.missionId,lesson.table]),[
     ['multiply-2',1,2],['divide-2',11,2],['multiply-3',16,3],['divide-3',26,3],
-    ['multiply-4',34,4],['divide-4',44,4],['multiply-5',52,5],['divide-5',62,5]
+    ['multiply-4',34,4],['divide-4',44,4],['multiply-5',52,5],['divide-5',62,5],
+    ['multiply-6',70,6],['divide-6',80,6]
   ]);
 
   for(const mission of config.missions){
@@ -116,8 +117,11 @@ function validateConfiguration(){
   assert.deepEqual(config.missions.slice(51,61).map(mission=>mission.operation),Array(10).fill('multiply'));
   assert.deepEqual(config.missions.slice(61,66).map(mission=>mission.operation),Array(5).fill('divide'));
   assert.deepEqual(config.missions.slice(66,69).map(mission=>mission.operation),Array(3).fill('mixed'));
-  assert.deepEqual(config.missions.filter(mission=>mission.mode==='choice').map(mission=>mission.id),[1,11,16,26,34,44,52,62]);
-  for(const missionId of [7,8,14,23,29,32,41,47,50,59,65,68]){
+  assert.deepEqual(config.missions.slice(69,79).map(mission=>mission.operation),Array(10).fill('multiply'));
+  assert.deepEqual(config.missions.slice(79,84).map(mission=>mission.operation),Array(5).fill('divide'));
+  assert.deepEqual(config.missions.slice(84,87).map(mission=>mission.operation),Array(3).fill('mixed'));
+  assert.deepEqual(config.missions.filter(mission=>mission.mode==='choice').map(mission=>mission.id),[1,11,16,26,34,44,52,62,70,80]);
+  for(const missionId of [7,8,14,23,29,32,41,47,50,59,65,68,77,83,86]){
     assert(config.missions[missionId-1].questionGroups.some(group=>group.type==='adaptive'),`Mission ${missionId} must include adaptive practice.`);
   }
 }
@@ -156,7 +160,7 @@ function validateGeneratedRounds(){
             if(question.b===1){
               assert.equal(mission.id,11,`Mission ${mission.id}: division by 1 is only preserved in the approved introductory mission 11.`);
             }else{
-              assert([2,3,4,5].includes(question.b),`Mission ${mission.id}: unsupported divisor ${question.b}.`);
+              assert([2,3,4,5,6].includes(question.b),`Mission ${mission.id}: unsupported divisor ${question.b}.`);
             }
           }
           if(index>0)assert.notEqual(engine.equationKey(question),engine.equationKey(round[index-1]),`Mission ${mission.id}, seed ${seed}: adjacent duplicate.`);
