@@ -97,6 +97,7 @@ check(!gameCode.includes("title:'Korrutamise valik'"),'game.js contains no embed
 check(gameCode.includes('window.__EDUKASS_TEST__'),'test interface remains available');
 check(gameCode.includes("const SHARE_URL='https://edukass.ee/games/korrutamine-test/'"),'share control uses the permanent EDUKASS game URL');
 check(/\.reward-chapter-nine[^{]*\.result-cat-crop\s*\{display:none\}/.test(gameCss),'chapter Kümme hides the legacy reward cat');
+check(/\.canyon-world::before\s*\{left:0\}/.test(gameCss),'chapter Kümme anchors the left canyon cliff');
 const siteShareCode=fs.readFileSync(path.join(root,'site-share.js'),'utf8');
 check(gameIndex.includes('shareGameButton')&&siteShareCode.includes('shareMathGameButton'),'share controls are available both on the site and inside the game');
 
