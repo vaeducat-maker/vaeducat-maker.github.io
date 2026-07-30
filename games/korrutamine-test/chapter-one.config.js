@@ -105,6 +105,14 @@
     {
       id:'divide-9',missionId:134,chapterId:8,mode:'divide',table:9,
       eyebrowKey:'lesson.table9.eyebrowDivide',titleKey:'lesson.table9.titleDivide'
+    },
+    {
+      id:'multiply-10',missionId:142,chapterId:9,mode:'multiply',table:10,
+      eyebrowKey:'lesson.table10.eyebrowMultiply',titleKey:'lesson.table10.titleMultiply'
+    },
+    {
+      id:'divide-10',missionId:152,chapterId:9,mode:'divide',table:10,
+      eyebrowKey:'lesson.table10.eyebrowDivide',titleKey:'lesson.table10.titleDivide'
     }
   ];
 
@@ -149,6 +157,27 @@
     {id:140,title:'Kõik segamini',short:'Kõik 1–9',mode:'input',operation:'mixed',seconds:TIMER_PROFILE.adaptive,accent:'#91bf83',questionGroups:[{type:'multiplication',table:7,statsTable:7,factors:[8],orientation:'mixed',copies:1},{type:'multiplication',table:8,statsTable:8,factors:[9],orientation:'mixed',copies:1},{type:'multiplication',table:9,statsTable:9,factors:[4,7],orientation:'mixed',copies:1},{type:'division',divisor:7,statsTable:7,factors:[9],copies:1},{type:'division',divisor:8,statsTable:8,factors:[7],copies:1},{type:'division',divisor:9,statsTable:9,factors:[3,8],copies:1},{type:'adaptive',count:7,families:[{operation:'multiply',table:7,statsTable:7,factors:ONE_TO_TEN,orientation:'mixed'},{operation:'multiply',table:8,statsTable:8,factors:ONE_TO_TEN,orientation:'mixed'},{operation:'multiply',table:9,statsTable:9,factors:ONE_TO_TEN,orientation:'mixed'},{operation:'divide',divisor:7,statsTable:7,factors:ONE_TO_TEN},{operation:'divide',divisor:8,statsTable:8,factors:ONE_TO_TEN},{operation:'divide',divisor:9,statsTable:9,factors:ONE_TO_TEN}]}]},
     {id:141,title:'Peatüki kontroll',short:'Kontroll 1–9',mode:'input',operation:'mixed',seconds:TIMER_PROFILE.control,accent:'#64b49a',questionGroups:[{type:'multiplication',table:5,statsTable:5,factors:[9],orientation:'mixed',copies:1},{type:'multiplication',table:6,statsTable:6,factors:[8],orientation:'mixed',copies:1},{type:'multiplication',table:7,statsTable:7,factors:[9],orientation:'mixed',copies:1},{type:'multiplication',table:8,statsTable:8,factors:[7,9],orientation:'mixed',copies:1},{type:'multiplication',table:9,statsTable:9,factors:[4,5,6,7,8,9],orientation:'mixed',copies:1},{type:'division',divisor:6,statsTable:6,factors:[9],copies:1},{type:'division',divisor:7,statsTable:7,factors:[8],copies:1},{type:'division',divisor:8,statsTable:8,factors:[9],copies:1},{type:'division',divisor:9,statsTable:9,factors:[5,10],copies:1}]}
   ].map(mission=>({...mission,chapterId:8,titleKey:`mission.${mission.id}.title`,shortKey:`mission.${mission.id}.short`}));
+
+  const CHAPTER_TEN_MISSIONS=[
+    {id:142,title:'Korrutamise valik',short:'Vali ×10',mode:'choice',operation:'multiply',seconds:TIMER_PROFILE.choice,accent:'#55b86b',questionGroups:[{type:'multiplication',table:10,statsTable:10,factors:ONE_TO_TEN,orientation:'forward',copies:1},{type:'multiplication',table:10,statsTable:10,factors:[2,4,6,8,10],orientation:'forward',copies:1}]},
+    {id:143,title:'Alustame kümnega',short:'×10 · 1–5',mode:'input',operation:'multiply',seconds:TIMER_PROFILE.firstHalf,accent:'#43aa69',questionGroups:[{type:'multiplication',table:10,statsTable:10,factors:ONE_TO_FIVE,orientation:'forward',copies:3}]},
+    {id:144,title:'Jätkame kümnega',short:'×10 · 6–10',mode:'input',operation:'multiply',seconds:TIMER_PROFILE.secondHalf,accent:'#319b68',questionGroups:[{type:'multiplication',table:10,statsTable:10,factors:SIX_TO_TEN,orientation:'forward',copies:3}]},
+    {id:145,title:'Kogu kümnega korrutamine',short:'×10 · kõik',mode:'input',operation:'multiply',seconds:TIMER_PROFILE.fullTable,accent:'#258b67',questionGroups:[{type:'multiplication',table:10,statsTable:10,factors:ONE_TO_TEN,orientation:'forward',copies:1},{type:'multiplication',table:10,statsTable:10,factors:SIX_TO_TEN,orientation:'forward',copies:1}]},
+    {id:146,title:'Kümme teisel kohal',short:'arv × 10',mode:'input',operation:'multiply',seconds:TIMER_PROFILE.reverse,accent:'#257b68',questionGroups:[{type:'multiplication',table:10,statsTable:10,factors:ONE_TO_TEN,orientation:'reverse',copies:1},{type:'multiplication',table:10,statsTable:10,factors:SIX_TO_TEN,orientation:'reverse',copies:1}]},
+    {id:147,title:'Vahetame järjekorda',short:'×10 ↔ 10×',mode:'input',operation:'multiply',seconds:TIMER_PROFILE.reorder,accent:'#346d6d',questionGroups:[{type:'multiplication',table:10,statsTable:10,factors:ONE_TO_TEN,orientation:'mixed',copies:1},{type:'multiplication',table:10,statsTable:10,factors:SIX_TO_TEN,orientation:'mixed',copies:1}]},
+    {id:148,title:'Üheksa ja kümme koos',short:'×9 ja ×10',mode:'input',operation:'multiply',seconds:TIMER_PROFILE.firstMix,accent:'#4d6475',questionGroups:[{type:'multiplication',table:9,statsTable:9,factors:[2,3,4,5,6,7,8,9,10],orientation:'mixed',copies:1},{type:'multiplication',table:10,statsTable:10,factors:[1,2,3,4,5,6,7,8,9,10],orientation:'mixed',copies:1}]},
+    {id:149,title:'Kümme on selge',short:'Täpsus ×10',mode:'input',operation:'multiply',seconds:TIMER_PROFILE.adaptive,accent:'#665c7d',questionGroups:[{type:'multiplication',table:10,statsTable:10,factors:ONE_TO_TEN,orientation:'mixed',copies:1},{type:'adaptive',operation:'multiply',table:10,statsTable:10,factors:[5,6,7,8,9,10],count:5,orientation:'mixed'}]},
+    {id:150,title:'Kordame kõike',short:'×1–10',mode:'input',operation:'multiply',seconds:TIMER_PROFILE.cumulative,accent:'#805985',questionGroups:[{type:'multiplication',table:6,statsTable:6,factors:[9],orientation:'mixed',copies:1},{type:'multiplication',table:7,statsTable:7,factors:[8],orientation:'mixed',copies:1},{type:'multiplication',table:8,statsTable:8,factors:[7,9],orientation:'mixed',copies:1},{type:'multiplication',table:9,statsTable:9,factors:[6,8],orientation:'mixed',copies:1},{type:'multiplication',table:10,statsTable:10,factors:ONE_TO_TEN,orientation:'mixed',copies:1}]},
+    {id:151,title:'Korrutamise kontroll',short:'Kontroll ×1–10',mode:'input',operation:'multiply',seconds:TIMER_PROFILE.control,accent:'#9a5b82',questionGroups:[{type:'multiplication',table:5,statsTable:5,factors:[9],orientation:'mixed',copies:1},{type:'multiplication',table:6,statsTable:6,factors:[8],orientation:'mixed',copies:1},{type:'multiplication',table:7,statsTable:7,factors:[9],orientation:'mixed',copies:1},{type:'multiplication',table:8,statsTable:8,factors:[6,9],orientation:'mixed',copies:1},{type:'multiplication',table:9,statsTable:9,factors:[7,10],orientation:'mixed',copies:1},{type:'multiplication',table:10,statsTable:10,factors:ONE_TO_TEN,orientation:'mixed',copies:1}]},
+    {id:152,title:'Jagamise valik',short:'Vali ÷10',mode:'choice',operation:'divide',seconds:TIMER_PROFILE.choice,accent:'#ad637c',questionGroups:[{type:'division',divisor:10,statsTable:10,factors:ONE_TO_TEN,copies:1},{type:'division',divisor:10,statsTable:10,factors:[2,4,6,8,10],copies:1}]},
+    {id:153,title:'Jagame kümnega',short:'÷10 · 1–5',mode:'input',operation:'divide',seconds:TIMER_PROFILE.firstHalf,accent:'#bd7072',questionGroups:[{type:'division',divisor:10,statsTable:10,factors:ONE_TO_FIVE,copies:3}]},
+    {id:154,title:'Jätkame jagamist',short:'÷10 · 6–10',mode:'input',operation:'divide',seconds:TIMER_PROFILE.secondHalf,accent:'#c98367',questionGroups:[{type:'division',divisor:10,statsTable:10,factors:SIX_TO_TEN,copies:3}]},
+    {id:155,title:'Kogu kümnega jagamine',short:'÷10 · kõik',mode:'input',operation:'divide',seconds:TIMER_PROFILE.divisionFull,accent:'#cd995d',questionGroups:[{type:'division',divisor:10,statsTable:10,factors:ONE_TO_TEN,copies:1},{type:'adaptive',operation:'divide',divisor:10,statsTable:10,factors:ONE_TO_TEN,count:5}]},
+    {id:156,title:'Jagame üheksa ja kümnega',short:'÷9 ja ÷10',mode:'input',operation:'divide',seconds:TIMER_PROFILE.reorder,accent:'#c5ad59',questionGroups:[{type:'division',divisor:9,statsTable:9,factors:[2,3,4,5,6,7,8,9,10],copies:1},{type:'division',divisor:10,statsTable:10,factors:[1,2,3,4,5,6,7,8,9,10],copies:1}]},
+    {id:157,title:'Korrutamine ja jagamine kümnega',short:'×10 ja ÷10',mode:'input',operation:'mixed',seconds:TIMER_PROFILE.familyMixed,accent:'#a8b85e',questionGroups:[{type:'multiplication',table:10,statsTable:10,factors:[1,2,3,4,5,6,7,8,9],orientation:'mixed',copies:1},{type:'division',divisor:10,statsTable:10,factors:[4,5,6,7,8,9,10],copies:1}]},
+    {id:158,title:'Kõik segamini',short:'Kõik 1–10',mode:'input',operation:'mixed',seconds:TIMER_PROFILE.adaptive,accent:'#80b46c',questionGroups:[{type:'multiplication',table:8,statsTable:8,factors:[9],orientation:'mixed',copies:1},{type:'multiplication',table:9,statsTable:9,factors:[8,10],orientation:'mixed',copies:1},{type:'multiplication',table:10,statsTable:10,factors:[4,7],orientation:'mixed',copies:1},{type:'division',divisor:8,statsTable:8,factors:[9],copies:1},{type:'division',divisor:9,statsTable:9,factors:[8],copies:1},{type:'division',divisor:10,statsTable:10,factors:[3,8],copies:1},{type:'adaptive',count:7,families:[{operation:'multiply',table:8,statsTable:8,factors:ONE_TO_TEN,orientation:'mixed'},{operation:'multiply',table:9,statsTable:9,factors:ONE_TO_TEN,orientation:'mixed'},{operation:'multiply',table:10,statsTable:10,factors:ONE_TO_TEN,orientation:'mixed'},{operation:'divide',divisor:8,statsTable:8,factors:ONE_TO_TEN},{operation:'divide',divisor:9,statsTable:9,factors:ONE_TO_TEN},{operation:'divide',divisor:10,statsTable:10,factors:ONE_TO_TEN}]}]},
+    {id:159,title:'Peatüki kontroll',short:'Kontroll 1–10',mode:'input',operation:'mixed',seconds:TIMER_PROFILE.control,accent:'#59aa7d',questionGroups:[{type:'multiplication',table:6,statsTable:6,factors:[9],orientation:'mixed',copies:1},{type:'multiplication',table:7,statsTable:7,factors:[8],orientation:'mixed',copies:1},{type:'multiplication',table:8,statsTable:8,factors:[9],orientation:'mixed',copies:1},{type:'multiplication',table:9,statsTable:9,factors:[7,10],orientation:'mixed',copies:1},{type:'multiplication',table:10,statsTable:10,factors:[4,5,6,7,8,9],orientation:'mixed',copies:1},{type:'division',divisor:7,statsTable:7,factors:[9],copies:1},{type:'division',divisor:8,statsTable:8,factors:[9],copies:1},{type:'division',divisor:9,statsTable:9,factors:[8],copies:1},{type:'division',divisor:10,statsTable:10,factors:[5,10],copies:1}]}
+  ].map(mission=>({...mission,chapterId:9,titleKey:`mission.${mission.id}.title`,shortKey:`mission.${mission.id}.short`}));
 
   return {
     schemaVersion:2,
@@ -338,6 +367,30 @@
           {missionId:140,role:'living-ocean'},
           {missionId:141,role:'departure'}
         ]
+      },
+      chapterNine:{
+        startMissionId:142,
+        finalMissionId:159,
+        worldSteps:[
+          {missionId:142,role:'alien-arrival'},
+          {missionId:143,role:'moss'},
+          {missionId:144,role:'root-bridge'},
+          {missionId:145,role:'twin-suns'},
+          {missionId:146,role:'vines'},
+          {missionId:147,role:'ferns'},
+          {missionId:148,role:'cliff-homes'},
+          {missionId:149,role:'windows'},
+          {missionId:150,role:'hanging-gardens'},
+          {missionId:151,role:'flowers'},
+          {missionId:152,role:'first-resident'},
+          {missionId:153,role:'residents'},
+          {missionId:154,role:'glowing-seeds'},
+          {missionId:155,role:'sky-bridges'},
+          {missionId:156,role:'turquoise-mist'},
+          {missionId:157,role:'ringed-planet'},
+          {missionId:158,role:'living-canyon'},
+          {missionId:159,role:'departure'}
+        ]
       }
     },
     chapters:[
@@ -348,7 +401,8 @@
       {id:5,titleKey:'chapter.5.title',shortKey:'chapter.5.short',startMissionId:70,endMissionId:87,accent:'#bd5d3a'},
       {id:6,titleKey:'chapter.6.title',shortKey:'chapter.6.short',startMissionId:88,endMissionId:105,accent:'#a6df45'},
       {id:7,titleKey:'chapter.7.title',shortKey:'chapter.7.short',startMissionId:106,endMissionId:123,accent:'#f1b53c'},
-      {id:8,titleKey:'chapter.8.title',shortKey:'chapter.8.short',startMissionId:124,endMissionId:141,accent:'#2aa8bf'}
+      {id:8,titleKey:'chapter.8.title',shortKey:'chapter.8.short',startMissionId:124,endMissionId:141,accent:'#2aa8bf'},
+      {id:9,titleKey:'chapter.9.title',shortKey:'chapter.9.short',startMissionId:142,endMissionId:159,accent:'#55b86b'}
     ],
     defaultLanguage:'et',
     supportedLanguages:['et'],
@@ -1287,7 +1341,8 @@
         questionGroups:[{type:'multiplication',table:2,factors:[8],orientation:'mixed',copies:1},{type:'multiplication',table:3,statsTable:3,factors:[7],orientation:'mixed',copies:1},{type:'multiplication',table:4,statsTable:4,factors:[6],orientation:'mixed',copies:1},{type:'multiplication',table:5,statsTable:5,factors:[9],orientation:'mixed',copies:1},{type:'multiplication',table:6,statsTable:6,factors:[8],orientation:'mixed',copies:1},{type:'multiplication',table:7,statsTable:7,factors:[4,5,6,7,8,9],orientation:'mixed',copies:1},{type:'division',divisor:4,statsTable:4,factors:[8],copies:1},{type:'division',divisor:5,statsTable:5,factors:[9],copies:1},{type:'division',divisor:6,statsTable:6,factors:[7],copies:1},{type:'division',divisor:7,statsTable:7,factors:[5,10],copies:1}]
       },
       ...CHAPTER_EIGHT_MISSIONS,
-      ...CHAPTER_NINE_MISSIONS
+      ...CHAPTER_NINE_MISSIONS,
+      ...CHAPTER_TEN_MISSIONS
 
     ],
     fallbackQuestionGroups:[
