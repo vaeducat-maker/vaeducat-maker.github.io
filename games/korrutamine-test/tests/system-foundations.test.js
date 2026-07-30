@@ -25,14 +25,15 @@ assert.equal(config.storage.progressKey,'edukass-chapter-one-v18');
 assert.equal(config.storage.soundKey,'edukass-sound-enabled');
 assert.equal(config.storage.introKey,'edukass-opening-seen-v28');
 assert.equal(config.storage.progressSchemaVersion,2);
-assert.equal(config.missions.length,105);
+assert.equal(config.missions.length,123);
 assert.deepEqual(config.chapters.map(chapter=>[chapter.id,chapter.startMissionId,chapter.endMissionId]),[
   [1,1,15],
   [2,16,33],
   [3,34,51],
   [4,52,69],
   [5,70,87],
-  [6,88,105]
+  [6,88,105],
+  [7,106,123]
 ]);
 assert.deepEqual(config.lesson.triggers.map(lesson=>[lesson.id,lesson.missionId,lesson.mode,lesson.table]),[
   ['multiply-2',1,'multiply',2],
@@ -46,7 +47,9 @@ assert.deepEqual(config.lesson.triggers.map(lesson=>[lesson.id,lesson.missionId,
   ['multiply-6',70,'multiply',6],
   ['divide-6',80,'divide',6],
   ['multiply-7',88,'multiply',7],
-  ['divide-7',98,'divide',7]
+  ['divide-7',98,'divide',7],
+  ['multiply-8',106,'multiply',8],
+  ['divide-8',116,'divide',8]
 ]);
 assert.deepEqual(config.story.chapterTwo,{
   startMissionId:16,
@@ -89,6 +92,7 @@ assert.equal(i18n.t('chapter.2.title'),'2. PEATÜKK · KOLM');
 assert.equal(i18n.t('chapter.3.title'),'3. PEATÜKK · NELI');
 assert.equal(i18n.t('chapter.4.title'),'4. PEATÜKK · VIIS');
 assert.equal(i18n.t('chapter.5.title'),'5. PEATÜKK · KUUS');
+assert.equal(i18n.t('chapter.7.title'),'7. PEATÜKK · KAHEKSA');
 assert.equal(i18n.t('mission.33.title'),'Peatüki kontroll');
 assert.equal(i18n.t('missing.key',{},'Varutekst'),'Varutekst');
 
@@ -106,7 +110,7 @@ assert.match(gameHtml,/id="repeatThreeMultiplicationButton"/);
 assert.match(gameHtml,/id="repeatThreeDivisionButton"/);
 assert.match(gameHtml,/id="repeatFourMultiplicationButton"/);
 assert.match(gameHtml,/id="repeatFourDivisionButton"/);
-assert.match(gameHtml,/MISSIOONID 1–105/);
+assert.match(gameHtml,/MISSIOONID 1–123/);
 assert.match(gameHtml,/id="missionRouteScroll"/);
 assert.match(gameCode,/missionRouteScroll\.scrollTop=/);
 assert.match(gameCode,/currentRect\.top-routeRect\.top/);
@@ -119,7 +123,7 @@ assert.match(gameCode,/function renderChapterTwoStory\(\)/);
 assert.match(gameCode,/worldAwaken/);
 assert.match(gameCode,/setChapterTwoRewardProgress\(levelId,true\)/);
 assert.match(gameCode,/const chapterTwoReveal=levelId>FINAL_MISSION_ID/);
-assert.match(gameCode,/const worldReveal=chapterTwoReveal\|\|chapterThreeReveal\|\|chapterFourReveal\|\|chapterFiveReveal\|\|chapterSixReveal/);
+assert.match(gameCode,/const worldReveal=chapterTwoReveal\|\|chapterThreeReveal\|\|chapterFourReveal\|\|chapterFiveReveal\|\|chapterSixReveal\|\|chapterSevenReveal/);
 assert.match(gameCode,/const visualReveal=firstCompletion\|\|worldReveal/);
 const chapterTwoCinematicStart=gameCode.indexOf("if(levelId>FINAL_MISSION_ID){",gameCode.indexOf('function startRewardCinematic'));
 const chapterOneCinematicStart=gameCode.indexOf("if(levelId===FINAL_MISSION_ID){",chapterTwoCinematicStart);
@@ -178,8 +182,14 @@ for(const [index,worldStep] of config.story.chapterSix.worldSteps.entries()){
 assert.match(gameHtml,/id="canopyWorldTemplate"/);
 assert.match(gameCode,/function renderChapterSixStory\(\)/);
 assert.match(gameCode,/setChapterSixRewardProgress\(levelId,true\)/);
-for(const table of [5,6,7]){
-  const numberName={5:'Five',6:'Six',7:'Seven'}[table];
+for(const [index,worldStep] of config.story.chapterSeven.worldSteps.entries()){
+  assert.equal(worldStep.missionId,106+index);
+}
+assert.match(gameHtml,/id="terraceWorldTemplate"/);
+assert.match(gameCode,/function renderChapterSevenStory\(\)/);
+assert.match(gameCode,/setChapterSevenRewardProgress\(levelId,true\)/);
+for(const table of [5,6,7,8]){
+  const numberName={5:'Five',6:'Six',7:'Seven',8:'Eight'}[table];
   assert.match(gameHtml,new RegExp(`id="repeat${numberName}MultiplicationButton"`));
   assert.match(gameHtml,new RegExp(`id="repeat${numberName}DivisionButton"`));
   assert.match(gameCode,new RegExp(`showLesson\\('multiply-${table}','explanations'\\)`));

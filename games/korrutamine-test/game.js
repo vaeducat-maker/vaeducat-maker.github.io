@@ -62,6 +62,8 @@ const repeatSixMultiplicationButton=document.querySelector('#repeatSixMultiplica
 const repeatSixDivisionButton=document.querySelector('#repeatSixDivisionButton');
 const repeatSevenMultiplicationButton=document.querySelector('#repeatSevenMultiplicationButton');
 const repeatSevenDivisionButton=document.querySelector('#repeatSevenDivisionButton');
+const repeatEightMultiplicationButton=document.querySelector('#repeatEightMultiplicationButton');
+const repeatEightDivisionButton=document.querySelector('#repeatEightDivisionButton');
 const storyStage=document.querySelector('#storyStage');
 const storyPhaseKicker=document.querySelector('#storyPhaseKicker');
 const storyPhaseTitle=document.querySelector('#storyPhaseTitle');
@@ -74,17 +76,20 @@ const storyThree=document.querySelector('#storyThree');
 const storyFour=document.querySelector('#storyFour');
 const storyFive=document.querySelector('#storyFive');
 const storySix=document.querySelector('#storySix');
+const storySeven=document.querySelector('#storySeven');
 const rewardScene=document.querySelector('#rewardScene');
 const rewardLivingWorld=document.querySelector('#rewardLivingWorld');
 const rewardWindWorld=document.querySelector('#rewardWindWorld');
 const rewardLuminWorld=document.querySelector('#rewardLuminWorld');
 const rewardNorthWorld=document.querySelector('#rewardNorthWorld');
 const rewardCanopyWorld=document.querySelector('#rewardCanopyWorld');
+const rewardTerraceWorld=document.querySelector('#rewardTerraceWorld');
 const livingWorldTemplate=document.querySelector('#livingWorldTemplate');
 const windWorldTemplate=document.querySelector('#windWorldTemplate');
 const luminWorldTemplate=document.querySelector('#luminWorldTemplate');
 const northWorldTemplate=document.querySelector('#northWorldTemplate');
 const canopyWorldTemplate=document.querySelector('#canopyWorldTemplate');
+const terraceWorldTemplate=document.querySelector('#terraceWorldTemplate');
 const rewardPill=document.querySelector('#rewardPill');
 const resultScreen=document.querySelector('#resultScreen');
 const battleFxCanvas=document.querySelector('#battleFxCanvas');
@@ -122,6 +127,10 @@ function mountCanopyWorld(container){
   if(!container||!canopyWorldTemplate)return;
   container.append(canopyWorldTemplate.content.cloneNode(true));
 }
+function mountTerraceWorld(container){
+  if(!container||!terraceWorldTemplate)return;
+  container.append(terraceWorldTemplate.content.cloneNode(true));
+}
 
 mountLivingWorld(storyTwo);
 mountLivingWorld(rewardLivingWorld);
@@ -133,6 +142,8 @@ mountNorthWorld(storyFive);
 mountNorthWorld(rewardNorthWorld);
 mountCanopyWorld(storySix);
 mountCanopyWorld(rewardCanopyWorld);
+mountTerraceWorld(storySeven);
+mountTerraceWorld(rewardTerraceWorld);
 
 const CHAPTER_CONFIG=window.EDUKASS_CHAPTER_ONE;
 if(!CHAPTER_CONFIG)throw new Error('EDUKASS chapter configuration was not loaded.');
@@ -184,6 +195,9 @@ const CHAPTER_FIVE_WORLD_STEP_COUNT=CHAPTER_FIVE_WORLD_STEPS.length;
 const CHAPTER_SIX_STORY=STORY_CONFIG.chapterSix||{};
 const CHAPTER_SIX_WORLD_STEPS=CHAPTER_SIX_STORY.worldSteps||[];
 const CHAPTER_SIX_WORLD_STEP_COUNT=CHAPTER_SIX_WORLD_STEPS.length;
+const CHAPTER_SEVEN_STORY=STORY_CONFIG.chapterSeven||{};
+const CHAPTER_SEVEN_WORLD_STEPS=CHAPTER_SEVEN_STORY.worldSteps||[];
+const CHAPTER_SEVEN_WORLD_STEP_COUNT=CHAPTER_SEVEN_WORLD_STEPS.length;
 const LAST_MISSION_ID=CHAPTER_CONFIG.missions[CHAPTER_CONFIG.missions.length-1].id;
 const CHAPTER_END_IDS=new Set(CHAPTERS.map(chapter=>chapter.endMissionId));
 const PLANET_MISSION_IDS=new Set(STORY_CONFIG.planetMissionIds);
@@ -895,6 +909,8 @@ function showExplanationHub({historyMode='push'}={}){
   const divideSix=LESSONS_BY_ID.get('divide-6');
   const multiplySeven=LESSONS_BY_ID.get('multiply-7');
   const divideSeven=LESSONS_BY_ID.get('divide-7');
+  const multiplyEight=LESSONS_BY_ID.get('multiply-8');
+  const divideEight=LESSONS_BY_ID.get('divide-8');
   configureExplanationChoice(repeatMultiplicationButton,multiplyTwo,{
     unlocked:true,
     openAria:'explanations.repeatMultiplicationAria',
@@ -954,6 +970,16 @@ function showExplanationHub({historyMode='push'}={}){
     unlocked:hasSeenLesson(divideSeven)||progress.unlockedLevel>=divideSeven.missionId,
     openAria:'explanations.repeatSevenDivisionAria',
     lockedAria:'explanations.lockedSevenDivisionAria'
+  });
+  configureExplanationChoice(repeatEightMultiplicationButton,multiplyEight,{
+    unlocked:hasSeenLesson(multiplyEight)||progress.unlockedLevel>=multiplyEight.missionId,
+    openAria:'explanations.repeatEightMultiplicationAria',
+    lockedAria:'explanations.lockedEightMultiplicationAria'
+  });
+  configureExplanationChoice(repeatEightDivisionButton,divideEight,{
+    unlocked:hasSeenLesson(divideEight)||progress.unlockedLevel>=divideEight.missionId,
+    openAria:'explanations.repeatEightDivisionAria',
+    lockedAria:'explanations.lockedEightDivisionAria'
   });
   showScreen('explanationScreen',{historyMode,historyView:'explanations'});
 }
@@ -1251,9 +1277,46 @@ function renderChapterSixStory(){
   });
 }
 
+function renderChapterSevenStory(){
+  const arrivalProgress=completedInRange(106,109);
+  const settlementProgress=completedInRange(110,113);
+  const peopleProgress=completedInRange(114,118);
+  const awakeningProgress=completedInRange(119,123);
+  const completed=arrivalProgress+settlementProgress+peopleProgress+awakeningProgress;
+  const phase=arrivalProgress<4?'arrival':settlementProgress<4?'motion':peopleProgress<5?'sky':awakeningProgress<5?'light':'complete';
+  const completedSet=new Set(progress.completedLevels);
+  storyStage.dataset.phase=phase;
+  storyStage.dataset.completed=String(completed);
+  storyStage.classList.remove('chapter-two','chapter-three','chapter-four','chapter-five','chapter-six','phase-ship','phase-engine','phase-portal','has-engine','has-portal');
+  storyStage.classList.add('chapter-seven');
+  storyStage.closest('.story-progress')?.classList.remove('chapter-two-active','chapter-three-active','chapter-four-active','chapter-five-active','chapter-six-active');
+  storyStage.closest('.story-progress')?.classList.add('chapter-seven-active');
+  storyStage.classList.toggle('is-complete',completed===CHAPTER_SEVEN_WORLD_STEP_COUNT);
+  const titles={arrival:'Saabumine laulvasse kraatrisse',motion:'Terrassilinn avaneb',sky:'Kraatri elanikud',light:'Helid äratavad maailma',complete:'Laulvad terrassid on ärganud'};
+  storyPhaseKicker.textContent=phase==='complete'?t('story.complete'):t(`story.goal${phase==='arrival'?1:phase==='motion'?2:phase==='sky'?3:4}`);
+  storyPhaseTitle.textContent=titles[phase];
+  const values={ship:arrivalProgress,engine:settlementProgress,portal:peopleProgress,vault:awakeningProgress};
+  const maximums={ship:4,engine:4,portal:5,vault:5};
+  const labels={ship:'Kraater ja helikivid',engine:'Terrassilinn',portal:'Elanikud',vault:'Laulva maailma ärkamine'};
+  shipGoalCount.textContent=`${arrivalProgress}/4`; engineGoalCount.textContent=`${settlementProgress}/4`; portalGoalCount.textContent=`${peopleProgress}/5`; vaultGoalCount.textContent=`${awakeningProgress}/5`;
+  document.querySelectorAll('[data-story-goal]').forEach(goal=>{
+    const name=goal.dataset.storyGoal,value=values[name]||0,max=maximums[name]||1;
+    const active=(phase==='arrival'&&name==='ship')||(phase==='motion'&&name==='engine')||(phase==='sky'&&name==='portal')||(phase==='light'&&name==='vault');
+    goal.classList.toggle('is-done',value===max); goal.classList.toggle('is-active',active); goal.setAttribute('aria-label',`${labels[name]}: ${value}/${max}`);
+  });
+  storySeven.dataset.terraceStep=String(completed);
+  storySeven.classList.toggle('terrace-departed',completedSet.has(CHAPTER_SEVEN_STORY.finalMissionId));
+  storySeven.querySelectorAll('[data-terrace-step]').forEach(element=>{
+    const worldStep=CHAPTER_SEVEN_WORLD_STEPS[Number(element.dataset.terraceStep)-1];
+    element.classList.toggle('is-earned',Boolean(worldStep&&completedSet.has(worldStep.missionId)));
+    element.classList.remove('is-new-reward');
+  });
+}
+
 function renderStoryProgress(){
   const chapter=activeMapChapter();
-  if(chapter.id===6)renderChapterSixStory();
+  if(chapter.id===7)renderChapterSevenStory();
+  else if(chapter.id===6)renderChapterSixStory();
   else if(chapter.id===5)renderChapterFiveStory();
   else if(chapter.id===4)renderChapterFourStory();
   else if(chapter.id===3)renderChapterThreeStory();
@@ -1265,7 +1328,7 @@ function createChapterDivider(chapter){
   const divider=document.createElement('div');
   divider.className=`chapter-divider chapter-divider-${chapter.id}`;
   divider.dataset.chapter=String(chapter.id);
-  const fallback=chapter.id===1?'1. PEATÜKK · ÜKS JA KAKS':chapter.id===2?'2. PEATÜKK · KOLM':chapter.id===3?'3. PEATÜKK · NELI':chapter.id===4?'4. PEATÜKK · VIIS':chapter.id===5?'5. PEATÜKK · KUUS':'6. PEATÜKK · SEITSE';
+  const fallback=chapter.id===1?'1. PEATÜKK · ÜKS JA KAKS':chapter.id===2?'2. PEATÜKK · KOLM':chapter.id===3?'3. PEATÜKK · NELI':chapter.id===4?'4. PEATÜKK · VIIS':chapter.id===5?'5. PEATÜKK · KUUS':chapter.id===6?'6. PEATÜKK · SEITSE':'7. PEATÜKK · KAHEKSA';
   divider.innerHTML=`<span>${t(chapter.titleKey,{},fallback)}</span><i aria-hidden="true"></i>`;
   return divider;
 }
@@ -1733,6 +1796,20 @@ function setChapterSixRewardProgress(levelId,showReveal){
   rewardScene.dataset.canopyStep=String(step);
 }
 
+function setChapterSevenRewardProgress(levelId,showReveal){
+  const step=Math.max(1,Math.min(CHAPTER_SEVEN_WORLD_STEP_COUNT,levelId-CHAPTER_SEVEN_STORY.startMissionId+1));
+  const previous=showReveal?Math.max(0,step-1):step;
+  rewardTerraceWorld.dataset.terraceStep=String(previous);
+  rewardTerraceWorld.classList.toggle('terrace-departed',!showReveal&&step===CHAPTER_SEVEN_WORLD_STEP_COUNT);
+  rewardTerraceWorld.querySelectorAll('[data-terrace-step]').forEach(element=>{
+    element.classList.remove('is-earned','is-new-reward');
+    const itemStep=Number(element.dataset.terraceStep);
+    if(itemStep<=previous)element.classList.add('is-earned');
+    else if(showReveal&&itemStep===step)element.classList.add('is-new-reward');
+  });
+  rewardScene.dataset.terraceStep=String(step);
+}
+
 function setRewardProgressState(levelId,firstCompletion){
   const shipStep=Math.min(STORY_SEGMENT_LENGTH,levelId);
   const engineStep=Math.min(STORY_SEGMENT_LENGTH,Math.max(0,levelId-SHIP_MISSION_ID));
@@ -1771,6 +1848,16 @@ function configureRewardScene(levelId,firstCompletion,levelPassed){
     return;
   }
   rewardPill.textContent=firstCompletion?t('result.rewardFirst'):t('result.rewardCollected');
+  if(levelId>=CHAPTER_SEVEN_STORY.startMissionId){
+    rewardScene.classList.add('reward-chapter-seven');
+    setChapterSevenRewardProgress(levelId,true);
+    const chapterStep=levelId-CHAPTER_SEVEN_STORY.startMissionId+1;
+    rewardScene.classList.add(`reward-terrace-step-${chapterStep}`);
+    if(chapterStep===1)rewardScene.classList.add('reward-terrace-arrival');
+    if(chapterStep===17)rewardScene.classList.add('reward-terrace-finale');
+    if(chapterStep===18)rewardScene.classList.add('reward-terrace-departure');
+    return;
+  }
   if(levelId>=CHAPTER_SIX_STORY.startMissionId){
     rewardScene.classList.add('reward-chapter-six');
     setChapterSixRewardProgress(levelId,true);
@@ -1854,12 +1941,13 @@ function startRewardCinematic(levelPassed,levelId,firstCompletion=true){
     return;
   }
 
-  const chapterSixReveal=levelId>=CHAPTER_SIX_STORY.startMissionId;
-  const chapterFiveReveal=levelId>=CHAPTER_FIVE_STORY.startMissionId&&!chapterSixReveal;
-  const chapterFourReveal=levelId>=CHAPTER_FOUR_STORY.startMissionId&&!chapterFiveReveal&&!chapterSixReveal;
-  const chapterThreeReveal=levelId>=CHAPTER_THREE_STORY.startMissionId&&!chapterFourReveal&&!chapterFiveReveal&&!chapterSixReveal;
-  const chapterTwoReveal=levelId>FINAL_MISSION_ID&&!chapterThreeReveal&&!chapterFourReveal&&!chapterFiveReveal&&!chapterSixReveal;
-  const worldReveal=chapterTwoReveal||chapterThreeReveal||chapterFourReveal||chapterFiveReveal||chapterSixReveal;
+  const chapterSevenReveal=levelId>=CHAPTER_SEVEN_STORY.startMissionId;
+  const chapterSixReveal=levelId>=CHAPTER_SIX_STORY.startMissionId&&!chapterSevenReveal;
+  const chapterFiveReveal=levelId>=CHAPTER_FIVE_STORY.startMissionId&&!chapterSixReveal&&!chapterSevenReveal;
+  const chapterFourReveal=levelId>=CHAPTER_FOUR_STORY.startMissionId&&!chapterFiveReveal&&!chapterSixReveal&&!chapterSevenReveal;
+  const chapterThreeReveal=levelId>=CHAPTER_THREE_STORY.startMissionId&&!chapterFourReveal&&!chapterFiveReveal&&!chapterSixReveal&&!chapterSevenReveal;
+  const chapterTwoReveal=levelId>FINAL_MISSION_ID&&!chapterThreeReveal&&!chapterFourReveal&&!chapterFiveReveal&&!chapterSixReveal&&!chapterSevenReveal;
+  const worldReveal=chapterTwoReveal||chapterThreeReveal||chapterFourReveal||chapterFiveReveal||chapterSixReveal||chapterSevenReveal;
   const visualReveal=firstCompletion||worldReveal;
   const changeOffset=visualReveal?REWARD_BEFORE_HOLD:0;
   const cue=(delay,callback)=>scheduleCinematic(changeOffset+delay,callback);
@@ -1879,7 +1967,9 @@ function startRewardCinematic(levelPassed,levelId,firstCompletion=true){
   }
 
   if(worldReveal){
-    const chapterStep=chapterSixReveal
+    const chapterStep=chapterSevenReveal
+      ?levelId-CHAPTER_SEVEN_STORY.startMissionId+1
+      :chapterSixReveal
       ?levelId-CHAPTER_SIX_STORY.startMissionId+1
       :chapterFiveReveal
       ?levelId-CHAPTER_FIVE_STORY.startMissionId+1
@@ -1888,12 +1978,12 @@ function startRewardCinematic(levelPassed,levelId,firstCompletion=true){
       :chapterThreeReveal?levelId-CHAPTER_THREE_STORY.startMissionId+1:levelId-FINAL_MISSION_ID;
     const settleAfter=chapterStep===18?3800:2850;
     cue(settleAfter,()=>{
-      const currentWorld=chapterSixReveal?rewardCanopyWorld:chapterFiveReveal?rewardNorthWorld:chapterFourReveal?rewardLuminWorld:chapterThreeReveal?rewardWindWorld:rewardLivingWorld;
+      const currentWorld=chapterSevenReveal?rewardTerraceWorld:chapterSixReveal?rewardCanopyWorld:chapterFiveReveal?rewardNorthWorld:chapterFourReveal?rewardLuminWorld:chapterThreeReveal?rewardWindWorld:rewardLivingWorld;
       currentWorld.querySelectorAll('.is-new-reward').forEach(element=>{
         element.classList.remove('is-new-reward');
         element.classList.add('is-earned');
       });
-      if(chapterStep===18)currentWorld.classList.add(chapterSixReveal?'canopy-departed':chapterFiveReveal?'north-departed':chapterFourReveal?'lumin-departed':chapterThreeReveal?'wind-departed':'world-departed');
+      if(chapterStep===18)currentWorld.classList.add(chapterSevenReveal?'terrace-departed':chapterSixReveal?'canopy-departed':chapterFiveReveal?'north-departed':chapterFourReveal?'lumin-departed':chapterThreeReveal?'wind-departed':'world-departed');
     });
     if([1,17].includes(chapterStep))cue(2050,()=>playSound('storyStep'));
     if(chapterStep===18){
@@ -2103,6 +2193,8 @@ repeatSixMultiplicationButton.addEventListener('click',()=>showLesson('multiply-
 repeatSixDivisionButton.addEventListener('click',()=>showLesson('divide-6','explanations'));
 repeatSevenMultiplicationButton.addEventListener('click',()=>showLesson('multiply-7','explanations'));
 repeatSevenDivisionButton.addEventListener('click',()=>showLesson('divide-7','explanations'));
+repeatEightMultiplicationButton.addEventListener('click',()=>showLesson('multiply-8','explanations'));
+repeatEightDivisionButton.addEventListener('click',()=>showLesson('divide-8','explanations'));
 document.querySelector('#explanationBackButton').addEventListener('click',()=>history.back());
 document.querySelector('#backToMapButton').addEventListener('click',()=>showMap());
 resultMapButton.addEventListener('click',()=>showMap());

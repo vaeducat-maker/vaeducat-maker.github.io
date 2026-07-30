@@ -17,7 +17,7 @@
   <meta property="og:image" content="https://edukass.ee/games/korrutamine-test/assets/share-korrutustabel.png?v=40">
   <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="stylesheet" href="game.css?v=65">
+  <link rel="stylesheet" href="game.css?v=66">
 </head>
 <body class="intro-active">
   <section class="game-intro is-running" id="introScreen" aria-label="EDUKASSi mängu algus" data-i18n-aria-label="intro.aria">
@@ -206,6 +206,20 @@
             <span class="explanation-lock" aria-hidden="true">🔒</span>
             <span class="explanation-arrow" aria-hidden="true">→</span>
           </button>
+
+          <button class="explanation-choice multiplication-choice" id="repeatEightMultiplicationButton" type="button">
+            <span class="explanation-orbit" aria-hidden="true"><span>×</span></span>
+            <span class="explanation-name"><strong data-i18n="explanations.multiply">Korrutamine</strong><small data-i18n="explanations.eight">8-ga</small></span>
+            <span class="explanation-lock" aria-hidden="true">🔒</span>
+            <span class="explanation-arrow" aria-hidden="true">→</span>
+          </button>
+
+          <button class="explanation-choice division-choice" id="repeatEightDivisionButton" type="button">
+            <span class="explanation-orbit" aria-hidden="true"><span>÷</span></span>
+            <span class="explanation-name"><strong data-i18n="explanations.divide">Jagamine</strong><small data-i18n="explanations.eight">8-ga</small></span>
+            <span class="explanation-lock" aria-hidden="true">🔒</span>
+            <span class="explanation-arrow" aria-hidden="true">→</span>
+          </button>
         </div>
 
         <button class="secondary-button explanation-back" id="explanationBackButton" type="button" data-i18n="lesson.toMissions">← KAARDILE</button>
@@ -263,6 +277,7 @@
             <div class="story-four lumin-world lumin-world-map" id="storyFour" aria-hidden="true"></div>
             <div class="story-five north-world north-world-map" id="storyFive" aria-hidden="true"></div>
             <div class="story-six canopy-world canopy-world-map" id="storySix" aria-hidden="true"></div>
+            <div class="story-seven terrace-world terrace-world-map" id="storySeven" aria-hidden="true"></div>
           </div>
 
           <div class="story-goals" aria-label="Peatüki teekond" data-i18n-aria-label="map.routeAria">
@@ -274,8 +289,8 @@
         </section>
 
         <div class="mission-route-scroll" id="missionRouteScroll" tabindex="0" aria-label="Missioonide keritav rada">
-          <div class="chapter-route-head"><span id="mapRouteLabel" data-i18n="map.routeLabel">KOSMOSETEE · MISSIOONID 1–105</span></div>
-          <div class="level-grid" id="levelGrid" aria-label="Esimese, teise ja kolmanda peatüki missioonid" data-i18n-aria-label="map.missionsAria"></div>
+          <div class="chapter-route-head"><span id="mapRouteLabel" data-i18n="map.routeLabel">KOSMOSETEE · MISSIOONID 1–123</span></div>
+          <div class="level-grid" id="levelGrid" aria-label="Esimese kuni seitsmenda peatüki missioonid" data-i18n-aria-label="map.missionsAria"></div>
         </div>
       </div>
       <div class="map-actions">
@@ -365,6 +380,7 @@
           <div class="reward-five-zone lumin-world lumin-world-reward" id="rewardLuminWorld" aria-hidden="true"></div>
           <div class="reward-six-zone north-world north-world-reward" id="rewardNorthWorld" aria-hidden="true"></div>
           <div class="reward-seven-zone canopy-world canopy-world-reward" id="rewardCanopyWorld" aria-hidden="true"></div>
+          <div class="reward-eight-zone terrace-world terrace-world-reward" id="rewardTerraceWorld" aria-hidden="true"></div>
           <div class="reward-impact-ground"><i></i><i></i><i></i></div>
           <div class="result-cat-crop">
             <img class="result-cat result-cat-neutral" src="assets/edukass-cat-transparent.png" alt="">
@@ -509,6 +525,29 @@
     <span class="canopy-life canopy-departure" data-canopy-step="18"><i></i><i></i><i></i></span>
   </template>
 
+  <template id="terraceWorldTemplate">
+    <span class="terrace-life terrace-rim" data-terrace-step="2"><i></i><b></b><em></em></span>
+    <span class="terrace-life terrace-bowls" data-terrace-step="3"><i></i><b></b><em></em></span>
+    <span class="terrace-life terrace-glaze" data-terrace-step="4"><i></i><b></b><em></em></span>
+    <span class="terrace-life terrace-home home-a" data-terrace-step="5"><i></i><b></b></span>
+    <span class="terrace-life terrace-homes" data-terrace-step="6"><i></i><b></b><em></em></span>
+    <span class="terrace-life terrace-home-lights" data-terrace-step="7"><i></i><b></b><em></em></span>
+    <span class="terrace-life terrace-circle" data-terrace-step="8"><i></i></span>
+    <span class="terrace-life terrace-lamps" data-terrace-step="9"><i></i><i></i><i></i><i></i><i></i></span>
+    <span class="terrace-life terrace-resident one" data-terrace-step="10"><i></i></span>
+    <span class="terrace-life terrace-residents" data-terrace-step="11"><i></i><b></b></span>
+    <span class="terrace-life terrace-resonators" data-terrace-step="12"><i></i><b></b><em></em></span>
+    <span class="terrace-life terrace-inlays" data-terrace-step="13"><i></i><b></b><em></em></span>
+    <span class="terrace-life terrace-vents" data-terrace-step="14"><i></i><b></b><em></em></span>
+    <span class="terrace-life terrace-steam" data-terrace-step="15"><i></i><b></b><em></em></span>
+    <span class="terrace-life terrace-mosaic" data-terrace-step="16"><i></i></span>
+    <span class="terrace-life terrace-waves" data-terrace-step="17"><i></i><b></b><em></em></span>
+    <span class="terrace-life terrace-landing" data-terrace-step="1"></span>
+    <img class="terrace-life terrace-rocket" data-terrace-step="1" src="assets/edukass-world-rocket.png" alt="">
+    <img class="terrace-life terrace-cat" data-terrace-step="1" src="assets/edukass-cat-transparent.png" alt="">
+    <span class="terrace-life terrace-departure" data-terrace-step="18"><i></i><i></i><i></i></span>
+  </template>
+
   <dialog class="share-dialog" id="shareDialog" aria-labelledby="shareDialogTitle">
     <form method="dialog" class="share-content">
       <button class="share-close" type="submit" aria-label="Sulge" data-i18n-aria-label="share.closeAria">×</button>
@@ -547,11 +586,11 @@
     </form>
   </dialog>
 
-  <script src="locales/et.js?v=65"></script>
-  <script src="chapter-one.config.js?v=64"></script>
+  <script src="locales/et.js?v=66"></script>
+  <script src="chapter-one.config.js?v=66"></script>
   <script src="i18n.js?v=61"></script>
   <script src="question-engine.js?v=61"></script>
   <script src="progress-store.js?v=61"></script>
-  <script src="game.js?v=65"></script>
+  <script src="game.js?v=66"></script>
 </body>
 </html>

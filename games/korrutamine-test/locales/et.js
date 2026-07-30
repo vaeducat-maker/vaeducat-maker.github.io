@@ -63,6 +63,10 @@
       'lesson.table7.eyebrowDivide':'PEATÜKK 6 · JAGAMINE',
       'lesson.table7.titleMultiply':'Nüüd korrutame seitsmega',
       'lesson.table7.titleDivide':'Nüüd jagame seitsmega',
+      'lesson.table8.eyebrowMultiply':'PEATÜKK 7 · KAHEKSA',
+      'lesson.table8.eyebrowDivide':'PEATÜKK 7 · JAGAMINE',
+      'lesson.table8.titleMultiply':'Nüüd korrutame kaheksaga',
+      'lesson.table8.titleDivide':'Nüüd jagame kaheksaga',
       'lesson.explorerAria':'Interaktiivne selgitus',
       'lesson.hintMultiply':'Vajuta arvule.',
       'lesson.hintDivide':'Vajuta jagatavale.',
@@ -88,6 +92,7 @@
       'explanations.five':'5-ga',
       'explanations.six':'6-ga',
       'explanations.seven':'7-ga',
+      'explanations.eight':'8-ga',
       'explanations.repeatThreeMultiplicationAria':'Korda kolmega korrutamise selgitust',
       'explanations.lockedThreeMultiplicationAria':'Kolmega korrutamise selgitus avaneb pärast 15. missiooni',
       'explanations.repeatThreeDivisionAria':'Korda kolmega jagamise selgitust',
@@ -108,14 +113,18 @@
       'explanations.lockedSevenMultiplicationAria':'Seitsmega korrutamise selgitus avaneb pärast 87. missiooni',
       'explanations.repeatSevenDivisionAria':'Korda seitsmega jagamise selgitust',
       'explanations.lockedSevenDivisionAria':'Seitsmega jagamise selgitus avaneb pärast 97. missiooni',
+      'explanations.repeatEightMultiplicationAria':'Korda kaheksaga korrutamise selgitust',
+      'explanations.lockedEightMultiplicationAria':'Kaheksaga korrutamise selgitus avaneb pärast 105. missiooni',
+      'explanations.repeatEightDivisionAria':'Korda kaheksaga jagamise selgitust',
+      'explanations.lockedEightDivisionAria':'Kaheksaga jagamise selgitus avaneb pärast 115. missiooni',
       'map.title':'Missioonide kaart',
       'map.energy':'Täheenergia',
       'map.routeAria':'Kosmosetee eesmärgid',
-      'map.missionsAria':'Esimese kuni kuuenda peatüki missioonid',
+      'map.missionsAria':'Esimese kuni seitsmenda peatüki missioonid',
       'map.multiply':'Korrutamine',
       'map.divide':'Jagamine',
       'map.repeatLesson':'Korda selgitust',
-      'map.routeLabel':'KOSMOSETEE · MISSIOONID 1–105',
+      'map.routeLabel':'KOSMOSETEE · MISSIOONID 1–123',
       'chapter.1.title':'1. PEATÜKK · ÜKS JA KAKS',
       'chapter.1.short':'ÜKS JA KAKS',
       'chapter.2.title':'2. PEATÜKK · KOLM',
@@ -128,6 +137,8 @@
       'chapter.5.short':'KUUS',
       'chapter.6.title':'6. PEATÜKK · SEITSE',
       'chapter.6.short':'SEITSE',
+      'chapter.7.title':'7. PEATÜKK · KAHEKSA',
+      'chapter.7.short':'KAHEKSA',
       'story.goal1':'1. SIHT',
       'story.goal2':'2. SIHT',
       'story.goal3':'3. SIHT',
@@ -376,6 +387,24 @@
       'mission.103.title':'Korrutamine ja jagamine seitsmega','mission.103.short':'×7 ja ÷7',
       'mission.104.title':'Kõik segamini','mission.104.short':'Kõik 1–7',
       'mission.105.title':'Peatüki kontroll','mission.105.short':'Kontroll 1–7'
+      ,'mission.106.title':'Korrutamise valik','mission.106.short':'Vali ×8'
+      ,'mission.107.title':'Alustame kaheksaga','mission.107.short':'×8 · 1–5'
+      ,'mission.108.title':'Jätkame kaheksaga','mission.108.short':'×8 · 6–10'
+      ,'mission.109.title':'Kogu kaheksaga korrutamine','mission.109.short':'×8 · kõik'
+      ,'mission.110.title':'Kaheksa teisel kohal','mission.110.short':'arv × 8'
+      ,'mission.111.title':'Vahetame järjekorda','mission.111.short':'×8 ↔ 8×'
+      ,'mission.112.title':'Seitse ja kaheksa koos','mission.112.short':'×7 ja ×8'
+      ,'mission.113.title':'Kaheksa on selge','mission.113.short':'Täpsus ×8'
+      ,'mission.114.title':'Kordame kõike','mission.114.short':'×1–8'
+      ,'mission.115.title':'Korrutamise kontroll','mission.115.short':'Kontroll ×1–8'
+      ,'mission.116.title':'Jagamise valik','mission.116.short':'Vali ÷8'
+      ,'mission.117.title':'Jagame kaheksaga','mission.117.short':'÷8 · 1–5'
+      ,'mission.118.title':'Jätkame jagamist','mission.118.short':'÷8 · 6–10'
+      ,'mission.119.title':'Kogu kaheksaga jagamine','mission.119.short':'÷8 · kõik'
+      ,'mission.120.title':'Jagame seitsme ja kaheksaga','mission.120.short':'÷7 ja ÷8'
+      ,'mission.121.title':'Korrutamine ja jagamine kaheksaga','mission.121.short':'×8 ja ÷8'
+      ,'mission.122.title':'Kõik segamini','mission.122.short':'Kõik 1–8'
+      ,'mission.123.title':'Peatüki kontroll','mission.123.short':'Kontroll 1–8'
     }
   };
 });

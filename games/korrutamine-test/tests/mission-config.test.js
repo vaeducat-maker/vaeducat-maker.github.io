@@ -7,7 +7,7 @@ const config=require(path.join(gameRoot,'chapter-one.config.js'));
 const questionEngineApi=require(path.join(gameRoot,'question-engine.js'));
 
 const EXPECTED_FIRST_CHAPTER_SIGNATURE='83fa3e428f49ac63046fb4529460ac1ae51a1a4c3ca595bcd9a36b5b7a720643';
-const EXPECTED_CONTENT_SIGNATURE='82c62832a176824f592f75ef0ceb9293baf7673b085b101fcc5dac41ec59f137';
+const EXPECTED_CONTENT_SIGNATURE='81438a94c575d628f92d10f6dbbbd32062de3625efc0d8d1a55eb3cdcc553629';
 const SUPPORTED_GROUP_TYPES=new Set(['fixed','multiplication','division','adaptive']);
 const SUPPORTED_MODES=new Set(['choice','input']);
 const SUPPORTED_OPERATIONS=new Set(['multiply','divide','mixed']);
@@ -78,13 +78,14 @@ function validateConfiguration(){
   assert.equal(config.roundLength,15,'A mission must require exactly 15 correct answers.');
   assert.equal(config.practiceTable,2,'The legacy first chapter must keep table 2 as its default.');
   assert.deepEqual(config.practiceFactors,[1,2,3,4,5,6,7,8,9,10]);
-  assert.equal(config.missions.length,105,'The current build must contain missions 1–105.');
-  assert.deepEqual(config.missions.map(mission=>mission.id),Array.from({length:105},(_,index)=>index+1));
-  assert.deepEqual(config.chapters.map(chapter=>[chapter.id,chapter.startMissionId,chapter.endMissionId]),[[1,1,15],[2,16,33],[3,34,51],[4,52,69],[5,70,87],[6,88,105]]);
+  assert.equal(config.missions.length,123,'The current build must contain missions 1–123.');
+  assert.deepEqual(config.missions.map(mission=>mission.id),Array.from({length:123},(_,index)=>index+1));
+  assert.deepEqual(config.chapters.map(chapter=>[chapter.id,chapter.startMissionId,chapter.endMissionId]),[[1,1,15],[2,16,33],[3,34,51],[4,52,69],[5,70,87],[6,88,105],[7,106,123]]);
   assert.deepEqual(config.lesson.triggers.map(lesson=>[lesson.id,lesson.missionId,lesson.table]),[
     ['multiply-2',1,2],['divide-2',11,2],['multiply-3',16,3],['divide-3',26,3],
     ['multiply-4',34,4],['divide-4',44,4],['multiply-5',52,5],['divide-5',62,5],
-    ['multiply-6',70,6],['divide-6',80,6],['multiply-7',88,7],['divide-7',98,7]
+    ['multiply-6',70,6],['divide-6',80,6],['multiply-7',88,7],['divide-7',98,7],
+    ['multiply-8',106,8],['divide-8',116,8]
   ]);
 
   for(const mission of config.missions){
@@ -123,8 +124,11 @@ function validateConfiguration(){
   assert.deepEqual(config.missions.slice(87,97).map(mission=>mission.operation),Array(10).fill('multiply'));
   assert.deepEqual(config.missions.slice(97,102).map(mission=>mission.operation),Array(5).fill('divide'));
   assert.deepEqual(config.missions.slice(102,105).map(mission=>mission.operation),Array(3).fill('mixed'));
-  assert.deepEqual(config.missions.filter(mission=>mission.mode==='choice').map(mission=>mission.id),[1,11,16,26,34,44,52,62,70,80,88,98]);
-  for(const missionId of [7,8,14,23,29,32,41,47,50,59,65,68,77,83,86,95,101,104]){
+  assert.deepEqual(config.missions.slice(105,115).map(mission=>mission.operation),Array(10).fill('multiply'));
+  assert.deepEqual(config.missions.slice(115,120).map(mission=>mission.operation),Array(5).fill('divide'));
+  assert.deepEqual(config.missions.slice(120,123).map(mission=>mission.operation),Array(3).fill('mixed'));
+  assert.deepEqual(config.missions.filter(mission=>mission.mode==='choice').map(mission=>mission.id),[1,11,16,26,34,44,52,62,70,80,88,98,106,116]);
+  for(const missionId of [7,8,14,23,29,32,41,47,50,59,65,68,77,83,86,95,101,104,113,119,122]){
     assert(config.missions[missionId-1].questionGroups.some(group=>group.type==='adaptive'),`Mission ${missionId} must include adaptive practice.`);
   }
 }
@@ -163,7 +167,7 @@ function validateGeneratedRounds(){
             if(question.b===1){
               assert.equal(mission.id,11,`Mission ${mission.id}: division by 1 is only preserved in the approved introductory mission 11.`);
             }else{
-              assert([2,3,4,5,6,7].includes(question.b),`Mission ${mission.id}: unsupported divisor ${question.b}.`);
+              assert([2,3,4,5,6,7,8].includes(question.b),`Mission ${mission.id}: unsupported divisor ${question.b}.`);
             }
           }
           if(index>0)assert.notEqual(engine.equationKey(question),engine.equationKey(round[index-1]),`Mission ${mission.id}, seed ${seed}: adjacent duplicate.`);
