@@ -222,6 +222,32 @@
     revisionMission(185,'Peegelliiva kontroll','Kontroll 1–10',TIMER_PROFILE.control,'#83b97b',HARD_TABLE_FAMILIES)
   ].map(mission=>({...mission,chapterId:11,titleKey:`mission.${mission.id}.title`,shortKey:`mission.${mission.id}.short`}));
 
+  const makeRevisionChapter=(chapterId,start,titles,accents)=>titles.map((title,index)=>
+    revisionMission(
+      start+index,
+      title,
+      index===12?'Kontroll 1–10':index===0?'Korrutamine 1–10':index===1?'Jagamine 1–10':'Kõik 1–10',
+      index===12?TIMER_PROFILE.control:index===1?TIMER_PROFILE.divisionFull:index%3===0?TIMER_PROFILE.adaptive:TIMER_PROFILE.familyMixed,
+      accents[index%accents.length],
+      index===0?ALL_TABLE_FAMILIES.filter(family=>family.operation==='multiply'):
+      index===1?ALL_TABLE_FAMILIES.filter(family=>family.operation==='divide'):
+      index===12?HARD_TABLE_FAMILIES:ALL_TABLE_FAMILIES
+    )
+  ).map(mission=>({...mission,chapterId,titleKey:`mission.${mission.id}.title`,shortKey:`mission.${mission.id}.short`}));
+
+  const CHAPTER_THIRTEEN_MISSIONS=makeRevisionChapter(12,186,[
+    'Esimene hiidleht','Vesised tehted','Korrutamise õied','Jagamise õied','Helendavad juured','Ujuv saar','Uued värvid','Lehesillad','Esimene elanik','Lillepere','Väikesed õiepungad','Õitsev planeet','Lilleplaneedi kontroll'
+  ],['#ef4fa0','#e861b7','#ca68d5','#9275e2','#5c8fe1','#3aa9d3','#2bbfae','#5ccc8d','#9ed55d','#e7cc4c','#f2a54c','#ef795e','#e9577e']);
+  const CHAPTER_FOURTEEN_MISSIONS=makeRevisionChapter(13,199,[
+    'Kristallide org','Sügavad jagamised','Esimesed kristallid','Valgusrada','Kristallrahvas','Hõbedane kuru','Iidsed märgid','Hiiglase silmad','Ärkav mägi','Särav süda','Valgusvõrk','Kosmiline majakas','Kristallplaneedi kontroll'
+  ],['#9bdcff','#76c8f5','#5db3e8','#599bdc','#657fce','#796cc2','#925db3','#aa54a1','#bd578d','#ca647a','#d37a70','#d99872','#dfb27e']);
+  const CHAPTER_FIFTEEN_MISSIONS=makeRevisionChapter(14,212,[
+    'Esimene kosmiline vihm','Peegelduvad tehted','Helendavad lombid','Hiigelvari','Veekerad','Peegeljärved','Piiskade rada','Soojad tuled','Vihmaelanik','Varjualune pere','Vesikookonid','Tähtvihm','Vihmaplaneedi kontroll'
+  ],['#6075aa','#527fb4','#438cb9','#3799bb','#31a6b9','#31b2b2','#3dbda6','#5bc393','#82c67e','#a7c66f','#c7bf68','#dfad70','#e29483']);
+  const CHAPTER_SIXTEEN_MISSIONS=makeRevisionChapter(15,225,[
+    'Vaikne tuliplaneet','Kuumad tehted','Esimene lõhe','Laavajõgi','Tulekristall','Leeklill','Uinuv tulemägi','Kuldsed märgid','Tuleelanik','Elavad sädemed','Taevane tulerõngas','Valguse tee','Tuliplaneedi kontroll'
+  ],['#a64d4d','#b94b45','#ca503b','#da5b31','#e66b29','#ef8128','#f39831','#f4ae3d','#eec44e','#d9d05c','#b5d26d','#85ca82','#58ba97']);
+
   return {
     schemaVersion:2,
     id:'uks-ja-kaks',
@@ -472,6 +498,22 @@
           {missionId:184,role:'living-reflections'},
           {missionId:185,role:'departure'}
         ]
+      },
+      chapterTwelve:{
+        startMissionId:186,finalMissionId:198,
+        worldSteps:['arrival','giant-leaf','first-flower','roots','floating-island','new-flowers','underwater-light','leaf-bridges','resident','family','children','living-garden','departure'].map((role,index)=>({missionId:186+index,role}))
+      },
+      chapterThirteen:{
+        startMissionId:199,finalMissionId:211,
+        worldSteps:['arrival','first-crystals','light-path','crystal-folk','silver-gorge','ancient-signs','giant-eyes','giant-awakes','glowing-heart','crystal-network','valley-light','beacon','departure'].map((role,index)=>({missionId:199+index,role}))
+      },
+      chapterFourteen:{
+        startMissionId:212,finalMissionId:224,
+        worldSteps:['arrival','puddles','umbrella-mushroom','water-orbs','mirror-lakes','drop-path','lanterns','resident','family','water-cocoons','star-drops','great-moon','departure'].map((role,index)=>({missionId:212+index,role}))
+      },
+      chapterFifteen:{
+        startMissionId:225,finalMissionId:237,
+        worldSteps:['arrival','first-crack','lava-river','fire-crystal','flame-flower','fire-mountain','golden-patterns','resident','fire-family','spark-children','fire-ring','light-route','departure'].map((role,index)=>({missionId:225+index,role}))
       }
     },
     chapters:[
@@ -486,6 +528,10 @@
       {id:9,titleKey:'chapter.9.title',shortKey:'chapter.9.short',startMissionId:142,endMissionId:159,accent:'#55b86b'},
       {id:10,titleKey:'chapter.10.title',shortKey:'chapter.10.short',startMissionId:160,endMissionId:172,accent:'#a06ae8'},
       {id:11,titleKey:'chapter.11.title',shortKey:'chapter.11.short',startMissionId:173,endMissionId:185,accent:'#e8a56d'}
+      ,{id:12,titleKey:'chapter.12.title',shortKey:'chapter.12.short',startMissionId:186,endMissionId:198,accent:'#ef4fa0'}
+      ,{id:13,titleKey:'chapter.13.title',shortKey:'chapter.13.short',startMissionId:199,endMissionId:211,accent:'#76c8f5'}
+      ,{id:14,titleKey:'chapter.14.title',shortKey:'chapter.14.short',startMissionId:212,endMissionId:224,accent:'#31a6b9'}
+      ,{id:15,titleKey:'chapter.15.title',shortKey:'chapter.15.short',startMissionId:225,endMissionId:237,accent:'#ef8128'}
     ],
     defaultLanguage:'et',
     supportedLanguages:['et'],
@@ -1427,7 +1473,11 @@
       ...CHAPTER_NINE_MISSIONS,
       ...CHAPTER_TEN_MISSIONS,
       ...CHAPTER_ELEVEN_MISSIONS,
-      ...CHAPTER_TWELVE_MISSIONS
+      ...CHAPTER_TWELVE_MISSIONS,
+      ...CHAPTER_THIRTEEN_MISSIONS,
+      ...CHAPTER_FOURTEEN_MISSIONS,
+      ...CHAPTER_FIFTEEN_MISSIONS,
+      ...CHAPTER_SIXTEEN_MISSIONS
 
     ],
     fallbackQuestionGroups:[

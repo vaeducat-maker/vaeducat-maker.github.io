@@ -17,7 +17,7 @@
   <meta property="og:image" content="https://edukass.ee/games/korrutamine-test/assets/share-korrutustabel.png?v=40">
   <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="stylesheet" href="game.css?v=73">
+  <link rel="stylesheet" href="game.css?v=74">
 </head>
 <body class="intro-active">
   <section class="game-intro is-running" id="introScreen" aria-label="EDUKASSi mängu algus" data-i18n-aria-label="intro.aria">
@@ -63,6 +63,7 @@
         <span data-i18n="share.button">JAGA</span>
       </button>
       <button class="sound-button" id="soundToggleButton" type="button" aria-label="Lülita heli välja" aria-pressed="true" data-i18n-aria-label="sound.offAria">🔊</button>
+      <button class="sound-button fact-table-button" id="factTableButton" type="button" aria-label="Korrutustabel">▦</button>
       <button class="tiny-button reset-progress-button" id="resetProgressButton" type="button" data-i18n="action.reset">Alusta uuesti</button>
     </div>
   </header>
@@ -116,7 +117,7 @@
       </div>
     </section>
 
-    <section id="explanationScreen" class="screen" aria-labelledby="explanationTitle">
+    <section id="explanationScreen" class="screen" aria-labelledby="explanationTitle" hidden>
       <div class="explanation-hub">
         <div class="explanation-head">
           <p class="eyebrow" data-i18n="explanations.eyebrow">PEATÜKK 1 · SELGITUSED</p>
@@ -310,6 +311,10 @@
             <div class="story-nine canyon-world canyon-world-map" id="storyNine" aria-hidden="true"></div>
             <div class="story-ten dragon-world dragon-world-map" id="storyTen" aria-hidden="true"></div>
             <div class="story-eleven mirror-world mirror-world-map" id="storyEleven" aria-hidden="true"></div>
+            <div class="story-twelve journey-world journey-world-map" id="storyTwelve" data-theme="flowers" aria-hidden="true"></div>
+            <div class="story-thirteen journey-world journey-world-map" id="storyThirteen" data-theme="crystals" aria-hidden="true"></div>
+            <div class="story-fourteen journey-world journey-world-map" id="storyFourteen" data-theme="rain" aria-hidden="true"></div>
+            <div class="story-fifteen journey-world journey-world-map" id="storyFifteen" data-theme="fire" aria-hidden="true"></div>
           </div>
 
           <div class="story-goals" aria-label="Peatüki teekond" data-i18n-aria-label="map.routeAria">
@@ -321,12 +326,12 @@
         </section>
 
         <div class="mission-route-scroll" id="missionRouteScroll" tabindex="0" aria-label="Missioonide keritav rada">
-          <div class="chapter-route-head"><span id="mapRouteLabel" data-i18n="map.routeLabel">KOSMOSETEE · MISSIOONID 1–185</span></div>
+          <div class="chapter-route-head"><span id="mapRouteLabel">KOSMOSETEE · MISSIOONID 1–237</span></div>
           <div class="level-grid" id="levelGrid" aria-label="Esimese kuni kaheksanda peatüki missioonid" data-i18n-aria-label="map.missionsAria"></div>
         </div>
       </div>
       <div class="map-actions">
-        <button class="secondary-button" id="repeatLessonButton" type="button" data-i18n="map.repeatLesson">Korda selgitust</button>
+        <button class="secondary-button" id="repeatLessonButton" type="button">▦ KORRUTUSTABEL</button>
       </div>
     </section>
 
@@ -417,6 +422,10 @@
           <div class="reward-ten-zone canyon-world canyon-world-reward" id="rewardCanyonWorld" aria-hidden="true"></div>
           <div class="reward-eleven-zone dragon-world dragon-world-reward" id="rewardDragonWorld" aria-hidden="true"></div>
           <div class="reward-twelve-zone mirror-world mirror-world-reward" id="rewardMirrorWorld" aria-hidden="true"></div>
+          <div class="reward-thirteen-zone journey-world journey-world-reward" id="rewardJourneyFlowers" data-theme="flowers" aria-hidden="true"></div>
+          <div class="reward-fourteen-zone journey-world journey-world-reward" id="rewardJourneyCrystals" data-theme="crystals" aria-hidden="true"></div>
+          <div class="reward-fifteen-zone journey-world journey-world-reward" id="rewardJourneyRain" data-theme="rain" aria-hidden="true"></div>
+          <div class="reward-sixteen-zone journey-world journey-world-reward" id="rewardJourneyFire" data-theme="fire" aria-hidden="true"></div>
           <div class="reward-impact-ground"><i></i><i></i><i></i></div>
           <div class="result-cat-crop">
             <img class="result-cat result-cat-neutral" src="assets/edukass-cat-transparent.png" alt="">
@@ -437,6 +446,18 @@
       </div>
     </section>
   </main>
+
+  <dialog class="fact-table-dialog" id="factTableDialog" aria-labelledby="factTableTitle">
+    <div class="fact-table-panel">
+      <button class="fact-table-close" id="factTableCloseButton" type="button" aria-label="Sulge">×</button>
+      <p class="eyebrow">KORRUTAMINE JA JAGAMINE</p>
+      <h1 id="factTableTitle">Korrutustabel</h1>
+      <div class="fact-table-equations" id="factTableEquations" aria-live="polite"></div>
+      <div class="fact-table-wrap">
+        <table class="fact-table-grid" id="factTableGrid" aria-label="Interaktiivne korrutustabel"></table>
+      </div>
+    </div>
+  </dialog>
 
   <template id="livingWorldTemplate">
     <span class="world-life world-sky-life" data-world-step="11" data-world-role="sky">
@@ -465,6 +486,25 @@
 
     <span class="world-life world-final-glow" data-world-step="17" data-world-role="final-glow"></span>
     <span class="world-life world-departure-trail" data-world-step="18" data-world-role="departure"><i></i><i></i><i></i><i></i></span>
+  </template>
+
+  <template id="journeyWorldTemplate">
+    <span class="journey-stars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+    <span class="journey-life journey-sky" data-journey-step="2"><i></i><b></b></span>
+    <span class="journey-life journey-land" data-journey-step="3"><i></i><b></b><em></em></span>
+    <span class="journey-life journey-feature feature-a" data-journey-step="4"><i></i><b></b><em></em></span>
+    <span class="journey-life journey-feature feature-b" data-journey-step="5"><i></i><b></b><em></em></span>
+    <span class="journey-life journey-feature feature-c" data-journey-step="6"><i></i><b></b><em></em></span>
+    <span class="journey-life journey-feature feature-d" data-journey-step="7"><i></i><b></b><em></em></span>
+    <span class="journey-life journey-path" data-journey-step="8"><i></i></span>
+    <span class="journey-life journey-resident resident-a" data-journey-step="9"><i></i><b></b><em></em></span>
+    <span class="journey-life journey-resident resident-b" data-journey-step="10"><i></i><b></b><em></em></span>
+    <span class="journey-life journey-children" data-journey-step="11"><i></i><b></b><em></em></span>
+    <span class="journey-life journey-finale" data-journey-step="12"><i></i><b></b></span>
+    <span class="journey-life journey-landing" data-journey-step="1"></span>
+    <img class="journey-life journey-rocket" data-journey-step="1" src="assets/edukass-world-rocket.png" alt="">
+    <img class="journey-life journey-cat" data-journey-step="1" src="assets/edukass-cat-transparent.png" alt="">
+    <span class="journey-life journey-departure" data-journey-step="13"><i></i><i></i><i></i></span>
   </template>
 
   <template id="windWorldTemplate">
@@ -705,10 +745,10 @@
   </dialog>
 
   <script src="locales/et.js?v=73"></script>
-  <script src="chapter-one.config.js?v=73"></script>
+  <script src="chapter-one.config.js?v=74"></script>
   <script src="i18n.js?v=61"></script>
   <script src="question-engine.js?v=61"></script>
   <script src="progress-store.js?v=61"></script>
-  <script src="game.js?v=73"></script>
+  <script src="game.js?v=74"></script>
 </body>
 </html>

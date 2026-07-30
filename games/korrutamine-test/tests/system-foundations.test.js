@@ -25,7 +25,7 @@ assert.equal(config.storage.progressKey,'edukass-chapter-one-v18');
 assert.equal(config.storage.soundKey,'edukass-sound-enabled');
 assert.equal(config.storage.introKey,'edukass-opening-seen-v28');
 assert.equal(config.storage.progressSchemaVersion,2);
-assert.equal(config.missions.length,185);
+assert.equal(config.missions.length,237);
 assert.deepEqual(config.chapters.map(chapter=>[chapter.id,chapter.startMissionId,chapter.endMissionId]),[
   [1,1,15],
   [2,16,33],
@@ -37,7 +37,11 @@ assert.deepEqual(config.chapters.map(chapter=>[chapter.id,chapter.startMissionId
   [8,124,141],
   [9,142,159],
   [10,160,172],
-  [11,173,185]
+  [11,173,185],
+  [12,186,198],
+  [13,199,211],
+  [14,212,224],
+  [15,225,237]
 ]);
 assert.deepEqual(config.lesson.triggers.map(lesson=>[lesson.id,lesson.missionId,lesson.mode,lesson.table]),[
   ['multiply-2',1,'multiply',2],
@@ -112,7 +116,8 @@ const gameCode=fs.readFileSync(path.join(gameRoot,'game.js'),'utf8');
 const gameHtml=fs.readFileSync(path.join(gameRoot,'index.html'),'utf8');
 const gameCss=fs.readFileSync(path.join(gameRoot,'game.css'),'utf8');
 assert.match(gameCode,/function lessonForMission\(levelId\)/);
-assert.match(gameCode,/showLesson\(lesson\.id,nextLevel,\{historyMode:'replace'\}\)/);
+assert.match(gameCode,/function openFactTable\(\)/);
+assert.match(gameCode,/startLevel\(nextLevel,\{historyMode:'replace'\}\)/);
 assert.match(gameCode,/markLessonSeen\(currentLesson\)/);
 assert.match(gameCode,/startLevel\(level,\{historyMode:'replace'\}\)/);
 assert.match(gameCode,/lessonContinueButton\.textContent=t\('lesson\.toExplanations'\)/);
@@ -122,7 +127,7 @@ assert.match(gameHtml,/id="repeatThreeMultiplicationButton"/);
 assert.match(gameHtml,/id="repeatThreeDivisionButton"/);
 assert.match(gameHtml,/id="repeatFourMultiplicationButton"/);
 assert.match(gameHtml,/id="repeatFourDivisionButton"/);
-assert.match(gameHtml,/MISSIOONID 1–185/);
+assert.match(gameHtml,/MISSIOONID 1–237/);
 assert.match(gameHtml,/id="missionRouteScroll"/);
 assert.match(gameCode,/missionRouteScroll\.scrollTop=/);
 assert.match(gameCode,/currentRect\.top-routeRect\.top/);
@@ -135,7 +140,7 @@ assert.match(gameCode,/function renderChapterTwoStory\(\)/);
 assert.match(gameCode,/worldAwaken/);
 assert.match(gameCode,/setChapterTwoRewardProgress\(levelId,true\)/);
 assert.match(gameCode,/const chapterTwoReveal=levelId>FINAL_MISSION_ID/);
-assert.match(gameCode,/const worldReveal=chapterTwoReveal\|\|chapterThreeReveal\|\|chapterFourReveal\|\|chapterFiveReveal\|\|chapterSixReveal\|\|chapterSevenReveal\|\|chapterEightReveal\|\|chapterNineReveal\|\|chapterTenReveal/);
+assert.match(gameCode,/const worldReveal=Boolean\(journey\)\|\|chapterTwoReveal\|\|chapterThreeReveal/);
 assert.match(gameCode,/const visualReveal=firstCompletion\|\|worldReveal/);
 const chapterTwoCinematicStart=gameCode.indexOf("if(levelId>FINAL_MISSION_ID){",gameCode.indexOf('function startRewardCinematic'));
 const chapterOneCinematicStart=gameCode.indexOf("if(levelId===FINAL_MISSION_ID){",chapterTwoCinematicStart);

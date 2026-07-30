@@ -1,4 +1,5 @@
 :root{
+  color-scheme:only light;
   --ink:#17365f;
   --night:#182452;
   --night-deep:#101733;
@@ -14,6 +15,67 @@
   --line:#d8e6ef;
   --shadow:0 20px 54px rgba(23,54,95,.16);
 }
+html,body{forced-color-adjust:none}
+.fact-table-button{font-size:1.35rem;line-height:1}
+.fact-table-dialog{width:min(94vw,760px);max-height:94vh;padding:0;border:0;border-radius:28px;background:transparent;color:#fff}
+.fact-table-dialog::backdrop{background:rgba(7,10,34,.78);backdrop-filter:blur(8px)}
+.fact-table-panel{position:relative;overflow:auto;max-height:94vh;padding:24px;background:radial-gradient(circle at 75% 12%,rgba(112,217,207,.2),transparent 28%),linear-gradient(145deg,#182452,#11163b);border:2px solid rgba(112,217,207,.55);border-radius:28px;box-shadow:0 24px 70px rgba(4,7,28,.65)}
+.fact-table-panel h1{margin:.15rem 0 .75rem;color:#fff}
+.fact-table-close{position:absolute;right:15px;top:13px;width:42px;height:42px;border:0;border-radius:50%;background:#e64e89;color:#fff;font-size:1.8rem;cursor:pointer}
+.fact-table-equations{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:0 0 16px}
+.fact-table-equations strong{padding:9px 12px;border-radius:14px;background:rgba(255,255,255,.1);color:#fff;text-align:center;font-size:clamp(.95rem,3.2vw,1.18rem)}
+.fact-table-equations strong:nth-child(1){color:#fff7a8}.fact-table-equations strong:nth-child(2){color:#bffdf5}.fact-table-equations strong:nth-child(n+3){color:#ffc1da}
+.fact-table-wrap{overflow:auto;padding:3px}
+.fact-table-grid{width:100%;border-collapse:separate;border-spacing:4px;table-layout:fixed}
+.fact-table-grid th,.fact-table-grid td{min-width:34px;height:39px;padding:0;border:0;border-radius:9px;text-align:center;font-weight:900;color:#eafcff;background:rgba(255,255,255,.08)}
+.fact-table-grid th{cursor:pointer;background:#7355b7;color:#fff}
+.fact-table-grid th:first-child{cursor:default;background:#e64e89}
+.fact-table-grid .is-axis{background:#e64e89;color:#fff;box-shadow:0 0 0 2px #ffd34d}
+.fact-table-grid .is-result{background:#70d9cf;color:#17365f;animation:factPulse 1.4s ease-in-out infinite}
+@keyframes factPulse{50%{transform:scale(1.1);box-shadow:0 0 18px rgba(112,217,207,.8)}}
+@media(max-width:540px){.fact-table-panel{padding:20px 10px 14px}.fact-table-grid{border-spacing:2px}.fact-table-grid th,.fact-table-grid td{min-width:27px;height:31px;border-radius:7px;font-size:.72rem}.fact-table-equations{grid-template-columns:1fr 1fr}}
+
+/* Chapters 12–15: one production-safe scene system, four unmistakably
+   different cosmic worlds. Each earned step remains visible. */
+.journey-world{--sky1:#25164e;--sky2:#09647c;--ground:#164d61;--accent:#ef4fa0;--accent2:#ffe15c;position:absolute;inset:0;display:none;overflow:hidden;border-radius:inherit;background:radial-gradient(circle at 78% 17%,var(--accent2) 0 2%,transparent 11%),radial-gradient(circle at 17% 22%,rgba(255,255,255,.16),transparent 1.2%),linear-gradient(155deg,var(--sky1),var(--sky2))}
+.journey-world[data-theme="crystals"]{--sky1:#080a28;--sky2:#202054;--ground:#24233b;--accent:#76c8f5;--accent2:#bb77ff}
+.journey-world[data-theme="rain"]{--sky1:#101937;--sky2:#164e6a;--ground:#172b48;--accent:#49d7ea;--accent2:#ffbd63}
+.journey-world[data-theme="fire"]{--sky1:#190d20;--sky2:#561d26;--ground:#20151c;--accent:#ff672f;--accent2:#ffd34d}
+.journey-stars{position:absolute;inset:0;background-image:radial-gradient(#fff 1px,transparent 1.5px);background-size:31px 31px;opacity:.55}
+.journey-stars i{position:absolute;width:6px;height:6px;border-radius:50%;background:#fff;box-shadow:0 0 9px #fff}.journey-stars i:nth-child(1){left:9%;top:13%}.journey-stars i:nth-child(2){left:35%;top:8%}.journey-stars i:nth-child(3){left:62%;top:24%}.journey-stars i:nth-child(4){right:10%;top:40%}.journey-stars i:nth-child(5){left:48%;top:34%}
+.journey-life{position:absolute;z-index:4;opacity:0;transform:scale(.65) translateY(14px);transition:opacity .7s,transform 1.2s cubic-bezier(.2,.8,.2,1)}
+.journey-life.is-earned{opacity:1;transform:none}.journey-life.is-new-reward{animation:journeyReveal 2.3s ease-out forwards}
+.journey-sky{right:8%;top:7%;width:88px;height:88px;border:12px solid var(--accent);border-radius:50%;box-shadow:0 0 26px var(--accent)}
+.journey-sky b{position:absolute;width:28px;height:28px;right:-38px;top:45px;border-radius:50%;background:var(--accent2);box-shadow:0 0 16px var(--accent2)}
+.journey-land{left:-8%;right:-8%;bottom:-12%;height:48%;border-radius:50% 50% 0 0;background:var(--ground);box-shadow:0 -12px 35px color-mix(in srgb,var(--accent) 30%,transparent)}
+.journey-land i,.journey-land b,.journey-land em{position:absolute;bottom:70%;width:72px;height:32px;border-radius:50%;background:color-mix(in srgb,var(--accent) 50%,var(--ground))}
+.journey-land i{left:18%}.journey-land b{left:48%;width:105px}.journey-land em{right:5%}
+.journey-feature{bottom:20%;width:90px;height:110px}.feature-a{left:30%}.feature-b{left:48%;bottom:28%}.feature-c{right:13%;bottom:18%}.feature-d{left:17%;bottom:13%}
+.journey-feature i,.journey-feature b,.journey-feature em{position:absolute;left:50%;transform:translateX(-50%);border-radius:55% 45% 55% 45%;background:var(--accent);box-shadow:0 0 15px var(--accent)}
+.journey-feature i{width:58px;height:58px;bottom:28px}.journey-feature b{width:42px;height:42px;bottom:2px;background:var(--accent2)}.journey-feature em{width:24px;height:88px;bottom:0;background:color-mix(in srgb,var(--accent) 75%,#fff)}
+[data-theme="flowers"] .journey-feature i{border-radius:50% 10% 50% 10%;transform:translateX(-50%) rotate(45deg)}[data-theme="flowers"] .journey-feature b{border-radius:50%}
+[data-theme="crystals"] .journey-feature i,[data-theme="crystals"] .journey-feature b,[data-theme="crystals"] .journey-feature em{clip-path:polygon(50% 0,100% 75%,72% 100%,25% 88%,0 72%);border-radius:0}
+[data-theme="rain"] .journey-feature i{width:86px;height:42px;border-radius:50% 50% 15% 15%}.journey-world[data-theme="rain"]::after{content:"";position:absolute;inset:-20%;background:repeating-linear-gradient(106deg,transparent 0 28px,rgba(153,233,255,.25) 29px 31px,transparent 32px 52px);animation:journeyRain 4s linear infinite}
+[data-theme="fire"] .journey-feature i,[data-theme="fire"] .journey-feature b{clip-path:polygon(50% 0,72% 35%,100% 63%,73% 100%,27% 100%,0 63%,28% 36%);border-radius:0}
+.journey-path{left:14%;right:13%;bottom:14%;height:10px;border-radius:50%;background:linear-gradient(90deg,var(--accent2),var(--accent),var(--accent2));box-shadow:0 0 18px var(--accent)}
+.journey-resident,.journey-children{bottom:13%;width:42px;height:65px;border-radius:48% 48% 40% 40%;background:color-mix(in srgb,var(--accent) 75%,#fff);box-shadow:0 0 12px var(--accent)}.resident-a{left:57%}.resident-b{left:67%}.journey-children{left:76%;width:58px;height:35px}
+.journey-resident:before,.journey-resident:after,.journey-children:before,.journey-children:after{content:"";position:absolute;top:15px;width:9px;height:12px;border-radius:50%;background:#fff;box-shadow:inset 0 -5px #17224b}.journey-resident:before{left:8px}.journey-resident:after{right:8px}.journey-children:before{left:11px;top:9px}.journey-children:after{right:11px;top:9px}
+.journey-finale{inset:0;background:radial-gradient(circle at 58% 58%,color-mix(in srgb,var(--accent) 30%,transparent),transparent 42%);mix-blend-mode:screen}
+.journey-landing{left:5%;bottom:5%;width:110px;height:35px;border-radius:50%;background:radial-gradient(ellipse,var(--accent),transparent 70%)}.journey-rocket{left:3%;bottom:5%;width:72px}.journey-cat{left:13%;bottom:3%;width:96px}
+.journey-departure{left:5%;top:8%;width:45%;height:45%;background:linear-gradient(145deg,transparent 40%,var(--accent2) 47% 50%,transparent 58%);filter:drop-shadow(0 0 8px var(--accent))}
+.reward-scene[class*="reward-chapter-"] .journey-world{z-index:6}.journey-world-map{z-index:3}
+.chapter-twelve .story-twelve,.chapter-thirteen .story-thirteen,.chapter-fourteen .story-fourteen,.chapter-fifteen .story-fifteen,.reward-chapter-twelve #rewardJourneyFlowers,.reward-chapter-thirteen #rewardJourneyCrystals,.reward-chapter-fourteen #rewardJourneyRain,.reward-chapter-fifteen #rewardJourneyFire{display:block}
+.reward-chapter-twelve>.reward-three-zone,.reward-chapter-twelve>.reward-four-zone,.reward-chapter-twelve>.reward-five-zone,.reward-chapter-twelve>.reward-six-zone,.reward-chapter-twelve>.reward-seven-zone,.reward-chapter-twelve>.reward-eight-zone,.reward-chapter-twelve>.reward-nine-zone,.reward-chapter-twelve>.reward-ten-zone,.reward-chapter-twelve>.reward-eleven-zone,.reward-chapter-twelve>.reward-twelve-zone,.reward-chapter-twelve>.reward-ship,.reward-chapter-twelve>.reward-portal,.reward-chapter-twelve>.result-cat-crop,
+.reward-chapter-thirteen>.reward-three-zone,.reward-chapter-thirteen>.reward-four-zone,.reward-chapter-thirteen>.reward-five-zone,.reward-chapter-thirteen>.reward-six-zone,.reward-chapter-thirteen>.reward-seven-zone,.reward-chapter-thirteen>.reward-eight-zone,.reward-chapter-thirteen>.reward-nine-zone,.reward-chapter-thirteen>.reward-ten-zone,.reward-chapter-thirteen>.reward-eleven-zone,.reward-chapter-thirteen>.reward-twelve-zone,.reward-chapter-thirteen>.reward-ship,.reward-chapter-thirteen>.reward-portal,.reward-chapter-thirteen>.result-cat-crop,
+.reward-chapter-fourteen>.reward-three-zone,.reward-chapter-fourteen>.reward-four-zone,.reward-chapter-fourteen>.reward-five-zone,.reward-chapter-fourteen>.reward-six-zone,.reward-chapter-fourteen>.reward-seven-zone,.reward-chapter-fourteen>.reward-eight-zone,.reward-chapter-fourteen>.reward-nine-zone,.reward-chapter-fourteen>.reward-ten-zone,.reward-chapter-fourteen>.reward-eleven-zone,.reward-chapter-fourteen>.reward-twelve-zone,.reward-chapter-fourteen>.reward-ship,.reward-chapter-fourteen>.reward-portal,.reward-chapter-fourteen>.result-cat-crop,
+.reward-chapter-fifteen>.reward-three-zone,.reward-chapter-fifteen>.reward-four-zone,.reward-chapter-fifteen>.reward-five-zone,.reward-chapter-fifteen>.reward-six-zone,.reward-chapter-fifteen>.reward-seven-zone,.reward-chapter-fifteen>.reward-eight-zone,.reward-chapter-fifteen>.reward-nine-zone,.reward-chapter-fifteen>.reward-ten-zone,.reward-chapter-fifteen>.reward-eleven-zone,.reward-chapter-fifteen>.reward-twelve-zone,.reward-chapter-fifteen>.reward-ship,.reward-chapter-fifteen>.reward-portal,.reward-chapter-fifteen>.result-cat-crop{display:none!important}
+.chapter-twelve .story-two,.chapter-twelve .story-three,.chapter-twelve .story-four,.chapter-twelve .story-five,.chapter-twelve .story-six,.chapter-twelve .story-seven,.chapter-twelve .story-eight,.chapter-twelve .story-nine,.chapter-twelve .story-ten,.chapter-twelve .story-eleven,
+.chapter-thirteen .story-two,.chapter-thirteen .story-three,.chapter-thirteen .story-four,.chapter-thirteen .story-five,.chapter-thirteen .story-six,.chapter-thirteen .story-seven,.chapter-thirteen .story-eight,.chapter-thirteen .story-nine,.chapter-thirteen .story-ten,.chapter-thirteen .story-eleven,
+.chapter-fourteen .story-two,.chapter-fourteen .story-three,.chapter-fourteen .story-four,.chapter-fourteen .story-five,.chapter-fourteen .story-six,.chapter-fourteen .story-seven,.chapter-fourteen .story-eight,.chapter-fourteen .story-nine,.chapter-fourteen .story-ten,.chapter-fourteen .story-eleven,
+.chapter-fifteen .story-two,.chapter-fifteen .story-three,.chapter-fifteen .story-four,.chapter-fifteen .story-five,.chapter-fifteen .story-six,.chapter-fifteen .story-seven,.chapter-fifteen .story-eight,.chapter-fifteen .story-nine,.chapter-fifteen .story-ten,.chapter-fifteen .story-eleven{display:none!important}
+@keyframes journeyReveal{0%{opacity:0;transform:scale(.3) translateY(30px);filter:brightness(.6)}70%{opacity:1;transform:scale(1.08) translateY(-4px);filter:brightness(1.5)}100%{opacity:1;transform:none;filter:none}}
+@keyframes journeyRain{to{transform:translate(60px,80px)}}
+@media(max-width:560px){.journey-rocket{width:48px}.journey-cat{width:64px}.journey-feature{scale:.7;transform-origin:50% 100%}.journey-resident,.journey-children{scale:.72;transform-origin:50% 100%}.journey-sky{scale:.7;transform-origin:100% 0}}
 
 *{box-sizing:border-box}
 html{min-height:100%;background:#eef8fb}
