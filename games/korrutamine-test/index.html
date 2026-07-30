@@ -220,6 +220,20 @@
             <span class="explanation-lock" aria-hidden="true">🔒</span>
             <span class="explanation-arrow" aria-hidden="true">→</span>
           </button>
+
+          <button class="explanation-choice multiplication-choice" id="repeatNineMultiplicationButton" type="button">
+            <span class="explanation-orbit" aria-hidden="true"><span>×</span></span>
+            <span class="explanation-name"><strong data-i18n="explanations.multiply">Korrutamine</strong><small data-i18n="explanations.nine">9-ga</small></span>
+            <span class="explanation-lock" aria-hidden="true">🔒</span>
+            <span class="explanation-arrow" aria-hidden="true">→</span>
+          </button>
+
+          <button class="explanation-choice division-choice" id="repeatNineDivisionButton" type="button">
+            <span class="explanation-orbit" aria-hidden="true"><span>÷</span></span>
+            <span class="explanation-name"><strong data-i18n="explanations.divide">Jagamine</strong><small data-i18n="explanations.nine">9-ga</small></span>
+            <span class="explanation-lock" aria-hidden="true">🔒</span>
+            <span class="explanation-arrow" aria-hidden="true">→</span>
+          </button>
         </div>
 
         <button class="secondary-button explanation-back" id="explanationBackButton" type="button" data-i18n="lesson.toMissions">← KAARDILE</button>
@@ -278,6 +292,7 @@
             <div class="story-five north-world north-world-map" id="storyFive" aria-hidden="true"></div>
             <div class="story-six canopy-world canopy-world-map" id="storySix" aria-hidden="true"></div>
             <div class="story-seven terrace-world terrace-world-map" id="storySeven" aria-hidden="true"></div>
+            <div class="story-eight ocean-world ocean-world-map" id="storyEight" aria-hidden="true"></div>
           </div>
 
           <div class="story-goals" aria-label="Peatüki teekond" data-i18n-aria-label="map.routeAria">
@@ -289,8 +304,8 @@
         </section>
 
         <div class="mission-route-scroll" id="missionRouteScroll" tabindex="0" aria-label="Missioonide keritav rada">
-          <div class="chapter-route-head"><span id="mapRouteLabel" data-i18n="map.routeLabel">KOSMOSETEE · MISSIOONID 1–123</span></div>
-          <div class="level-grid" id="levelGrid" aria-label="Esimese kuni seitsmenda peatüki missioonid" data-i18n-aria-label="map.missionsAria"></div>
+          <div class="chapter-route-head"><span id="mapRouteLabel" data-i18n="map.routeLabel">KOSMOSETEE · MISSIOONID 1–141</span></div>
+          <div class="level-grid" id="levelGrid" aria-label="Esimese kuni kaheksanda peatüki missioonid" data-i18n-aria-label="map.missionsAria"></div>
         </div>
       </div>
       <div class="map-actions">
@@ -381,6 +396,7 @@
           <div class="reward-six-zone north-world north-world-reward" id="rewardNorthWorld" aria-hidden="true"></div>
           <div class="reward-seven-zone canopy-world canopy-world-reward" id="rewardCanopyWorld" aria-hidden="true"></div>
           <div class="reward-eight-zone terrace-world terrace-world-reward" id="rewardTerraceWorld" aria-hidden="true"></div>
+          <div class="reward-nine-zone ocean-world ocean-world-reward" id="rewardOceanWorld" aria-hidden="true"></div>
           <div class="reward-impact-ground"><i></i><i></i><i></i></div>
           <div class="result-cat-crop">
             <img class="result-cat result-cat-neutral" src="assets/edukass-cat-transparent.png" alt="">
@@ -546,6 +562,29 @@
     <img class="terrace-life terrace-rocket" data-terrace-step="1" src="assets/edukass-world-rocket.png" alt="">
     <img class="terrace-life terrace-cat" data-terrace-step="1" src="assets/edukass-cat-transparent.png" alt="">
     <span class="terrace-life terrace-departure" data-terrace-step="18"><i></i><i></i><i></i></span>
+  </template>
+
+  <template id="oceanWorldTemplate">
+    <span class="ocean-life ocean-seabed" data-ocean-step="2"><i></i><b></b><em></em></span>
+    <span class="ocean-life ocean-coral-trunk" data-ocean-step="3"><i></i><b></b></span>
+    <span class="ocean-life ocean-coral-crown" data-ocean-step="4"><i></i><b></b><em></em></span>
+    <span class="ocean-life ocean-kelp" data-ocean-step="5"><i></i><b></b><em></em><strong></strong></span>
+    <span class="ocean-life ocean-flowers" data-ocean-step="6"><i></i><b></b><em></em></span>
+    <span class="ocean-life ocean-shell-home" data-ocean-step="7"><i></i><b></b></span>
+    <span class="ocean-life ocean-bubble-homes" data-ocean-step="8"><i></i><b></b><em></em></span>
+    <span class="ocean-life ocean-home-lights" data-ocean-step="9"><i></i><b></b><em></em></span>
+    <span class="ocean-life ocean-resident" data-ocean-step="10"><i></i></span>
+    <span class="ocean-life ocean-children" data-ocean-step="11"><i></i><b></b></span>
+    <span class="ocean-life ocean-arches" data-ocean-step="12"><i></i><b></b></span>
+    <span class="ocean-life ocean-fruit" data-ocean-step="13"><i></i><i></i><i></i><i></i></span>
+    <span class="ocean-life ocean-fish" data-ocean-step="14"><i></i><b></b><em></em></span>
+    <span class="ocean-life ocean-garden" data-ocean-step="15"><i></i><b></b><em></em><strong></strong></span>
+    <span class="ocean-life ocean-rays" data-ocean-step="16"><i></i><b></b><em></em></span>
+    <span class="ocean-life ocean-alive" data-ocean-step="17"><i></i><i></i><i></i><i></i><i></i></span>
+    <span class="ocean-life ocean-landing" data-ocean-step="1"></span>
+    <img class="ocean-life ocean-rocket" data-ocean-step="1" src="assets/edukass-world-rocket.png" alt="">
+    <img class="ocean-life ocean-cat" data-ocean-step="1" src="assets/edukass-cat-transparent.png" alt="">
+    <span class="ocean-life ocean-departure" data-ocean-step="18"><i></i><i></i><i></i></span>
   </template>
 
   <dialog class="share-dialog" id="shareDialog" aria-labelledby="shareDialogTitle">
