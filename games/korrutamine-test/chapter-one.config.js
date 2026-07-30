@@ -206,6 +206,21 @@
     revisionMission(171,'Suur kordamine','Kõik segamini',TIMER_PROFILE.control,'#d2aa55'),
     revisionMission(172,'Draakoniplaneedi kontroll','Kontroll 1–10',TIMER_PROFILE.control,'#ef8d63',HARD_TABLE_FAMILIES)
   ].map(mission=>({...mission,chapterId:10,titleKey:`mission.${mission.id}.title`,shortKey:`mission.${mission.id}.short`}));
+  const CHAPTER_TWELVE_MISSIONS=[
+    revisionMission(173,'Peegelliiva algus','Korrutamine 1–10',TIMER_PROFILE.cumulative,'#f1ba78',ALL_TABLE_FAMILIES.filter(family=>family.operation==='multiply')),
+    revisionMission(174,'Täpsed jagamised','Jagamine 1–10',TIMER_PROFILE.divisionFull,'#e8a56d',ALL_TABLE_FAMILIES.filter(family=>family.operation==='divide')),
+    revisionMission(175,'Väikesed ja suured','× ja ÷ · 2–10',TIMER_PROFILE.familyMixed,'#d88f67'),
+    revisionMission(176,'Pööratud tehted','Järjekord vahetub',TIMER_PROFILE.reorder,'#c87967'),
+    revisionMission(177,'Kuue ja seitsme rada','× ja ÷ · 6, 7',TIMER_PROFILE.familyMixed,'#ac6870',ALL_TABLE_FAMILIES.filter(family=>[6,7].includes(family.table||family.divisor))),
+    revisionMission(178,'Kaheksa ja üheksa rada','× ja ÷ · 8, 9',TIMER_PROFILE.familyMixed,'#8e607c',ALL_TABLE_FAMILIES.filter(family=>[8,9].includes(family.table||family.divisor))),
+    revisionMission(179,'Peegelduvad paarid','Seotud tehted',TIMER_PROFILE.firstMix,'#6c638d',HARD_TABLE_FAMILIES),
+    revisionMission(180,'Rasked korrutamised','Täpsus ×6–9',TIMER_PROFILE.adaptive,'#526d9d',HARD_TABLE_FAMILIES.filter(family=>family.operation==='multiply')),
+    revisionMission(181,'Rasked jagamised','Täpsus ÷6–9',TIMER_PROFILE.adaptive,'#3c7fa4',HARD_TABLE_FAMILIES.filter(family=>family.operation==='divide')),
+    revisionMission(182,'Kiire vahetus','Korruta või jaga',TIMER_PROFILE.cumulative,'#2f91a5'),
+    revisionMission(183,'Tähtede ränd','Kõik 1–10',TIMER_PROFILE.adaptive,'#35a39d'),
+    revisionMission(184,'Vaikne suurkontroll','Kõik segamini',TIMER_PROFILE.control,'#54ad8d'),
+    revisionMission(185,'Peegelliiva kontroll','Kontroll 1–10',TIMER_PROFILE.control,'#83b97b',HARD_TABLE_FAMILIES)
+  ].map(mission=>({...mission,chapterId:11,titleKey:`mission.${mission.id}.title`,shortKey:`mission.${mission.id}.short`}));
 
   return {
     schemaVersion:2,
@@ -438,6 +453,25 @@
           {missionId:171,role:'living-sky'},
           {missionId:172,role:'departure'}
         ]
+      },
+      chapterEleven:{
+        startMissionId:173,
+        finalMissionId:185,
+        worldSteps:[
+          {missionId:173,role:'arrival'},
+          {missionId:174,role:'eclipse'},
+          {missionId:175,role:'ringed-planet'},
+          {missionId:176,role:'sand-waves'},
+          {missionId:177,role:'mirror-lake'},
+          {missionId:178,role:'bone-arches'},
+          {missionId:179,role:'sail-tents'},
+          {missionId:180,role:'tent-lights'},
+          {missionId:181,role:'first-wanderer'},
+          {missionId:182,role:'wanderer-pair'},
+          {missionId:183,role:'young-wanderers'},
+          {missionId:184,role:'living-reflections'},
+          {missionId:185,role:'departure'}
+        ]
       }
     },
     chapters:[
@@ -450,7 +484,8 @@
       {id:7,titleKey:'chapter.7.title',shortKey:'chapter.7.short',startMissionId:106,endMissionId:123,accent:'#f1b53c'},
       {id:8,titleKey:'chapter.8.title',shortKey:'chapter.8.short',startMissionId:124,endMissionId:141,accent:'#2aa8bf'},
       {id:9,titleKey:'chapter.9.title',shortKey:'chapter.9.short',startMissionId:142,endMissionId:159,accent:'#55b86b'},
-      {id:10,titleKey:'chapter.10.title',shortKey:'chapter.10.short',startMissionId:160,endMissionId:172,accent:'#a06ae8'}
+      {id:10,titleKey:'chapter.10.title',shortKey:'chapter.10.short',startMissionId:160,endMissionId:172,accent:'#a06ae8'},
+      {id:11,titleKey:'chapter.11.title',shortKey:'chapter.11.short',startMissionId:173,endMissionId:185,accent:'#e8a56d'}
     ],
     defaultLanguage:'et',
     supportedLanguages:['et'],
@@ -1391,7 +1426,8 @@
       ...CHAPTER_EIGHT_MISSIONS,
       ...CHAPTER_NINE_MISSIONS,
       ...CHAPTER_TEN_MISSIONS,
-      ...CHAPTER_ELEVEN_MISSIONS
+      ...CHAPTER_ELEVEN_MISSIONS,
+      ...CHAPTER_TWELVE_MISSIONS
 
     ],
     fallbackQuestionGroups:[

@@ -25,7 +25,7 @@ assert.equal(config.storage.progressKey,'edukass-chapter-one-v18');
 assert.equal(config.storage.soundKey,'edukass-sound-enabled');
 assert.equal(config.storage.introKey,'edukass-opening-seen-v28');
 assert.equal(config.storage.progressSchemaVersion,2);
-assert.equal(config.missions.length,172);
+assert.equal(config.missions.length,185);
 assert.deepEqual(config.chapters.map(chapter=>[chapter.id,chapter.startMissionId,chapter.endMissionId]),[
   [1,1,15],
   [2,16,33],
@@ -36,7 +36,8 @@ assert.deepEqual(config.chapters.map(chapter=>[chapter.id,chapter.startMissionId
   [7,106,123],
   [8,124,141],
   [9,142,159],
-  [10,160,172]
+  [10,160,172],
+  [11,173,185]
 ]);
 assert.deepEqual(config.lesson.triggers.map(lesson=>[lesson.id,lesson.missionId,lesson.mode,lesson.table]),[
   ['multiply-2',1,'multiply',2],
@@ -103,6 +104,7 @@ assert.equal(i18n.t('chapter.7.title'),'7. PEATÜKK · KAHEKSA');
 assert.equal(i18n.t('chapter.8.title'),'8. PEATÜKK · ÜHEKSA');
 assert.equal(i18n.t('chapter.9.title'),'9. PEATÜKK · KÜMME');
 assert.equal(i18n.t('chapter.10.title'),'10. PEATÜKK · DRAAKONITE TAEVAS');
+assert.equal(i18n.t('chapter.11.title'),'11. PEATÜKK · PEEGELLIIVAD');
 assert.equal(i18n.t('mission.33.title'),'Peatüki kontroll');
 assert.equal(i18n.t('missing.key',{},'Varutekst'),'Varutekst');
 
@@ -120,7 +122,7 @@ assert.match(gameHtml,/id="repeatThreeMultiplicationButton"/);
 assert.match(gameHtml,/id="repeatThreeDivisionButton"/);
 assert.match(gameHtml,/id="repeatFourMultiplicationButton"/);
 assert.match(gameHtml,/id="repeatFourDivisionButton"/);
-assert.match(gameHtml,/MISSIOONID 1–172/);
+assert.match(gameHtml,/MISSIOONID 1–185/);
 assert.match(gameHtml,/id="missionRouteScroll"/);
 assert.match(gameCode,/missionRouteScroll\.scrollTop=/);
 assert.match(gameCode,/currentRect\.top-routeRect\.top/);

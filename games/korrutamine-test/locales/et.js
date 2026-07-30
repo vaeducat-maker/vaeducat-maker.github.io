@@ -142,7 +142,7 @@
       'map.multiply':'Korrutamine',
       'map.divide':'Jagamine',
       'map.repeatLesson':'Korda selgitust',
-      'map.routeLabel':'KOSMOSETEE · MISSIOONID 1–172',
+      'map.routeLabel':'KOSMOSETEE · MISSIOONID 1–185',
       'chapter.1.title':'1. PEATÜKK · ÜKS JA KAKS',
       'chapter.1.short':'ÜKS JA KAKS',
       'chapter.2.title':'2. PEATÜKK · KOLM',
@@ -478,6 +478,20 @@
       ,'mission.170.title':'Kiiruse rada','mission.170.short':'Kiirus 1–10'
       ,'mission.171.title':'Suur kordamine','mission.171.short':'Kõik segamini'
       ,'mission.172.title':'Draakoniplaneedi kontroll','mission.172.short':'Kontroll 1–10'
+      ,'chapter.11.title':'11. PEATÜKK · PEEGELLIIVAD','chapter.11.short':'Peegelliivad'
+      ,'mission.173.title':'Peegelliiva algus','mission.173.short':'Korrutamine 1–10'
+      ,'mission.174.title':'Täpsed jagamised','mission.174.short':'Jagamine 1–10'
+      ,'mission.175.title':'Väikesed ja suured','mission.175.short':'× ja ÷ · 2–10'
+      ,'mission.176.title':'Pööratud tehted','mission.176.short':'Järjekord vahetub'
+      ,'mission.177.title':'Kuue ja seitsme rada','mission.177.short':'× ja ÷ · 6, 7'
+      ,'mission.178.title':'Kaheksa ja üheksa rada','mission.178.short':'× ja ÷ · 8, 9'
+      ,'mission.179.title':'Peegelduvad paarid','mission.179.short':'Seotud tehted'
+      ,'mission.180.title':'Rasked korrutamised','mission.180.short':'Täpsus ×6–9'
+      ,'mission.181.title':'Rasked jagamised','mission.181.short':'Täpsus ÷6–9'
+      ,'mission.182.title':'Kiire vahetus','mission.182.short':'Korruta või jaga'
+      ,'mission.183.title':'Tähtede ränd','mission.183.short':'Kõik 1–10'
+      ,'mission.184.title':'Vaikne suurkontroll','mission.184.short':'Kõik segamini'
+      ,'mission.185.title':'Peegelliiva kontroll','mission.185.short':'Kontroll 1–10'
     }
   };
 });

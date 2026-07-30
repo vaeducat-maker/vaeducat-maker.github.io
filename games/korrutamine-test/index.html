@@ -17,7 +17,7 @@
   <meta property="og:image" content="https://edukass.ee/games/korrutamine-test/assets/share-korrutustabel.png?v=40">
   <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="stylesheet" href="game.css?v=72">
+  <link rel="stylesheet" href="game.css?v=73">
 </head>
 <body class="intro-active">
   <section class="game-intro is-running" id="introScreen" aria-label="EDUKASSi mängu algus" data-i18n-aria-label="intro.aria">
@@ -309,6 +309,7 @@
             <div class="story-eight ocean-world ocean-world-map" id="storyEight" aria-hidden="true"></div>
             <div class="story-nine canyon-world canyon-world-map" id="storyNine" aria-hidden="true"></div>
             <div class="story-ten dragon-world dragon-world-map" id="storyTen" aria-hidden="true"></div>
+            <div class="story-eleven mirror-world mirror-world-map" id="storyEleven" aria-hidden="true"></div>
           </div>
 
           <div class="story-goals" aria-label="Peatüki teekond" data-i18n-aria-label="map.routeAria">
@@ -320,7 +321,7 @@
         </section>
 
         <div class="mission-route-scroll" id="missionRouteScroll" tabindex="0" aria-label="Missioonide keritav rada">
-          <div class="chapter-route-head"><span id="mapRouteLabel" data-i18n="map.routeLabel">KOSMOSETEE · MISSIOONID 1–172</span></div>
+          <div class="chapter-route-head"><span id="mapRouteLabel" data-i18n="map.routeLabel">KOSMOSETEE · MISSIOONID 1–185</span></div>
           <div class="level-grid" id="levelGrid" aria-label="Esimese kuni kaheksanda peatüki missioonid" data-i18n-aria-label="map.missionsAria"></div>
         </div>
       </div>
@@ -415,6 +416,7 @@
           <div class="reward-nine-zone ocean-world ocean-world-reward" id="rewardOceanWorld" aria-hidden="true"></div>
           <div class="reward-ten-zone canyon-world canyon-world-reward" id="rewardCanyonWorld" aria-hidden="true"></div>
           <div class="reward-eleven-zone dragon-world dragon-world-reward" id="rewardDragonWorld" aria-hidden="true"></div>
+          <div class="reward-twelve-zone mirror-world mirror-world-reward" id="rewardMirrorWorld" aria-hidden="true"></div>
           <div class="reward-impact-ground"><i></i><i></i><i></i></div>
           <div class="result-cat-crop">
             <img class="result-cat result-cat-neutral" src="assets/edukass-cat-transparent.png" alt="">
@@ -646,6 +648,24 @@
     <span class="dragon-life dragon-departure" data-dragon-step="13"><i></i><b></b></span>
   </template>
 
+  <template id="mirrorWorldTemplate">
+    <span class="mirror-life mirror-eclipse" data-mirror-step="2"><i></i></span>
+    <span class="mirror-life mirror-ringed" data-mirror-step="3"><i></i><b></b></span>
+    <span class="mirror-life mirror-waves" data-mirror-step="4"><i></i><b></b><em></em></span>
+    <span class="mirror-life mirror-lake" data-mirror-step="5"><i></i></span>
+    <span class="mirror-life mirror-arches" data-mirror-step="6"><i></i><b></b><em></em></span>
+    <span class="mirror-life mirror-tents" data-mirror-step="7"><i></i><b></b><em></em></span>
+    <span class="mirror-life mirror-lights" data-mirror-step="8"><i></i><b></b><em></em></span>
+    <span class="mirror-life mirror-wanderer mirror-one" data-mirror-step="9"><i></i></span>
+    <span class="mirror-life mirror-wanderer mirror-pair" data-mirror-step="10"><i></i><b></b></span>
+    <span class="mirror-life mirror-wanderer mirror-young" data-mirror-step="11"><i></i><b></b></span>
+    <span class="mirror-life mirror-shimmer" data-mirror-step="12"><i></i><i></i><i></i><i></i></span>
+    <span class="mirror-life mirror-landing" data-mirror-step="1"></span>
+    <img class="mirror-life mirror-rocket" data-mirror-step="1" src="assets/edukass-world-rocket.png" alt="">
+    <img class="mirror-life mirror-cat" data-mirror-step="1" src="assets/edukass-cat-transparent.png" alt="">
+    <span class="mirror-life mirror-departure" data-mirror-step="13"><i></i><b></b></span>
+  </template>
+
   <dialog class="share-dialog" id="shareDialog" aria-labelledby="shareDialogTitle">
     <form method="dialog" class="share-content">
       <button class="share-close" type="submit" aria-label="Sulge" data-i18n-aria-label="share.closeAria">×</button>
@@ -684,11 +704,11 @@
     </form>
   </dialog>
 
-  <script src="locales/et.js?v=71"></script>
-  <script src="chapter-one.config.js?v=71"></script>
+  <script src="locales/et.js?v=73"></script>
+  <script src="chapter-one.config.js?v=73"></script>
   <script src="i18n.js?v=61"></script>
   <script src="question-engine.js?v=61"></script>
   <script src="progress-store.js?v=61"></script>
-  <script src="game.js?v=72"></script>
+  <script src="game.js?v=73"></script>
 </body>
 </html>
