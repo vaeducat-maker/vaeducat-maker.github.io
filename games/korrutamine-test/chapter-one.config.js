@@ -179,6 +179,34 @@
     {id:159,title:'Peatüki kontroll',short:'Kontroll 1–10',mode:'input',operation:'mixed',seconds:TIMER_PROFILE.control,accent:'#59aa7d',questionGroups:[{type:'multiplication',table:6,statsTable:6,factors:[9],orientation:'mixed',copies:1},{type:'multiplication',table:7,statsTable:7,factors:[8],orientation:'mixed',copies:1},{type:'multiplication',table:8,statsTable:8,factors:[9],orientation:'mixed',copies:1},{type:'multiplication',table:9,statsTable:9,factors:[7,10],orientation:'mixed',copies:1},{type:'multiplication',table:10,statsTable:10,factors:[4,5,6,7,8,9],orientation:'mixed',copies:1},{type:'division',divisor:7,statsTable:7,factors:[9],copies:1},{type:'division',divisor:8,statsTable:8,factors:[9],copies:1},{type:'division',divisor:9,statsTable:9,factors:[8],copies:1},{type:'division',divisor:10,statsTable:10,factors:[5,10],copies:1}]}
   ].map(mission=>({...mission,chapterId:9,titleKey:`mission.${mission.id}.title`,shortKey:`mission.${mission.id}.short`}));
 
+  const ALL_TABLE_FAMILIES=[
+    ...Array.from({length:9},(_,index)=>({operation:'multiply',table:index+2,statsTable:index+2,factors:ONE_TO_TEN,orientation:'mixed'})),
+    ...Array.from({length:9},(_,index)=>({operation:'divide',divisor:index+2,statsTable:index+2,factors:ONE_TO_TEN}))
+  ];
+  const HARD_TABLE_FAMILIES=[
+    ...[6,7,8,9].map(table=>({operation:'multiply',table,statsTable:table,factors:[4,6,7,8,9],orientation:'mixed'})),
+    ...[6,7,8,9].map(divisor=>({operation:'divide',divisor,statsTable:divisor,factors:[4,6,7,8,9]}))
+  ];
+  const revisionMission=(id,title,short,seconds,accent,families=ALL_TABLE_FAMILIES)=>({
+    id,title,short,mode:'input',operation:'mixed',seconds,accent,
+    questionGroups:[{type:'adaptive',count:24,families}]
+  });
+  const CHAPTER_ELEVEN_MISSIONS=[
+    revisionMission(160,'Korrutamine ärkab','Korrutamine 1–10',TIMER_PROFILE.fullTable,'#a06ae8',ALL_TABLE_FAMILIES.filter(family=>family.operation==='multiply')),
+    revisionMission(161,'Jagamine ärkab','Jagamine 1–10',TIMER_PROFILE.divisionFull,'#8a67df',ALL_TABLE_FAMILIES.filter(family=>family.operation==='divide')),
+    revisionMission(162,'Kerged paarid','× ja ÷ · 2, 5, 10',TIMER_PROFILE.familyMixed,'#7269d5',ALL_TABLE_FAMILIES.filter(family=>[2,5,10].includes(family.table||family.divisor))),
+    revisionMission(163,'Kolm ja neli','× ja ÷ · 3, 4',TIMER_PROFILE.familyMixed,'#5b74ce',ALL_TABLE_FAMILIES.filter(family=>[3,4].includes(family.table||family.divisor))),
+    revisionMission(164,'Kuus ja seitse','× ja ÷ · 6, 7',TIMER_PROFILE.familyMixed,'#4782c6',ALL_TABLE_FAMILIES.filter(family=>[6,7].includes(family.table||family.divisor))),
+    revisionMission(165,'Kaheksa ja üheksa','× ja ÷ · 8, 9',TIMER_PROFILE.familyMixed,'#3792b9',ALL_TABLE_FAMILIES.filter(family=>[8,9].includes(family.table||family.divisor))),
+    revisionMission(166,'Vaheta kiiresti','Korruta või jaga',TIMER_PROFILE.firstMix,'#2ca3aa'),
+    revisionMission(167,'Keerulisemad tehted','Rasked paarid',TIMER_PROFILE.adaptive,'#32ad95',HARD_TABLE_FAMILIES),
+    revisionMission(168,'Draakoni lend','Kõik 1–10',TIMER_PROFILE.adaptive,'#4bb77c'),
+    revisionMission(169,'Täpsuse rada','Täpsus 1–10',TIMER_PROFILE.cumulative,'#72bc67',HARD_TABLE_FAMILIES),
+    revisionMission(170,'Kiiruse rada','Kiirus 1–10',TIMER_PROFILE.control,'#a5bd58'),
+    revisionMission(171,'Suur kordamine','Kõik segamini',TIMER_PROFILE.control,'#d2aa55'),
+    revisionMission(172,'Draakoniplaneedi kontroll','Kontroll 1–10',TIMER_PROFILE.control,'#ef8d63',HARD_TABLE_FAMILIES)
+  ].map(mission=>({...mission,chapterId:10,titleKey:`mission.${mission.id}.title`,shortKey:`mission.${mission.id}.short`}));
+
   return {
     schemaVersion:2,
     id:'uks-ja-kaks',
@@ -391,6 +419,25 @@
           {missionId:158,role:'living-canyon'},
           {missionId:159,role:'departure'}
         ]
+      },
+      chapterTen:{
+        startMissionId:160,
+        finalMissionId:172,
+        worldSteps:[
+          {missionId:160,role:'dragon-arrival'},
+          {missionId:161,role:'violet-moons'},
+          {missionId:162,role:'sky-islands'},
+          {missionId:163,role:'crystal-nests'},
+          {missionId:164,role:'first-dragon'},
+          {missionId:165,role:'dragon-pair'},
+          {missionId:166,role:'star-waterfalls'},
+          {missionId:167,role:'young-dragons'},
+          {missionId:168,role:'celestial-arches'},
+          {missionId:169,role:'glowing-eggs'},
+          {missionId:170,role:'dragon-flock'},
+          {missionId:171,role:'living-sky'},
+          {missionId:172,role:'departure'}
+        ]
       }
     },
     chapters:[
@@ -402,7 +449,8 @@
       {id:6,titleKey:'chapter.6.title',shortKey:'chapter.6.short',startMissionId:88,endMissionId:105,accent:'#a6df45'},
       {id:7,titleKey:'chapter.7.title',shortKey:'chapter.7.short',startMissionId:106,endMissionId:123,accent:'#f1b53c'},
       {id:8,titleKey:'chapter.8.title',shortKey:'chapter.8.short',startMissionId:124,endMissionId:141,accent:'#2aa8bf'},
-      {id:9,titleKey:'chapter.9.title',shortKey:'chapter.9.short',startMissionId:142,endMissionId:159,accent:'#55b86b'}
+      {id:9,titleKey:'chapter.9.title',shortKey:'chapter.9.short',startMissionId:142,endMissionId:159,accent:'#55b86b'},
+      {id:10,titleKey:'chapter.10.title',shortKey:'chapter.10.short',startMissionId:160,endMissionId:172,accent:'#a06ae8'}
     ],
     defaultLanguage:'et',
     supportedLanguages:['et'],
@@ -1342,7 +1390,8 @@
       },
       ...CHAPTER_EIGHT_MISSIONS,
       ...CHAPTER_NINE_MISSIONS,
-      ...CHAPTER_TEN_MISSIONS
+      ...CHAPTER_TEN_MISSIONS,
+      ...CHAPTER_ELEVEN_MISSIONS
 
     ],
     fallbackQuestionGroups:[

@@ -142,7 +142,7 @@
       'map.multiply':'Korrutamine',
       'map.divide':'Jagamine',
       'map.repeatLesson':'Korda selgitust',
-      'map.routeLabel':'KOSMOSETEE · MISSIOONID 1–159',
+      'map.routeLabel':'KOSMOSETEE · MISSIOONID 1–172',
       'chapter.1.title':'1. PEATÜKK · ÜKS JA KAKS',
       'chapter.1.short':'ÜKS JA KAKS',
       'chapter.2.title':'2. PEATÜKK · KOLM',
@@ -161,6 +161,8 @@
       'chapter.8.short':'ÜHEKSA',
       'chapter.9.title':'9. PEATÜKK · KÜMME',
       'chapter.9.short':'KÜMME',
+      'chapter.10.title':'10. PEATÜKK · DRAAKONITE TAEVAS',
+      'chapter.10.short':'DRAAKONID',
       'story.goal1':'1. SIHT',
       'story.goal2':'2. SIHT',
       'story.goal3':'3. SIHT',
@@ -463,6 +465,19 @@
       ,'mission.157.title':'Korrutamine ja jagamine kümnega','mission.157.short':'×10 ja ÷10'
       ,'mission.158.title':'Kõik segamini','mission.158.short':'Kõik 1–10'
       ,'mission.159.title':'Peatüki kontroll','mission.159.short':'Kontroll 1–10'
+      ,'mission.160.title':'Korrutamine ärkab','mission.160.short':'Korrutamine 1–10'
+      ,'mission.161.title':'Jagamine ärkab','mission.161.short':'Jagamine 1–10'
+      ,'mission.162.title':'Kerged paarid','mission.162.short':'× ja ÷ · 2, 5, 10'
+      ,'mission.163.title':'Kolm ja neli','mission.163.short':'× ja ÷ · 3, 4'
+      ,'mission.164.title':'Kuus ja seitse','mission.164.short':'× ja ÷ · 6, 7'
+      ,'mission.165.title':'Kaheksa ja üheksa','mission.165.short':'× ja ÷ · 8, 9'
+      ,'mission.166.title':'Vaheta kiiresti','mission.166.short':'Korruta või jaga'
+      ,'mission.167.title':'Keerulisemad tehted','mission.167.short':'Rasked paarid'
+      ,'mission.168.title':'Draakoni lend','mission.168.short':'Kõik 1–10'
+      ,'mission.169.title':'Täpsuse rada','mission.169.short':'Täpsus 1–10'
+      ,'mission.170.title':'Kiiruse rada','mission.170.short':'Kiirus 1–10'
+      ,'mission.171.title':'Suur kordamine','mission.171.short':'Kõik segamini'
+      ,'mission.172.title':'Draakoniplaneedi kontroll','mission.172.short':'Kontroll 1–10'
     }
   };
 });

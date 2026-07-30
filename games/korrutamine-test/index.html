@@ -308,6 +308,7 @@
             <div class="story-seven terrace-world terrace-world-map" id="storySeven" aria-hidden="true"></div>
             <div class="story-eight ocean-world ocean-world-map" id="storyEight" aria-hidden="true"></div>
             <div class="story-nine canyon-world canyon-world-map" id="storyNine" aria-hidden="true"></div>
+            <div class="story-ten dragon-world dragon-world-map" id="storyTen" aria-hidden="true"></div>
           </div>
 
           <div class="story-goals" aria-label="Peatüki teekond" data-i18n-aria-label="map.routeAria">
@@ -319,7 +320,7 @@
         </section>
 
         <div class="mission-route-scroll" id="missionRouteScroll" tabindex="0" aria-label="Missioonide keritav rada">
-          <div class="chapter-route-head"><span id="mapRouteLabel" data-i18n="map.routeLabel">KOSMOSETEE · MISSIOONID 1–159</span></div>
+          <div class="chapter-route-head"><span id="mapRouteLabel" data-i18n="map.routeLabel">KOSMOSETEE · MISSIOONID 1–172</span></div>
           <div class="level-grid" id="levelGrid" aria-label="Esimese kuni kaheksanda peatüki missioonid" data-i18n-aria-label="map.missionsAria"></div>
         </div>
       </div>
@@ -413,6 +414,7 @@
           <div class="reward-eight-zone terrace-world terrace-world-reward" id="rewardTerraceWorld" aria-hidden="true"></div>
           <div class="reward-nine-zone ocean-world ocean-world-reward" id="rewardOceanWorld" aria-hidden="true"></div>
           <div class="reward-ten-zone canyon-world canyon-world-reward" id="rewardCanyonWorld" aria-hidden="true"></div>
+          <div class="reward-eleven-zone dragon-world dragon-world-reward" id="rewardDragonWorld" aria-hidden="true"></div>
           <div class="reward-impact-ground"><i></i><i></i><i></i></div>
           <div class="result-cat-crop">
             <img class="result-cat result-cat-neutral" src="assets/edukass-cat-transparent.png" alt="">
@@ -626,6 +628,24 @@
     <span class="ocean-life ocean-departure" data-ocean-step="18"><i></i><i></i><i></i></span>
   </template>
 
+  <template id="dragonWorldTemplate">
+    <span class="dragon-life dragon-moons" data-dragon-step="2"><i></i><b></b><em></em></span>
+    <span class="dragon-life dragon-islands" data-dragon-step="3"><i></i><b></b><em></em></span>
+    <span class="dragon-life dragon-nests" data-dragon-step="4"><i></i><b></b><em></em></span>
+    <span class="dragon-life dragon-one" data-dragon-step="5"><i></i><b></b><em></em><strong></strong></span>
+    <span class="dragon-life dragon-pair" data-dragon-step="6"><i></i><b></b></span>
+    <span class="dragon-life dragon-falls" data-dragon-step="7"><i></i><b></b><em></em></span>
+    <span class="dragon-life dragon-young" data-dragon-step="8"><i></i><b></b><em></em></span>
+    <span class="dragon-life dragon-arches" data-dragon-step="9"><i></i><b></b></span>
+    <span class="dragon-life dragon-eggs" data-dragon-step="10"><i></i><b></b><em></em><strong></strong></span>
+    <span class="dragon-life dragon-flock" data-dragon-step="11"><i></i><b></b><em></em></span>
+    <span class="dragon-life dragon-alive" data-dragon-step="12"><i></i><i></i><i></i><i></i></span>
+    <span class="dragon-life dragon-landing" data-dragon-step="1"></span>
+    <img class="dragon-life dragon-rocket" data-dragon-step="1" src="assets/edukass-world-rocket.png" alt="">
+    <img class="dragon-life dragon-cat" data-dragon-step="1" src="assets/edukass-cat-transparent.png" alt="">
+    <span class="dragon-life dragon-departure" data-dragon-step="13"><i></i><b></b></span>
+  </template>
+
   <dialog class="share-dialog" id="shareDialog" aria-labelledby="shareDialogTitle">
     <form method="dialog" class="share-content">
       <button class="share-close" type="submit" aria-label="Sulge" data-i18n-aria-label="share.closeAria">×</button>
@@ -664,11 +684,11 @@
     </form>
   </dialog>
 
-  <script src="locales/et.js?v=68"></script>
-  <script src="chapter-one.config.js?v=68"></script>
+  <script src="locales/et.js?v=71"></script>
+  <script src="chapter-one.config.js?v=71"></script>
   <script src="i18n.js?v=61"></script>
   <script src="question-engine.js?v=61"></script>
   <script src="progress-store.js?v=61"></script>
-  <script src="game.js?v=68"></script>
+  <script src="game.js?v=71"></script>
 </body>
 </html>

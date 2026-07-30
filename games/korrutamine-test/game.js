@@ -83,6 +83,7 @@ const storySix=document.querySelector('#storySix');
 const storySeven=document.querySelector('#storySeven');
 const storyEight=document.querySelector('#storyEight');
 const storyNine=document.querySelector('#storyNine');
+const storyTen=document.querySelector('#storyTen');
 const rewardScene=document.querySelector('#rewardScene');
 const rewardLivingWorld=document.querySelector('#rewardLivingWorld');
 const rewardWindWorld=document.querySelector('#rewardWindWorld');
@@ -92,6 +93,7 @@ const rewardCanopyWorld=document.querySelector('#rewardCanopyWorld');
 const rewardTerraceWorld=document.querySelector('#rewardTerraceWorld');
 const rewardOceanWorld=document.querySelector('#rewardOceanWorld');
 const rewardCanyonWorld=document.querySelector('#rewardCanyonWorld');
+const rewardDragonWorld=document.querySelector('#rewardDragonWorld');
 const livingWorldTemplate=document.querySelector('#livingWorldTemplate');
 const windWorldTemplate=document.querySelector('#windWorldTemplate');
 const luminWorldTemplate=document.querySelector('#luminWorldTemplate');
@@ -100,6 +102,7 @@ const canopyWorldTemplate=document.querySelector('#canopyWorldTemplate');
 const terraceWorldTemplate=document.querySelector('#terraceWorldTemplate');
 const oceanWorldTemplate=document.querySelector('#oceanWorldTemplate');
 const canyonWorldTemplate=document.querySelector('#canyonWorldTemplate');
+const dragonWorldTemplate=document.querySelector('#dragonWorldTemplate');
 const rewardPill=document.querySelector('#rewardPill');
 const resultScreen=document.querySelector('#resultScreen');
 const battleFxCanvas=document.querySelector('#battleFxCanvas');
@@ -149,6 +152,10 @@ function mountCanyonWorld(container){
   if(!container||!canyonWorldTemplate)return;
   container.append(canyonWorldTemplate.content.cloneNode(true));
 }
+function mountDragonWorld(container){
+  if(!container||!dragonWorldTemplate)return;
+  container.append(dragonWorldTemplate.content.cloneNode(true));
+}
 
 mountLivingWorld(storyTwo);
 mountLivingWorld(rewardLivingWorld);
@@ -166,6 +173,8 @@ mountOceanWorld(storyEight);
 mountOceanWorld(rewardOceanWorld);
 mountCanyonWorld(storyNine);
 mountCanyonWorld(rewardCanyonWorld);
+mountDragonWorld(storyTen);
+mountDragonWorld(rewardDragonWorld);
 
 const CHAPTER_CONFIG=window.EDUKASS_CHAPTER_ONE;
 if(!CHAPTER_CONFIG)throw new Error('EDUKASS chapter configuration was not loaded.');
@@ -226,6 +235,9 @@ const CHAPTER_EIGHT_WORLD_STEP_COUNT=CHAPTER_EIGHT_WORLD_STEPS.length;
 const CHAPTER_NINE_STORY=STORY_CONFIG.chapterNine||{};
 const CHAPTER_NINE_WORLD_STEPS=CHAPTER_NINE_STORY.worldSteps||[];
 const CHAPTER_NINE_WORLD_STEP_COUNT=CHAPTER_NINE_WORLD_STEPS.length;
+const CHAPTER_TEN_STORY=STORY_CONFIG.chapterTen||{};
+const CHAPTER_TEN_WORLD_STEPS=CHAPTER_TEN_STORY.worldSteps||[];
+const CHAPTER_TEN_WORLD_STEP_COUNT=CHAPTER_TEN_WORLD_STEPS.length;
 const LAST_MISSION_ID=CHAPTER_CONFIG.missions[CHAPTER_CONFIG.missions.length-1].id;
 const CHAPTER_END_IDS=new Set(CHAPTERS.map(chapter=>chapter.endMissionId));
 const PLANET_MISSION_IDS=new Set(STORY_CONFIG.planetMissionIds);
@@ -1438,9 +1450,46 @@ function renderChapterNineStory(){
   });
 }
 
+function renderChapterTenStory(){
+  const arrivalProgress=completedInRange(160,162);
+  const nestProgress=completedInRange(163,165);
+  const dragonProgress=completedInRange(166,168);
+  const awakeningProgress=completedInRange(169,172);
+  const completed=arrivalProgress+nestProgress+dragonProgress+awakeningProgress;
+  const phase=arrivalProgress<3?'arrival':nestProgress<3?'motion':dragonProgress<3?'sky':awakeningProgress<4?'light':'complete';
+  const completedSet=new Set(progress.completedLevels);
+  storyStage.dataset.phase=phase;
+  storyStage.dataset.completed=String(completed);
+  storyStage.classList.remove('chapter-two','chapter-three','chapter-four','chapter-five','chapter-six','chapter-seven','chapter-eight','chapter-nine','phase-ship','phase-engine','phase-portal','has-engine','has-portal');
+  storyStage.classList.add('chapter-ten');
+  storyStage.closest('.story-progress')?.classList.remove('chapter-two-active','chapter-three-active','chapter-four-active','chapter-five-active','chapter-six-active','chapter-seven-active','chapter-eight-active','chapter-nine-active');
+  storyStage.closest('.story-progress')?.classList.add('chapter-ten-active');
+  storyStage.classList.toggle('is-complete',completed===CHAPTER_TEN_WORLD_STEP_COUNT);
+  const titles={arrival:'Saabumine draakonite taevasse',motion:'Taevasaared ja pesad',sky:'Draakonipere ärkab',light:'Tähtede taevas elab',complete:'Draakoniplaneet on ärganud'};
+  storyPhaseKicker.textContent=phase==='complete'?t('story.complete'):t(`story.goal${phase==='arrival'?1:phase==='motion'?2:phase==='sky'?3:4}`);
+  storyPhaseTitle.textContent=titles[phase];
+  const values={ship:arrivalProgress,engine:nestProgress,portal:dragonProgress,vault:awakeningProgress};
+  const maximums={ship:3,engine:3,portal:3,vault:4};
+  const labels={ship:'Võõras taevas',engine:'Saared ja pesad',portal:'Draakonid',vault:'Elav tähistaevas'};
+  shipGoalCount.textContent=`${arrivalProgress}/3`; engineGoalCount.textContent=`${nestProgress}/3`; portalGoalCount.textContent=`${dragonProgress}/3`; vaultGoalCount.textContent=`${awakeningProgress}/4`;
+  document.querySelectorAll('[data-story-goal]').forEach(goal=>{
+    const name=goal.dataset.storyGoal,value=values[name]||0,max=maximums[name]||1;
+    const active=(phase==='arrival'&&name==='ship')||(phase==='motion'&&name==='engine')||(phase==='sky'&&name==='portal')||(phase==='light'&&name==='vault');
+    goal.classList.toggle('is-done',value===max); goal.classList.toggle('is-active',active); goal.setAttribute('aria-label',`${labels[name]}: ${value}/${max}`);
+  });
+  storyTen.dataset.dragonStep=String(completed);
+  storyTen.classList.toggle('dragon-departed',completedSet.has(CHAPTER_TEN_STORY.finalMissionId));
+  storyTen.querySelectorAll('[data-dragon-step]').forEach(element=>{
+    const worldStep=CHAPTER_TEN_WORLD_STEPS[Number(element.dataset.dragonStep)-1];
+    element.classList.toggle('is-earned',Boolean(worldStep&&completedSet.has(worldStep.missionId)));
+    element.classList.remove('is-new-reward');
+  });
+}
+
 function renderStoryProgress(){
   const chapter=activeMapChapter();
-  if(chapter.id===9)renderChapterNineStory();
+  if(chapter.id===10)renderChapterTenStory();
+  else if(chapter.id===9)renderChapterNineStory();
   else if(chapter.id===8)renderChapterEightStory();
   else if(chapter.id===7)renderChapterSevenStory();
   else if(chapter.id===6)renderChapterSixStory();
@@ -1966,6 +2015,20 @@ function setChapterNineRewardProgress(levelId,showReveal){
   rewardScene.dataset.canyonStep=String(step);
 }
 
+function setChapterTenRewardProgress(levelId,showReveal){
+  const step=Math.max(1,Math.min(CHAPTER_TEN_WORLD_STEP_COUNT,levelId-CHAPTER_TEN_STORY.startMissionId+1));
+  const previous=showReveal?Math.max(0,step-1):step;
+  rewardDragonWorld.dataset.dragonStep=String(previous);
+  rewardDragonWorld.classList.toggle('dragon-departed',!showReveal&&step===CHAPTER_TEN_WORLD_STEP_COUNT);
+  rewardDragonWorld.querySelectorAll('[data-dragon-step]').forEach(element=>{
+    element.classList.remove('is-earned','is-new-reward');
+    const itemStep=Number(element.dataset.dragonStep);
+    if(itemStep<=previous)element.classList.add('is-earned');
+    else if(showReveal&&itemStep===step)element.classList.add('is-new-reward');
+  });
+  rewardScene.dataset.dragonStep=String(step);
+}
+
 function setRewardProgressState(levelId,firstCompletion){
   const shipStep=Math.min(STORY_SEGMENT_LENGTH,levelId);
   const engineStep=Math.min(STORY_SEGMENT_LENGTH,Math.max(0,levelId-SHIP_MISSION_ID));
@@ -2004,6 +2067,16 @@ function configureRewardScene(levelId,firstCompletion,levelPassed){
     return;
   }
   rewardPill.textContent=firstCompletion?t('result.rewardFirst'):t('result.rewardCollected');
+  if(levelId>=CHAPTER_TEN_STORY.startMissionId){
+    rewardScene.classList.add('reward-chapter-ten');
+    setChapterTenRewardProgress(levelId,true);
+    const chapterStep=levelId-CHAPTER_TEN_STORY.startMissionId+1;
+    rewardScene.classList.add(`reward-dragon-step-${chapterStep}`);
+    if(chapterStep===1)rewardScene.classList.add('reward-dragon-arrival');
+    if(chapterStep===12)rewardScene.classList.add('reward-dragon-finale');
+    if(chapterStep===13)rewardScene.classList.add('reward-dragon-departure');
+    return;
+  }
   if(levelId>=CHAPTER_NINE_STORY.startMissionId){
     rewardScene.classList.add('reward-chapter-nine');
     setChapterNineRewardProgress(levelId,true);
@@ -2117,15 +2190,16 @@ function startRewardCinematic(levelPassed,levelId,firstCompletion=true){
     return;
   }
 
-  const chapterNineReveal=levelId>=CHAPTER_NINE_STORY.startMissionId;
-  const chapterEightReveal=levelId>=CHAPTER_EIGHT_STORY.startMissionId&&!chapterNineReveal;
-  const chapterSevenReveal=levelId>=CHAPTER_SEVEN_STORY.startMissionId&&!chapterEightReveal&&!chapterNineReveal;
-  const chapterSixReveal=levelId>=CHAPTER_SIX_STORY.startMissionId&&!chapterSevenReveal&&!chapterEightReveal&&!chapterNineReveal;
-  const chapterFiveReveal=levelId>=CHAPTER_FIVE_STORY.startMissionId&&!chapterSixReveal&&!chapterSevenReveal&&!chapterEightReveal&&!chapterNineReveal;
-  const chapterFourReveal=levelId>=CHAPTER_FOUR_STORY.startMissionId&&!chapterFiveReveal&&!chapterSixReveal&&!chapterSevenReveal&&!chapterEightReveal&&!chapterNineReveal;
-  const chapterThreeReveal=levelId>=CHAPTER_THREE_STORY.startMissionId&&!chapterFourReveal&&!chapterFiveReveal&&!chapterSixReveal&&!chapterSevenReveal&&!chapterEightReveal&&!chapterNineReveal;
-  const chapterTwoReveal=levelId>FINAL_MISSION_ID&&!chapterThreeReveal&&!chapterFourReveal&&!chapterFiveReveal&&!chapterSixReveal&&!chapterSevenReveal&&!chapterEightReveal&&!chapterNineReveal;
-  const worldReveal=chapterTwoReveal||chapterThreeReveal||chapterFourReveal||chapterFiveReveal||chapterSixReveal||chapterSevenReveal||chapterEightReveal||chapterNineReveal;
+  const chapterTenReveal=levelId>=CHAPTER_TEN_STORY.startMissionId;
+  const chapterNineReveal=levelId>=CHAPTER_NINE_STORY.startMissionId&&!chapterTenReveal;
+  const chapterEightReveal=levelId>=CHAPTER_EIGHT_STORY.startMissionId&&!chapterNineReveal&&!chapterTenReveal;
+  const chapterSevenReveal=levelId>=CHAPTER_SEVEN_STORY.startMissionId&&!chapterEightReveal&&!chapterNineReveal&&!chapterTenReveal;
+  const chapterSixReveal=levelId>=CHAPTER_SIX_STORY.startMissionId&&!chapterSevenReveal&&!chapterEightReveal&&!chapterNineReveal&&!chapterTenReveal;
+  const chapterFiveReveal=levelId>=CHAPTER_FIVE_STORY.startMissionId&&!chapterSixReveal&&!chapterSevenReveal&&!chapterEightReveal&&!chapterNineReveal&&!chapterTenReveal;
+  const chapterFourReveal=levelId>=CHAPTER_FOUR_STORY.startMissionId&&!chapterFiveReveal&&!chapterSixReveal&&!chapterSevenReveal&&!chapterEightReveal&&!chapterNineReveal&&!chapterTenReveal;
+  const chapterThreeReveal=levelId>=CHAPTER_THREE_STORY.startMissionId&&!chapterFourReveal&&!chapterFiveReveal&&!chapterSixReveal&&!chapterSevenReveal&&!chapterEightReveal&&!chapterNineReveal&&!chapterTenReveal;
+  const chapterTwoReveal=levelId>FINAL_MISSION_ID&&!chapterThreeReveal&&!chapterFourReveal&&!chapterFiveReveal&&!chapterSixReveal&&!chapterSevenReveal&&!chapterEightReveal&&!chapterNineReveal&&!chapterTenReveal;
+  const worldReveal=chapterTwoReveal||chapterThreeReveal||chapterFourReveal||chapterFiveReveal||chapterSixReveal||chapterSevenReveal||chapterEightReveal||chapterNineReveal||chapterTenReveal;
   const visualReveal=firstCompletion||worldReveal;
   const changeOffset=visualReveal?REWARD_BEFORE_HOLD:0;
   const cue=(delay,callback)=>scheduleCinematic(changeOffset+delay,callback);
@@ -2145,7 +2219,9 @@ function startRewardCinematic(levelPassed,levelId,firstCompletion=true){
   }
 
   if(worldReveal){
-    const chapterStep=chapterNineReveal
+    const chapterStep=chapterTenReveal
+      ?levelId-CHAPTER_TEN_STORY.startMissionId+1
+      :chapterNineReveal
       ?levelId-CHAPTER_NINE_STORY.startMissionId+1
       :chapterEightReveal
       ?levelId-CHAPTER_EIGHT_STORY.startMissionId+1
@@ -2158,21 +2234,22 @@ function startRewardCinematic(levelPassed,levelId,firstCompletion=true){
       :chapterFourReveal
       ?levelId-CHAPTER_FOUR_STORY.startMissionId+1
       :chapterThreeReveal?levelId-CHAPTER_THREE_STORY.startMissionId+1:levelId-FINAL_MISSION_ID;
-    const settleAfter=chapterStep===18?3800:2850;
+    const isDeparture=chapterTenReveal?chapterStep===13:chapterStep===18;
+    const settleAfter=isDeparture?3800:2850;
     cue(settleAfter,()=>{
-      const currentWorld=chapterNineReveal?rewardCanyonWorld:chapterEightReveal?rewardOceanWorld:chapterSevenReveal?rewardTerraceWorld:chapterSixReveal?rewardCanopyWorld:chapterFiveReveal?rewardNorthWorld:chapterFourReveal?rewardLuminWorld:chapterThreeReveal?rewardWindWorld:rewardLivingWorld;
+      const currentWorld=chapterTenReveal?rewardDragonWorld:chapterNineReveal?rewardCanyonWorld:chapterEightReveal?rewardOceanWorld:chapterSevenReveal?rewardTerraceWorld:chapterSixReveal?rewardCanopyWorld:chapterFiveReveal?rewardNorthWorld:chapterFourReveal?rewardLuminWorld:chapterThreeReveal?rewardWindWorld:rewardLivingWorld;
       currentWorld.querySelectorAll('.is-new-reward').forEach(element=>{
         element.classList.remove('is-new-reward');
         element.classList.add('is-earned');
       });
-      if(chapterStep===18)currentWorld.classList.add(chapterNineReveal?'canyon-departed':chapterEightReveal?'ocean-departed':chapterSevenReveal?'terrace-departed':chapterSixReveal?'canopy-departed':chapterFiveReveal?'north-departed':chapterFourReveal?'lumin-departed':chapterThreeReveal?'wind-departed':'world-departed');
+      if(isDeparture)currentWorld.classList.add(chapterTenReveal?'dragon-departed':chapterNineReveal?'canyon-departed':chapterEightReveal?'ocean-departed':chapterSevenReveal?'terrace-departed':chapterSixReveal?'canopy-departed':chapterFiveReveal?'north-departed':chapterFourReveal?'lumin-departed':chapterThreeReveal?'wind-departed':'world-departed');
     });
-    if([1,17].includes(chapterStep))cue(2050,()=>playSound('storyStep'));
-    if(chapterStep===18){
+    if([1,chapterTenReveal?12:17].includes(chapterStep))cue(2050,()=>playSound('storyStep'));
+    if(isDeparture){
       cue(2550,()=>playSound('launch'));
     }
     if(visualReveal){
-      const revealAfterChange=chapterStep===18?5600:(chapterStep===1?4800:4200);
+      const revealAfterChange=isDeparture?5600:(chapterStep===1?4800:4200);
       scheduleCinematic(REWARD_BEFORE_HOLD+revealAfterChange,finishRewardReveal);
     }
     return;

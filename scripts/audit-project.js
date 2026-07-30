@@ -98,6 +98,8 @@ check(gameCode.includes('window.__EDUKASS_TEST__'),'test interface remains avail
 check(gameCode.includes("const SHARE_URL='https://edukass.ee/games/korrutamine-test/'"),'share control uses the permanent EDUKASS game URL');
 check(/\.reward-chapter-nine[^{]*\.result-cat-crop\s*\{display:none\}/.test(gameCss),'chapter Kümme hides the legacy reward cat');
 check(/\.canyon-world::before\s*\{left:0\}/.test(gameCss),'chapter Kümme anchors the left canyon cliff');
+check(/\.reward-chapter-ten[^{]*\.result-cat-crop\s*\{display:none\}/.test(gameCss),'dragon chapter hides the legacy reward cat');
+check(gameCss.includes('.dragon-one i::before')&&gameCss.includes('.dragon-one i::after'),'dragon residents have distinct heads, eyes and wings');
 const siteShareCode=fs.readFileSync(path.join(root,'site-share.js'),'utf8');
 check(gameIndex.includes('shareGameButton')&&siteShareCode.includes('shareMathGameButton'),'share controls are available both on the site and inside the game');
 
