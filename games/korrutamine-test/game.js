@@ -520,6 +520,12 @@ function playSound(kind){
     playTone(620,0,.075,.035,'sine');
     playTone(820,.085,.09,.035,'sine');
   }
+  if(kind==='missionComplete'){
+    playTone(659,0,.16,.026,'sine');
+    playTone(784,.12,.2,.028,'sine');
+    playTone(988,.28,.34,.031,'sine');
+    playChord([523,659,784],.42,.42,.013);
+  }
   if(kind==='wrong'){
     playTone(250,0,.11,.032,'triangle');
     playTone(185,.09,.13,.026,'triangle');
@@ -1853,6 +1859,7 @@ function finishAttempt(reason){
   timeCount.textContent=formatTime(elapsed);
 
   if(levelPassed){
+    playSound('missionComplete');
     if(!progress.completedLevels.includes(currentLevel.id))progress.completedLevels.push(currentLevel.id);
     progress.completedLevels.sort((a,b)=>a-b);
     progress.unlockedLevel=Math.min(LAST_MISSION_ID,Math.max(progress.unlockedLevel,currentLevel.id+1));

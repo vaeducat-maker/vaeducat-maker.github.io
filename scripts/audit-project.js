@@ -100,6 +100,8 @@ check(/\.reward-chapter-nine[^{]*\.result-cat-crop\s*\{display:none\}/.test(game
 check(/\.canyon-world::before\s*\{left:0\}/.test(gameCss),'chapter Kümme anchors the left canyon cliff');
 check(/\.reward-chapter-ten[^{]*\.result-cat-crop\s*\{display:none\}/.test(gameCss),'dragon chapter hides the legacy reward cat');
 check(gameCss.includes('.dragon-one i::before')&&gameCss.includes('.dragon-one i::after'),'dragon residents have distinct heads, eyes and wings');
+check(gameCss.includes('transform:scale(.52) rotate(-8deg)')&&gameCss.includes('transform:scale(.48) rotate(7deg)'),'large dragon pair uses the reduced scale');
+check(gameCode.includes("if(kind==='missionComplete')")&&gameCode.includes("playSound('missionComplete');"),'mission completion has a dedicated victory sound');
 const siteShareCode=fs.readFileSync(path.join(root,'site-share.js'),'utf8');
 check(gameIndex.includes('shareGameButton')&&siteShareCode.includes('shareMathGameButton'),'share controls are available both on the site and inside the game');
 
