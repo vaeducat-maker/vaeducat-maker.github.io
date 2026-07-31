@@ -28,6 +28,7 @@ const battleTitle=document.querySelector('#battleTitle');
 const resultEyebrow=document.querySelector('#resultEyebrow');
 const resultTitle=document.querySelector('#resultTitle');
 const resultMessage=document.querySelector('#resultMessage');
+const resultMissionProgress=document.querySelector('#resultMissionProgress');
 const resultPrimaryButton=document.querySelector('#resultPrimaryButton');
 const resultMapButton=document.querySelector('#resultMapButton');
 const lessonEyebrow=document.querySelector('#lessonEyebrow');
@@ -130,7 +131,6 @@ const shareDialog=document.querySelector('#shareDialog');
 const shareUrlInput=document.querySelector('#shareUrlInput');
 const copyShareLinkButton=document.querySelector('#copyShareLinkButton');
 const shareStatus=document.querySelector('#shareStatus');
-const factTableButton=document.querySelector('#factTableButton');
 const factTableDialog=document.querySelector('#factTableDialog');
 const factTableCloseButton=document.querySelector('#factTableCloseButton');
 const factTableGrid=document.querySelector('#factTableGrid');
@@ -147,7 +147,11 @@ function renderFactTable(){
     const row=document.createElement('tr');
     row.innerHTML=`<th scope="row" data-factor-a="${a}">${a}</th>`+Array.from({length:10},(_,index)=>{
       const b=index+1;
-      return `<td class="${a===factTableA&&b===factTableB?'is-result':''}">${a*b}</td>`;
+      const classes=[];
+      if(a===factTableA&&b<=factTableB)classes.push('is-row-path');
+      if(b===factTableB&&a<=factTableA)classes.push('is-column-path');
+      if(a===factTableA&&b===factTableB)classes.push('is-result');
+      return `<td class="${classes.join(' ')}">${a*b}</td>`;
     }).join('');
     rows.push(row);
   }
@@ -320,7 +324,7 @@ const ANSWER_DELAYS={exact:480,possiblePrefix:2200,wrong:1050};
 const START_SHOWER_PROGRESS=.08;
 const WRONG_ANSWER_ADVANCE=.105;
 const NAVIGATION_MARKER='edukass-game-v28';
-const REWARD_BEFORE_HOLD=1500;
+const REWARD_BEFORE_HOLD=350;
 const INTRO_READY_DELAY=2200;
 const INTRO_EXIT_DELAY=1720;
 const SHARE_URL='https://edukass.ee/games/korrutamine-test/';
@@ -1991,6 +1995,10 @@ function finishAttempt(reason){
 
   mistakeCount.textContent=mistakes;
   timeCount.textContent=formatTime(elapsed);
+  const currentChapter=CHAPTERS.find(item=>currentLevel.id>=item.startMissionId&&currentLevel.id<=item.endMissionId);
+  const missionInChapter=currentChapter?currentLevel.id-currentChapter.startMissionId+1:currentLevel.id;
+  const missionsInChapter=currentChapter?currentChapter.endMissionId-currentChapter.startMissionId+1:LAST_MISSION_ID;
+  resultMissionProgress.textContent=`${missionInChapter}/${missionsInChapter}`;
 
   if(levelPassed){
     playSound('missionComplete');
@@ -2003,10 +2011,8 @@ function finishAttempt(reason){
     resultEyebrow.textContent='';
     resultTitle.textContent=t('result.done');
     resultTitle.hidden=false;
-    const chapter=CHAPTERS.find(item=>currentLevel.id>=item.startMissionId&&currentLevel.id<=item.endMissionId);
-    const remaining=chapter?chapter.endMissionId-currentLevel.id:0;
-    resultMessage.textContent=remaining===0?'Peatükk läbitud!':remaining===1?'Selles peatükis on jäänud 1 missioon.':`Selles peatükis on jäänud ${remaining} missiooni.`;
-    resultMessage.hidden=false;
+    resultMessage.textContent='';
+    resultMessage.hidden=true;
     resultPrimaryButton.textContent=gameComplete?t('result.missions'):t('result.next');
     resultMapButton.hidden=gameComplete;
     resultAction=gameComplete?'map':'next';
@@ -2046,7 +2052,7 @@ function finishAttempt(reason){
     showScreen('resultScreen',resultNavigation);
     startRewardCinematic(levelPassed,currentLevel.id,firstCompletion);
   };
-  if(levelPassed)setTimeout(revealResult,900);
+  if(levelPassed)setTimeout(revealResult,250);
   else revealResult();
 }
 
@@ -2192,6 +2198,8 @@ function setChapterElevenRewardProgress(levelId,showReveal){
 function setJourneyRewardProgress(item,levelId,showReveal){
   const step=Math.max(1,Math.min(item.steps.length,levelId-item.story.startMissionId+1));
   const previous=showReveal?Math.max(0,step-1):step;
+  item.reward.classList.toggle('journey-arriving',showReveal&&step===1);
+  item.reward.classList.toggle('journey-departing',showReveal&&step===item.steps.length);
   item.reward.querySelectorAll('[data-journey-step]').forEach(element=>{
     element.classList.remove('is-earned','is-new-reward');
     const itemStep=Number(element.dataset.journeyStep);
@@ -2442,7 +2450,7 @@ function startRewardCinematic(levelPassed,levelId,firstCompletion=true){
       cue(2550,()=>playSound('launch'));
     }
     if(visualReveal){
-      const revealAfterChange=isDeparture?5600:(chapterStep===1?4800:4200);
+      const revealAfterChange=isDeparture?3000:(chapterStep===1?2300:1900);
       scheduleCinematic(REWARD_BEFORE_HOLD+revealAfterChange,finishRewardReveal);
     }
     return;
@@ -2502,6 +2510,10 @@ function restoreResult(state){
   resultEyebrow.hidden=true;
   resultTitle.textContent=state.resultTitle||t('result.titlePassed');
   resultMessage.textContent=state.resultMessage||'';
+  const restoredChapter=CHAPTERS.find(item=>state.levelId>=item.startMissionId&&state.levelId<=item.endMissionId);
+  if(restoredChapter){
+    resultMissionProgress.textContent=`${state.levelId-restoredChapter.startMissionId+1}/${restoredChapter.endMissionId-restoredChapter.startMissionId+1}`;
+  }
   resultTitle.hidden=Boolean(state.titleHidden);
   resultMessage.hidden=state.messageHidden!==false;
   resultPrimaryButton.textContent=state.primaryText||t('result.toMissions');
@@ -2654,7 +2666,6 @@ document.querySelector('#backToMapButton').addEventListener('click',()=>showMap(
 resultMapButton.addEventListener('click',()=>showMap());
 resultPrimaryButton.addEventListener('click',runResultAction);
 document.querySelector('#resetProgressButton').addEventListener('click',resetProgress);
-factTableButton.addEventListener('click',openFactTable);
 factTableCloseButton.addEventListener('click',closeFactTable);
 factTableGrid.addEventListener('click',event=>{
   const a=Number(event.target.closest('[data-factor-a]')?.dataset.factorA);

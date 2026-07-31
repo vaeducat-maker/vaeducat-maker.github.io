@@ -492,10 +492,10 @@
       ,'mission.183.title':'Tähtede ränd','mission.183.short':'Kõik 1–10'
       ,'mission.184.title':'Vaikne suurkontroll','mission.184.short':'Kõik segamini'
       ,'mission.185.title':'Peegelliiva kontroll','mission.185.short':'Kontroll 1–10'
-      ,'chapter.12.title':'12. PEATÜKK · HIIDLILLED','chapter.12.short':'Hiidlilled'
-      ,'chapter.13.title':'13. PEATÜKK · KRISTALLHIIGLASED','chapter.13.short':'Kristallhiiglased'
-      ,'chapter.14.title':'14. PEATÜKK · LÕPUTU VIHM','chapter.14.short':'Lõputu vihm'
-      ,'chapter.15.title':'15. PEATÜKK · TULEPLANEET','chapter.15.short':'Tuleplaneet'
+      ,'chapter.12.title':'12. PEATÜKK · KORDAMINE','chapter.12.short':'KORDAMINE'
+      ,'chapter.13.title':'13. PEATÜKK · KORDAMINE','chapter.13.short':'KORDAMINE'
+      ,'chapter.14.title':'14. PEATÜKK · KORDAMINE','chapter.14.short':'KORDAMINE'
+      ,'chapter.15.title':'15. PEATÜKK · KORDAMINE','chapter.15.short':'KORDAMINE'
       ,...Object.fromEntries([
         ...['Esimene hiidleht','Vesised tehted','Korrutamise õied','Jagamise õied','Helendavad juured','Ujuv saar','Uued värvid','Lehesillad','Esimene elanik','Lillepere','Väikesed õiepungad','Õitsev planeet','Lilleplaneedi kontroll'].flatMap((title,index)=>[[`mission.${186+index}.title`,title],[`mission.${186+index}.short`,index===12?'Kontroll 1–10':index===0?'Korrutamine 1–10':index===1?'Jagamine 1–10':'Kõik 1–10']]),
         ...['Kristallide org','Sügavad jagamised','Esimesed kristallid','Valgusrada','Kristallrahvas','Hõbedane kuru','Iidsed märgid','Hiiglase silmad','Ärkav mägi','Särav süda','Valgusvõrk','Kosmiline majakas','Kristallplaneedi kontroll'].flatMap((title,index)=>[[`mission.${199+index}.title`,title],[`mission.${199+index}.short`,index===12?'Kontroll 1–10':index===0?'Korrutamine 1–10':index===1?'Jagamine 1–10':'Kõik 1–10']]),
