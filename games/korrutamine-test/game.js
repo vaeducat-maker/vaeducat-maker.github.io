@@ -151,7 +151,7 @@ function renderFactTable(){
       if(a===factTableA&&b<=factTableB)classes.push('is-row-path');
       if(b===factTableB&&a<=factTableA)classes.push('is-column-path');
       if(a===factTableA&&b===factTableB)classes.push('is-result');
-      return `<td class="${classes.join(' ')}">${a*b}</td>`;
+      return `<td data-factor-a="${a}" data-factor-b="${b}" class="${classes.join(' ')}">${a*b}</td>`;
     }).join('');
     rows.push(row);
   }
@@ -313,9 +313,9 @@ const CHAPTER_ELEVEN_WORLD_STEPS=CHAPTER_ELEVEN_STORY.worldSteps||[];
 const CHAPTER_ELEVEN_WORLD_STEP_COUNT=CHAPTER_ELEVEN_WORLD_STEPS.length;
 const JOURNEY_CHAPTERS=[
   {id:12,story:STORY_CONFIG.chapterTwelve||{},map:storyTwelve,reward:rewardJourneyFlowers,theme:'flowers',titles:['Saabumine hiidlillede planeedile','Vesi hakkab õitsema','Lilleelanikud ärkavad','Kogu planeet õitseb']},
-  {id:13,story:STORY_CONFIG.chapterThirteen||{},map:storyThirteen,reward:rewardJourneyCrystals,theme:'crystals',titles:['Saabumine kristallorgu','Kristallteed süttivad','Iidne hiiglane ärkab','Org muutub majakaks']},
-  {id:14,story:STORY_CONFIG.chapterFourteen||{},map:storyFourteen,reward:rewardJourneyRain,theme:'rain',titles:['Saabumine vihmaplaneedile','Piisad loovad maailma','Vihmaelanikud ilmuvad','Tähed peegelduvad vihmas']},
-  {id:15,story:STORY_CONFIG.chapterFifteen||{},map:storyFifteen,reward:rewardJourneyFire,theme:'fire',titles:['Saabumine tuliplaneedile','Elav tuli ärkab','Tuleelanikud ilmuvad','Valgustee avaneb']}
+  {id:13,story:STORY_CONFIG.chapterThirteen||{},map:storyThirteen,reward:rewardJourneyCrystals,theme:'observatory',titles:['Saabumine taevase vaatluskeskuse juurde','Kuldsed orbiidid süttivad','Tähevaatlejad ärkavad','Suur täheseade hakkab tööle']},
+  {id:14,story:STORY_CONFIG.chapterFourteen||{},map:storyFourteen,reward:rewardJourneyRain,theme:'clouds',titles:['Saabumine pilvede ookeanile','Saared tõusevad pilvedest','Lendavad elanikud ilmuvad','Taevavaal äratab maailma']},
+  {id:15,story:STORY_CONFIG.chapterFifteen||{},map:storyFifteen,reward:rewardJourneyFire,theme:'tree',titles:['Saabumine hiigelpuu sisse','Puulinn hakkab kasvama','Seemneelanikud ilmuvad','Kogu puulinn ärkab ellu']}
 ].map(item=>({...item,steps:item.story.worldSteps||[]}));
 const LAST_MISSION_ID=CHAPTER_CONFIG.missions[CHAPTER_CONFIG.missions.length-1].id;
 const CHAPTER_END_IDS=new Set(CHAPTERS.map(chapter=>chapter.endMissionId));
@@ -1146,8 +1146,41 @@ function completedInRange(startMissionId,endMissionId){
   return count;
 }
 
+function highestCompletedMissionId(){
+  const completed=progress.completedLevels.filter(levelId=>LEVEL_IDS.has(levelId));
+  return completed.length?completed[completed.length-1]:0;
+}
+
+function getMapPreviewMissionId(){
+  const saved=Number(progress.lastSuccessfulMissionId);
+  if(Number.isInteger(saved)&&LEVEL_IDS.has(saved))return saved;
+  const highest=highestCompletedMissionId();
+  if(highest)return highest;
+  return Math.max(1,Math.min(progress.unlockedLevel||1,LAST_MISSION_ID));
+}
+
+function getMapStoryMissionLimit(story){
+  const previewMissionId=getMapPreviewMissionId();
+  if(!story||!Number.isInteger(story.startMissionId)||!Number.isInteger(story.finalMissionId))return null;
+  if(previewMissionId<story.startMissionId||previewMissionId>story.finalMissionId)return null;
+  return previewMissionId;
+}
+
+function completedInRangeForMap(startMissionId,endMissionId,story){
+  const limit=getMapStoryMissionLimit(story);
+  if(limit===null)return completedInRange(startMissionId,endMissionId);
+  return Math.max(0,Math.min(endMissionId,limit)-startMissionId+1);
+}
+
+function isMapStoryMissionEarned(missionId,story){
+  const limit=getMapStoryMissionLimit(story);
+  if(limit!==null)return missionId<=limit;
+  return progress.completedLevels.includes(missionId);
+}
+
 function activeMapChapter(){
-  return CHAPTERS.find(chapter=>progress.unlockedLevel>=chapter.startMissionId&&progress.unlockedLevel<=chapter.endMissionId)
+  const previewMissionId=getMapPreviewMissionId();
+  return CHAPTERS.find(chapter=>previewMissionId>=chapter.startMissionId&&previewMissionId<=chapter.endMissionId)
     ||CHAPTERS[CHAPTERS.length-1]
     ||{id:1,titleKey:'chapter.1.title',startMissionId:1,endMissionId:FINAL_MISSION_ID};
 }
@@ -1204,13 +1237,12 @@ function renderChapterOneStory(completed){
 }
 
 function renderChapterTwoStory(){
-  const arrivalProgress=completedInRange(16,19);
-  const natureProgress=completedInRange(20,23);
-  const friendsProgress=completedInRange(24,28);
-  const lightProgress=completedInRange(29,33);
+  const arrivalProgress=completedInRangeForMap(16,19,CHAPTER_TWO_STORY);
+  const natureProgress=completedInRangeForMap(20,23,CHAPTER_TWO_STORY);
+  const friendsProgress=completedInRangeForMap(24,28,CHAPTER_TWO_STORY);
+  const lightProgress=completedInRangeForMap(29,33,CHAPTER_TWO_STORY);
   const completed=arrivalProgress+natureProgress+friendsProgress+lightProgress;
   const phase=arrivalProgress<4?'arrival':natureProgress<4?'nature':friendsProgress<5?'friends':lightProgress<5?'light':'complete';
-  const completedSet=new Set(progress.completedLevels);
 
   storyStage.dataset.phase=phase;
   storyStage.dataset.completed=String(completed);
@@ -1258,23 +1290,22 @@ function renderChapterTwoStory(){
     goal.setAttribute('aria-label',`${labels[name]}: ${value}/${max}`);
   });
   storyTwo.dataset.worldStep=String(completed);
-  storyTwo.classList.toggle('world-departed',completedSet.has(CHAPTER_TWO_STORY.finalMissionId));
+  storyTwo.classList.toggle('world-departed',isMapStoryMissionEarned(CHAPTER_TWO_STORY.finalMissionId,CHAPTER_TWO_STORY));
   storyTwo.querySelectorAll('[data-world-step]').forEach(element=>{
     const step=Number(element.dataset.worldStep);
     const worldStep=CHAPTER_TWO_WORLD_STEPS[step-1];
-    element.classList.toggle('is-earned',Boolean(worldStep&&completedSet.has(worldStep.missionId)));
+    element.classList.toggle('is-earned',Boolean(worldStep&&isMapStoryMissionEarned(worldStep.missionId,CHAPTER_TWO_STORY)));
     element.classList.remove('is-new-reward');
   });
 }
 
 function renderChapterThreeStory(){
-  const arrivalProgress=completedInRange(34,37);
-  const motionProgress=completedInRange(38,41);
-  const skyProgress=completedInRange(42,46);
-  const lightProgress=completedInRange(47,51);
+  const arrivalProgress=completedInRangeForMap(34,37,CHAPTER_THREE_STORY);
+  const motionProgress=completedInRangeForMap(38,41,CHAPTER_THREE_STORY);
+  const skyProgress=completedInRangeForMap(42,46,CHAPTER_THREE_STORY);
+  const lightProgress=completedInRangeForMap(47,51,CHAPTER_THREE_STORY);
   const completed=arrivalProgress+motionProgress+skyProgress+lightProgress;
   const phase=arrivalProgress<4?'arrival':motionProgress<4?'motion':skyProgress<5?'sky':lightProgress<5?'light':'complete';
-  const completedSet=new Set(progress.completedLevels);
 
   storyStage.dataset.phase=phase;
   storyStage.dataset.completed=String(completed);
@@ -1309,23 +1340,22 @@ function renderChapterThreeStory(){
     goal.setAttribute('aria-label',`${labels[name]}: ${value}/${max}`);
   });
   storyThree.dataset.windStep=String(completed);
-  storyThree.classList.toggle('wind-departed',completedSet.has(CHAPTER_THREE_STORY.finalMissionId));
+  storyThree.classList.toggle('wind-departed',isMapStoryMissionEarned(CHAPTER_THREE_STORY.finalMissionId,CHAPTER_THREE_STORY));
   storyThree.querySelectorAll('[data-wind-step]').forEach(element=>{
     const step=Number(element.dataset.windStep);
     const worldStep=CHAPTER_THREE_WORLD_STEPS[step-1];
-    element.classList.toggle('is-earned',Boolean(worldStep&&completedSet.has(worldStep.missionId)));
+    element.classList.toggle('is-earned',Boolean(worldStep&&isMapStoryMissionEarned(worldStep.missionId,CHAPTER_THREE_STORY)));
     element.classList.remove('is-new-reward');
   });
 }
 
 function renderChapterFourStory(){
-  const arrivalProgress=completedInRange(52,55);
-  const sourceProgress=completedInRange(56,59);
-  const cityProgress=completedInRange(60,64);
-  const lightProgress=completedInRange(65,69);
+  const arrivalProgress=completedInRangeForMap(52,55,CHAPTER_FOUR_STORY);
+  const sourceProgress=completedInRangeForMap(56,59,CHAPTER_FOUR_STORY);
+  const cityProgress=completedInRangeForMap(60,64,CHAPTER_FOUR_STORY);
+  const lightProgress=completedInRangeForMap(65,69,CHAPTER_FOUR_STORY);
   const completed=arrivalProgress+sourceProgress+cityProgress+lightProgress;
   const phase=arrivalProgress<4?'arrival':sourceProgress<4?'motion':cityProgress<5?'sky':lightProgress<5?'light':'complete';
-  const completedSet=new Set(progress.completedLevels);
   storyStage.dataset.phase=phase;
   storyStage.dataset.completed=String(completed);
   storyStage.classList.remove('chapter-two','chapter-three','phase-ship','phase-engine','phase-portal','has-engine','has-portal');
@@ -1348,22 +1378,21 @@ function renderChapterFourStory(){
     goal.classList.toggle('is-done',value===max); goal.classList.toggle('is-active',active); goal.setAttribute('aria-label',`${labels[name]}: ${value}/${max}`);
   });
   storyFour.dataset.luminStep=String(completed);
-  storyFour.classList.toggle('lumin-departed',completedSet.has(CHAPTER_FOUR_STORY.finalMissionId));
+  storyFour.classList.toggle('lumin-departed',isMapStoryMissionEarned(CHAPTER_FOUR_STORY.finalMissionId,CHAPTER_FOUR_STORY));
   storyFour.querySelectorAll('[data-lumin-step]').forEach(element=>{
     const worldStep=CHAPTER_FOUR_WORLD_STEPS[Number(element.dataset.luminStep)-1];
-    element.classList.toggle('is-earned',Boolean(worldStep&&completedSet.has(worldStep.missionId)));
+    element.classList.toggle('is-earned',Boolean(worldStep&&isMapStoryMissionEarned(worldStep.missionId,CHAPTER_FOUR_STORY)));
     element.classList.remove('is-new-reward');
   });
 }
 
 function renderChapterFiveStory(){
-  const coastProgress=completedInRange(70,73);
-  const villageProgress=completedInRange(74,77);
-  const peopleProgress=completedInRange(78,82);
-  const lifeProgress=completedInRange(83,87);
+  const coastProgress=completedInRangeForMap(70,73,CHAPTER_FIVE_STORY);
+  const villageProgress=completedInRangeForMap(74,77,CHAPTER_FIVE_STORY);
+  const peopleProgress=completedInRangeForMap(78,82,CHAPTER_FIVE_STORY);
+  const lifeProgress=completedInRangeForMap(83,87,CHAPTER_FIVE_STORY);
   const completed=coastProgress+villageProgress+peopleProgress+lifeProgress;
   const phase=coastProgress<4?'arrival':villageProgress<4?'motion':peopleProgress<5?'sky':lifeProgress<5?'light':'complete';
-  const completedSet=new Set(progress.completedLevels);
   storyStage.dataset.phase=phase;
   storyStage.dataset.completed=String(completed);
   storyStage.classList.remove('chapter-two','chapter-three','chapter-four','phase-ship','phase-engine','phase-portal','has-engine','has-portal');
@@ -1384,22 +1413,21 @@ function renderChapterFiveStory(){
     goal.classList.toggle('is-done',value===max); goal.classList.toggle('is-active',active); goal.setAttribute('aria-label',`${labels[name]}: ${value}/${max}`);
   });
   storyFive.dataset.northStep=String(completed);
-  storyFive.classList.toggle('north-departed',completedSet.has(CHAPTER_FIVE_STORY.finalMissionId));
+  storyFive.classList.toggle('north-departed',isMapStoryMissionEarned(CHAPTER_FIVE_STORY.finalMissionId,CHAPTER_FIVE_STORY));
   storyFive.querySelectorAll('[data-north-step]').forEach(element=>{
     const worldStep=CHAPTER_FIVE_WORLD_STEPS[Number(element.dataset.northStep)-1];
-    element.classList.toggle('is-earned',Boolean(worldStep&&completedSet.has(worldStep.missionId)));
+    element.classList.toggle('is-earned',Boolean(worldStep&&isMapStoryMissionEarned(worldStep.missionId,CHAPTER_FIVE_STORY)));
     element.classList.remove('is-new-reward');
   });
 }
 
 function renderChapterSixStory(){
-  const baseProgress=completedInRange(88,91);
-  const growthProgress=completedInRange(92,95);
-  const homesProgress=completedInRange(96,100);
-  const lifeProgress=completedInRange(101,105);
+  const baseProgress=completedInRangeForMap(88,91,CHAPTER_SIX_STORY);
+  const growthProgress=completedInRangeForMap(92,95,CHAPTER_SIX_STORY);
+  const homesProgress=completedInRangeForMap(96,100,CHAPTER_SIX_STORY);
+  const lifeProgress=completedInRangeForMap(101,105,CHAPTER_SIX_STORY);
   const completed=baseProgress+growthProgress+homesProgress+lifeProgress;
   const phase=baseProgress<4?'arrival':growthProgress<4?'motion':homesProgress<5?'sky':lifeProgress<5?'light':'complete';
-  const completedSet=new Set(progress.completedLevels);
   storyStage.dataset.phase=phase;
   storyStage.dataset.completed=String(completed);
   storyStage.classList.remove('chapter-two','chapter-three','chapter-four','chapter-five','phase-ship','phase-engine','phase-portal','has-engine','has-portal');
@@ -1420,22 +1448,21 @@ function renderChapterSixStory(){
     goal.classList.toggle('is-done',value===max); goal.classList.toggle('is-active',active); goal.setAttribute('aria-label',`${labels[name]}: ${value}/${max}`);
   });
   storySix.dataset.canopyStep=String(completed);
-  storySix.classList.toggle('canopy-departed',completedSet.has(CHAPTER_SIX_STORY.finalMissionId));
+  storySix.classList.toggle('canopy-departed',isMapStoryMissionEarned(CHAPTER_SIX_STORY.finalMissionId,CHAPTER_SIX_STORY));
   storySix.querySelectorAll('[data-canopy-step]').forEach(element=>{
     const worldStep=CHAPTER_SIX_WORLD_STEPS[Number(element.dataset.canopyStep)-1];
-    element.classList.toggle('is-earned',Boolean(worldStep&&completedSet.has(worldStep.missionId)));
+    element.classList.toggle('is-earned',Boolean(worldStep&&isMapStoryMissionEarned(worldStep.missionId,CHAPTER_SIX_STORY)));
     element.classList.remove('is-new-reward');
   });
 }
 
 function renderChapterSevenStory(){
-  const arrivalProgress=completedInRange(106,109);
-  const settlementProgress=completedInRange(110,113);
-  const peopleProgress=completedInRange(114,118);
-  const awakeningProgress=completedInRange(119,123);
+  const arrivalProgress=completedInRangeForMap(106,109,CHAPTER_SEVEN_STORY);
+  const settlementProgress=completedInRangeForMap(110,113,CHAPTER_SEVEN_STORY);
+  const peopleProgress=completedInRangeForMap(114,118,CHAPTER_SEVEN_STORY);
+  const awakeningProgress=completedInRangeForMap(119,123,CHAPTER_SEVEN_STORY);
   const completed=arrivalProgress+settlementProgress+peopleProgress+awakeningProgress;
   const phase=arrivalProgress<4?'arrival':settlementProgress<4?'motion':peopleProgress<5?'sky':awakeningProgress<5?'light':'complete';
-  const completedSet=new Set(progress.completedLevels);
   storyStage.dataset.phase=phase;
   storyStage.dataset.completed=String(completed);
   storyStage.classList.remove('chapter-two','chapter-three','chapter-four','chapter-five','chapter-six','phase-ship','phase-engine','phase-portal','has-engine','has-portal');
@@ -1456,22 +1483,21 @@ function renderChapterSevenStory(){
     goal.classList.toggle('is-done',value===max); goal.classList.toggle('is-active',active); goal.setAttribute('aria-label',`${labels[name]}: ${value}/${max}`);
   });
   storySeven.dataset.terraceStep=String(completed);
-  storySeven.classList.toggle('terrace-departed',completedSet.has(CHAPTER_SEVEN_STORY.finalMissionId));
+  storySeven.classList.toggle('terrace-departed',isMapStoryMissionEarned(CHAPTER_SEVEN_STORY.finalMissionId,CHAPTER_SEVEN_STORY));
   storySeven.querySelectorAll('[data-terrace-step]').forEach(element=>{
     const worldStep=CHAPTER_SEVEN_WORLD_STEPS[Number(element.dataset.terraceStep)-1];
-    element.classList.toggle('is-earned',Boolean(worldStep&&completedSet.has(worldStep.missionId)));
+    element.classList.toggle('is-earned',Boolean(worldStep&&isMapStoryMissionEarned(worldStep.missionId,CHAPTER_SEVEN_STORY)));
     element.classList.remove('is-new-reward');
   });
 }
 
 function renderChapterEightStory(){
-  const arrivalProgress=completedInRange(124,127);
-  const settlementProgress=completedInRange(128,131);
-  const peopleProgress=completedInRange(132,136);
-  const awakeningProgress=completedInRange(137,141);
+  const arrivalProgress=completedInRangeForMap(124,127,CHAPTER_EIGHT_STORY);
+  const settlementProgress=completedInRangeForMap(128,131,CHAPTER_EIGHT_STORY);
+  const peopleProgress=completedInRangeForMap(132,136,CHAPTER_EIGHT_STORY);
+  const awakeningProgress=completedInRangeForMap(137,141,CHAPTER_EIGHT_STORY);
   const completed=arrivalProgress+settlementProgress+peopleProgress+awakeningProgress;
   const phase=arrivalProgress<4?'arrival':settlementProgress<4?'motion':peopleProgress<5?'sky':awakeningProgress<5?'light':'complete';
-  const completedSet=new Set(progress.completedLevels);
   storyStage.dataset.phase=phase;
   storyStage.dataset.completed=String(completed);
   storyStage.classList.remove('chapter-two','chapter-three','chapter-four','chapter-five','chapter-six','chapter-seven','phase-ship','phase-engine','phase-portal','has-engine','has-portal');
@@ -1492,23 +1518,22 @@ function renderChapterEightStory(){
     goal.classList.toggle('is-done',value===max); goal.classList.toggle('is-active',active); goal.setAttribute('aria-label',`${labels[name]}: ${value}/${max}`);
   });
   storyEight.dataset.oceanStep=String(completed);
-  storyEight.classList.toggle('ocean-departed',completedSet.has(CHAPTER_EIGHT_STORY.finalMissionId));
+  storyEight.classList.toggle('ocean-departed',isMapStoryMissionEarned(CHAPTER_EIGHT_STORY.finalMissionId,CHAPTER_EIGHT_STORY));
   storyEight.querySelectorAll('[data-ocean-step]').forEach(element=>{
     const worldStep=CHAPTER_EIGHT_WORLD_STEPS[Number(element.dataset.oceanStep)-1];
-    element.classList.toggle('is-earned',Boolean(worldStep&&completedSet.has(worldStep.missionId)));
+    element.classList.toggle('is-earned',Boolean(worldStep&&isMapStoryMissionEarned(worldStep.missionId,CHAPTER_EIGHT_STORY)));
     element.classList.remove('is-new-reward');
   });
 }
 
 
 function renderChapterNineStory(){
-  const arrivalProgress=completedInRange(142,145);
-  const settlementProgress=completedInRange(146,149);
-  const peopleProgress=completedInRange(150,154);
-  const awakeningProgress=completedInRange(155,159);
+  const arrivalProgress=completedInRangeForMap(142,145,CHAPTER_NINE_STORY);
+  const settlementProgress=completedInRangeForMap(146,149,CHAPTER_NINE_STORY);
+  const peopleProgress=completedInRangeForMap(150,154,CHAPTER_NINE_STORY);
+  const awakeningProgress=completedInRangeForMap(155,159,CHAPTER_NINE_STORY);
   const completed=arrivalProgress+settlementProgress+peopleProgress+awakeningProgress;
   const phase=arrivalProgress<4?'arrival':settlementProgress<4?'motion':peopleProgress<5?'sky':awakeningProgress<5?'light':'complete';
-  const completedSet=new Set(progress.completedLevels);
   storyStage.dataset.phase=phase;
   storyStage.dataset.completed=String(completed);
   storyStage.classList.remove('chapter-two','chapter-three','chapter-four','chapter-five','chapter-six','chapter-seven','chapter-eight','phase-ship','phase-engine','phase-portal','has-engine','has-portal');
@@ -1529,22 +1554,21 @@ function renderChapterNineStory(){
     goal.classList.toggle('is-done',value===max); goal.classList.toggle('is-active',active); goal.setAttribute('aria-label',`${labels[name]}: ${value}/${max}`);
   });
   storyNine.dataset.canyonStep=String(completed);
-  storyNine.classList.toggle('canyon-departed',completedSet.has(CHAPTER_NINE_STORY.finalMissionId));
+  storyNine.classList.toggle('canyon-departed',isMapStoryMissionEarned(CHAPTER_NINE_STORY.finalMissionId,CHAPTER_NINE_STORY));
   storyNine.querySelectorAll('[data-canyon-step]').forEach(element=>{
     const worldStep=CHAPTER_NINE_WORLD_STEPS[Number(element.dataset.canyonStep)-1];
-    element.classList.toggle('is-earned',Boolean(worldStep&&completedSet.has(worldStep.missionId)));
+    element.classList.toggle('is-earned',Boolean(worldStep&&isMapStoryMissionEarned(worldStep.missionId,CHAPTER_NINE_STORY)));
     element.classList.remove('is-new-reward');
   });
 }
 
 function renderChapterTenStory(){
-  const arrivalProgress=completedInRange(160,162);
-  const nestProgress=completedInRange(163,165);
-  const dragonProgress=completedInRange(166,168);
-  const awakeningProgress=completedInRange(169,172);
+  const arrivalProgress=completedInRangeForMap(160,162,CHAPTER_TEN_STORY);
+  const nestProgress=completedInRangeForMap(163,165,CHAPTER_TEN_STORY);
+  const dragonProgress=completedInRangeForMap(166,168,CHAPTER_TEN_STORY);
+  const awakeningProgress=completedInRangeForMap(169,172,CHAPTER_TEN_STORY);
   const completed=arrivalProgress+nestProgress+dragonProgress+awakeningProgress;
   const phase=arrivalProgress<3?'arrival':nestProgress<3?'motion':dragonProgress<3?'sky':awakeningProgress<4?'light':'complete';
-  const completedSet=new Set(progress.completedLevels);
   storyStage.dataset.phase=phase;
   storyStage.dataset.completed=String(completed);
   storyStage.classList.remove('chapter-two','chapter-three','chapter-four','chapter-five','chapter-six','chapter-seven','chapter-eight','chapter-nine','phase-ship','phase-engine','phase-portal','has-engine','has-portal');
@@ -1565,22 +1589,21 @@ function renderChapterTenStory(){
     goal.classList.toggle('is-done',value===max); goal.classList.toggle('is-active',active); goal.setAttribute('aria-label',`${labels[name]}: ${value}/${max}`);
   });
   storyTen.dataset.dragonStep=String(completed);
-  storyTen.classList.toggle('dragon-departed',completedSet.has(CHAPTER_TEN_STORY.finalMissionId));
+  storyTen.classList.toggle('dragon-departed',isMapStoryMissionEarned(CHAPTER_TEN_STORY.finalMissionId,CHAPTER_TEN_STORY));
   storyTen.querySelectorAll('[data-dragon-step]').forEach(element=>{
     const worldStep=CHAPTER_TEN_WORLD_STEPS[Number(element.dataset.dragonStep)-1];
-    element.classList.toggle('is-earned',Boolean(worldStep&&completedSet.has(worldStep.missionId)));
+    element.classList.toggle('is-earned',Boolean(worldStep&&isMapStoryMissionEarned(worldStep.missionId,CHAPTER_TEN_STORY)));
     element.classList.remove('is-new-reward');
   });
 }
 
 function renderChapterElevenStory(){
-  const arrivalProgress=completedInRange(173,175);
-  const landscapeProgress=completedInRange(176,178);
-  const settlementProgress=completedInRange(179,181);
-  const awakeningProgress=completedInRange(182,185);
+  const arrivalProgress=completedInRangeForMap(173,175,CHAPTER_ELEVEN_STORY);
+  const landscapeProgress=completedInRangeForMap(176,178,CHAPTER_ELEVEN_STORY);
+  const settlementProgress=completedInRangeForMap(179,181,CHAPTER_ELEVEN_STORY);
+  const awakeningProgress=completedInRangeForMap(182,185,CHAPTER_ELEVEN_STORY);
   const completed=arrivalProgress+landscapeProgress+settlementProgress+awakeningProgress;
   const phase=arrivalProgress<3?'arrival':landscapeProgress<3?'motion':settlementProgress<3?'sky':awakeningProgress<4?'light':'complete';
-  const completedSet=new Set(progress.completedLevels);
   storyStage.dataset.phase=phase;
   storyStage.dataset.completed=String(completed);
   storyStage.className='story-stage chapter-eleven';
@@ -1600,10 +1623,10 @@ function renderChapterElevenStory(){
     goal.classList.toggle('is-done',value===max); goal.classList.toggle('is-active',active); goal.setAttribute('aria-label',`${labels[name]}: ${value}/${max}`);
   });
   storyEleven.dataset.mirrorStep=String(completed);
-  storyEleven.classList.toggle('mirror-departed',completedSet.has(CHAPTER_ELEVEN_STORY.finalMissionId));
+  storyEleven.classList.toggle('mirror-departed',isMapStoryMissionEarned(CHAPTER_ELEVEN_STORY.finalMissionId,CHAPTER_ELEVEN_STORY));
   storyEleven.querySelectorAll('[data-mirror-step]').forEach(element=>{
     const worldStep=CHAPTER_ELEVEN_WORLD_STEPS[Number(element.dataset.mirrorStep)-1];
-    element.classList.toggle('is-earned',Boolean(worldStep&&completedSet.has(worldStep.missionId)));
+    element.classList.toggle('is-earned',Boolean(worldStep&&isMapStoryMissionEarned(worldStep.missionId,CHAPTER_ELEVEN_STORY)));
     element.classList.remove('is-new-reward');
   });
 }
@@ -1611,8 +1634,7 @@ function renderChapterElevenStory(){
 function renderJourneyStory(chapterId){
   const item=JOURNEY_CHAPTERS.find(chapter=>chapter.id===chapterId);
   if(!item)return;
-  const completedSet=new Set(progress.completedLevels);
-  const completed=item.steps.filter(step=>completedSet.has(step.missionId)).length;
+  const completed=item.steps.filter(step=>isMapStoryMissionEarned(step.missionId,item.story)).length;
   const phaseIndex=Math.min(3,Math.floor(completed/3));
   storyStage.dataset.phase=['arrival','motion','sky','light'][phaseIndex];
   storyStage.dataset.completed=String(completed);
@@ -1628,7 +1650,7 @@ function renderJourneyStory(chapterId){
   });
   item.map.querySelectorAll('[data-journey-step]').forEach(element=>{
     const step=item.steps[Number(element.dataset.journeyStep)-1];
-    element.classList.toggle('is-earned',Boolean(step&&completedSet.has(step.missionId)));
+    element.classList.toggle('is-earned',Boolean(step&&isMapStoryMissionEarned(step.missionId,item.story)));
     element.classList.remove('is-new-reward');
   });
 }
@@ -1646,7 +1668,7 @@ function renderStoryProgress(){
   else if(chapter.id===4)renderChapterFourStory();
   else if(chapter.id===3)renderChapterThreeStory();
   else if(chapter.id===2)renderChapterTwoStory();
-  else renderChapterOneStory(Math.min(FINAL_MISSION_ID,completedMissionCount()));
+  else renderChapterOneStory(Math.min(FINAL_MISSION_ID,getMapPreviewMissionId()||completedMissionCount()));
 }
 
 function createChapterDivider(chapter){
@@ -2005,6 +2027,7 @@ function finishAttempt(reason){
     if(!progress.completedLevels.includes(currentLevel.id))progress.completedLevels.push(currentLevel.id);
     progress.completedLevels.sort((a,b)=>a-b);
     progress.unlockedLevel=Math.min(LAST_MISSION_ID,Math.max(progress.unlockedLevel,currentLevel.id+1));
+    progress.lastSuccessfulMissionId=currentLevel.id;
     saveProgress();
     configureRewardScene(currentLevel.id,firstCompletion,true);
     resultEyebrow.hidden=true;
@@ -2527,11 +2550,7 @@ function restoreResult(state){
 
 function restoreNavigation(state){
   if(!state||state.marker!==NAVIGATION_MARKER)return;
-  if(state.view==='guard'){
-    if(progress.multiplicationLessonSeen)showMap({historyMode:'push'});
-    else showLesson(LESSON_CONFIG.initialLessonId,null,{historyMode:'push'});
-  }
-  else if(state.view==='map')showMap({historyMode:'none'});
+  if(state.view==='guard'||state.view==='map')showMap({historyMode:'none'});
   else if(state.view==='explanations')showExplanationHub({historyMode:'none'});
   else if(state.view==='lesson')showLesson(state.lessonId||state.mode,state.pendingLevel,{historyMode:'none'});
   else if(state.view==='battle')startLevel(state.levelId,{historyMode:'none'});
@@ -2668,8 +2687,10 @@ resultPrimaryButton.addEventListener('click',runResultAction);
 document.querySelector('#resetProgressButton').addEventListener('click',resetProgress);
 factTableCloseButton.addEventListener('click',closeFactTable);
 factTableGrid.addEventListener('click',event=>{
-  const a=Number(event.target.closest('[data-factor-a]')?.dataset.factorA);
-  const b=Number(event.target.closest('[data-factor-b]')?.dataset.factorB);
+  const cell=event.target.closest('[data-factor-a],[data-factor-b]');
+  if(!cell)return;
+  const a=Number(cell.dataset.factorA);
+  const b=Number(cell.dataset.factorB);
   if(a)factTableA=a;
   if(b)factTableB=b;
   if(a||b)renderFactTable();
@@ -2717,8 +2738,7 @@ updateSoundButton();
 renderLevelMap();
 if(history.state?.marker===NAVIGATION_MARKER)restoreNavigation(history.state);
 else{
-  history.replaceState(navigationState('guard'),'',`${location.pathname}${location.search}`);
-  showMap({historyMode:'push'});
+  showMap({historyMode:'replace'});
 }
 prepareIntro();
 if('serviceWorker' in navigator)navigator.serviceWorker.register('./service-worker.js').catch(()=>{});

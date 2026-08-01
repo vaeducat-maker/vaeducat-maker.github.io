@@ -505,15 +505,15 @@
       },
       chapterThirteen:{
         startMissionId:199,finalMissionId:211,
-        worldSteps:['arrival','first-crystals','light-path','crystal-folk','silver-gorge','ancient-signs','giant-eyes','giant-awakes','glowing-heart','crystal-network','valley-light','beacon','departure'].map((role,index)=>({missionId:199+index,role}))
+        worldSteps:['arrival','first-orbit','terrace-path','first-tower','small-planet','star-markers','observatory-dome','first-stargazer','stargazer-pair','grand-ring','constellation','living-orrery','departure'].map((role,index)=>({missionId:199+index,role}))
       },
       chapterFourteen:{
         startMissionId:212,finalMissionId:224,
-        worldSteps:['arrival','puddles','umbrella-mushroom','water-orbs','mirror-lakes','drop-path','lanterns','resident','family','water-cocoons','star-drops','great-moon','departure'].map((role,index)=>({missionId:212+index,role}))
+        worldSteps:['arrival','first-sail','rising-island','cloud-bridge','parachute-tree','sun-lanterns','first-flier','flier-pair','cloud-harbor','sky-whale','whale-homes','living-sails','departure'].map((role,index)=>({missionId:212+index,role}))
       },
       chapterFifteen:{
         startMissionId:225,finalMissionId:237,
-        worldSteps:['arrival','first-crack','lava-river','fire-crystal','flame-flower','fire-mountain','golden-patterns','resident','fire-family','spark-children','fire-ring','light-route','departure'].map((role,index)=>({missionId:225+index,role}))
+        worldSteps:['arrival','amber-lantern','blue-stream','first-platform','spiral-stair','door-homes','first-seed','seed-family','window-lights','bridge-rings','rising-seeds','living-tree-city','departure'].map((role,index)=>({missionId:225+index,role}))
       }
     },
     chapters:[

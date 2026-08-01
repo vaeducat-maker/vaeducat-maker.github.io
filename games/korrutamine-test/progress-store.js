@@ -14,7 +14,8 @@
         multiplicationLessonSeen:false,
         divisionLessonSeen:false,
         lessonSeen:{},
-        factStats:{}
+        factStats:{},
+        lastSuccessfulMissionId:null
       };
     }
 
@@ -63,13 +64,18 @@
         Math.min(maxLevel,Math.max(migrated.unlockedLevel,firstUnfinished))
       );
 
+      const lastSuccessfulMissionId=Number.isInteger(migrated.lastSuccessfulMissionId)&&migrated.lastSuccessfulMissionId>=1&&migrated.lastSuccessfulMissionId<=maxLevel
+        ?migrated.lastSuccessfulMissionId
+        :null;
+
       return {
         ...defaultProgress(),
         ...migrated,
         saveVersion:schemaVersion,
         completedLevels,
         lessonSeen,
-        unlockedLevel
+        unlockedLevel,
+        lastSuccessfulMissionId
       };
     }
 
