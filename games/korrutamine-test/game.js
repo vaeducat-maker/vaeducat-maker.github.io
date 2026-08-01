@@ -326,6 +326,7 @@ const ANSWER_DELAYS={exact:480,possiblePrefix:2200,wrong:1050};
 const START_SHOWER_PROGRESS=.08;
 const WRONG_ANSWER_ADVANCE=.105;
 const NAVIGATION_MARKER='edukass-game-v28';
+const MAP_PREVIEW_MISSION_KEY='edukass-map-preview-mission-v83';
 const REWARD_BEFORE_HOLD=350;
 const INTRO_READY_DELAY=2200;
 const INTRO_EXIT_DELAY=1720;
@@ -1154,11 +1155,19 @@ function highestCompletedMissionId(){
 }
 
 function getMapPreviewMissionId(){
+  const persisted=Number(localStorage.getItem(MAP_PREVIEW_MISSION_KEY));
+  if(Number.isInteger(persisted)&&LEVEL_IDS.has(persisted))return persisted;
   const saved=Number(progress.lastSuccessfulMissionId);
   if(Number.isInteger(saved)&&LEVEL_IDS.has(saved))return saved;
   const highest=highestCompletedMissionId();
   if(highest)return highest;
   return Math.max(1,Math.min(progress.unlockedLevel||1,LAST_MISSION_ID));
+}
+
+function rememberMapPreviewMission(levelId){
+  if(!Number.isInteger(levelId)||!LEVEL_IDS.has(levelId))return;
+  progress.lastSuccessfulMissionId=levelId;
+  localStorage.setItem(MAP_PREVIEW_MISSION_KEY,String(levelId));
 }
 
 function getMapStoryMissionLimit(story){
@@ -2064,7 +2073,7 @@ function finishAttempt(reason){
     if(!progress.completedLevels.includes(currentLevel.id))progress.completedLevels.push(currentLevel.id);
     progress.completedLevels.sort((a,b)=>a-b);
     progress.unlockedLevel=Math.min(LAST_MISSION_ID,Math.max(progress.unlockedLevel,currentLevel.id+1));
-    progress.lastSuccessfulMissionId=currentLevel.id;
+    rememberMapPreviewMission(currentLevel.id);
     saveProgress();
     configureRewardScene(currentLevel.id,firstCompletion,true);
     resultEyebrow.hidden=true;
@@ -2565,6 +2574,7 @@ function runResultAction(){
 
 function restoreResult(state){
   stopRound();
+  if(state?.levelPassed!==false&&Number.isInteger(state?.levelId))rememberMapPreviewMission(state.levelId);
   currentLevel=LEVELS.find(level=>level.id===state.levelId)||currentLevel;
   resultAction=state.resultAction||'map';
   resultEyebrow.textContent='';
