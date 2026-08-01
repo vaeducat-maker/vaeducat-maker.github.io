@@ -161,8 +161,8 @@
       'chapter.8.short':'ÜHEKSA',
       'chapter.9.title':'9. PEATÜKK · KÜMME',
       'chapter.9.short':'KÜMME',
-      'chapter.10.title':'10. PEATÜKK · DRAAKONITE TAEVAS',
-      'chapter.10.short':'DRAAKONID',
+      'chapter.10.title':'10. PEATÜKK · KORDAMINE',
+      'chapter.10.short':'KORDAMINE',
       'story.goal1':'1. SIHT',
       'story.goal2':'2. SIHT',
       'story.goal3':'3. SIHT',
@@ -478,7 +478,7 @@
       ,'mission.170.title':'Kiiruse rada','mission.170.short':'Kiirus 1–10'
       ,'mission.171.title':'Suur kordamine','mission.171.short':'Kõik segamini'
       ,'mission.172.title':'Draakoniplaneedi kontroll','mission.172.short':'Kontroll 1–10'
-      ,'chapter.11.title':'11. PEATÜKK · PEEGELLIIVAD','chapter.11.short':'Peegelliivad'
+      ,'chapter.11.title':'11. PEATÜKK · KORDAMINE','chapter.11.short':'KORDAMINE'
       ,'mission.173.title':'Peegelliiva algus','mission.173.short':'Korrutamine 1–10'
       ,'mission.174.title':'Täpsed jagamised','mission.174.short':'Jagamine 1–10'
       ,'mission.175.title':'Väikesed ja suured','mission.175.short':'× ja ÷ · 2–10'

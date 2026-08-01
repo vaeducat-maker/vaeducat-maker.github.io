@@ -90,6 +90,7 @@ const storyTwelve=document.querySelector('#storyTwelve');
 const storyThirteen=document.querySelector('#storyThirteen');
 const storyFourteen=document.querySelector('#storyFourteen');
 const storyFifteen=document.querySelector('#storyFifteen');
+const storyCatCrop=storyStage.querySelector('.story-cat-crop');
 const rewardScene=document.querySelector('#rewardScene');
 const rewardLivingWorld=document.querySelector('#rewardLivingWorld');
 const rewardWindWorld=document.querySelector('#rewardWindWorld');
@@ -105,6 +106,7 @@ const rewardJourneyFlowers=document.querySelector('#rewardJourneyFlowers');
 const rewardJourneyCrystals=document.querySelector('#rewardJourneyCrystals');
 const rewardJourneyRain=document.querySelector('#rewardJourneyRain');
 const rewardJourneyFire=document.querySelector('#rewardJourneyFire');
+const rewardCatCrop=rewardScene.querySelector('.result-cat-crop');
 const livingWorldTemplate=document.querySelector('#livingWorldTemplate');
 const windWorldTemplate=document.querySelector('#windWorldTemplate');
 const luminWorldTemplate=document.querySelector('#luminWorldTemplate');
@@ -1179,10 +1181,31 @@ function isMapStoryMissionEarned(missionId,story){
 }
 
 function activeMapChapter(){
-  const previewMissionId=getMapPreviewMissionId();
-  return CHAPTERS.find(chapter=>previewMissionId>=chapter.startMissionId&&previewMissionId<=chapter.endMissionId)
+  const openMissionId=Math.max(1,Math.min(progress.unlockedLevel||1,LAST_MISSION_ID));
+  return CHAPTERS.find(chapter=>openMissionId>=chapter.startMissionId&&openMissionId<=chapter.endMissionId)
     ||CHAPTERS[CHAPTERS.length-1]
     ||{id:1,titleKey:'chapter.1.title',startMissionId:1,endMissionId:FINAL_MISSION_ID};
+}
+
+function previewMapChapter(){
+  const previewMissionId=getMapPreviewMissionId();
+  return CHAPTERS.find(chapter=>previewMissionId>=chapter.startMissionId&&previewMissionId<=chapter.endMissionId)
+    ||activeMapChapter();
+}
+
+function syncMapCatVisibility(chapterId){
+  if(!storyCatCrop)return;
+  const hide=Number(chapterId)>=2;
+  storyCatCrop.hidden=hide;
+  storyCatCrop.style.display=hide?'none':'';
+}
+
+function syncRewardCatVisibility(levelId){
+  if(!rewardCatCrop)return;
+  const chapterId=LEVELS.find(level=>level.id===levelId)?.chapterId||1;
+  const hide=chapterId>=2;
+  rewardCatCrop.hidden=hide;
+  rewardCatCrop.style.display=hide?'none':'';
 }
 
 function renderChapterOneStory(completed){
@@ -1656,7 +1679,7 @@ function renderJourneyStory(chapterId){
 }
 
 function renderStoryProgress(){
-  const chapter=activeMapChapter();
+  const chapter=previewMapChapter();
   if(chapter.id>=12&&chapter.id<=15)renderJourneyStory(chapter.id);
   else if(chapter.id===11)renderChapterElevenStory();
   else if(chapter.id===10)renderChapterTenStory();
@@ -1709,6 +1732,7 @@ function renderLevelMap(){
   const fallback=activeChapter.id===1?'1. PEATÜKK · ÜKS JA KAKS':activeChapter.id===2?'2. PEATÜKK · KOLM':'3. PEATÜKK · NELI';
   mapEyebrow.textContent=t(activeChapter.titleKey,{},fallback);
   renderStoryProgress();
+  syncMapCatVisibility(previewMapChapter().id);
   const nodes=[];
   CHAPTERS.forEach(chapter=>{
     nodes.push(createChapterDivider(chapter));
@@ -2257,6 +2281,7 @@ function setRewardProgressState(levelId,firstCompletion){
 
 function configureRewardScene(levelId,firstCompletion,levelPassed){
   rewardScene.className='result-animation reward-scene';
+  syncRewardCatVisibility(levelId);
   rewardScene.dataset.level=String(levelId);
   rewardScene.classList.toggle('first-completion',Boolean(firstCompletion&&levelPassed));
   rewardScene.classList.toggle('reward-replay',Boolean(!firstCompletion&&levelPassed));
