@@ -90,8 +90,10 @@ const storyTwelve=document.querySelector('#storyTwelve');
 const storyThirteen=document.querySelector('#storyThirteen');
 const storyFourteen=document.querySelector('#storyFourteen');
 const storyFifteen=document.querySelector('#storyFifteen');
+const stationWorldMap=document.querySelector('#stationWorldMap');
 const storyCatCrop=storyStage.querySelector('.story-cat-crop');
 const rewardScene=document.querySelector('#rewardScene');
+const stationWorldReward=document.querySelector('#stationWorldReward');
 const rewardLivingWorld=document.querySelector('#rewardLivingWorld');
 const rewardWindWorld=document.querySelector('#rewardWindWorld');
 const rewardLuminWorld=document.querySelector('#rewardLuminWorld');
@@ -1238,6 +1240,7 @@ function renderChapterOneStory(completed){
 
   storyStage.dataset.phase=phase;
   storyStage.dataset.completed=String(completed);
+  storyStage.className='story-stage chapter-one';
   storyStage.classList.remove('chapter-two');
   storyStage.closest('.story-progress')?.classList.remove('chapter-two-active');
   storyStage.classList.remove('chapter-three');
@@ -1264,6 +1267,10 @@ function renderChapterOneStory(completed){
   document.querySelectorAll('[data-ship-part]').forEach(part=>part.classList.toggle('is-found',Number(part.dataset.shipPart)<=shipProgress));
   document.querySelectorAll('[data-engine-cell]').forEach(cell=>cell.classList.toggle('is-charged',Number(cell.dataset.engineCell)<=engineProgress));
   document.querySelectorAll('[data-portal-spark]').forEach(spark=>spark.classList.toggle('is-lit',Number(spark.dataset.portalSpark)<=portalProgress));
+  stationWorldMap?.querySelectorAll('[data-station-step]').forEach(element=>{
+    element.classList.toggle('is-earned',Number(element.dataset.stationStep)<=completed);
+    element.classList.remove('is-new-reward');
+  });
   document.querySelectorAll('[data-story-goal]').forEach(goal=>{
     const goalName=goal.dataset.storyGoal;
     if(goalName==='vault'){
@@ -2301,6 +2308,17 @@ function setRewardProgressState(levelId,firstCompletion){
   rewardScene.style.setProperty('--portal-after',String(portalStep));
 }
 
+function setChapterOneStationReward(levelId,showReveal){
+  const step=Math.max(1,Math.min(FINAL_MISSION_ID,levelId));
+  const previous=showReveal?Math.max(0,step-1):step;
+  stationWorldReward?.querySelectorAll('[data-station-step]').forEach(element=>{
+    element.classList.remove('is-earned','is-new-reward');
+    const itemStep=Number(element.dataset.stationStep);
+    if(itemStep<=previous)element.classList.add('is-earned');
+    else if(showReveal&&itemStep===step)element.classList.add('is-new-reward');
+  });
+}
+
 function configureRewardScene(levelId,firstCompletion,levelPassed){
   rewardScene.className='result-animation reward-scene';
   syncRewardCatVisibility(levelId);
@@ -2424,6 +2442,8 @@ function configureRewardScene(levelId,firstCompletion,levelPassed){
     if(chapterStep===18)rewardScene.classList.add('reward-world-departure');
     return;
   }
+  rewardScene.classList.add('reward-chapter-one');
+  setChapterOneStationReward(levelId,true);
   setRewardProgressState(levelId,firstCompletion);
   if(levelId>ENGINE_MISSION_ID)rewardScene.classList.add('reward-state-portal');
   else if(levelId>SHIP_MISSION_ID)rewardScene.classList.add('reward-state-engine');
