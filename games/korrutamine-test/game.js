@@ -1200,6 +1200,19 @@ function syncMapCatVisibility(chapterId){
   storyCatCrop.style.display=hide?'none':'';
 }
 
+function syncChapterOneOverlayVisibility(chapterId){
+  const hide=Number(chapterId)>=2;
+  [storyShip,storyPortal,nextPlanet].forEach(element=>{
+    if(!element)return;
+    element.hidden=hide;
+    element.style.display=hide?'none':'';
+  });
+  if(storyEnergyStream){
+    storyEnergyStream.hidden=hide;
+    storyEnergyStream.style.display=hide?'none':'';
+  }
+}
+
 function syncRewardCatVisibility(levelId){
   if(!rewardCatCrop)return;
   const chapterId=LEVELS.find(level=>level.id===levelId)?.chapterId||1;
