@@ -248,6 +248,23 @@
     'Vaikne tuliplaneet','Kuumad tehted','Esimene lõhe','Laavajõgi','Tulekristall','Leeklill','Uinuv tulemägi','Kuldsed märgid','Tuleelanik','Elavad sädemed','Taevane tulerõngas','Valguse tee','Tuliplaneedi kontroll'
   ],['#a64d4d','#b94b45','#ca503b','#da5b31','#e66b29','#ef8128','#f39831','#f4ae3d','#eec44e','#d9d05c','#b5d26d','#85ca82','#58ba97']);
 
+  const FINAL_CHAPTER_TITLES=[
+    'Saabumine täheväravasse','Valgusrada süttib','Sadama platvorm ärkab','Kosmosemajakas','Esimene signaal',
+    'Esimesed sõbrad','Teine signaal','Vee- ja aiaelanikud','Suur laev avaneb','Draakoni kristall',
+    'Mootor ärkab','Meeskond koguneb','Tähekaart avaneb','Kõik pardale','Suur lõpukontroll'
+  ];
+  const FINAL_CHAPTER_ACCENTS=['#75dcff','#65cdef','#58bbe5','#54a8dc','#5b94d3','#6b82ca','#8171bf','#995faf','#b1539c','#c45583','#d05e6c','#d97359','#dc8c4c','#d8aa4c','#ffd76b'];
+  const CHAPTER_SEVENTEEN_MISSIONS=FINAL_CHAPTER_TITLES.map((title,index)=>revisionMission(
+    238+index,
+    title,
+    index===14?'Lõpukontroll 1–10':index===0?'Korrutamine 1–10':index===1?'Jagamine 1–10':'Kõik 1–10',
+    index===14?TIMER_PROFILE.control:index===1?TIMER_PROFILE.divisionFull:index%3===0?TIMER_PROFILE.adaptive:TIMER_PROFILE.familyMixed,
+    FINAL_CHAPTER_ACCENTS[index],
+    index===0?ALL_TABLE_FAMILIES.filter(family=>family.operation==='multiply'):
+    index===1?ALL_TABLE_FAMILIES.filter(family=>family.operation==='divide'):
+    index===14?HARD_TABLE_FAMILIES:ALL_TABLE_FAMILIES
+  )).map(mission=>({...mission,chapterId:16,titleKey:`mission.${mission.id}.title`,shortKey:`mission.${mission.id}.short`}));
+
   return {
     schemaVersion:2,
     id:'uks-ja-kaks',
@@ -513,7 +530,11 @@
       },
       chapterFifteen:{
         startMissionId:225,finalMissionId:237,
-        worldSteps:['arrival','light-path','space-beacon','first-signal','first-friends','second-signal','great-ship','dragon-crystal','engine-light','friends-from-worlds','crew-gathers','star-map','departure'].map((role,index)=>({missionId:225+index,role}))
+        worldSteps:['arrival','amber-lantern','blue-stream','first-platform','spiral-stair','door-homes','first-seed','seed-family','window-lights','bridge-rings','rising-seeds','living-tree-city','departure'].map((role,index)=>({missionId:225+index,role}))
+      },
+      chapterSixteen:{
+        startMissionId:238,finalMissionId:252,
+        worldSteps:['arrival','light-path','harbor-platform','space-beacon','first-signal','first-friends','second-signal','world-friends','great-ship','dragon-crystal','engine-light','crew-gathers','star-map','boarding','departure'].map((role,index)=>({missionId:238+index,role}))
       }
     },
     chapters:[
@@ -532,6 +553,7 @@
       ,{id:13,titleKey:'chapter.13.title',shortKey:'chapter.13.short',startMissionId:199,endMissionId:211,accent:'#76c8f5'}
       ,{id:14,titleKey:'chapter.14.title',shortKey:'chapter.14.short',startMissionId:212,endMissionId:224,accent:'#31a6b9'}
       ,{id:15,titleKey:'chapter.15.title',shortKey:'chapter.15.short',startMissionId:225,endMissionId:237,accent:'#ef8128'}
+      ,{id:16,titleKey:'chapter.16.title',shortKey:'chapter.16.short',startMissionId:238,endMissionId:252,accent:'#75dcff'}
     ],
     defaultLanguage:'et',
     supportedLanguages:['et'],
@@ -1477,7 +1499,8 @@
       ...CHAPTER_THIRTEEN_MISSIONS,
       ...CHAPTER_FOURTEEN_MISSIONS,
       ...CHAPTER_FIFTEEN_MISSIONS,
-      ...CHAPTER_SIXTEEN_MISSIONS
+      ...CHAPTER_SIXTEEN_MISSIONS,
+      ...CHAPTER_SEVENTEEN_MISSIONS
 
     ],
     fallbackQuestionGroups:[

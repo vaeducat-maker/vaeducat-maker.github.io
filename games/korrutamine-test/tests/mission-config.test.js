@@ -12,7 +12,7 @@ const EXPECTED_MISSIONS_1_TO_141_SIGNATURE='b624f2b69c2ee61545b0e330633ffbd91a47
 const EXPECTED_MISSIONS_1_TO_159_SIGNATURE='92f902f54e928f9d0e16c96ce4621a670d7d2969b435a218522b5d6dd5a64059';
 const EXPECTED_MISSIONS_1_TO_172_SIGNATURE='5b1b641af44a36f32c5250bb87579550b11e449abcaf877f2e263d411a10f053';
 const EXPECTED_MISSIONS_1_TO_185_SIGNATURE='d7aabe581a94d3aa59cef22b4d51ce0d0ad031c66aacd11bb1343fe9a3234183';
-const EXPECTED_CONTENT_SIGNATURE='1bf315e8c2ff92df7922c781254b147bb1b10ef52364060e828b10dcd32af41d';
+const EXPECTED_CONTENT_SIGNATURE='12e6e7bdb6042a960e97c435e92e8bba477ab3c44a9aa2746f4a2cca6f241119';
 const SUPPORTED_GROUP_TYPES=new Set(['fixed','multiplication','division','adaptive']);
 const SUPPORTED_MODES=new Set(['choice','input']);
 const SUPPORTED_OPERATIONS=new Set(['multiply','divide','mixed']);
@@ -83,9 +83,9 @@ function validateConfiguration(){
   assert.equal(config.roundLength,15,'A mission must require exactly 15 correct answers.');
   assert.equal(config.practiceTable,2,'The legacy first chapter must keep table 2 as its default.');
   assert.deepEqual(config.practiceFactors,[1,2,3,4,5,6,7,8,9,10]);
-  assert.equal(config.missions.length,237,'The current build must contain missions 1–237.');
-  assert.deepEqual(config.missions.map(mission=>mission.id),Array.from({length:237},(_,index)=>index+1));
-  assert.deepEqual(config.chapters.map(chapter=>[chapter.id,chapter.startMissionId,chapter.endMissionId]),[[1,1,15],[2,16,33],[3,34,51],[4,52,69],[5,70,87],[6,88,105],[7,106,123],[8,124,141],[9,142,159],[10,160,172],[11,173,185],[12,186,198],[13,199,211],[14,212,224],[15,225,237]]);
+  assert.equal(config.missions.length,252,'The current build must contain missions 1–252.');
+  assert.deepEqual(config.missions.map(mission=>mission.id),Array.from({length:252},(_,index)=>index+1));
+  assert.deepEqual(config.chapters.map(chapter=>[chapter.id,chapter.startMissionId,chapter.endMissionId]),[[1,1,15],[2,16,33],[3,34,51],[4,52,69],[5,70,87],[6,88,105],[7,106,123],[8,124,141],[9,142,159],[10,160,172],[11,173,185],[12,186,198],[13,199,211],[14,212,224],[15,225,237],[16,238,252]]);
   assert.deepEqual(config.lesson.triggers.map(lesson=>[lesson.id,lesson.missionId,lesson.table]),[
     ['multiply-2',1,2],['divide-2',11,2],['multiply-3',16,3],['divide-3',26,3],
     ['multiply-4',34,4],['divide-4',44,4],['multiply-5',52,5],['divide-5',62,5],

@@ -90,6 +90,7 @@ const storyTwelve=document.querySelector('#storyTwelve');
 const storyThirteen=document.querySelector('#storyThirteen');
 const storyFourteen=document.querySelector('#storyFourteen');
 const storyFifteen=document.querySelector('#storyFifteen');
+const storySixteen=document.querySelector('#storySixteen');
 const stationWorldMap=document.querySelector('#stationWorldMap');
 const storyCatCrop=storyStage.querySelector('.story-cat-crop');
 const rewardScene=document.querySelector('#rewardScene');
@@ -108,6 +109,7 @@ const rewardJourneyFlowers=document.querySelector('#rewardJourneyFlowers');
 const rewardJourneyCrystals=document.querySelector('#rewardJourneyCrystals');
 const rewardJourneyRain=document.querySelector('#rewardJourneyRain');
 const rewardJourneyFire=document.querySelector('#rewardJourneyFire');
+const rewardJourneyHarbor=document.querySelector('#rewardJourneyHarbor');
 const rewardCatCrop=rewardScene.querySelector('.result-cat-crop');
 const livingWorldTemplate=document.querySelector('#livingWorldTemplate');
 const windWorldTemplate=document.querySelector('#windWorldTemplate');
@@ -120,6 +122,7 @@ const canyonWorldTemplate=document.querySelector('#canyonWorldTemplate');
 const dragonWorldTemplate=document.querySelector('#dragonWorldTemplate');
 const mirrorWorldTemplate=document.querySelector('#mirrorWorldTemplate');
 const journeyWorldTemplate=document.querySelector('#journeyWorldTemplate');
+const starHarborWorldTemplate=document.querySelector('#starHarborWorldTemplate');
 const rewardPill=document.querySelector('#rewardPill');
 const resultScreen=document.querySelector('#resultScreen');
 const battleFxCanvas=document.querySelector('#battleFxCanvas');
@@ -130,6 +133,9 @@ const introPlayLabel=document.querySelector('#introPlayLabel');
 const installGameButton=document.querySelector('#installGameButton');
 const installDialog=document.querySelector('#installDialog');
 const confirmInstallButton=document.querySelector('#confirmInstallButton');
+const continueInBrowserButton=document.querySelector('#continueInBrowserButton');
+const installDialogTitle=document.querySelector('#installDialogTitle');
+const installHelpText=document.querySelector('#installHelpText');
 const shareGameButton=document.querySelector('#shareGameButton');
 const shareDialog=document.querySelector('#shareDialog');
 const shareUrlInput=document.querySelector('#shareUrlInput');
@@ -224,6 +230,10 @@ function mountJourneyWorld(container){
   if(!container||!journeyWorldTemplate)return;
   container.append(journeyWorldTemplate.content.cloneNode(true));
 }
+function mountStarHarborWorld(container){
+  if(!container||!starHarborWorldTemplate)return;
+  container.append(starHarborWorldTemplate.content.cloneNode(true));
+}
 
 mountLivingWorld(storyTwo);
 mountLivingWorld(rewardLivingWorld);
@@ -249,6 +259,7 @@ mountMirrorWorld(rewardMirrorWorld);
   storyTwelve,storyThirteen,storyFourteen,storyFifteen,
   rewardJourneyFlowers,rewardJourneyCrystals,rewardJourneyRain,rewardJourneyFire
 ].forEach(mountJourneyWorld);
+[storySixteen,rewardJourneyHarbor].forEach(mountStarHarborWorld);
 
 const CHAPTER_CONFIG=window.EDUKASS_CHAPTER_ONE;
 if(!CHAPTER_CONFIG)throw new Error('EDUKASS chapter configuration was not loaded.');
@@ -319,7 +330,8 @@ const JOURNEY_CHAPTERS=[
   {id:12,story:STORY_CONFIG.chapterTwelve||{},map:storyTwelve,reward:rewardJourneyFlowers,theme:'flowers',titles:['Saabumine hiidlillede planeedile','Vesi hakkab õitsema','Lilleelanikud ärkavad','Kogu planeet õitseb']},
   {id:13,story:STORY_CONFIG.chapterThirteen||{},map:storyThirteen,reward:rewardJourneyCrystals,theme:'observatory',titles:['Saabumine taevase vaatluskeskuse juurde','Kuldsed orbiidid süttivad','Tähevaatlejad ärkavad','Suur täheseade hakkab tööle']},
   {id:14,story:STORY_CONFIG.chapterFourteen||{},map:storyFourteen,reward:rewardJourneyRain,theme:'clouds',titles:['Saabumine pilvede ookeanile','Saared tõusevad pilvedest','Lendavad elanikud ilmuvad','Taevavaal äratab maailma']},
-  {id:15,story:STORY_CONFIG.chapterFifteen||{},map:storyFifteen,reward:rewardJourneyFire,theme:'harbor',titles:['Saabumine täheväravasse','Kosmosemajakas saadab signaali','Sõbrad kogunevad suurde sadamasse','Uus teekond algab']}
+  {id:15,story:STORY_CONFIG.chapterFifteen||{},map:storyFifteen,reward:rewardJourneyFire,theme:'tree',titles:['Saabumine hiigelpuu sisse','Puulinn hakkab kasvama','Seemneelanikud ilmuvad','Kogu puulinn ärkab ellu']},
+  {id:16,story:STORY_CONFIG.chapterSixteen||{},map:storySixteen,reward:rewardJourneyHarbor,theme:'harbor',titles:['Saabumine täheväravasse','Kosmosemajakas saadab signaali','Sõbrad kogunevad suurde sadamasse','Uus teekond algab']}
 ].map(item=>({...item,steps:item.story.worldSteps||[]}));
 const LAST_MISSION_ID=CHAPTER_CONFIG.missions[CHAPTER_CONFIG.missions.length-1].id;
 const CHAPTER_END_IDS=new Set(CHAPTERS.map(chapter=>chapter.endMissionId));
@@ -1693,7 +1705,7 @@ function renderJourneyStory(chapterId){
   const phaseIndex=Math.min(3,Math.floor(completed/3));
   storyStage.dataset.phase=['arrival','motion','sky','light'][phaseIndex];
   storyStage.dataset.completed=String(completed);
-  storyStage.className=`story-stage chapter-${['','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen'][chapterId]}`;
+  storyStage.className=`story-stage chapter-${['','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen'][chapterId]}`;
   storyStage.classList.toggle('is-complete',completed===item.steps.length);
   storyPhaseKicker.textContent=completed===item.steps.length?t('story.complete'):t(`story.goal${phaseIndex+1}`);
   storyPhaseTitle.textContent=item.titles[phaseIndex];
@@ -2345,7 +2357,7 @@ function configureRewardScene(levelId,firstCompletion,levelPassed){
   rewardPill.textContent=firstCompletion?t('result.rewardFirst'):t('result.rewardCollected');
   const journey=JOURNEY_CHAPTERS.find(item=>levelId>=item.story.startMissionId&&levelId<=item.story.finalMissionId);
   if(journey){
-    rewardScene.classList.add(`reward-chapter-${journey.id===12?'twelve':journey.id===13?'thirteen':journey.id===14?'fourteen':'fifteen'}`);
+    rewardScene.classList.add(`reward-chapter-${journey.id===12?'twelve':journey.id===13?'thirteen':journey.id===14?'fourteen':journey.id===15?'fifteen':'sixteen'}`);
     setJourneyRewardProgress(journey,levelId,true);
     return;
   }
@@ -2694,12 +2706,60 @@ function prepareIntro(){
   }
 }
 
+function isSamsungInternet(){
+  return /SamsungBrowser/i.test(navigator.userAgent);
+}
+
+function isIOS(){
+  return /iPad|iPhone|iPod/.test(navigator.userAgent)&&!window.MSStream;
+}
+
+function isStandaloneMode(){
+  return window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;
+}
+
+function openInChrome(){
+  const target=`intent://${location.host}${location.pathname}${location.search}${location.hash}#Intent;scheme=https;package=com.android.chrome;end`;
+  window.location.href=target;
+}
+
+function configureInstallDialog(){
+  const samsung=isSamsungInternet();
+  const ios=isIOS();
+  continueInBrowserButton.hidden=false;
+  if(samsung){
+    installDialogTitle.textContent='AVA MÄNG CHROME’IS';
+    installHelpText.textContent='Turvaliseks lisamiseks telefoni ava EDUKASS Google Chrome’i brauseris. Mängida saab kohe ka siin brauseris.';
+    confirmInstallButton.textContent='AVA CHROME’IS';
+    confirmInstallButton.dataset.action='chrome';
+    return;
+  }
+  if(ios){
+    installDialogTitle.textContent='LISA TELEFONI EKRAANILE';
+    installHelpText.textContent='Ava mäng Safaris, vajuta jagamise nuppu ja vali „Lisa avakuvale”. Mängida saab kohe ka brauseris.';
+    confirmInstallButton.textContent='SELGESTI';
+    confirmInstallButton.dataset.action='close';
+    return;
+  }
+  installDialogTitle.textContent='LISA TELEFONI EKRAANILE';
+  installHelpText.textContent='Mängu ikoon ilmub sinu telefoni. Kui automaatne lisamine ei avane, vali brauseri menüüst „Lisa avakuvale”.';
+  confirmInstallButton.textContent='📲 LISA TELEFONI EKRAANILE';
+  confirmInstallButton.dataset.action='install';
+}
+
 function openInstallHelp(){
+  if(isStandaloneMode())return;
+  if(isSamsungInternet()){
+    configureInstallDialog();
+    if(typeof installDialog.showModal==='function')installDialog.showModal();
+    return;
+  }
   if(deferredInstallPrompt){
     deferredInstallPrompt.prompt();
     deferredInstallPrompt.userChoice.finally(()=>{deferredInstallPrompt=null});
     return;
   }
+  configureInstallDialog();
   if(typeof installDialog.showModal==='function')installDialog.showModal();
 }
 
@@ -2783,9 +2843,23 @@ shareDialog.addEventListener('click',event=>{
   if(event.target===shareDialog)shareDialog.close();
 });
 installGameButton.addEventListener('click',openInstallHelp);
-confirmInstallButton.addEventListener('click',openInstallHelp);
+confirmInstallButton.addEventListener('click',()=>{
+  const action=confirmInstallButton.dataset.action;
+  if(action==='chrome'){openInChrome();return;}
+  if(action==='close'){installDialog.close();return;}
+  if(deferredInstallPrompt){
+    deferredInstallPrompt.prompt();
+    deferredInstallPrompt.userChoice.finally(()=>{deferredInstallPrompt=null});
+  }
+});
+continueInBrowserButton.addEventListener('click',()=>installDialog.close());
 installDialog.addEventListener('click',event=>{if(event.target===installDialog)installDialog.close()});
-window.addEventListener('beforeinstallprompt',event=>{event.preventDefault();deferredInstallPrompt=event;confirmInstallButton.hidden=false});
+window.addEventListener('beforeinstallprompt',event=>{
+  if(isSamsungInternet())return;
+  event.preventDefault();
+  deferredInstallPrompt=event;
+  confirmInstallButton.hidden=false;
+});
 window.addEventListener('appinstalled',()=>{deferredInstallPrompt=null;if(installDialog.open)installDialog.close()});
 document.addEventListener('visibilitychange',()=>document.hidden?pauseRoundForVisibility():resumeRoundFromVisibility());
 introPlayButton.addEventListener('click',event=>{
