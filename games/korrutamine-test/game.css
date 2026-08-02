@@ -2489,3 +2489,66 @@ body.intro-active{overflow:hidden}
 @keyframes portalSegmentReveal{0%{opacity:.05;transform:scale(.25);filter:blur(7px)}58%{opacity:1;transform:scale(1.45);filter:blur(0);text-shadow:0 0 24px #fff,0 0 42px #70d9cf}100%{opacity:1;transform:none}}
 @media(max-width:560px){.station-second-sun{right:8%;width:52px}.station-ground-crystal{right:24%;width:44px;height:70px}.station-flying-object{right:4%;width:76px}.station-bright-star{left:55%;font-size:40px}.station-star-road{right:3%;width:35%}}
 @media(prefers-reduced-motion:reduce){.station-life,.station-life *{animation-duration:.01ms!important;animation-iteration-count:1!important}}
+
+
+/* v88 · Chapter 15: Star Harbor finale */
+.journey-world[data-theme="harbor"]{
+  --sky1:#07112d;--sky2:#172b63;--ground:#182343;--accent:#75dcff;--accent2:#ffd76b;
+  background:
+    radial-gradient(circle at 74% 16%,rgba(255,215,107,.24),transparent 12%),
+    radial-gradient(circle at 18% 26%,rgba(117,220,255,.14),transparent 18%),
+    linear-gradient(180deg,#07112d 0,#172b63 58%,#121a35 100%);
+}
+[data-theme="harbor"] .journey-stars{opacity:1;background-image:radial-gradient(#fff 1px,transparent 1.6px);background-size:29px 29px}
+[data-theme="harbor"] .journey-stars i{width:7px;height:7px;background:#fff6bd;box-shadow:0 0 12px #75dcff}
+/* 226 · light path */
+[data-theme="harbor"] .journey-sky{left:12%;right:auto;top:auto;bottom:16%;width:62%;height:10px;border:0;border-radius:999px;background:linear-gradient(90deg,transparent,#75dcff 18%,#ffd76b 74%,transparent);box-shadow:0 0 18px #75dcff}
+[data-theme="harbor"] .journey-sky b{display:none}
+/* 227 · harbor platform */
+[data-theme="harbor"] .journey-land{left:16%;right:8%;bottom:4%;height:34%;border-radius:50% 50% 12% 12%;background:linear-gradient(180deg,#344d7d,#182343);box-shadow:inset 0 9px rgba(117,220,255,.18),0 -12px 28px rgba(117,220,255,.2)}
+[data-theme="harbor"] .journey-land i,[data-theme="harbor"] .journey-land b,[data-theme="harbor"] .journey-land em{bottom:68%;height:7px;border-radius:999px;background:#ffd76b;box-shadow:0 0 12px #ffd76b}
+/* 228 · main beacon */
+[data-theme="harbor"] .feature-a{left:45%;bottom:23%}
+[data-theme="harbor"] .feature-a i{width:30px;height:92px;border-radius:15px;background:linear-gradient(#e7fbff,#75dcff 55%,#3658a7);box-shadow:0 0 18px #75dcff}
+[data-theme="harbor"] .feature-a b{width:92px;height:15px;bottom:55px;border-radius:999px;background:#ffd76b;box-shadow:0 0 18px #ffd76b}
+[data-theme="harbor"] .feature-a em{width:48px;height:48px;bottom:76px;border-radius:50%;background:radial-gradient(circle,#fff 0 18%,#75dcff 20% 48%,transparent 50%);box-shadow:0 0 26px #75dcff}
+/* 229 · first signal / arriving friends */
+[data-theme="harbor"] .feature-b{left:68%;bottom:38%;width:104px;height:70px}
+[data-theme="harbor"] .feature-b i{width:78px;height:28px;border-radius:50% 50% 24% 24%;background:#8d73e6;box-shadow:0 0 18px #75dcff}
+[data-theme="harbor"] .feature-b b{width:22px;height:22px;bottom:4px;border-radius:50%;background:#ffd76b}
+[data-theme="harbor"] .feature-b em{width:9px;height:64px;bottom:-12px;border-radius:999px;background:linear-gradient(#75dcff,transparent)}
+/* 230 · second signal */
+[data-theme="harbor"] .feature-c{right:9%;bottom:22%;width:88px;height:94px}
+[data-theme="harbor"] .feature-c i{width:74px;height:42px;border-radius:50%;background:linear-gradient(145deg,#80e7ff,#3570a8);box-shadow:0 0 16px #75dcff}
+[data-theme="harbor"] .feature-c b{width:30px;height:30px;border-radius:50%;background:#a6ef78}
+[data-theme="harbor"] .feature-c em{width:14px;height:72px;border-radius:999px;background:linear-gradient(#a6ef78,transparent)}
+/* 231–232 · great ship under dome */
+[data-theme="harbor"] .feature-d{left:20%;bottom:21%;width:165px;height:116px}
+[data-theme="harbor"] .feature-d i{width:150px;height:76px;border-radius:58% 58% 34% 34%;background:linear-gradient(160deg,#dff8ff,#6d8ddb 52%,#293c79);box-shadow:inset 0 9px rgba(255,255,255,.55),0 0 22px #75dcff}
+[data-theme="harbor"] .feature-d b{width:92px;height:24px;bottom:4px;border-radius:50%;background:#ffd76b;box-shadow:0 0 20px #ffd76b}
+[data-theme="harbor"] .feature-d em{width:170px;height:96px;bottom:18px;border-radius:50% 50% 10% 10%;background:transparent;border:4px solid rgba(117,220,255,.55);box-shadow:0 0 20px rgba(117,220,255,.45)}
+/* 233 · engine light */
+[data-theme="harbor"] .journey-path{left:22%;right:13%;bottom:12%;height:12px;border-radius:999px;background:linear-gradient(90deg,#ffd76b,#75dcff,#ffd76b);box-shadow:0 0 20px #75dcff}
+/* 234–236 · arriving friends and crew */
+[data-theme="harbor"] .journey-resident,[data-theme="harbor"] .journey-children{background:#dff8ff;box-shadow:0 0 12px #75dcff;border:2px solid rgba(255,255,255,.65)}
+[data-theme="harbor"] .resident-a{left:59%;bottom:14%;filter:hue-rotate(45deg)}
+[data-theme="harbor"] .resident-b{left:69%;bottom:14%;filter:hue-rotate(-35deg)}
+[data-theme="harbor"] .journey-children{left:79%;bottom:14%;background:#ffe8b7}
+/* 236 · star map */
+[data-theme="harbor"] .journey-finale{inset:4% 8% 33% 8%;border-radius:50%;background:
+ radial-gradient(circle at 18% 30%,#fff 0 2px,transparent 3px),
+ radial-gradient(circle at 37% 52%,#75dcff 0 3px,transparent 4px),
+ radial-gradient(circle at 58% 28%,#ffd76b 0 3px,transparent 4px),
+ radial-gradient(circle at 76% 54%,#a6ef78 0 3px,transparent 4px),
+ linear-gradient(22deg,transparent 48%,rgba(117,220,255,.4) 49% 51%,transparent 52%),
+ linear-gradient(-18deg,transparent 48%,rgba(255,215,107,.34) 49% 51%,transparent 52%);
+ box-shadow:inset 0 0 24px rgba(117,220,255,.2);mix-blend-mode:screen}
+/* 237 · final departure and farewell */
+[data-theme="harbor"] .journey-departure{left:18%;top:8%;width:64%;height:64%;background:none;filter:none}
+[data-theme="harbor"] .journey-departure:before{content:"";position:absolute;left:18%;top:30%;width:220px;height:92px;border-radius:60% 60% 38% 38%;background:linear-gradient(160deg,#f3fdff,#7394df 50%,#283f80);box-shadow:0 0 28px #75dcff}
+[data-theme="harbor"] .journey-departure:after{content:"Kohtumiseni!";position:absolute;left:0;right:0;bottom:0;text-align:center;font-weight:900;font-size:clamp(28px,7vw,54px);letter-spacing:.03em;color:#fff7c7;text-shadow:0 0 12px #75dcff,0 3px 0 #263f83}
+[data-theme="harbor"].journey-departing .journey-departure{animation:harborFinale 6.8s ease-in-out both}
+[data-theme="harbor"].journey-departing .journey-rocket,[data-theme="harbor"].journey-departing .journey-cat{animation:harborBoard 1s ease-in both}
+@keyframes harborFinale{0%{opacity:0;transform:translateY(80px) scale(.72)}18%{opacity:1;transform:none}63%{opacity:1;transform:translate(45px,-35px) scale(.9)}82%{opacity:1;transform:translate(170px,-145px) scale(.55)}100%{opacity:1;transform:translate(300px,-260px) scale(.25)}}
+@keyframes harborBoard{to{opacity:0;transform:translate(55px,-20px) scale(.35)}}
+@media(max-width:600px){[data-theme="harbor"] .feature-d{left:15%;width:138px}[data-theme="harbor"] .feature-d i{width:126px}[data-theme="harbor"] .feature-d em{width:142px}[data-theme="harbor"] .journey-departure:before{width:170px;height:72px}}

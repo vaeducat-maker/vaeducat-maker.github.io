@@ -513,7 +513,7 @@
       },
       chapterFifteen:{
         startMissionId:225,finalMissionId:237,
-        worldSteps:['arrival','amber-lantern','blue-stream','first-platform','spiral-stair','door-homes','first-seed','seed-family','window-lights','bridge-rings','rising-seeds','living-tree-city','departure'].map((role,index)=>({missionId:225+index,role}))
+        worldSteps:['arrival','light-path','space-beacon','first-signal','first-friends','second-signal','great-ship','dragon-crystal','engine-light','friends-from-worlds','crew-gathers','star-map','departure'].map((role,index)=>({missionId:225+index,role}))
       }
     },
     chapters:[

@@ -319,7 +319,7 @@ const JOURNEY_CHAPTERS=[
   {id:12,story:STORY_CONFIG.chapterTwelve||{},map:storyTwelve,reward:rewardJourneyFlowers,theme:'flowers',titles:['Saabumine hiidlillede planeedile','Vesi hakkab õitsema','Lilleelanikud ärkavad','Kogu planeet õitseb']},
   {id:13,story:STORY_CONFIG.chapterThirteen||{},map:storyThirteen,reward:rewardJourneyCrystals,theme:'observatory',titles:['Saabumine taevase vaatluskeskuse juurde','Kuldsed orbiidid süttivad','Tähevaatlejad ärkavad','Suur täheseade hakkab tööle']},
   {id:14,story:STORY_CONFIG.chapterFourteen||{},map:storyFourteen,reward:rewardJourneyRain,theme:'clouds',titles:['Saabumine pilvede ookeanile','Saared tõusevad pilvedest','Lendavad elanikud ilmuvad','Taevavaal äratab maailma']},
-  {id:15,story:STORY_CONFIG.chapterFifteen||{},map:storyFifteen,reward:rewardJourneyFire,theme:'tree',titles:['Saabumine hiigelpuu sisse','Puulinn hakkab kasvama','Seemneelanikud ilmuvad','Kogu puulinn ärkab ellu']}
+  {id:15,story:STORY_CONFIG.chapterFifteen||{},map:storyFifteen,reward:rewardJourneyFire,theme:'harbor',titles:['Saabumine täheväravasse','Kosmosemajakas saadab signaali','Sõbrad kogunevad suurde sadamasse','Uus teekond algab']}
 ].map(item=>({...item,steps:item.story.worldSteps||[]}));
 const LAST_MISSION_ID=CHAPTER_CONFIG.missions[CHAPTER_CONFIG.missions.length-1].id;
 const CHAPTER_END_IDS=new Set(CHAPTERS.map(chapter=>chapter.endMissionId));
