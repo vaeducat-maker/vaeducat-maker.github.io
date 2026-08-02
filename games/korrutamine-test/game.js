@@ -397,6 +397,7 @@ let deferredInstallPrompt=null;
 let roundPaused=false;
 let pausedAt=0;
 let totalPausedTime=0;
+let lastSuccessfulPlayedMissionId=null;
 
 function navigationState(view,details={}){
   return {marker:NAVIGATION_MARKER,view,...details};
@@ -1157,6 +1158,7 @@ function highestCompletedMissionId(){
 }
 
 function getMapPreviewMissionId(){
+  if(Number.isInteger(lastSuccessfulPlayedMissionId)&&LEVEL_IDS.has(lastSuccessfulPlayedMissionId))return lastSuccessfulPlayedMissionId;
   const persisted=Number(localStorage.getItem(MAP_PREVIEW_MISSION_KEY));
   if(Number.isInteger(persisted)&&LEVEL_IDS.has(persisted))return persisted;
   const saved=Number(progress.lastSuccessfulMissionId);
@@ -1168,8 +1170,9 @@ function getMapPreviewMissionId(){
 
 function rememberMapPreviewMission(levelId){
   if(!Number.isInteger(levelId)||!LEVEL_IDS.has(levelId))return;
+  lastSuccessfulPlayedMissionId=levelId;
   progress.lastSuccessfulMissionId=levelId;
-  localStorage.setItem(MAP_PREVIEW_MISSION_KEY,String(levelId));
+  try{localStorage.setItem(MAP_PREVIEW_MISSION_KEY,String(levelId))}catch(error){}
 }
 
 function getMapStoryMissionLimit(story){
@@ -1781,8 +1784,13 @@ function focusCurrentMission(){
   missionRouteScroll.scrollTop=Math.max(0,Math.min(maximumTop,targetTop));
 }
 
+// IRON RULE: route focus uses unlockedLevel; top story uses the most recently won mission.
 function showMap({historyMode='push'}={}){
   stopRound();
+  if(Number.isInteger(lastSuccessfulPlayedMissionId)){
+    rememberMapPreviewMission(lastSuccessfulPlayedMissionId);
+    saveProgress();
+  }
   renderLevelMap();
   showScreen('mapScreen',{historyMode,historyView:'map'});
   requestAnimationFrame(()=>requestAnimationFrame(focusCurrentMission));
@@ -2080,6 +2088,7 @@ function finishAttempt(reason){
     if(!progress.completedLevels.includes(currentLevel.id))progress.completedLevels.push(currentLevel.id);
     progress.completedLevels.sort((a,b)=>a-b);
     progress.unlockedLevel=Math.min(LAST_MISSION_ID,Math.max(progress.unlockedLevel,currentLevel.id+1));
+    // IRON RULE: every victory, including a replay, becomes the map story preview.
     rememberMapPreviewMission(currentLevel.id);
     saveProgress();
     configureRewardScene(currentLevel.id,firstCompletion,true);
@@ -2284,20 +2293,20 @@ function setJourneyRewardProgress(item,levelId,showReveal){
   });
 }
 
-function setRewardProgressState(levelId,firstCompletion){
+function setRewardProgressState(levelId,showReveal=true){
   const shipStep=Math.min(STORY_SEGMENT_LENGTH,levelId);
   const engineStep=Math.min(STORY_SEGMENT_LENGTH,Math.max(0,levelId-SHIP_MISSION_ID));
   const portalStep=Math.min(STORY_SEGMENT_LENGTH,Math.max(0,levelId-ENGINE_MISSION_ID));
-  const previousShip=firstCompletion&&levelId<=SHIP_MISSION_ID?Math.max(0,shipStep-1):shipStep;
-  const previousEngine=firstCompletion&&levelId>SHIP_MISSION_ID&&levelId<=ENGINE_MISSION_ID?Math.max(0,engineStep-1):engineStep;
-  const previousPortal=firstCompletion&&levelId>ENGINE_MISSION_ID?Math.max(0,portalStep-1):portalStep;
+  const previousShip=showReveal&&levelId<=SHIP_MISSION_ID?Math.max(0,shipStep-1):shipStep;
+  const previousEngine=showReveal&&levelId>SHIP_MISSION_ID&&levelId<=ENGINE_MISSION_ID?Math.max(0,engineStep-1):engineStep;
+  const previousPortal=showReveal&&levelId>ENGINE_MISSION_ID?Math.max(0,portalStep-1):portalStep;
 
   const setState=(selector,previous,current)=>{
     rewardScene.querySelectorAll(selector).forEach(element=>{
       element.classList.remove('is-earned','is-new-reward');
       const step=Number(element.dataset.rewardPart||element.dataset.rewardEngine||element.dataset.rewardPortal);
       if(step<=previous)element.classList.add('is-earned');
-      else if(firstCompletion&&step===current)element.classList.add('is-new-reward');
+      else if(showReveal&&step===current)element.classList.add('is-new-reward');
     });
   };
 
@@ -2444,7 +2453,7 @@ function configureRewardScene(levelId,firstCompletion,levelPassed){
   }
   rewardScene.classList.add('reward-chapter-one');
   setChapterOneStationReward(levelId,true);
-  setRewardProgressState(levelId,firstCompletion);
+  setRewardProgressState(levelId,true);
   if(levelId>ENGINE_MISSION_ID)rewardScene.classList.add('reward-state-portal');
   else if(levelId>SHIP_MISSION_ID)rewardScene.classList.add('reward-state-engine');
   else rewardScene.classList.add('reward-state-ship');
@@ -2487,7 +2496,7 @@ function startRewardCinematic(levelPassed,levelId,firstCompletion=true){
   const chapterThreeReveal=levelId>=CHAPTER_THREE_STORY.startMissionId&&!chapterFourReveal&&!chapterFiveReveal&&!chapterSixReveal&&!chapterSevenReveal&&!chapterEightReveal&&!chapterNineReveal&&!chapterTenReveal;
   const chapterTwoReveal=levelId>FINAL_MISSION_ID&&!chapterThreeReveal&&!chapterFourReveal&&!chapterFiveReveal&&!chapterSixReveal&&!chapterSevenReveal&&!chapterEightReveal&&!chapterNineReveal&&!chapterTenReveal;
   const worldReveal=Boolean(journey)||chapterTwoReveal||chapterThreeReveal||chapterFourReveal||chapterFiveReveal||chapterSixReveal||chapterSevenReveal||chapterEightReveal||chapterNineReveal||chapterTenReveal||chapterElevenReveal;
-  const visualReveal=firstCompletion||worldReveal;
+  const visualReveal=true;
   const changeOffset=visualReveal?REWARD_BEFORE_HOLD:0;
   const cue=(delay,callback)=>scheduleCinematic(changeOffset+delay,callback);
   const beginRewardChange=()=>{
@@ -2573,7 +2582,7 @@ function startRewardCinematic(levelPassed,levelId,firstCompletion=true){
     cue(1320,()=>rewardFx.sparkBurst(target[0],target[1],42,['#fff','#ffd34d','#70d9cf'],.9));
     cue(1480,()=>rewardFx.shockwave(target[0],target[1],'#70d9cf',.74));
   }
-  if(firstCompletion){
+  {
     const revealAfterChange=levelId===FINAL_MISSION_ID?6500:(levelId===SHIP_MISSION_ID||levelId===ENGINE_MISSION_ID?5700:3800);
     scheduleCinematic(REWARD_BEFORE_HOLD+revealAfterChange,finishRewardReveal);
   }
@@ -2594,7 +2603,10 @@ function runResultAction(){
 
 function restoreResult(state){
   stopRound();
-  if(state?.levelPassed!==false&&Number.isInteger(state?.levelId))rememberMapPreviewMission(state.levelId);
+  if(state?.levelPassed!==false&&Number.isInteger(state?.levelId)){
+    rememberMapPreviewMission(state.levelId);
+    saveProgress();
+  }
   currentLevel=LEVELS.find(level=>level.id===state.levelId)||currentLevel;
   resultAction=state.resultAction||'map';
   resultEyebrow.textContent='';
