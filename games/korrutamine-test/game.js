@@ -1724,7 +1724,7 @@ function renderJourneyStory(chapterId){
 
 function renderStoryProgress(){
   const chapter=previewMapChapter();
-  if(chapter.id>=12&&chapter.id<=15)renderJourneyStory(chapter.id);
+  if(chapter.id>=12&&chapter.id<=16)renderJourneyStory(chapter.id);
   else if(chapter.id===11)renderChapterElevenStory();
   else if(chapter.id===10)renderChapterTenStory();
   else if(chapter.id===9)renderChapterNineStory();
@@ -2895,7 +2895,7 @@ else{
   showMap({historyMode:'replace'});
 }
 prepareIntro();
-if('serviceWorker' in navigator)navigator.serviceWorker.register('./service-worker.js').catch(()=>{});
+if('serviceWorker' in navigator)navigator.serviceWorker.register('./service-worker.js?v=91').catch(()=>{});
 
 window.__EDUKASS_TEST__={
   LEVELS,
