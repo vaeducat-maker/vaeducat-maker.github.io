@@ -1752,7 +1752,7 @@ function createLevelButton(level){
   const completed=progress.completedLevels.includes(level.id);
   const unlocked=completed||level.id<=progress.unlockedLevel;
   button.type='button';
-  const celestialType=PLANET_MISSION_IDS.has(level.id)?'planet':'star';
+  const celestialType='star';
   button.className=`level-object ${celestialType}${completed?' completed':''}${!unlocked?' locked':''}${level.id===progress.unlockedLevel&&!completed?' current':''}`;
   button.disabled=!unlocked;
   button.dataset.level=String(level.id);
@@ -2801,7 +2801,7 @@ lessonContinueButton.addEventListener('click',()=>{
     startLevel(currentLesson.missionId||1);
   }
 });
-document.querySelector('#repeatLessonButton').addEventListener('click',openFactTable);
+document.querySelectorAll('#repeatLessonButton,#battleFactTableButton').forEach(button=>button?.addEventListener('click',openFactTable));
 repeatMultiplicationButton.addEventListener('click',()=>showLesson('multiply-2','explanations'));
 repeatDivisionButton.addEventListener('click',()=>showLesson('divide-2','explanations'));
 repeatThreeMultiplicationButton.addEventListener('click',()=>showLesson('multiply-3','explanations'));
