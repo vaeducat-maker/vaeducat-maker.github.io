@@ -4,166 +4,167 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>EDUKASS — õppematerjalid ja mängud</title>
-  <meta name="description" content="EDUKASS — autori õppematerjalid ja tasuta õppemängud lastele.">
+  <meta name="description" content="EDUKASS — selged õppematerjalid ja tasuta õppemängud lastele.">
   <link rel="stylesheet" href="styles.css?v=36">
+  <link rel="stylesheet" href="home.css?v=1">
 </head>
-<body>
+<body class="home-page">
 <header class="site-header">
   <div class="container header-inner">
-    <a class="brand" href="./">
-      <img src="games/korrutamine-test/assets/edukass-cat-transparent.png" alt="EDUKASS">
+    <a class="brand" href="./" aria-label="EDUKASS avaleht">
+      <img src="games/korrutamine-test/assets/edukass-cat-transparent.png" alt="">
       <span>EDUKASS</span>
     </a>
-    <nav class="nav" aria-label="Põhinavigatsioon">
-      <a class="nav-new" href="#uus">UUS!!!</a>
+    <nav class="nav home-nav" aria-label="Põhinavigatsioon">
       <a href="materials/">Materjalid</a>
       <a href="#mangud">Mängud</a>
-      <a href="#teemad">Teemad</a>
     </nav>
   </div>
 </header>
 
 <main>
-  <section class="showcase-section" aria-label="Uus materjal ja uusim mäng">
-    <div class="container showcase-grid">
-      <article class="showcase-card material-showcase" id="uus">
-        <div class="showcase-copy">
-          <div class="new-label">UUS!!!</div>
-          <div class="meta">TASUTA TÖÖLEHT · 15.07.2026</div>
-          <h1>Lõika! Kosmoserada</h1>
-          <p>Harjuta kääridega täpset lõikamist mööda pikka ja käänulist kosmoserada.</p>
-          <div class="actions">
-            <a class="button material-primary" href="materials/loika-kosmoserada/">Vaata materjali</a>
-            <a class="secondary-action" href="downloads/loika-kosmoserada.pdf" download>
-              <span aria-hidden="true">↓</span> Laadi PDF alla
-            </a>
-          </div>
+  <section class="home-hero">
+    <div class="container home-hero-grid">
+      <div class="home-hero-copy">
+        <div class="home-eyebrow">ÕPPEMATERJALID JA MÄNGUD LASTELE</div>
+        <h1>Õppimine algab uudishimust.</h1>
+        <p>Selged õppematerjalid ja tasuta mängud, mis aitavad lapsel õppida samm-sammult.</p>
+        <div class="home-actions">
+          <a class="home-button home-button-primary" href="games/korrutamine-test/">Mängi tasuta</a>
+          <a class="home-button home-button-secondary" href="materials/">Vaata materjale</a>
         </div>
-        <div class="material-showcase-visual">
-          <span class="accent-dot accent-dot-one" aria-hidden="true"></span>
-          <span class="accent-dot accent-dot-two" aria-hidden="true"></span>
-          <img src="assets/loika-kosmoserada.png" alt="Lõika! Kosmoserada töölehe eelvaade">
-        </div>
-      </article>
-
-      <article class="showcase-card game-showcase" id="mangud">
-        <div class="showcase-copy">
-          <div class="latest-badge game-badge">EDUKASS MÄNGUD</div>
-          <div class="meta game-meta">EESTI KEEL · A1 · TASUTA</div>
-          <h2>Koolikoti memomäng</h2>
-          <p>Ühenda koolitarbe pilt õige eestikeelse sõnaga. Vali 6 või 10 paari ja mängi kohe veebis.</p>
-          <div class="actions">
-            <a class="button game-primary" href="games/koolikott/">Mängi kohe</a>
-            <a class="secondary-action game-link" href="materials/koolikott/">
-              Vaata sõnu <span aria-hidden="true">→</span>
-            </a>
-          </div>
-        </div>
-        <div class="game-showcase-visual" aria-hidden="true">
-          <div class="game-card game-card-blue"><img src="games/koolikott/assets/pinal.png" alt=""></div>
-          <div class="game-card game-card-white"><img src="games/koolikott/assets/pliiats.png" alt=""></div>
-          <div class="game-card game-card-word">PLIIATS</div>
-          <span class="game-spark spark-one">✦</span>
-          <span class="game-spark spark-two">+</span>
-        </div>
-      </article>
-    </div>
-  </section>
-
-  <section class="math-prototype-strip" aria-label="EDUKASSi matemaatikamängu kaks esimest peatükki">
-    <div class="container math-prototype-inner">
-      <div>
-        <span>MÄNGU PROTOTÜÜP · 33 MISSIOONI</span>
-        <h2>Matemaatika: „Üks ja kaks“ ning „Kolm“</h2>
-        <p>Harjuta 33 järjestikuses missioonis 1, 2 ja 3-ga korrutamist ning jagamist.</p>
       </div>
-      <div class="math-prototype-actions">
-        <a class="button math-prototype-button" href="games/korrutamine-test/">Ava prototüüp</a>
-        <button class="button math-share-button" id="shareMathGameButton" type="button" aria-label="Jaga matemaatikamängu">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="18" cy="5" r="2.5"></circle>
-            <circle cx="6" cy="12" r="2.5"></circle>
-            <circle cx="18" cy="19" r="2.5"></circle>
-            <path d="m8.2 10.8 7.6-4.5M8.2 13.2l7.6 4.5"></path>
-          </svg>
-          JAGA
-        </button>
-        <span class="math-share-status" id="mathShareStatus" role="status" aria-live="polite"></span>
+      <div class="home-hero-visual" aria-hidden="true">
+        <div class="home-hero-orbit home-orbit-one"></div>
+        <div class="home-hero-orbit home-orbit-two"></div>
+        <img src="games/korrutamine-test/assets/edukass-cat-transparent.png" alt="">
+        <span class="home-hero-star star-one">★</span>
+        <span class="home-hero-star star-two">✦</span>
+        <span class="home-hero-equation">6 × 4 = 24</span>
       </div>
     </div>
   </section>
 
-  <section class="intro-strip" aria-label="EDUKASSi tutvustus">
-    <div class="container intro-inner">
-      <div class="intro-copy">
-        <div class="eyebrow">Autori õppematerjalide töötuba</div>
-        <h2>Õppimine algab uudishimust.</h2>
-        <p>Selged materjalid, mängud ja väikesed avastused lastele.</p>
-      </div>
-      <img class="intro-mascot" src="games/korrutamine-test/assets/edukass-cat-transparent.png" alt="EDUKASSi maskott">
-    </div>
-  </section>
-
-  <section class="section topics-section" id="teemad">
+  <section class="home-feature" id="mangud" aria-labelledby="feature-title">
     <div class="container">
-      <div class="section-head">
-        <h2>Teemad</h2>
-        <p>Vali teema ja ava sobiv materjal või mäng.</p>
+      <article class="home-feature-card">
+        <div class="home-feature-image">
+          <img src="games/korrutamine-test/assets/share-korrutustabel.png" alt="Korrutustabeli treeneri eelvaade">
+        </div>
+        <div class="home-feature-copy">
+          <div class="home-kicker">EDUKASS MÄNGUD</div>
+          <h2 id="feature-title">Korrutustabeli treener</h2>
+          <div class="home-facts" aria-label="Mängu põhiandmed">
+            <span>16 peatükki</span><span>252 missiooni</span><span>Tasuta</span>
+          </div>
+          <p>Harjuta korrutamist ja jagamist, ava uusi maailmu ning kogu täheenergiat.</p>
+          <a class="home-button home-button-yellow" href="games/korrutamine-test/">Mängi kohe</a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="home-new" id="uus" aria-labelledby="new-title">
+    <div class="container">
+      <div class="home-section-heading">
+        <div>
+          <span class="home-new-label">UUS!!!</span>
+          <h2 id="new-title">Värskelt lisatud</h2>
+        </div>
+        <p>Uued materjalid ja mängud ühes kohas.</p>
       </div>
-      <div class="cards topic-cards topic-cards-six">
-        <a class="card topic-card topic-link topic-estonian" href="materials/#eesti-keel">
-          <div class="icon" aria-hidden="true">
-            <svg viewBox="0 0 48 48" role="img"><path d="M10 12h28v20H19l-9 7V12Z"/><path d="M17 20h14M17 26h10"/></svg>
-          </div>
-          <div class="topic-card-top"><h3>Eesti keel</h3><span class="topic-arrow" aria-hidden="true">→</span></div>
-          <p>Sõnavara, plakatid, töölehed ja väikesed keeleharjutused.</p>
-        </a>
 
-        <article class="card topic-card topic-coming topic-history" aria-label="Ajalugu ja kultuur — materjalid tulevad peagi">
-          <div class="icon" aria-hidden="true">
-            <svg viewBox="0 0 48 48" role="img"><path d="m8 18 16-9 16 9H8Z"/><path d="M12 20v15M20 20v15M28 20v15M36 20v15M8 38h32"/></svg>
+      <div class="home-new-grid">
+        <article class="home-new-card home-new-material">
+          <div class="home-new-card-visual">
+            <img src="assets/loika-kosmoserada.png" alt="Lõika! Kosmoserada töölehe eelvaade">
           </div>
-          <div class="topic-card-top"><h3>Ajalugu ja kultuur</h3><span class="coming-badge">PEAGI</span></div>
-          <p>Ajastud, inimesed, müüdid ja lood, mis aitavad maailma mõista.</p>
+          <div class="home-new-card-copy">
+            <div class="home-card-meta">TASUTA TÖÖLEHT</div>
+            <h3>Lõika! Kosmoserada</h3>
+            <p>Harjuta kääridega täpset lõikamist mööda pikka ja käänulist kosmoserada.</p>
+            <a class="home-text-link" href="materials/loika-kosmoserada/">Vaata materjali <span aria-hidden="true">→</span></a>
+          </div>
         </article>
 
-        <article class="card topic-card topic-coming topic-nature" aria-label="Loodus — materjalid tulevad peagi">
-          <div class="icon" aria-hidden="true">
-            <svg viewBox="0 0 48 48" role="img"><path d="M12 36c15 0 24-9 24-24-15 0-24 9-24 24Z"/><path d="M14 34c7-7 13-12 21-18M22 27l-1-8M28 22l7 1"/></svg>
+        <article class="home-new-card home-new-game">
+          <div class="home-new-card-visual home-memory-visual" aria-hidden="true">
+            <span class="home-memory-card memory-blue"><img src="games/koolikott/assets/pinal.png" alt=""></span>
+            <span class="home-memory-card memory-white"><img src="games/koolikott/assets/pliiats.png" alt=""></span>
+            <span class="home-memory-card memory-word">PLIIATS</span>
           </div>
-          <div class="topic-card-top"><h3>Loodus</h3><span class="coming-badge">PEAGI</span></div>
-          <p>Vaatlused, katsed ja õppematerjalid päris elust.</p>
+          <div class="home-new-card-copy">
+            <div class="home-card-meta">EESTI KEEL · A1 · TASUTA</div>
+            <h3>Koolikoti memomäng</h3>
+            <p>Ühenda koolitarbe pilt õige eestikeelse sõnaga ja mängi kohe veebis.</p>
+            <a class="home-text-link" href="games/koolikott/">Mängi kohe <span aria-hidden="true">→</span></a>
+          </div>
         </article>
+      </div>
+    </div>
+  </section>
 
-        <a class="card topic-card topic-link topic-planning" href="materials/#korraldus">
-          <div class="icon" aria-hidden="true">
-            <svg viewBox="0 0 48 48" role="img"><rect x="9" y="11" width="30" height="29" rx="4"/><path d="M15 8v7M33 8v7M9 19h30M16 27h6M16 33h10"/><path d="m30 29 3 3 6-7"/></svg>
+  <section class="home-directions" aria-labelledby="directions-title">
+    <div class="container">
+      <div class="home-section-heading home-section-heading-simple">
+        <div>
+          <div class="home-eyebrow">VALI SUUND</div>
+          <h2 id="directions-title">Mida otsid?</h2>
+        </div>
+      </div>
+      <div class="home-direction-grid">
+        <a class="home-direction-card home-direction-materials" href="materials/">
+          <span class="home-direction-icon" aria-hidden="true">✂</span>
+          <div>
+            <h3>Materjalid</h3>
+            <p>Töölehed, plakatid ja praktilised abivahendid.</p>
           </div>
-          <div class="topic-card-top"><h3>Korraldus ja planeerimine</h3><span class="topic-arrow" aria-hidden="true">→</span></div>
-          <p>Päevaplaanid, kalendrid, tunniplaanid, nimekirjad ja muud praktilised abivahendid.</p>
+          <span class="home-direction-arrow" aria-hidden="true">→</span>
         </a>
-
-        <a class="card topic-card topic-link topic-skills" href="materials/#kaelised-oskused">
-          <div class="icon" aria-hidden="true">
-            <svg viewBox="0 0 48 48" role="img"><circle cx="15" cy="34" r="5"/><circle cx="33" cy="34" r="5"/><path d="m18 31 18-20M30 31 12 11M22 24l4 4"/></svg>
+        <a class="home-direction-card home-direction-games" href="#mangud">
+          <span class="home-direction-icon" aria-hidden="true">★</span>
+          <div>
+            <h3>Mängud</h3>
+            <p>Tasuta interaktiivsed harjutused ja õppemängud.</p>
           </div>
-          <div class="topic-card-top"><h3>Käelised oskused ja loovus</h3><span class="topic-arrow" aria-hidden="true">→</span></div>
-          <p>Lõikamine, värvimine, joonistamine ja muud käelist osavust arendavad tegevused.</p>
+          <span class="home-direction-arrow" aria-hidden="true">→</span>
         </a>
+      </div>
+    </div>
+  </section>
 
-        <a class="card topic-card topic-link topic-games" href="games/koolikott/">
-          <div class="icon" aria-hidden="true">
-            <svg viewBox="0 0 48 48" role="img"><path d="M15 17h18c6 0 10 5 9 11l-1 6c-1 4-6 5-8 2l-3-4H18l-3 4c-2 3-7 2-8-2l-1-6c-1-6 3-11 9-11Z"/><path d="M15 24h8M19 20v8M31 24h.1M36 28h.1"/></svg>
-          </div>
-          <div class="topic-card-top"><h3>Mängud ja rakendused</h3><span class="topic-arrow" aria-hidden="true">→</span></div>
-          <p>Interaktiivsed harjutused, kaardid ja õppemängud.</p>
+  <section class="home-categories" aria-labelledby="categories-title">
+    <div class="container">
+      <div class="home-section-heading home-section-heading-simple">
+        <div>
+          <div class="home-eyebrow">MATERJALID TEEMADE KAUPA</div>
+          <h2 id="categories-title">Alusta siit</h2>
+        </div>
+        <a class="home-all-link" href="materials/">Vaata kõiki materjale →</a>
+      </div>
+
+      <div class="home-category-grid">
+        <a class="home-category-card category-language" href="materials/#eesti-keel">
+          <span class="home-category-icon" aria-hidden="true">Aa</span>
+          <h3>Eesti keel</h3>
+          <p>Sõnavara, töölehed ja väikesed keeleharjutused.</p>
+        </a>
+        <a class="home-category-card category-planning" href="materials/#korraldus">
+          <span class="home-category-icon" aria-hidden="true">✓</span>
+          <h3>Korraldus ja planeerimine</h3>
+          <p>Päevaplaanid, kalendrid, tunniplaanid ja nimekirjad.</p>
+        </a>
+        <a class="home-category-card category-skills" href="materials/#kaelised-oskused">
+          <span class="home-category-icon" aria-hidden="true">✂</span>
+          <h3>Käelised oskused ja loovus</h3>
+          <p>Lõikamine, värvimine, joonistamine ja loovad tegevused.</p>
         </a>
       </div>
     </div>
   </section>
 </main>
 
-<footer class="site-footer">
+<footer class="site-footer home-footer">
   <div class="container footer-inner">
     <div class="footer-brand">
       <img src="games/korrutamine-test/assets/edukass-cat-transparent.png" alt="">
@@ -172,6 +173,5 @@
     <div class="footer-note">© 2026 EDUKASS · edukass.ee</div>
   </div>
 </footer>
-<script src="site-share.js?v=1"></script>
 </body>
 </html>
