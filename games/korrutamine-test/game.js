@@ -345,6 +345,7 @@ const REWARD_BEFORE_HOLD=350;
 const INTRO_READY_DELAY=2200;
 const INTRO_EXIT_DELAY=1720;
 const SHARE_URL='https://edukass.ee/games/korrutamine-test/';
+const TEST_UNLOCK_ALL=new URLSearchParams(window.location.search).get('edukass-test')==='all';
 
 const LEVELS=CHAPTER_CONFIG.missions.map(mission=>({
   id:mission.id,
@@ -1183,6 +1184,7 @@ function getMapPreviewMissionId(){
 function rememberMapPreviewMission(levelId){
   if(!Number.isInteger(levelId)||!LEVEL_IDS.has(levelId))return;
   lastSuccessfulPlayedMissionId=levelId;
+  if(TEST_UNLOCK_ALL)return;
   progress.lastSuccessfulMissionId=levelId;
   try{localStorage.setItem(MAP_PREVIEW_MISSION_KEY,String(levelId))}catch(error){}
 }
@@ -1750,7 +1752,7 @@ function createChapterDivider(chapter){
 function createLevelButton(level){
   const button=document.createElement('button');
   const completed=progress.completedLevels.includes(level.id);
-  const unlocked=completed||level.id<=progress.unlockedLevel;
+  const unlocked=TEST_UNLOCK_ALL||completed||level.id<=progress.unlockedLevel;
   button.type='button';
   const celestialType='star';
   button.className=`level-object ${celestialType}${completed?' completed':''}${!unlocked?' locked':''}${level.id===progress.unlockedLevel&&!completed?' current':''}`;
@@ -2097,12 +2099,15 @@ function finishAttempt(reason){
 
   if(levelPassed){
     playSound('missionComplete');
-    if(!progress.completedLevels.includes(currentLevel.id))progress.completedLevels.push(currentLevel.id);
-    progress.completedLevels.sort((a,b)=>a-b);
-    progress.unlockedLevel=Math.min(LAST_MISSION_ID,Math.max(progress.unlockedLevel,currentLevel.id+1));
+    if(!TEST_UNLOCK_ALL){
+      if(!progress.completedLevels.includes(currentLevel.id))progress.completedLevels.push(currentLevel.id);
+      progress.completedLevels.sort((a,b)=>a-b);
+      progress.unlockedLevel=Math.min(LAST_MISSION_ID,Math.max(progress.unlockedLevel,currentLevel.id+1));
+    }
     // IRON RULE: every victory, including a replay, becomes the map story preview.
+    // Test mode keeps this preview only in memory and does not alter the real save.
     rememberMapPreviewMission(currentLevel.id);
-    saveProgress();
+    if(!TEST_UNLOCK_ALL)saveProgress();
     configureRewardScene(currentLevel.id,firstCompletion,true);
     resultEyebrow.hidden=true;
     resultEyebrow.textContent='';
