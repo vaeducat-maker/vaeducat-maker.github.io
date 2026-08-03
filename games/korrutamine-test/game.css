@@ -2945,3 +2945,49 @@ body.intro-active{overflow:hidden}
   .answer-column .answer-panel{margin-top:8px}
   .battle-table-button{min-height:44px;font-size:.78rem}
 }
+
+
+/* v104: responsive isolation guard.
+   The accepted phone layout is the base. Desktop uses its own image and positioning only at 1101px+. */
+.hero-cat-picture{display:block;width:100%;height:100%}
+
+@media(max-width:700px){
+  .hero-zone{
+    left:50%;
+    bottom:.5%;
+    width:45%;
+    max-width:235px;
+    height:40%;
+    transform:translateX(-50%);
+  }
+  .hero-cat-crop{
+    position:absolute;
+    left:0;
+    right:0;
+    top:0;
+    height:94%;
+    overflow:hidden;
+    display:block;
+  }
+  .hero-cat-picture{width:100%;height:auto}
+  .hero-cat{
+    width:100%;
+    height:auto;
+    max-width:none;
+    object-fit:initial;
+    display:block;
+    transform:scale(1.25) translateY(-10%);
+    transform-origin:50% 4%;
+  }
+  .hero-shadow{left:23%;right:23%;bottom:4%;height:10%}
+}
+
+@media(min-width:1101px){
+  .hero-cat-picture{
+    width:100%;
+    height:100%;
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+  }
+}

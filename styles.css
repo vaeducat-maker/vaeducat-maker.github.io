@@ -1528,3 +1528,14 @@ h1, h2, h3,
   .material-category-head .category-title-icon { width: 54px; height: 54px; padding: 12px; }
   .category-material-grid .catalog-tile { max-width: none; }
 }
+
+/* v103: one consistent EDUKASS wordmark across the whole site. */
+.brand .brand-name b,
+.footer-brand .brand-name b{
+  color:#44bcb2;
+  text-shadow:0 1px 0 var(--ink);
+}
+.brand .brand-name,
+.footer-brand .brand-name{
+  color:var(--ink);
+}

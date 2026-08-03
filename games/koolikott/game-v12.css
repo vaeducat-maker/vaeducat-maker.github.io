@@ -99,3 +99,7 @@ footer{text-align:center;color:var(--muted);padding:0 20px 24px}
 }
 .card-back:before{display:none !important}
 .card-back img{display:none !important}
+
+/* v103: match the main EDUKASS wordmark. */
+.brand .brand-name b{color:#44bcb2;text-shadow:0 1px 0 var(--ink)}
+.brand .brand-name{color:var(--ink)}
