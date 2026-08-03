@@ -2991,3 +2991,42 @@ body.intro-active{overflow:hidden}
     justify-content:center;
   }
 }
+
+
+/* v105: mobile-only cat refinement. Desktop rules are intentionally untouched. */
+@media(max-width:700px){
+  .hero-zone{
+    left:50%;
+    bottom:5%;
+    width:36%;
+    max-width:185px;
+    height:38%;
+    transform:translateX(-50%);
+  }
+  .hero-cat-crop{
+    inset:0;
+    width:100%;
+    height:100%;
+    overflow:visible;
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+  }
+  .hero-cat-picture{
+    width:100%;
+    height:100%;
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+  }
+  .hero-cat{
+    width:auto;
+    height:100%;
+    max-width:100%;
+    object-fit:contain;
+    display:block;
+    transform:none;
+    transform-origin:50% 100%;
+  }
+  .hero-shadow{left:18%;right:18%;bottom:-1%;height:8%}
+}
