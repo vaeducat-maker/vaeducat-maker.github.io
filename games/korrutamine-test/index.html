@@ -19,7 +19,7 @@
   <meta property="og:image" content="https://edukass.ee/games/korrutamine-test/assets/share-korrutustabel.png?v=40">
   <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="stylesheet" href="game.css?v=100">
+  <link rel="stylesheet" href="game.css?v=101">
 </head>
 <body class="intro-active">
   <section class="game-intro is-running" id="introScreen" aria-label="EDUKASSi mängu algus" data-i18n-aria-label="intro.aria">
@@ -353,7 +353,8 @@
     <section id="battleScreen" class="screen battle-screen" aria-labelledby="battleTitle">
       <div class="battle-top">
         <button class="back-button" id="backToMapButton" type="button" data-i18n="battle.back">← KAARDILE</button>
-        <div class="battle-title-wrap"><span id="levelKicker">MISSIOON 1</span><h1 id="battleTitle">Korrutamise valik</h1></div>
+        <div class="battle-title-wrap visually-hidden"><span id="levelKicker">MISSIOON 1</span><h1 id="battleTitle">Korrutamise valik</h1></div>
+        <div class="battle-chapter-label" id="battleChapterLabel">1. PEATÜKK · ÜKS JA KAKS</div>
         <div class="progress-pill"><span data-i18n="battle.answers">Vastused</span><strong>★ <span id="correctCount">0</span>/15</strong></div>
       </div>
 
@@ -391,17 +392,19 @@
           </div>
         </div>
 
-        <aside class="answer-panel" id="answerPanel" aria-label="Vastus" data-i18n-aria-label="battle.answerAria">
-          <div class="answer-panel-head"><span id="answerPanelTitle" data-i18n="battle.choose">Vali vastus</span></div>
-          <div class="choice-grid" id="choiceGrid" aria-label="Vastusevariandid" data-i18n-aria-label="battle.optionsAria"></div>
-          <div class="keypad" id="keypad" aria-label="Vastuse numbriklahvid" data-i18n-aria-label="battle.keypadAria">
-            <button type="button" data-key="1">1</button><button type="button" data-key="2">2</button><button type="button" data-key="3">3</button>
-            <button type="button" data-key="4">4</button><button type="button" data-key="5">5</button><button type="button" data-key="6">6</button>
-            <button type="button" data-key="7">7</button><button type="button" data-key="8">8</button><button type="button" data-key="9">9</button>
-            <button class="key-clear-all" type="button" data-key="clearAll" aria-label="Tühjenda" data-i18n-aria-label="battle.clearAria">C</button><button type="button" data-key="0">0</button><button class="key-clear" type="button" data-key="clear" aria-label="Kustuta number" data-i18n-aria-label="battle.deleteAria">⌫</button>
-          </div>
+        <div class="answer-column">
+          <aside class="answer-panel" id="answerPanel" aria-label="Vastus" data-i18n-aria-label="battle.answerAria">
+            <div class="answer-panel-head"><span id="answerPanelTitle" data-i18n="battle.choose">Vali vastus</span></div>
+            <div class="choice-grid" id="choiceGrid" aria-label="Vastusevariandid" data-i18n-aria-label="battle.optionsAria"></div>
+            <div class="keypad" id="keypad" aria-label="Vastuse numbriklahvid" data-i18n-aria-label="battle.keypadAria">
+              <button type="button" data-key="1">1</button><button type="button" data-key="2">2</button><button type="button" data-key="3">3</button>
+              <button type="button" data-key="4">4</button><button type="button" data-key="5">5</button><button type="button" data-key="6">6</button>
+              <button type="button" data-key="7">7</button><button type="button" data-key="8">8</button><button type="button" data-key="9">9</button>
+              <button class="key-clear-all" type="button" data-key="clearAll" aria-label="Tühjenda" data-i18n-aria-label="battle.clearAria">C</button><button type="button" data-key="0">0</button><button class="key-clear" type="button" data-key="clear" aria-label="Kustuta number" data-i18n-aria-label="battle.deleteAria">⌫</button>
+            </div>
+          </aside>
           <button class="secondary-button battle-table-button" id="battleFactTableButton" type="button">▦ KORRUTUSTABEL</button>
-        </aside>
+        </div>
       </div>
     </section>
 
@@ -804,6 +807,6 @@
   <script src="i18n.js?v=61"></script>
   <script src="question-engine.js?v=61"></script>
   <script src="progress-store.js?v=92"></script>
-  <script src="game.js?v=100"></script>
+  <script src="game.js?v=101"></script>
 </body>
 </html>

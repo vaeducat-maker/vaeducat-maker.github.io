@@ -2889,3 +2889,59 @@ body.intro-active{overflow:hidden}
   .keypad button{min-height:46px;font-size:1.08rem}
   .battle-table-button{min-height:48px;margin-top:12px}
 }
+
+
+/* v101: clean intro sound support, chapter orientation, and a separate fact-table action. */
+.answer-column{min-width:0;display:flex;flex-direction:column;gap:12px}
+.battle-table-button{
+  width:100%;
+  margin:0;
+  min-height:48px;
+  background:#eef4f8;
+  border:1px solid var(--line);
+  box-shadow:0 8px 18px rgba(23,54,95,.1);
+}
+.battle-chapter-label{
+  min-width:0;
+  color:var(--muted);
+  font-size:.82rem;
+  font-weight:900;
+  letter-spacing:.075em;
+  line-height:1.15;
+  text-align:center;
+  text-transform:uppercase;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+@media(min-width:1101px){
+  .battle-top{grid-template-columns:auto minmax(0,1fr) auto}
+  .battle-chapter-label{padding:0 14px;font-size:.86rem}
+  .answer-column{gap:12px}
+  .battle-table-button{min-height:50px;border-radius:999px}
+}
+
+@media(max-width:880px){
+  .answer-column{gap:8px}
+  .answer-column .answer-panel{margin-top:8px}
+  .battle-table-button{min-height:46px;border-radius:18px}
+}
+
+@media(max-width:620px){
+  .battle-top{position:relative}
+  .battle-chapter-label{
+    position:absolute;
+    left:112px;
+    right:8px;
+    top:50%;
+    transform:translateY(-50%);
+    padding:0 6px;
+    font-size:.62rem;
+    text-align:right;
+    pointer-events:none;
+  }
+  .answer-column{gap:7px}
+  .answer-column .answer-panel{margin-top:8px}
+  .battle-table-button{min-height:44px;font-size:.78rem}
+}

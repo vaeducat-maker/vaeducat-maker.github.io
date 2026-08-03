@@ -25,6 +25,7 @@ const mapEnergyTotal=document.querySelector('#mapEnergyTotal');
 const mapEyebrow=document.querySelector('#mapEyebrow');
 const levelKicker=document.querySelector('#levelKicker');
 const battleTitle=document.querySelector('#battleTitle');
+const battleChapterLabel=document.querySelector('#battleChapterLabel');
 const resultEyebrow=document.querySelector('#resultEyebrow');
 const resultTitle=document.querySelector('#resultTitle');
 const resultMessage=document.querySelector('#resultMessage');
@@ -701,13 +702,13 @@ function playSound(kind){
     playTone(1318,3.05,.62,.037,'sine');
   }
   if(kind==='introIgnition'){
-    playTone(440,0,.09,.035,'triangle');
-    playTone(620,.17,.1,.04,'triangle');
-    playTone(860,.34,.13,.045,'triangle');
-    playSweep(105,360,.4,.78,.055,'sawtooth');
-    playNoise(.42,.9,.07,820,'lowpass');
-    playChord([523,659,784],.78,.62,.032);
-    playSweep(380,1320,.92,.46,.038,'sine');
+    // Clean rocket whoosh + bright space chime. No low bubbling layer.
+    playNoise(0,.34,.032,4200,'highpass');
+    playSweep(560,1480,.02,.38,.034,'sine');
+    playTone(880,.3,.11,.026,'triangle');
+    playTone(1175,.42,.16,.028,'sine');
+    playChord([659,784,988],.53,.36,.018);
+    playTone(1568,.78,.22,.022,'sine');
   }
 }
 
@@ -1851,6 +1852,8 @@ function startLevel(levelId,{historyMode='push'}={}){
   showerMeter.hidden=false;
   levelKicker.textContent=t('battle.mission',{number:level.id,total:LEVELS.length});
   battleTitle.textContent=level.title;
+  const chapter=CHAPTERS.find(item=>item.id===level.chapterId);
+  battleChapterLabel.textContent=chapter?t(chapter.titleKey,{},`${chapter.id}. PEATÜKK`):'';
   const choiceMode=level.mode==='choice';
   answerPanel.classList.toggle('choice-mode',choiceMode);
   choiceGrid.hidden=!choiceMode;
