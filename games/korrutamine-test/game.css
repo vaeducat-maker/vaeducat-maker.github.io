@@ -471,6 +471,32 @@ button{color:inherit;touch-action:manipulation}
   .keypad button{min-height:40px}
 }
 
+@media(min-width:1101px){
+  #battleScreen.is-active{
+    min-height:calc(100dvh - 140px);
+  }
+  .battle-screen{width:min(1160px,100%)}
+  .battle-top{gap:14px;margin-bottom:10px;align-items:center}
+  .back-button{min-height:40px;padding:0 15px}
+  .battle-title-wrap span{font-size:.78rem}
+  .battle-title-wrap h1{font-size:clamp(2.2rem,3.4vw,3rem)}
+  .progress-pill{padding:8px 12px}
+  .play-grid{grid-template-columns:minmax(0,1.12fr) minmax(300px,.68fr);gap:18px;align-items:start}
+  .scene-column{gap:10px}
+  .question-card{padding:10px 18px;border-radius:24px}
+  .question-label{font-size:.8rem}
+  .equation{font-size:clamp(2.7rem,4.4vw,3.95rem);gap:8px}
+  .answer-slot{min-width:72px;border-bottom-width:5px}
+  .battle-stage{height:clamp(330px,43vh,420px);min-height:330px;border-radius:28px}
+  .answer-panel{padding:18px 18px 16px;border-radius:26px;justify-content:flex-start}
+  .answer-panel-head{margin-bottom:10px}
+  .answer-panel-head span{font-size:1rem}
+  .choice-grid{gap:10px}
+  .choice-grid button{min-height:86px;border-radius:18px;font-size:1.85rem}
+  .keypad button{min-height:62px;border-radius:16px;font-size:1.32rem}
+  .active-tables-card{margin-top:14px}
+}
+
 @media(orientation:landscape) and (max-height:520px){
   .battle-screen{width:min(920px,100%)}
   .play-grid{display:grid;grid-template-columns:minmax(390px,1.2fr) minmax(280px,.8fr);gap:14px}
