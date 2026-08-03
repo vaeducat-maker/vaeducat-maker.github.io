@@ -2895,7 +2895,7 @@ else{
   showMap({historyMode:'replace'});
 }
 prepareIntro();
-if('serviceWorker' in navigator)navigator.serviceWorker.register('./service-worker.js?v=91').catch(()=>{});
+if('serviceWorker' in navigator)navigator.serviceWorker.register('./service-worker.js',{updateViaCache:'none'}).then(registration=>registration.update()).catch(()=>{});
 
 window.__EDUKASS_TEST__={
   LEVELS,
