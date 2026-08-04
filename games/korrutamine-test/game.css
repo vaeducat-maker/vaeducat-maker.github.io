@@ -3030,3 +3030,48 @@ body.intro-active{overflow:hidden}
   }
   .hero-shadow{left:18%;right:18%;bottom:-1%;height:8%}
 }
+
+/* v110: visible intro readiness and a child-sized chapter goal on the map. */
+.intro-status{
+  position:absolute;
+  z-index:19;
+  left:50%;
+  bottom:23%;
+  max-width:min(82vw,360px);
+  padding:9px 14px;
+  border:1px solid rgba(255,255,255,.28);
+  border-radius:999px;
+  background:rgba(20,31,75,.72);
+  color:#fff;
+  font-size:.86rem;
+  font-weight:850;
+  letter-spacing:.035em;
+  text-align:center;
+  white-space:nowrap;
+  opacity:1;
+  transform:translateX(-50%);
+  transition:opacity .2s ease,visibility .2s ease;
+}
+.game-intro.intro-ready .intro-status,
+.game-intro.is-launching .intro-status,
+.game-intro.is-returning .intro-status{opacity:0;visibility:hidden}
+
+.energy-panel{gap:10px;align-items:center}
+.energy-panel .energy-star{flex:0 0 auto;color:var(--yellow);font-size:1.55rem;line-height:1;text-shadow:0 2px 7px rgba(255,211,77,.42)}
+.energy-panel .energy-copy{display:flex;min-width:0;flex-direction:column;gap:1px}
+.energy-panel .energy-copy strong{color:var(--ink);font-size:1rem;line-height:1.15;white-space:nowrap}
+.energy-panel .energy-copy strong span{color:inherit;font-weight:inherit}
+.energy-panel .energy-copy small{color:var(--muted);font-size:.75rem;font-weight:800;line-height:1.2;white-space:nowrap}
+.energy-panel .energy-copy small span{color:inherit;font-size:inherit;font-weight:inherit}
+
+@media(max-width:700px){
+  .intro-status{bottom:27%;padding:7px 11px;font-size:.74rem}
+  #mapScreen .energy-panel{gap:6px;padding:6px 8px}
+  #mapScreen .energy-panel .energy-star{font-size:1.15rem}
+  #mapScreen .energy-panel .energy-copy strong{font-size:.76rem}
+  #mapScreen .energy-panel .energy-copy small{font-size:.62rem}
+}
+
+@media(max-width:700px) and (max-height:720px){
+  .intro-status{bottom:22%}
+}

@@ -20,6 +20,10 @@ const answerPanel=document.querySelector('#answerPanel');
 const answerPanelTitle=document.querySelector('#answerPanelTitle');
 const levelGrid=document.querySelector('#levelGrid');
 const missionRouteScroll=document.querySelector('#missionRouteScroll');
+const mapProgressPanel=document.querySelector('#mapProgressPanel');
+const mapChapterNumber=document.querySelector('#mapChapterNumber');
+const completedChapterLevelCount=document.querySelector('#completedChapterLevelCount');
+const mapChapterTotal=document.querySelector('#mapChapterTotal');
 const completedLevelCount=document.querySelector('#completedLevelCount');
 const mapEnergyTotal=document.querySelector('#mapEnergyTotal');
 const mapEyebrow=document.querySelector('#mapEyebrow');
@@ -1773,9 +1777,22 @@ function createLevelButton(level){
 }
 
 function renderLevelMap(){
-  completedLevelCount.textContent=completedMissionCount();
+  const totalCompleted=completedMissionCount();
+  completedLevelCount.textContent=totalCompleted;
   mapEnergyTotal.textContent=LEVELS.length;
   const activeChapter=activeMapChapter();
+  const chapterTotal=activeChapter.endMissionId-activeChapter.startMissionId+1;
+  const chapterCompleted=completedInRange(activeChapter.startMissionId,activeChapter.endMissionId);
+  mapChapterNumber.textContent=`${activeChapter.id}. PEATÜKK`;
+  completedChapterLevelCount.textContent=chapterCompleted;
+  mapChapterTotal.textContent=chapterTotal;
+  mapProgressPanel.setAttribute('aria-label',t('map.progressAria',{
+    number:activeChapter.id,
+    chapterCompleted,
+    chapterTotal,
+    totalCompleted,
+    total:LEVELS.length
+  },`${activeChapter.id}. peatükk: ${chapterCompleted}/${chapterTotal}. Kokku ${totalCompleted}/${LEVELS.length}.`));
   const fallback=activeChapter.id===1?'1. PEATÜKK · ÜKS JA KAKS':activeChapter.id===2?'2. PEATÜKK · KOLM':'3. PEATÜKK · NELI';
   mapEyebrow.textContent=t(activeChapter.titleKey,{},fallback);
   renderStoryProgress();

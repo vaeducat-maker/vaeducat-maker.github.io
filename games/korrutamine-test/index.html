@@ -23,7 +23,7 @@
   <meta property="og:image" content="https://edukass.ee/games/korrutamine-test/assets/share-korrutustabel.png?v=40">
   <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="stylesheet" href="game.css?v=105">
+  <link rel="stylesheet" href="game.css?v=110">
 </head>
 <body class="intro-active">
   <section class="game-intro is-running" id="introScreen" aria-label="EDUKASSi mängu algus" data-i18n-aria-label="intro.aria">
@@ -48,6 +48,7 @@
     </div>
     <div class="intro-math" aria-hidden="true"><span>7 × 8 = 56</span><span>6 × 4 = 24</span></div>
     <div class="intro-brand" aria-hidden="true"><span class="intro-edukass"><b>EDU</b><span>KASS</span></span><small>KORRUTUSTABELI<br>TREENER</small></div>
+    <div class="intro-status" id="introStatus" role="status" aria-live="polite" data-i18n="intro.loading">Valmistume stardiks…</div>
     <button class="intro-play" id="introPlayButton" type="button" aria-label="Mängi" data-i18n-aria-label="intro.playAria"><span id="introPlayLabel">MÄNGI!</span></button>
     <div class="intro-light-wash" aria-hidden="true"></div>
   </section>
@@ -267,7 +268,13 @@
           <p class="eyebrow" id="mapEyebrow" data-i18n="lesson.eyebrowMultiply">PEATÜKK 1 · ÜKS JA KAKS</p>
           <h1 id="mapTitle" class="visually-hidden" data-i18n="map.title">Missioonide kaart</h1>
         </div>
-        <div class="energy-panel"><span data-i18n="map.energy">Täheenergia</span><strong>★ <span id="completedLevelCount">0</span>/<span id="mapEnergyTotal">51</span></strong></div>
+        <div class="energy-panel" id="mapProgressPanel" aria-label="1. peatükk: 0/15. Kokku 0/252.">
+          <span class="energy-star" aria-hidden="true">★</span>
+          <span class="energy-copy">
+            <strong><span id="mapChapterNumber">1. PEATÜKK</span> · <span id="completedChapterLevelCount">0</span>/<span id="mapChapterTotal">15</span></strong>
+            <small><span data-i18n="map.total">Kokku</span>: <span id="completedLevelCount">0</span>/<span id="mapEnergyTotal">252</span></small>
+          </span>
+        </div>
       </div>
 
       <div class="chapter-board">
@@ -809,11 +816,11 @@
     </form>
   </dialog>
 
-  <script src="locales/et.js?v=109"></script>
+  <script src="locales/et.js?v=110"></script>
   <script src="chapter-one.config.js?v=92"></script>
   <script src="i18n.js?v=61"></script>
   <script src="question-engine.js?v=61"></script>
   <script src="progress-store.js?v=92"></script>
-  <script src="game.js?v=105"></script>
+  <script src="game.js?v=110"></script>
 </body>
 </html>

@@ -12,9 +12,9 @@ const checks = [
   ['desktop cat is isolated behind a desktop media source', html.includes('media="(min-width: 1101px)" srcset="assets/edukass-cat-battle.png"')],
   ['mobile layout guard exists', css.includes('@media(max-width:700px)') && css.includes('v104: responsive isolation guard')],
   ['desktop source is not the default image', !html.includes('<img class="hero-cat hero-cat-neutral" src="assets/edukass-cat-battle.png"')],
-  ['v104 stylesheet is loaded', html.includes('game.css?v=104')],
-  ['v104 script is loaded', html.includes('game.js?v=104')],
-  ['v104 service-worker cache is active', sw.includes('edukass-korrutustabel-v104-responsive-isolation')],
+  ['v110 stylesheet is loaded', html.includes('game.css?v=110')],
+  ['v110 script is loaded', html.includes('game.js?v=110')],
+  ['v110 service-worker cache is active', sw.includes('edukass-korrutustabel-v110-education-design')],
 ];
 
 let failed = false;
