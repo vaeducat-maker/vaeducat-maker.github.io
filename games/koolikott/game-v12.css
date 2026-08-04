@@ -103,3 +103,27 @@ footer{text-align:center;color:var(--muted);padding:0 20px 24px}
 /* v103: match the main EDUKASS wordmark. */
 .brand .brand-name b{color:#44bcb2;text-shadow:0 1px 0 var(--ink)}
 .brand .brand-name{color:var(--ink)}
+
+/* v113: keep the complete EDUKASS lockup visible in the game header. */
+.topbar .brand{
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  gap:0;
+  line-height:1;
+}
+.topbar .brand img{
+  width:44px;
+  height:44px;
+  object-fit:contain;
+}
+.topbar .brand .brand-name{
+  display:block;
+  margin-top:-1px;
+  font-size:.7rem;
+  line-height:1;
+  white-space:nowrap;
+}
+@media(max-width:760px){
+  .topbar .brand .brand-name{display:block}
+}

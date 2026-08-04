@@ -1570,3 +1570,38 @@ button:focus-visible { outline: 3px solid #6549a6; outline-offset: 4px; }
 .footer-brand .brand-name{
   color:var(--ink);
 }
+
+/* v113: the complete EDUKASS lockup stays visible in every site header. */
+.site-header .brand{
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  gap:0;
+  line-height:1;
+}
+.site-header .brand img{
+  width:54px;
+  height:54px;
+  flex:0 0 54px;
+}
+.site-header .brand .brand-name{
+  display:block;
+  margin-top:-2px;
+  font-size:.78rem;
+  line-height:1;
+  white-space:nowrap;
+}
+@media (max-width:860px){
+  .site-header .brand img{
+    width:44px;
+    height:44px;
+    flex-basis:44px;
+  }
+  .site-header .brand .brand-name{
+    display:block;
+    font-size:.7rem;
+  }
+}
+@media (max-width:390px){
+  .site-header .brand .brand-name{display:block}
+}
