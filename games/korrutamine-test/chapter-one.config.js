@@ -249,7 +249,7 @@
   ],['#a64d4d','#b94b45','#ca503b','#da5b31','#e66b29','#ef8128','#f39831','#f4ae3d','#eec44e','#d9d05c','#b5d26d','#85ca82','#58ba97']);
 
   const FINAL_CHAPTER_TITLES=[
-    'Saabumine täheväravasse','Valgusrada süttib','Sadama platvorm ärkab','Kosmosemajakas','Esimene signaal',
+    'Saabumine tähesadamasse','Valgusrada süttib','Sadama platvorm ärkab','Kosmosemajakas','Esimene signaal',
     'Esimesed sõbrad','Teine signaal','Vee- ja aiaelanikud','Suur laev avaneb','Draakoni kristall',
     'Mootor ärkab','Meeskond koguneb','Tähekaart avaneb','Kõik pardale','Suur lõpukontroll'
   ];

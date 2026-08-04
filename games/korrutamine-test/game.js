@@ -335,8 +335,8 @@ const JOURNEY_CHAPTERS=[
   {id:12,story:STORY_CONFIG.chapterTwelve||{},map:storyTwelve,reward:rewardJourneyFlowers,theme:'flowers',titles:['Saabumine hiidlillede planeedile','Vesi hakkab õitsema','Lilleelanikud ärkavad','Kogu planeet õitseb']},
   {id:13,story:STORY_CONFIG.chapterThirteen||{},map:storyThirteen,reward:rewardJourneyCrystals,theme:'observatory',titles:['Saabumine taevase vaatluskeskuse juurde','Kuldsed orbiidid süttivad','Tähevaatlejad ärkavad','Suur täheseade hakkab tööle']},
   {id:14,story:STORY_CONFIG.chapterFourteen||{},map:storyFourteen,reward:rewardJourneyRain,theme:'clouds',titles:['Saabumine pilvede ookeanile','Saared tõusevad pilvedest','Lendavad elanikud ilmuvad','Taevavaal äratab maailma']},
-  {id:15,story:STORY_CONFIG.chapterFifteen||{},map:storyFifteen,reward:rewardJourneyFire,theme:'tree',titles:['Saabumine hiigelpuu sisse','Puulinn hakkab kasvama','Seemneelanikud ilmuvad','Kogu puulinn ärkab ellu']},
-  {id:16,story:STORY_CONFIG.chapterSixteen||{},map:storySixteen,reward:rewardJourneyHarbor,theme:'harbor',titles:['Saabumine täheväravasse','Kosmosemajakas saadab signaali','Sõbrad kogunevad suurde sadamasse','Uus teekond algab']}
+  {id:15,story:STORY_CONFIG.chapterFifteen||{},map:storyFifteen,reward:rewardJourneyFire,theme:'tree',titles:['Saabumine hiigelpuu sisemusse','Puulinn hakkab kasvama','Seemneelanikud ilmuvad','Kogu puulinn ärkab ellu']},
+  {id:16,story:STORY_CONFIG.chapterSixteen||{},map:storySixteen,reward:rewardJourneyHarbor,theme:'harbor',titles:['Saabumine tähesadamasse','Kosmosemajakas saadab signaali','Sõbrad kogunevad suurde sadamasse','Uus teekond algab']}
 ].map(item=>({...item,steps:item.story.worldSteps||[]}));
 const LAST_MISSION_ID=CHAPTER_CONFIG.missions[CHAPTER_CONFIG.missions.length-1].id;
 const CHAPTER_END_IDS=new Set(CHAPTERS.map(chapter=>chapter.endMissionId));
@@ -1650,7 +1650,7 @@ function renderChapterTenStory(){
   storyStage.closest('.story-progress')?.classList.remove('chapter-two-active','chapter-three-active','chapter-four-active','chapter-five-active','chapter-six-active','chapter-seven-active','chapter-eight-active','chapter-nine-active','chapter-eleven-active');
   storyStage.closest('.story-progress')?.classList.add('chapter-ten-active');
   storyStage.classList.toggle('is-complete',completed===CHAPTER_TEN_WORLD_STEP_COUNT);
-  const titles={arrival:'Saabumine draakonite taevasse',motion:'Taevasaared ja pesad',sky:'Draakonipere ärkab',light:'Tähtede taevas elab',complete:'Draakoniplaneet on ärganud'};
+  const titles={arrival:'Saabumine draakonite taevasse',motion:'Taevasaared ja pesad',sky:'Draakonipere ärkab',light:'Tähistaevas ärkab ellu',complete:'Draakoniplaneet on ärganud'};
   storyPhaseKicker.textContent=phase==='complete'?t('story.complete'):t(`story.goal${phase==='arrival'?1:phase==='motion'?2:phase==='sky'?3:4}`);
   storyPhaseTitle.textContent=titles[phase];
   const values={ship:arrivalProgress,engine:nestProgress,portal:dragonProgress,vault:awakeningProgress};
@@ -2760,15 +2760,15 @@ function configureInstallDialog(){
     return;
   }
   if(ios){
-    installDialogTitle.textContent='LISA TELEFONI EKRAANILE';
-    installHelpText.textContent='Ava mäng Safaris, vajuta jagamise nuppu ja vali „Lisa avakuvale”. Mängida saab kohe ka brauseris.';
-    confirmInstallButton.textContent='SELGESTI';
+    installDialogTitle.textContent='LISA TELEFONI AVAKUVALE';
+    installHelpText.textContent='Ava mäng Safaris, vajuta jagamise nuppu ja vali „Lisa avakuvale“. Mängida saab kohe ka brauseris.';
+    confirmInstallButton.textContent='SELGE';
     confirmInstallButton.dataset.action='close';
     return;
   }
-  installDialogTitle.textContent='LISA TELEFONI EKRAANILE';
-  installHelpText.textContent='Mängu ikoon ilmub sinu telefoni. Kui automaatne lisamine ei avane, vali brauseri menüüst „Lisa avakuvale”.';
-  confirmInstallButton.textContent='📲 LISA TELEFONI EKRAANILE';
+  installDialogTitle.textContent='LISA TELEFONI AVAKUVALE';
+  installHelpText.textContent='Mängu ikoon ilmub sinu telefoni. Kui automaatse lisamise aken ei avane, vali brauseri menüüst „Lisa avakuvale“.';
+  confirmInstallButton.textContent='📲 LISA TELEFONI AVAKUVALE';
   confirmInstallButton.dataset.action='install';
 }
 

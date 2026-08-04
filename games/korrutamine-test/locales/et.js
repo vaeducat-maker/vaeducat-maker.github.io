@@ -13,7 +13,7 @@
     name:'Eesti',
     strings:{
       'meta.title':'EDUKASS — Korrutustabeli treener',
-      'meta.description':'EDUKASSi korrutustabeli treener: 51 korrutamise ja jagamise missiooni lastele.',
+      'meta.description':'EDUKASSi korrutustabeli treener: 252 korrutamise ja jagamise missiooni lastele.',
       'intro.aria':'EDUKASSi mängu algus',
       'intro.playAria':'Mängi',
       'intro.start':'MÄNGI!',
@@ -33,9 +33,9 @@
       'share.copy':'Kopeeri link',
       'share.copied':'Link kopeeritud!',
       'share.copyFailed':'Kopeeri link käsitsi.',
-      'share.progressNote':'Edusammud salvestatakse mängija seadmes.',
+      'share.progressNote':'Mängu edenemine salvestatakse mängija seadmesse.',
       'share.nativeText':'Proovi EDUKASSi korrutustabeli treenerit!',
-      'install.button':'LISA TELEFONI EKRAANILE',
+      'install.button':'LISA TELEFONI AVAKUVALE',
       'lesson.eyebrowMultiply':'PEATÜKK 1 · ÜKS JA KAKS',
       'lesson.eyebrowDivide':'PEATÜKK 1 · JAGAMINE',
       'lesson.titleMultiply':'Avastame arvud 1 ja 2',
@@ -199,7 +199,7 @@
       'battle.choose':'Vali vastus',
       'battle.input':'Sisesta arv',
       'battle.optionsAria':'Vastusevariandid',
-      'battle.keypadAria':'Vastuse numbriklahvid',
+      'battle.keypadAria':'Numbriklahvid vastuse sisestamiseks',
       'battle.clearAria':'Tühjenda',
       'battle.deleteAria':'Kustuta number',
       'feedback.correct':'Õige',
@@ -505,7 +505,7 @@
         ...['Kristallide org','Sügavad jagamised','Esimesed kristallid','Valgusrada','Kristallrahvas','Hõbedane kuru','Iidsed märgid','Hiiglase silmad','Ärkav mägi','Särav süda','Valgusvõrk','Kosmiline majakas','Kristallplaneedi kontroll'].flatMap((title,index)=>[[`mission.${199+index}.title`,title],[`mission.${199+index}.short`,index===12?'Kontroll 1–10':index===0?'Korrutamine 1–10':index===1?'Jagamine 1–10':'Kõik 1–10']]),
         ...['Esimene kosmiline vihm','Peegelduvad tehted','Helendavad lombid','Hiigelvari','Veekerad','Peegeljärved','Piiskade rada','Soojad tuled','Vihmaelanik','Varjualune pere','Vesikookonid','Tähtvihm','Vihmaplaneedi kontroll'].flatMap((title,index)=>[[`mission.${212+index}.title`,title],[`mission.${212+index}.short`,index===12?'Kontroll 1–10':index===0?'Korrutamine 1–10':index===1?'Jagamine 1–10':'Kõik 1–10']]),
         ...['Vaikne tuliplaneet','Kuumad tehted','Esimene lõhe','Laavajõgi','Tulekristall','Leeklill','Uinuv tulemägi','Kuldsed märgid','Tuleelanik','Elavad sädemed','Taevane tulerõngas','Valguse tee','Tuliplaneedi kontroll'].flatMap((title,index)=>[[`mission.${225+index}.title`,title],[`mission.${225+index}.short`,index===12?'Kontroll 1–10':index===0?'Korrutamine 1–10':index===1?'Jagamine 1–10':'Kõik 1–10']]),
-        ...['Saabumine täheväravasse','Valgusrada süttib','Sadama platvorm ärkab','Kosmosemajakas','Esimene signaal','Esimesed sõbrad','Teine signaal','Vee- ja aiaelanikud','Suur laev avaneb','Draakoni kristall','Mootor ärkab','Meeskond koguneb','Tähekaart avaneb','Kõik pardale','Suur lõpukontroll'].flatMap((title,index)=>[[`mission.${238+index}.title`,title],[`mission.${238+index}.short`,index===14?'Lõpukontroll 1–10':index===0?'Korrutamine 1–10':index===1?'Jagamine 1–10':'Kõik 1–10']])
+        ...['Saabumine tähesadamasse','Valgusrada süttib','Sadama platvorm ärkab','Kosmosemajakas','Esimene signaal','Esimesed sõbrad','Teine signaal','Vee- ja aiaelanikud','Suur laev avaneb','Draakoni kristall','Mootor ärkab','Meeskond koguneb','Tähekaart avaneb','Kõik pardale','Suur lõpukontroll'].flatMap((title,index)=>[[`mission.${238+index}.title`,title],[`mission.${238+index}.short`,index===14?'Lõpukontroll 1–10':index===0?'Korrutamine 1–10':index===1?'Jagamine 1–10':'Kõik 1–10']])
       ])
     }
   };
