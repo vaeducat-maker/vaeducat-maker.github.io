@@ -25,7 +25,7 @@ assert.equal(config.storage.progressKey,'edukass-chapter-one-v18');
 assert.equal(config.storage.soundKey,'edukass-sound-enabled');
 assert.equal(config.storage.introKey,'edukass-opening-seen-v28');
 assert.equal(config.storage.progressSchemaVersion,2);
-assert.equal(config.missions.length,237);
+assert.equal(config.missions.length,252);
 assert.deepEqual(config.chapters.map(chapter=>[chapter.id,chapter.startMissionId,chapter.endMissionId]),[
   [1,1,15],
   [2,16,33],
@@ -41,7 +41,8 @@ assert.deepEqual(config.chapters.map(chapter=>[chapter.id,chapter.startMissionId
   [12,186,198],
   [13,199,211],
   [14,212,224],
-  [15,225,237]
+  [15,225,237],
+  [16,238,252]
 ]);
 assert.deepEqual(config.lesson.triggers.map(lesson=>[lesson.id,lesson.missionId,lesson.mode,lesson.table]),[
   ['multiply-2',1,'multiply',2],
@@ -107,8 +108,13 @@ assert.equal(i18n.t('chapter.5.title'),'5. PEATÜKK · KUUS');
 assert.equal(i18n.t('chapter.7.title'),'7. PEATÜKK · KAHEKSA');
 assert.equal(i18n.t('chapter.8.title'),'8. PEATÜKK · ÜHEKSA');
 assert.equal(i18n.t('chapter.9.title'),'9. PEATÜKK · KÜMME');
-assert.equal(i18n.t('chapter.10.title'),'10. PEATÜKK · DRAAKONITE TAEVAS');
-assert.equal(i18n.t('chapter.11.title'),'11. PEATÜKK · PEEGELLIIVAD');
+assert.equal(i18n.t('chapter.10.title'),'10. PEATÜKK · KORDAMINE');
+assert.equal(i18n.t('chapter.11.title'),'11. PEATÜKK · KORDAMINE');
+assert.equal(i18n.t('chapter.12.title'),'12. PEATÜKK · KORDAMINE');
+assert.equal(i18n.t('chapter.13.title'),'13. PEATÜKK · KORDAMINE');
+assert.equal(i18n.t('chapter.14.title'),'14. PEATÜKK · KORDAMINE');
+assert.equal(i18n.t('chapter.15.title'),'15. PEATÜKK · KORDAMINE');
+assert.equal(i18n.t('chapter.16.title'),'16. PEATÜKK · KORDAMINE');
 assert.equal(i18n.t('mission.33.title'),'Peatüki kontroll');
 assert.equal(i18n.t('missing.key',{},'Varutekst'),'Varutekst');
 
@@ -127,7 +133,8 @@ assert.match(gameHtml,/id="repeatThreeMultiplicationButton"/);
 assert.match(gameHtml,/id="repeatThreeDivisionButton"/);
 assert.match(gameHtml,/id="repeatFourMultiplicationButton"/);
 assert.match(gameHtml,/id="repeatFourDivisionButton"/);
-assert.match(gameHtml,/MISSIOONID 1–237/);
+assert.match(gameHtml,/MISSIOONID 1–252/);
+assert.match(gameHtml,/data-i18n="map\.routeLabel"/);
 assert.match(gameHtml,/id="missionRouteScroll"/);
 assert.match(gameCode,/missionRouteScroll\.scrollTop=/);
 assert.match(gameCode,/currentRect\.top-routeRect\.top/);
@@ -141,7 +148,7 @@ assert.match(gameCode,/worldAwaken/);
 assert.match(gameCode,/setChapterTwoRewardProgress\(levelId,true\)/);
 assert.match(gameCode,/const chapterTwoReveal=levelId>FINAL_MISSION_ID/);
 assert.match(gameCode,/const worldReveal=Boolean\(journey\)\|\|chapterTwoReveal\|\|chapterThreeReveal/);
-assert.match(gameCode,/const visualReveal=firstCompletion\|\|worldReveal/);
+assert.match(gameCode,/const visualReveal=true/);
 const chapterTwoCinematicStart=gameCode.indexOf("if(levelId>FINAL_MISSION_ID){",gameCode.indexOf('function startRewardCinematic'));
 const chapterOneCinematicStart=gameCode.indexOf("if(levelId===FINAL_MISSION_ID){",chapterTwoCinematicStart);
 const chapterTwoCinematic=gameCode.slice(chapterTwoCinematicStart,chapterOneCinematicStart);

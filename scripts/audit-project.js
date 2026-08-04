@@ -70,7 +70,9 @@ for(const htmlPath of htmlFiles){
     if(/^(?:https?:|mailto:|tel:|data:|#|javascript:)/.test(reference))continue;
     const pathname=decodeURIComponent(reference.split(/[?#]/)[0]);
     if(!pathname)continue;
-    const target=path.resolve(path.dirname(htmlPath),pathname);
+    const target=pathname.startsWith('/')
+      ? path.resolve(root,pathname.replace(/^\/+/,''))
+      : path.resolve(path.dirname(htmlPath),pathname);
     const exists=fs.existsSync(target)&&(fs.statSync(target).isFile()||fs.existsSync(path.join(target,'index.html')));
     if(!exists)missingLinks.push(`${path.relative(root,htmlPath)} -> ${reference}`);
   }
