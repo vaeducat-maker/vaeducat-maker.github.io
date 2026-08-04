@@ -1,4 +1,4 @@
-/* EDUKASS homepage v2 — clean hierarchy without changing inner pages. */
+/* EDUKASS homepage v3 — umbrella brand with product-specific offers. */
 .home-page{
   --home-navy:#17365f;
   --home-deep:#202f67;
@@ -43,7 +43,10 @@
 .home-orbit-two{right:23%;bottom:19%;width:70px;height:70px;border-width:5px;border-color:rgba(255,255,255,.22)}
 .home-hero-star{position:absolute;z-index:2;color:var(--home-yellow);filter:drop-shadow(0 0 10px rgba(255,214,92,.52))}
 .star-one{right:13%;bottom:25%;font-size:2.3rem}.star-two{left:49%;top:16%;font-size:1.7rem;color:var(--home-mint)}
-.home-hero-equation{position:absolute;z-index:4;right:8%;bottom:8%;padding:12px 17px;border-radius:16px;background:#fff;color:var(--home-navy);font-size:1.22rem;font-weight:900;box-shadow:0 12px 24px rgba(3,8,30,.24)}
+.home-hero-topic{position:absolute;z-index:4;display:grid;place-items:center;border-radius:18px;background:#fff;color:var(--home-navy);font-weight:950;box-shadow:0 12px 24px rgba(3,8,30,.24)}
+.home-topic-language{right:9%;top:15%;width:76px;height:76px;font-size:1.7rem;transform:rotate(7deg)}
+.home-topic-math{right:7%;bottom:9%;min-width:112px;min-height:52px;padding:0 16px;font-size:1.15rem;transform:rotate(-3deg)}
+.home-topic-discover{left:49%;top:19%;width:47px;height:47px;background:var(--home-yellow);font-size:1.55rem;transform:rotate(-8deg)}
 
 .home-feature{padding:72px 0;background:#fff}
 .home-feature-card{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(360px,.85fr);gap:0;overflow:hidden;border-radius:34px;background:var(--home-deep);box-shadow:0 24px 60px rgba(23,54,95,.18)}
@@ -129,7 +132,8 @@
   .home-hero{padding:42px 0 50px}
   .home-hero h1{font-size:clamp(3rem,14vw,4.6rem)}
   .home-hero-visual{min-height:330px;border-radius:30px}
-  .home-hero-equation{font-size:1rem}
+  .home-topic-language{width:68px;height:68px;font-size:1.5rem}
+  .home-topic-math{min-width:102px;min-height:48px;font-size:1rem}
   .home-feature,.home-new,.home-principles,.home-categories,.home-about{padding:50px 0}
   .home-feature-image{min-height:270px}
   .home-feature-copy{padding:32px 24px}
@@ -154,6 +158,9 @@
   .home-hero-visual{min-height:210px}
   .home-hero-visual img{width:48%;left:5%;bottom:-12%}
   .home-orbit-one{width:120px;height:120px}
+  .home-topic-language{right:8%;top:12%;width:52px;height:52px;border-radius:14px;font-size:1.2rem}
+  .home-topic-math{right:6%;bottom:7%;min-width:82px;min-height:38px;padding:0 11px;border-radius:13px;font-size:.82rem}
+  .home-topic-discover{left:47%;top:15%;width:36px;height:36px;border-radius:12px;font-size:1.15rem}
   .home-feature-image{min-height:220px}
   .home-new-card-copy{padding:25px 22px}
   .home-principle-card{min-height:0;padding:22px}
