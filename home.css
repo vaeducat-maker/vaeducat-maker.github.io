@@ -106,8 +106,10 @@
 .home-category-card p{margin:0;color:#667782;line-height:1.5}
 .home-about{padding:72px 0;background:#fff}
 .home-about-card{display:grid;grid-template-columns:190px minmax(0,1fr);align-items:center;gap:36px;padding:34px 42px;border:1px solid #d8e7eb;border-radius:32px;background:linear-gradient(135deg,#eaf9f6,#f7f2ff 58%,#fff8df);box-shadow:0 16px 38px rgba(23,54,95,.08)}
-.home-about-mark{height:170px;display:grid;place-items:center;overflow:hidden;border-radius:28px;background:rgba(255,255,255,.7)}
-.home-about-mark img{width:155px;align-self:end;filter:drop-shadow(0 10px 9px rgba(23,54,95,.15))}
+.home-about-mark{position:relative;height:170px;overflow:hidden;border-radius:28px;background:rgba(255,255,255,.7)}
+.home-about-mark img{position:absolute;left:50%;top:-1px;width:132px;transform:translateX(-50%);filter:drop-shadow(0 10px 9px rgba(23,54,95,.15))}
+.home-about-wordmark{position:absolute;z-index:2;left:50%;bottom:18px;display:block!important;transform:translateX(-50%);color:var(--home-navy);font-size:1.04rem;font-weight:900;letter-spacing:.04em;line-height:1;white-space:nowrap}
+.home-about-wordmark b{color:#44bcb2;text-shadow:0 1px 0 var(--home-navy)}
 .home-about-copy h2{margin:8px 0 12px;color:var(--home-navy);font-size:clamp(2rem,3.5vw,3rem);line-height:1}
 .home-about-copy p{max-width:780px;margin:0;color:#536875;font-size:1.05rem;line-height:1.6}
 .home-about-facts{display:flex;flex-wrap:wrap;gap:9px;margin-top:20px}
@@ -142,7 +144,8 @@
   .home-category-grid{grid-template-columns:1fr}
   .home-about-card{grid-template-columns:140px minmax(0,1fr);gap:24px;padding:28px}
   .home-about-mark{height:150px}
-  .home-about-mark img{width:130px}
+  .home-about-mark img{top:-2px;width:120px}
+  .home-about-wordmark{bottom:15px;font-size:1rem}
 }
 @media(max-width:520px){
   .home-page .brand span{font-size:.78rem}
@@ -168,7 +171,8 @@
   .home-principle-card h3{font-size:1.35rem}
   .home-about-card{grid-template-columns:1fr;gap:18px;padding:24px}
   .home-about-mark{height:140px}
-  .home-about-mark img{width:120px}
+  .home-about-mark img{top:-5px;width:118px}
+  .home-about-wordmark{bottom:13px;font-size:.98rem}
 }
 
 
