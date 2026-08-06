@@ -5,3 +5,5 @@ EDUKASS v121 · что проверить глазами
 3. В Materjalid → Korraldus ja planeerimine должны быть два материала: Minu tänased ülesanded и Minu tunniplaan.
 4. Страница Minu tunniplaan должна открываться по адресу /materials/tunniplaan/ и PDF должен скачиваться.
 5. Геометрический прототип по-прежнему не должен быть публичным.
+
+Повторная публикация v121: без изменений внешнего вида и содержания сайта.
