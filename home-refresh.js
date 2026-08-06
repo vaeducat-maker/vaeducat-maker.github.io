@@ -2,9 +2,10 @@
   const navigation = performance.getEntriesByType?.('navigation')?.[0];
   const isReload = navigation?.type === 'reload';
   const returnToTopState = '__edukassReturnToTop';
+  const returnToTopBase = '__edukassReturnToTopBase';
   const returnToTopThreshold = 96;
-  let returnEntryActive = Boolean(history.state?.[returnToTopState]);
   let returningToTop = false;
+  let leavingPage = false;
 
   if ('scrollRestoration' in history) {
     history.scrollRestoration = 'manual';
@@ -38,11 +39,15 @@
   }
 
   const armReturnToTop = () => {
-    if (returnEntryActive || returningToTop || window.scrollY <= returnToTopThreshold) return;
+    if (returningToTop || leavingPage || history.state?.[returnToTopState]) return;
     const currentState = history.state && typeof history.state === 'object' ? history.state : {};
+    history.replaceState({ ...currentState, [returnToTopBase]: true }, '', pageUrl());
     history.pushState({ ...currentState, [returnToTopState]: true }, '', pageUrl());
-    returnEntryActive = true;
   };
+
+  // The guard is present before the first scroll event. Android can therefore
+  // always turn the first Back press below the fold into a return to the top.
+  armReturnToTop();
 
   // Same-page menu links scroll without adding an extra hash-history step.
   // This keeps Android Back predictable: section -> top -> leave the site.
@@ -60,22 +65,23 @@
       behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
       block: 'start'
     });
-    window.setTimeout(armReturnToTop, 0);
   });
 
-  window.addEventListener('scroll', armReturnToTop, { passive: true });
   window.addEventListener('pageshow', armReturnToTop);
 
   window.addEventListener('popstate', (event) => {
-    if (!returnEntryActive) {
-      returnEntryActive = Boolean(event.state?.[returnToTopState]);
+    if (leavingPage) return;
+
+    if (window.scrollY <= returnToTopThreshold) {
+      leavingPage = true;
+      history.back();
       return;
     }
 
-    returnEntryActive = false;
     returningToTop = true;
     if (location.hash) history.replaceState(event.state, '', pageUrl());
     resetScroll();
     finishReturnToTop();
+    window.setTimeout(armReturnToTop, 140);
   });
 })();

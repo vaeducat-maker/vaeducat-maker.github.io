@@ -38,8 +38,6 @@
 .home-hero-visual:before{content:"";position:absolute;inset:0;background-image:radial-gradient(#fff 1px,transparent 1.5px);background-size:58px 62px;opacity:.34}
 .home-hero-visual:after{content:"";position:absolute;left:-12%;right:-12%;bottom:-23%;height:43%;border-radius:50%;background:linear-gradient(180deg,#7356b1,#47337d)}
 .home-hero-visual img{position:absolute;z-index:3;left:8%;bottom:-8%;width:52%;filter:drop-shadow(0 17px 12px rgba(4,8,30,.35))}
-.home-hero-wordmark{position:absolute;z-index:4;left:33%;bottom:18px;display:block;transform:translateX(-50%);padding:8px 14px;border:1px solid rgba(255,255,255,.72);border-radius:999px;background:rgba(255,255,255,.94);color:var(--home-navy);font-size:1.05rem;font-weight:950;letter-spacing:.055em;line-height:1;white-space:nowrap;box-shadow:0 9px 22px rgba(4,8,30,.22)}
-.home-hero-wordmark b{color:#44bcb2;text-shadow:0 1px 0 var(--home-navy)}
 .home-hero-orbit{position:absolute;border-radius:50%;border:9px solid rgba(255,255,255,.2)}
 .home-orbit-one{right:8%;top:11%;width:160px;height:160px;border-color:var(--home-mint) rgba(255,255,255,.18) var(--home-pink) var(--home-yellow);transform:rotate(20deg)}
 .home-orbit-two{right:23%;bottom:19%;width:70px;height:70px;border-width:5px;border-color:rgba(255,255,255,.22)}
@@ -99,11 +97,11 @@
 .home-categories{padding:70px 0 82px;background:#f4f9fb}
 .home-all-link{color:var(--home-navy);font-weight:900;text-decoration:none}
 .home-all-link:hover{text-decoration:underline}
-.home-category-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.home-category-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
 .home-category-card{min-height:245px;padding:27px;border-radius:26px;background:#fff;border:1px solid #dce7eb;text-decoration:none;color:var(--home-navy);box-shadow:0 10px 24px rgba(23,54,95,.06);transition:transform .18s ease,box-shadow .18s ease}
 .home-category-card:hover{transform:translateY(-4px);box-shadow:0 18px 32px rgba(23,54,95,.11)}
 .home-category-icon{width:62px;height:62px;margin-bottom:25px;border-radius:19px;display:grid;place-items:center;font-size:1.5rem;font-weight:900}
-.category-language .home-category-icon{background:#e7f7ff;color:#1c6ea4}.category-planning .home-category-icon{background:#e8f8ef;color:#237d51}.category-skills .home-category-icon{background:#fff2df;color:#aa5c13}
+.category-language .home-category-icon{background:#e7f7ff;color:#1c6ea4}.category-planning .home-category-icon{background:#e8f8ef;color:#237d51}.category-skills .home-category-icon{background:#fff2df;color:#aa5c13}.category-more .home-category-icon{background:#efe9fb;color:var(--home-purple)}
 .home-category-card h3{margin:0 0 10px;font-size:1.45rem;line-height:1.13}
 .home-category-card p{margin:0;color:#667782;line-height:1.5}
 .home-about{padding:72px 0;background:#fff}
@@ -128,6 +126,7 @@
   .home-new-card{grid-template-columns:1fr}
   .home-new-card-visual{min-height:240px}
   .home-principle-grid{grid-template-columns:1fr}
+  .home-category-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media(max-width:760px){
   .home-page .header-inner{min-height:68px}
@@ -162,7 +161,6 @@
   .home-button{width:100%;min-height:46px;padding:0 12px;font-size:.84rem}
   .home-hero-visual{min-height:210px}
   .home-hero-visual img{width:48%;left:5%;bottom:-12%}
-  .home-hero-wordmark{left:28%;bottom:13px;padding:6px 10px;font-size:.78rem}
   .home-orbit-one{width:120px;height:120px}
   .home-topic-language{right:8%;top:12%;width:52px;height:52px;border-radius:14px;font-size:1.2rem}
   .home-topic-math{right:6%;bottom:7%;min-width:82px;min-height:38px;padding:0 11px;border-radius:13px;font-size:.82rem}

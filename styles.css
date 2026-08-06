@@ -1450,12 +1450,6 @@ h1, h2, h3,
   background: #edf7f5;
   font-weight: 900;
 }
-.category-math { border-top-color: #6549a6; }
-.category-math .category-nav-icon {
-  color: #6549a6;
-  background: #eee7f8;
-}
-.category-math .category-nav-arrow { background: #eee7f8; }
 .category-planning { border-top-color: #35a8c4; }
 .category-planning .category-nav-icon {
   color: #147f9b;
@@ -1468,16 +1462,22 @@ h1, h2, h3,
   background: #fff0e8;
 }
 .category-skills .category-nav-arrow { background: #fff0e8; }
+.category-more { border-top-color: var(--violet); }
+.category-more .category-nav-icon {
+  color: var(--violet);
+  background: var(--violet-soft);
+}
+.category-more .category-nav-arrow { background: var(--violet-soft); }
 
 .material-category-section {
   padding: 58px 0 66px;
   scroll-margin-top: 90px;
   border-top: 1px solid var(--line);
 }
-.category-math-section { background: #f7f4fc; }
 .category-language-section { background: #f8fcfb; }
 .category-planning-section { background: #f4fafc; }
 .category-skills-section { background: #fff9f5; }
+.category-more-section { background: #faf8ff; }
 .material-category-head {
   display: grid;
   grid-template-columns: 68px minmax(0, 1fr);
@@ -1505,20 +1505,20 @@ h1, h2, h3,
   color: #147f9b;
   background: #dff2f7;
 }
-.category-math-section .category-title-icon {
-  color: #6549a6;
-  background: #eee7f8;
-}
 .category-skills-section .category-title-icon {
   color: var(--orange-bright);
   background: #ffe9dc;
 }
-.category-math-section .eyebrow,
-.math-meta { color: #6549a6; }
+.category-more-section .category-title-icon {
+  color: var(--violet);
+  background: var(--violet-soft);
+}
 .category-planning-section .eyebrow,
 .planning-meta { color: #147f9b; }
 .category-skills-section .eyebrow,
 .skills-meta { color: var(--orange-bright); }
+.category-more-section .eyebrow,
+.more-meta { color: var(--violet); }
 .category-material-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
