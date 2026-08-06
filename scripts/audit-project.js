@@ -7,17 +7,18 @@ const root=path.resolve(__dirname,'..');
 const fastAudit=process.argv.includes('--fast');
 const expectedMissionSignature='537dc9b1315305f9140f0d50da8c7d3965d2683c5e57269d23dacb863b3b9989';
 
-const v119Required=[
+const v121Required=[
   'materials/korrutustabel/index.html',
   'assets/korrutustabel.png',
   'downloads/korrutustabel-A4.pdf',
-  'games/umbermoot-pindala/index.html',
-  'games/umbermoot-pindala/prototype.css',
-  'games/umbermoot-pindala/prototype.js'
+  'materials/tunniplaan/index.html',
+  'assets/minu-tunniplaan.png',
+  'downloads/minu-tunniplaan.pdf'
 ];
-for(const relativePath of v119Required){
-  assert(fs.existsSync(path.join(root,relativePath)),`Missing v119 deliverable: ${relativePath}`);
+for(const relativePath of v121Required){
+  assert(fs.existsSync(path.join(root,relativePath)),`Missing v121 deliverable: ${relativePath}`);
 }
+assert(!fs.existsSync(path.join(root,'games/umbermoot-pindala/index.html')),'Private geometry prototype must not ship in the public site build.');
 const failures=[];
 const passes=[];
 
@@ -138,7 +139,7 @@ if(fastAudit){
 }
 runNode('games/korrutamine-test/tests/system-foundations.test.js');
 runNode('games/korrutamine-test/tests/live-ui-regressions.test.js');
-runNode('games/korrutamine-test/tests/v119-site-deliverables.test.js');
+runNode('games/korrutamine-test/tests/v121-site-deliverables.test.js');
 
 console.log('EDUKASS project audit');
 passes.forEach(message=>console.log(`PASS  ${message}`));
