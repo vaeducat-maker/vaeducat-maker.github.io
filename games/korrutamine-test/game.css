@@ -3101,3 +3101,114 @@ body.intro-active{overflow:hidden}
   54%{transform:translateY(5%) rotate(2deg)}
   100%{transform:translateY(4%)}
 }
+
+
+/* v119: the helmet is anchored to the rendered cat image, not to the responsive crop. */
+.hero-cat-figure{
+  position:relative;
+  display:block;
+  flex:0 0 auto;
+  height:100%;
+  width:auto;
+  max-width:100%;
+  aspect-ratio:743 / 856;
+}
+.hero-cat-figure .hero-cat-picture,
+.hero-cat-figure .hero-cat{
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  max-width:none!important;
+  object-fit:contain!important;
+  transform:none!important;
+}
+.hero-cat-figure .hero-cat-gear{
+  inset:0;
+}
+.hero-cat-figure .hero-helmet{
+  left:37%;
+  top:8.5%;
+  width:48%;
+  height:17%;
+}
+.hero-cat-figure .hero-wink{
+  left:52%;
+  top:37%;
+  width:13%;
+  height:8%;
+}
+@media(max-width:700px){
+  .hero-cat-crop{display:flex!important;align-items:flex-end!important;justify-content:center!important;}
+  .hero-cat-figure{height:100%;width:auto;max-width:100%;}
+}
+@media(min-width:1101px){
+  .hero-cat-crop{display:flex!important;align-items:flex-end!important;justify-content:center!important;}
+  .hero-cat-figure{height:100%;width:auto;max-width:100%;}
+}
+
+/* v119: failed attempts always show the universal recovering cat above every chapter world. */
+#resultScreen .reward-scene.reward-failed > .result-cat-crop{
+  display:block!important;
+  visibility:visible!important;
+  opacity:1!important;
+  z-index:90!important;
+}
+#resultScreen .reward-scene.reward-failed .result-cat-neutral{
+  display:block!important;
+  opacity:1!important;
+  visibility:visible!important;
+}
+#resultScreen .reward-scene.reward-failed .result-cat-surprise,
+#resultScreen .reward-scene.reward-failed .result-cat-joy,
+#resultScreen .reward-scene:not(.reward-failed) .failure-dizzy-stars{
+  display:none!important;
+}
+.failure-dizzy-stars{
+  position:absolute;
+  z-index:95;
+  left:21%;
+  top:-2%;
+  width:70%;
+  height:34%;
+  display:none;
+  pointer-events:none;
+  transform-origin:50% 70%;
+}
+.reward-failed.is-playing .failure-dizzy-stars{
+  display:block;
+  animation:failureStarsOrbit 2.15s linear infinite;
+}
+.failure-dizzy-stars i{
+  position:absolute;
+  color:#ffe56f;
+  font-style:normal;
+  font-size:1.35rem;
+  line-height:1;
+  text-shadow:0 0 7px #fff,0 0 14px #ff9a3c,0 0 23px #e64e89;
+  animation:failureStarTwinkle .64s ease-in-out infinite alternate;
+}
+.failure-dizzy-stars i:nth-child(1){left:2%;top:44%;}
+.failure-dizzy-stars i:nth-child(2){left:24%;top:2%;font-size:1.65rem;animation-delay:.12s;}
+.failure-dizzy-stars i:nth-child(3){left:52%;top:0;animation-delay:.24s;}
+.failure-dizzy-stars i:nth-child(4){right:2%;top:34%;font-size:1.55rem;animation-delay:.36s;}
+.failure-dizzy-stars i:nth-child(5){right:19%;bottom:0;animation-delay:.48s;}
+@keyframes failureStarsOrbit{to{transform:rotate(360deg)}}
+@keyframes failureStarTwinkle{from{opacity:.48;transform:scale(.72)}to{opacity:1;transform:scale(1.18)}}
+
+/* v119 visual acceptance target: the recovering cat is a clear central subject on failure. */
+#resultScreen .reward-scene.reward-failed > .result-cat-crop{
+  left:50%!important;
+  right:auto!important;
+  bottom:-8px!important;
+  width:176px!important;
+  height:198px!important;
+  transform:translateX(-50%)!important;
+  overflow:visible!important;
+}
+@media(min-width:701px){
+  #resultScreen .reward-scene.reward-failed > .result-cat-crop{
+    bottom:-10px!important;
+    width:196px!important;
+    height:220px!important;
+  }
+}

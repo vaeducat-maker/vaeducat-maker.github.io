@@ -1255,7 +1255,8 @@ function syncRewardCatVisibility(levelId,levelPassed){
   const chapterId=LEVELS.find(level=>level.id===levelId)?.chapterId||1;
   const hide=shouldHideRewardCat(chapterId,levelPassed);
   rewardCatCrop.hidden=hide;
-  rewardCatCrop.style.display=hide?'none':'';
+  rewardCatCrop.style.setProperty('display',hide?'none':'block','important');
+  rewardCatCrop.style.setProperty('visibility',hide?'hidden':'visible','important');
 }
 
 function renderChapterOneStory(completed){

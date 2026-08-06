@@ -1,8 +1,23 @@
 const {spawnSync}=require('node:child_process');
 const fs=require('node:fs');
 const path=require('node:path');
+const assert=require('node:assert/strict');
 
 const root=path.resolve(__dirname,'..');
+const fastAudit=process.argv.includes('--fast');
+const expectedMissionSignature='537dc9b1315305f9140f0d50da8c7d3965d2683c5e57269d23dacb863b3b9989';
+
+const v119Required=[
+  'materials/korrutustabel/index.html',
+  'assets/korrutustabel.png',
+  'downloads/korrutustabel-A4.pdf',
+  'games/umbermoot-pindala/index.html',
+  'games/umbermoot-pindala/prototype.css',
+  'games/umbermoot-pindala/prototype.js'
+];
+for(const relativePath of v119Required){
+  assert(fs.existsSync(path.join(root,relativePath)),`Missing v119 deliverable: ${relativePath}`);
+}
 const failures=[];
 const passes=[];
 
@@ -115,9 +130,15 @@ for(const jsFile of walk(root,file=>file.endsWith('.js'))){
 }
 if(!failures.some(message=>message.startsWith('JavaScript syntax:')))pass('JavaScript syntax is valid');
 
-runNode('games/korrutamine-test/tests/mission-config.test.js');
+if(fastAudit){
+  const signatureResult=spawnSync(process.execPath,[path.join(root,'games/korrutamine-test/tests/mission-config.test.js'),'--print-signature'],{cwd:root,encoding:'utf8'});
+  check(signatureResult.status===0&&signatureResult.stdout.trim()===expectedMissionSignature,'approved 252-mission content signature is unchanged (fast audit)');
+}else{
+  runNode('games/korrutamine-test/tests/mission-config.test.js');
+}
 runNode('games/korrutamine-test/tests/system-foundations.test.js');
 runNode('games/korrutamine-test/tests/live-ui-regressions.test.js');
+runNode('games/korrutamine-test/tests/v119-site-deliverables.test.js');
 
 console.log('EDUKASS project audit');
 passes.forEach(message=>console.log(`PASS  ${message}`));

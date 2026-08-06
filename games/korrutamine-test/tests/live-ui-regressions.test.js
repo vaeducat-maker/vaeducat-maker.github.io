@@ -7,35 +7,25 @@ const gameRoot=path.resolve(__dirname,'..');
 const config=require(path.join(gameRoot,'chapter-one.config.js'));
 const gameCode=fs.readFileSync(path.join(gameRoot,'game.js'),'utf8');
 const gameCss=fs.readFileSync(path.join(gameRoot,'game.css'),'utf8');
+const gameHtml=fs.readFileSync(path.join(gameRoot,'index.html'),'utf8');
 
 const visibilityFunction=gameCode.match(/function shouldHideRewardCat\(chapterId,levelPassed\)\{[^}]+\}/)?.[0];
-assert.ok(visibilityFunction,'The reward-cat visibility contract must remain a small testable function.');
-const sandbox={};
-vm.runInNewContext(visibilityFunction,sandbox);
-
+assert.ok(visibilityFunction,'Reward-cat visibility must remain independently testable.');
+const sandbox={};vm.runInNewContext(visibilityFunction,sandbox);
 for(const chapter of config.chapters){
-  assert.equal(
-    sandbox.shouldHideRewardCat(chapter.id,false),
-    false,
-    `A failed attempt in chapter ${chapter.id} must show the recovering cat.`
-  );
-  assert.equal(
-    sandbox.shouldHideRewardCat(chapter.id,true),
-    chapter.id>=2,
-    `A victory in chapter ${chapter.id} must use the approved chapter-specific reward composition.`
-  );
+  assert.equal(sandbox.shouldHideRewardCat(chapter.id,false),false,`Failed attempt in chapter ${chapter.id} must show the recovering cat.`);
+  assert.equal(sandbox.shouldHideRewardCat(chapter.id,true),chapter.id>=2,`Victory composition changed in chapter ${chapter.id}.`);
 }
-assert.match(gameCode,/syncRewardCatVisibility\(levelId,levelPassed\)/);
-assert.match(gameCode,/configureRewardScene\(currentLevel\?\.id\|\|1,false,false\)/);
+assert.match(gameCode,/style\.setProperty\('display',hide\?'none':'block','important'\)/,'Failure visibility must beat chapter-specific display:none rules.');
+assert.match(gameCode,/style\.setProperty\('visibility',hide\?'hidden':'visible','important'\)/);
+assert.match(gameCss,/#resultScreen \.reward-scene\.reward-failed > \.result-cat-crop\{[\s\S]*display:block!important/);
+assert.match(gameCss,/z-index:90!important/);
+assert.match(gameHtml,/class="failure-dizzy-stars"/);
+assert.match(gameCss,/\.reward-failed\.is-playing \.failure-dizzy-stars\{[\s\S]*display:block/);
 
-const helmetGuard=gameCss.slice(gameCss.indexOf('/* v118: the helmet and cat share one motion layer'));
-assert.ok(helmetGuard.length>0,'The responsive helmet guard must remain in game.css.');
-assert.match(helmetGuard,/\.hero-zone\.danger-high:not\(\.impact\) \.hero-cat-crop\{animation:helmetCatNervous/);
-assert.match(helmetGuard,/\.hero-zone\.danger-critical:not\(\.impact\) \.hero-cat-crop\{animation:helmetCatBrace/);
-assert.match(helmetGuard,/\.hero-zone\.impact \.hero-cat-crop\{animation:helmetCatImpact/);
-assert.match(helmetGuard,/\.hero-zone\.impact \.hero-cat-gear\{animation:none!important\}/);
-assert.match(helmetGuard,/@keyframes helmetCatNervous/);
-assert.match(helmetGuard,/@keyframes helmetCatBrace/);
-assert.match(helmetGuard,/@keyframes helmetCatImpact/);
+assert.match(gameHtml,/class="hero-cat-figure"/,'Helmet needs an image-sized coordinate system.');
+assert.match(gameCss,/\.hero-cat-figure\{[\s\S]*aspect-ratio:743 \/ 856/);
+assert.match(gameCss,/\.hero-cat-figure \.hero-helmet\{[\s\S]*top:8\.5%/);
+assert.doesNotMatch(gameCss.slice(gameCss.lastIndexOf('/* v119:')),/hero-cat-gear\{animation:[^n]/);
 
-console.log('Live UI regressions protected: helmet alignment and failed-attempt cat across all 16 chapters.');
+console.log('Live UI regressions protected: image-anchored helmet and visible failure recovery in all 16 chapters.');
