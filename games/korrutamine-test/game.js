@@ -1246,10 +1246,14 @@ function syncChapterOneOverlayVisibility(chapterId){
   }
 }
 
-function syncRewardCatVisibility(levelId){
+function shouldHideRewardCat(chapterId,levelPassed){
+  return Boolean(levelPassed)&&Number(chapterId)>=2;
+}
+
+function syncRewardCatVisibility(levelId,levelPassed){
   if(!rewardCatCrop)return;
   const chapterId=LEVELS.find(level=>level.id===levelId)?.chapterId||1;
-  const hide=chapterId>=2;
+  const hide=shouldHideRewardCat(chapterId,levelPassed);
   rewardCatCrop.hidden=hide;
   rewardCatCrop.style.display=hide?'none':'';
 }
@@ -2367,7 +2371,7 @@ function setChapterOneStationReward(levelId,showReveal){
 
 function configureRewardScene(levelId,firstCompletion,levelPassed){
   rewardScene.className='result-animation reward-scene';
-  syncRewardCatVisibility(levelId);
+  syncRewardCatVisibility(levelId,levelPassed);
   rewardScene.dataset.level=String(levelId);
   rewardScene.classList.toggle('first-completion',Boolean(firstCompletion&&levelPassed));
   rewardScene.classList.toggle('reward-replay',Boolean(!firstCompletion&&levelPassed));

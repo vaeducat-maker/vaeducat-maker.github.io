@@ -42,6 +42,8 @@ const requiredFiles=[
   'games/korrutamine-test/game.css',
   'games/korrutamine-test/tests/mission-config.test.js',
   'games/korrutamine-test/tests/system-foundations.test.js',
+  'games/korrutamine-test/tests/live-ui-regressions.test.js',
+  'docs/PEDAGOGICAL_CONSTITUTION_RU.md',
   'docs/CREATIVE_RULES_RU.md',
   'docs/LANGUAGE_AND_SAVES_RU.md',
   'docs/INDEPENDENT_AUDIT_CYCLE_RU.md'
@@ -115,6 +117,7 @@ if(!failures.some(message=>message.startsWith('JavaScript syntax:')))pass('JavaS
 
 runNode('games/korrutamine-test/tests/mission-config.test.js');
 runNode('games/korrutamine-test/tests/system-foundations.test.js');
+runNode('games/korrutamine-test/tests/live-ui-regressions.test.js');
 
 console.log('EDUKASS project audit');
 passes.forEach(message=>console.log(`PASS  ${message}`));

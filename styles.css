@@ -1468,6 +1468,17 @@ h1, h2, h3,
   background: var(--violet-soft);
 }
 .category-more .category-nav-arrow { background: var(--violet-soft); }
+.subject-nav {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+.category-math { border-top-color: var(--violet); }
+.category-math .category-nav-icon {
+  color: var(--violet);
+  background: var(--violet-soft);
+}
+.category-math .category-nav-arrow { background: var(--violet-soft); }
 
 .material-category-section {
   padding: 58px 0 66px;
@@ -1529,6 +1540,7 @@ h1, h2, h3,
 @media (max-width: 900px) {
   .topic-cards-six,
   .category-nav { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .subject-nav { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .category-material-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
@@ -1565,6 +1577,7 @@ button:focus-visible { outline: 3px solid #6549a6; outline-offset: 4px; }
 @media (max-width: 620px) {
   .topic-cards-six,
   .category-nav,
+  .subject-nav,
   .category-material-grid { grid-template-columns: 1fr; }
   .category-nav-card { min-height: 102px; padding: 17px; }
   .material-category-section { padding: 44px 0 52px; }

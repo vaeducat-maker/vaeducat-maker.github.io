@@ -14,7 +14,7 @@ const checks = [
   ['desktop source is not the default image', !html.includes('<img class="hero-cat hero-cat-neutral" src="assets/edukass-cat-battle.png"')],
   ['v110 stylesheet is loaded', html.includes('game.css?v=110')],
   ['v110 script is loaded', html.includes('game.js?v=110')],
-  ['v110 service-worker cache is active', sw.includes('edukass-korrutustabel-v110-education-design')],
+  ['v118 service-worker cache is active', sw.includes('edukass-korrutustabel-v118-live-ui-regressions')],
 ];
 
 let failed = false;
