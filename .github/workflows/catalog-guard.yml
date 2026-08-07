@@ -1,0 +1,28 @@
+name: EDUKASS catalog guard
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  protect-published-materials:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout site
+        uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Test guard itself
+        run: node scripts/test-catalog-guard.js
+      - name: Validate catalog and permanent links
+        run: node scripts/catalog-guard.js
+      - name: Show release report
+        if: always()
+        run: cat RELEASE_REPORT_RU.md || true

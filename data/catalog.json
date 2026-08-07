@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "release": "v122",
+  "products": [
+    {
+      "id": "koolikott",
+      "title": "Mis on koolikotis?",
+      "type": "material",
+      "status": "published",
+      "priceType": "free",
+      "category": "eesti-keel",
+      "page": "/materials/koolikott/",
+      "catalogPage": "/materials/",
+      "catalogHref": "koolikott/",
+      "preview": "/assets/mis-on-koolikotis-edukass.png",
+      "downloads": ["/assets/mis-on-koolikotis-edukass.png"],
+      "related": ["/games/koolikott/"]
+    },
+    {
+      "id": "tanased-ulesanded",
+      "title": "Minu tänased ülesanded",
+      "type": "material",
+      "status": "published",
+      "priceType": "free",
+      "category": "korraldus-ja-planeerimine",
+      "page": "/materials/tanased-ulesanded/",
+      "catalogPage": "/materials/",
+      "catalogHref": "tanased-ulesanded/",
+      "preview": "/assets/minu-tanased-ulesanded.jpg",
+      "downloads": ["/downloads/minu-tanased-ulesanded.pdf"]
+    },
+    {
+      "id": "tunniplaan",
+      "title": "Minu tunniplaan",
+      "type": "material",
+      "status": "published",
+      "priceType": "free",
+      "category": "korraldus-ja-planeerimine",
+      "page": "/materials/tunniplaan/",
+      "catalogPage": "/materials/",
+      "catalogHref": "tunniplaan/",
+      "preview": "/assets/minu-tunniplaan.png",
+      "downloads": ["/downloads/minu-tunniplaan.pdf"]
+    },
+    {
+      "id": "loika-kosmoserada",
+      "title": "Lõika! Kosmoserada",
+      "type": "material",
+      "status": "published",
+      "priceType": "free",
+      "category": "kaelised-oskused",
+      "page": "/materials/loika-kosmoserada/",
+      "catalogPage": "/materials/",
+      "catalogHref": "loika-kosmoserada/",
+      "preview": "/assets/loika-kosmoserada.png",
+      "downloads": ["/downloads/loika-kosmoserada.pdf"]
+    },
+    {
+      "id": "korrutustabel",
+      "title": "Korrutustabel",
+      "type": "material",
+      "status": "published",
+      "priceType": "free",
+      "category": "matemaatika",
+      "page": "/materials/korrutustabel/",
+      "catalogPage": "/materials/matemaatika/",
+      "catalogHref": "../korrutustabel/",
+      "preview": "/assets/korrutustabel.png",
+      "downloads": ["/downloads/korrutustabel-A4.pdf"]
+    },
+    {
+      "id": "umbermoot-pindala",
+      "title": "Ümbermõõt ja pindala",
+      "type": "material",
+      "status": "published",
+      "priceType": "free",
+      "category": "matemaatika",
+      "page": "/materials/umbermoot-pindala/",
+      "catalogPage": "/materials/matemaatika/",
+      "catalogHref": "../umbermoot-pindala/",
+      "preview": "/assets/umbermoot-pindala.png",
+      "downloads": [
+        "/downloads/umbermoot-pindala-A4-4-kaarti.pdf",
+        "/downloads/umbermoot-pindala-A7.pdf"
+      ]
+    }
+  ]
+}

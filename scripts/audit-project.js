@@ -140,6 +140,8 @@ if(fastAudit){
 runNode('games/korrutamine-test/tests/system-foundations.test.js');
 runNode('games/korrutamine-test/tests/live-ui-regressions.test.js');
 runNode('games/korrutamine-test/tests/v121-site-deliverables.test.js');
+runNode('scripts/test-catalog-guard.js');
+runNode('scripts/catalog-guard.js');
 
 console.log('EDUKASS project audit');
 passes.forEach(message=>console.log(`PASS  ${message}`));
