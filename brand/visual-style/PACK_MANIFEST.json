@@ -1,0 +1,15 @@
+{
+  "project": "EDUKASS",
+  "date": "2026-08-07",
+  "purpose": "portable context for continuing visual/material work in another chat",
+  "canonical_visual_reference": "METSLOOMAD approved poster 2026-08-07",
+  "files": [
+    "EKI_noor_animals_source.txt",
+    "ANIMAL_MATERIALS_PLAN.md",
+    "REFERENCE_IMAGE_NOTE.txt",
+    "00_READ_ME_FIRST_RU.md",
+    "EDUKASS_VISUAL_STYLE.md"
+  ],
+  "canonical_visual_reference_file": "METSLOOMAD_APPROVED_STYLE_REFERENCE_2026-08-07.png",
+  "repository_folder": "brand/visual-style/"
+}
