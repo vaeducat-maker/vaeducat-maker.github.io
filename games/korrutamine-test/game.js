@@ -1,3 +1,6 @@
+function trackPlausible(eventName){
+  if(typeof window.plausible==='function')window.plausible(eventName);
+}
 const screens=[...document.querySelectorAll('.screen')];
 const answerDisplay=document.querySelector('#answerDisplay');
 const feedback=document.querySelector('#feedback');
@@ -2123,6 +2126,9 @@ function finishAttempt(reason){
   resultMissionProgress.textContent=`${missionInChapter}/${missionsInChapter}`;
 
   if(levelPassed){
+    trackPlausible('Korrutustabel Mission Complete');
+    if(CHAPTER_END_IDS.has(currentLevel.id))trackPlausible('Korrutustabel Chapter Complete');
+    if(gameComplete)trackPlausible('Korrutustabel Complete');
     playSound('missionComplete');
     if(!TEST_UNLOCK_ALL){
       if(!progress.completedLevels.includes(currentLevel.id))progress.completedLevels.push(currentLevel.id);
@@ -2710,6 +2716,7 @@ function finishIntro(){
 
 function launchIntro(quick=false){
   if(introScreen.hidden||introScreen.classList.contains('is-launching'))return;
+  trackPlausible('Korrutustabel Start');
   clearTimeout(introReadyTimer);
   introPlayButton.disabled=true;
   introScreen.classList.remove('intro-ready');

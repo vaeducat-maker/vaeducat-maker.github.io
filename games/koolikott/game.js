@@ -1,3 +1,7 @@
+function trackPlausible(eventName){
+  if(typeof window.plausible==='function')window.plausible(eventName);
+}
+
 const allItems = [
   {id:'vihik', word:'vihik'}, {id:'õpik', word:'õpik'}, {id:'raamat', word:'raamat'},
   {id:'pinal', word:'pinal'}, {id:'pliiats', word:'pliiats'}, {id:'pastakas', word:'pastakas'},
@@ -50,6 +54,7 @@ function updateBest(){
 function startTimer(){
   if(started) return;
   started=true;
+  trackPlausible('Koolikott Start');
   timerId=setInterval(()=>{ seconds++; timerEl.textContent=formatTime(seconds); },1000);
 }
 function stopTimer(){ clearInterval(timerId); timerId=null; }
@@ -127,7 +132,9 @@ function checkPair(){
 }
 function resetTurn(){ [firstCard,secondCard]=[null,null];boardLocked=false; }
 function finishGame(){
-  stopTimer(); ping('win');
+  stopTimer();
+  trackPlausible('Koolikott Complete');
+  ping('win');
   const old=JSON.parse(localStorage.getItem(bestKey())||'null');
   if(!old||moves<old.moves||(moves===old.moves&&seconds<old.seconds)){
     localStorage.setItem(bestKey(),JSON.stringify({moves,seconds}));
