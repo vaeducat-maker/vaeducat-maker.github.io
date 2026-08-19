@@ -126,6 +126,7 @@
     .passportAnimal b{display:block;color:var(--blue);font-size:18px;margin-top:5px}
 
     @media(max-width:520px){
+      #app.memoViewport{height:min(100dvh,var(--memo-visual-height,100dvh))}
       .shell{padding:8px 14px 12px}
       .topbar{min-height:44px}
       .iconbtn{width:40px;height:40px}
@@ -134,8 +135,11 @@
       .heroCard{grid-template-columns:1fr 1fr;padding:14px}
       .heroAnimals img{height:92px}
       .stages{grid-template-columns:repeat(2,1fr)}
-      .memoGrid{gap:7px}
-      .memoFace{border-radius:14px;padding:6px}
+      .memoScreen{min-height:0;padding-bottom:env(safe-area-inset-bottom)}
+      .gameCard.memoStage{width:100%;min-height:0;max-height:100%;aspect-ratio:7/11;display:flex;flex:0 1 auto;flex-direction:column;padding:clamp(8px,1.5dvh,14px)}
+      .memoStage .memoGrid{flex:1 1 auto;min-height:0;grid-template-rows:repeat(4,minmax(0,1fr));gap:clamp(4px,.75dvh,7px)}
+      .memoStage .memo{height:100%;min-height:0;aspect-ratio:auto}
+      .memoStage .memoFace{border-radius:14px;padding:6px}
       .gameCard{padding:14px}
       .options{gap:8px}
       .option{min-height:50px}
@@ -465,7 +469,19 @@ function shell(content,opts={}){
     <div class="shareToast" id="shareStatus" role="status" aria-live="polite"></div>
   </div>`
 }
-function set(html){app.innerHTML=html;scrollTo({top:0,behavior:'smooth'})}
+function syncMemoViewport(){
+  if(!app.classList.contains('memoViewport'))return;
+  const height=window.visualViewport?.height||window.innerHeight;
+  app.style.setProperty('--memo-visual-height',`${Math.round(height)}px`);
+}
+function set(html){
+  app.innerHTML=html;
+  app.classList.toggle('memoViewport',Boolean(app.querySelector('.memoScreen')));
+  if(app.classList.contains('memoViewport'))syncMemoViewport();
+  scrollTo({top:0,behavior:'smooth'});
+}
+window.addEventListener('resize',syncMemoViewport,{passive:true});
+window.visualViewport?.addEventListener('resize',syncMemoViewport,{passive:true});
 function count(ok){} // Vastuseid ei skoorita ega protsendita.
 function later(queue,item,offset=3){queue.splice(Math.min(queue.length,offset),0,{...item,_retry:true})}
 function resolveChoice(btn,isCorrect,correctValue,after){
@@ -586,7 +602,7 @@ function startMemo(){
   state.memo={cards:shuffle(cards),open:[],matched:new Set(),moves:0};renderMemo();
 }
 function renderMemo(){let m=state.memo;
-  set(shell(`${levelHead('MEMO','Leia kokku loom ja tema kohta käiv väide.')}<div class="gameCard"><div class="memoGrid">${m.cards.map((c,i)=>`<button class="memo ${m.open.includes(i)||m.matched.has(c.id)?'flipped':''} ${m.matched.has(c.id)?'matched':''}" onclick="flipMemo(${i})"><div class="memoInner"><div class="memoFace memoBack"><div class="paw">🐾</div><small>EDUKASS</small></div><div class="memoFace memoFront">${c.type==='img'?`<img src="${animals[c.a].img}" alt="">`:`${c.text}`}</div></div></button>`).join('')}</div><div class="feedback"></div></div>`));
+  set(shell(`${levelHead('MEMO','Leia kokku loom ja tema kohta käiv väide.')}<div class="gameCard memoStage"><div class="memoGrid">${m.cards.map((c,i)=>`<button class="memo ${m.open.includes(i)||m.matched.has(c.id)?'flipped':''} ${m.matched.has(c.id)?'matched':''}" onclick="flipMemo(${i})"><div class="memoInner"><div class="memoFace memoBack"><div class="paw">🐾</div><small>EDUKASS</small></div><div class="memoFace memoFront">${c.type==='img'?`<img src="${animals[c.a].img}" alt="">`:`${c.text}`}</div></div></button>`).join('')}</div><div class="feedback"></div></div>`,{mainClass:'memoScreen'}));
 }
 function flipMemo(i){let m=state.memo;if(m.open.includes(i)||m.matched.has(m.cards[i].id)||m.open.length===2)return;playSound('key');m.open.push(i);renderMemo();if(m.open.length===2){m.moves++;let[a,b]=m.open;if(m.cards[a].id===m.cards[b].id){playSound('correct');setTimeout(()=>{m.matched.add(m.cards[a].id);m.open=[];count(true);renderMemo();if(m.matched.size===6)setTimeout(()=>memoDone(),350)},450)}else{playSound('wrong');count(false);setTimeout(()=>{m.open=[];renderMemo()},760)}}}
 function memoDone(){stageDone('MEMO')}
