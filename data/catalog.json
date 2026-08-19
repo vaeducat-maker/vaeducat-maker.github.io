@@ -3,6 +3,29 @@
   "release": "v122",
   "products": [
     {
+      "id": "metsloomad",
+      "title": "Metsloomad",
+      "type": "material",
+      "status": "published",
+      "priceType": "free",
+      "category": "eesti-keel",
+      "description": "METSARADA, mobiilne töövihik ja prinditav PDF Eesti metsloomade õppimiseks.",
+      "page": "/materials/metsloomad/",
+      "qrUrl": "https://edukass.ee/metsloomad/",
+      "catalogPage": "/materials/",
+      "featuredPages": ["/"],
+      "preview": "/assets/metsloomad-preview.png",
+      "previewAlt": "Metsloomade õppematerjali eelvaade",
+      "downloads": ["/downloads/metsloomad.pdf"],
+      "game": "/games/metsarada/",
+      "workbook": "/materials/metsloomad/mobiilne-toovihik/",
+      "metadataSync": true,
+      "internal": {
+        "cefr": "A2",
+        "recommendedAge": "9–11"
+      }
+    },
+    {
       "id": "koolikott",
       "title": "Mis on koolikotis?",
       "type": "material",

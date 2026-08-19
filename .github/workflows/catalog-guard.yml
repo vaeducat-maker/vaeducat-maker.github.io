@@ -21,6 +21,8 @@ jobs:
           node-version: '20'
       - name: Test guard itself
         run: node scripts/test-catalog-guard.js
+      - name: Test public metadata guard
+        run: node scripts/test-material-metadata.js
       - name: Validate catalog and permanent links
         run: node scripts/catalog-guard.js
       - name: Show release report

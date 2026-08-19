@@ -2,6 +2,7 @@
 'use strict';
 const fs=require('node:fs');
 const path=require('node:path');
+const {pageDocument,relativePublicUrl,validateMaterialMetadata}=require('./material-metadata');
 
 const root=path.resolve(__dirname,'..');
 const currentPath=path.join(root,'data/catalog.json');
@@ -44,10 +45,10 @@ function validateCatalog(current, baseline, opts={checkFiles:true}){
   for(const now of current.products){
     const old=baselineById.get(now.id);
     if(!old) added.push(now.title);
-    else if(now.title!==old.title || now.category!==old.category || now.preview!==old.preview || !sameArray(now.downloads,old.downloads)) changed.push(now.title);
+    else if(now.title!==old.title || now.description!==old.description || now.category!==old.category || now.priceType!==old.priceType || now.preview!==old.preview || !sameArray(now.downloads,old.downloads)) changed.push(now.title);
 
     if(now.status!=='published') continue;
-    for(const required of ['id','title','page','catalogPage','catalogHref','preview','priceType','category']){
+    for(const required of ['id','title','page','catalogPage','preview','priceType','category']){
       if(!now[required]) errors.push(`${now.id}: отсутствует обязательное поле ${required}`);
     }
     if(now.priceType==='paid' && !now.purchaseUrl) errors.push(`${now.title}: платный продукт без purchaseUrl`);
@@ -63,11 +64,15 @@ function validateCatalog(current, baseline, opts={checkFiles:true}){
       for(const rel of now.related||[]){
         if(!fs.existsSync(pageFile(rel))) errors.push(`${now.title}: не работает связанная страница ${rel}`);
       }
+      for(const [label,linkedPage] of [['игра',now.game],['мобильный workbook',now.workbook]]){
+        if(linkedPage && !fs.existsSync(pageFile(linkedPage))) errors.push(`${now.title}: не работает связанная страница (${label}) ${linkedPage}`);
+      }
       const catalogFile=pageFile(now.catalogPage);
       if(!fs.existsSync(catalogFile)) errors.push(`${now.title}: отсутствует каталог ${now.catalogPage}`);
       else {
         const html=fs.readFileSync(catalogFile,'utf8');
-        if(!html.includes(`href="${now.catalogHref}"`) && !html.includes(`href='${now.catalogHref}'`)){
+        const catalogHref=now.catalogHref||relativePublicUrl(pageDocument(now.catalogPage),now.page);
+        if(!html.includes(`href="${catalogHref}"`) && !html.includes(`href='${catalogHref}'`)){
           errors.push(`${now.title}: карточка/ссылка исчезла из каталога ${now.catalogPage}`);
         }
         if(!html.includes(now.title)) errors.push(`${now.title}: название отсутствует в каталоге ${now.catalogPage}`);
@@ -77,6 +82,10 @@ function validateCatalog(current, baseline, opts={checkFiles:true}){
         if(!html.includes(now.title)) warnings.push(`${now.title}: название не найдено дословно на собственной странице.`);
       }
     }
+  }
+  if(opts.checkFiles){
+    const metadataResult=validateMaterialMetadata(current,{rootDirectory:root});
+    errors.push(...metadataResult.errors);
   }
   return {errors,warnings,added,changed,archived,currentCount:current.products.filter(p=>p.status==='published').length,baselineCount:baseline.products.filter(p=>p.status==='published').length};
 }

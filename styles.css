@@ -1631,3 +1631,117 @@ button:focus-visible { outline: 3px solid #6549a6; outline-offset: 4px; }
 @media (max-width:390px){
   .site-header .brand .brand-name{display:block}
 }
+
+/* Metsloomad integration preview. The image URL comes from the material catalog. */
+.metsloomad-page {
+  background: linear-gradient(180deg, #f7fcf5 0, #fff 56%);
+}
+.metsloomad-layout {
+  align-items: stretch;
+}
+.metsloomad-preview-panel {
+  display: flex;
+  min-height: 100%;
+  padding: 14px;
+  background: #fff;
+}
+.metsloomad-preview-art {
+  position: relative;
+  display: flex;
+  flex: 1;
+  min-height: 480px;
+  padding: 30px;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
+  border-radius: 18px;
+  color: #17365f;
+  background-color: #eef8e8;
+  background-image:
+    var(--material-preview, none),
+    radial-gradient(circle at 18% 24%, rgba(112, 217, 207, .65) 0 12%, transparent 12.5%),
+    radial-gradient(circle at 78% 34%, rgba(255, 214, 92, .68) 0 14%, transparent 14.5%),
+    linear-gradient(145deg, #e4f4dc, #f8f7df 54%, #dceff0);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain, cover, cover, cover;
+}
+.metsloomad-info-panel {
+  display: flex;
+  padding: 34px;
+  flex-direction: column;
+  justify-content: center;
+  border-color: #d9ead3;
+  background: #f5fbf1;
+}
+.metsloomad-info-panel h1 {
+  margin-bottom: 16px;
+}
+.metsloomad-info-panel > p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 1.08rem;
+}
+.metsloomad-meta {
+  color: #427a35;
+}
+.metsloomad-actions {
+  display: grid;
+  gap: 12px;
+  margin-top: 30px;
+}
+.metsloomad-actions .button {
+  width: 100%;
+  min-height: 54px;
+  padding: 10px 18px;
+  text-align: center;
+}
+.metsloomad-print-button {
+  border: 2px solid #427a35;
+  color: #244d2c;
+  background: #fff;
+}
+.metsloomad-print-button:hover {
+  background: #edf7e9;
+}
+.home-new-card.home-new-metsloomad {
+  grid-column: 1 / -1;
+  grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr);
+}
+.home-new-card-visual.home-metsloomad-visual {
+  padding: 16px;
+  background: linear-gradient(145deg, #e7f4df, #edf8f6);
+}
+.home-metsloomad-visual .metsloomad-preview-art {
+  width: 100%;
+  min-height: 300px;
+}
+.metsloomad-catalog-art {
+  min-height: 0;
+  aspect-ratio: 16 / 10;
+  padding: 20px;
+  border-radius: 0;
+  border-bottom: 1px solid var(--line);
+}
+@media (max-width: 860px) {
+  .metsloomad-preview-art { min-height: 390px; }
+  .home-new-card.home-new-metsloomad { grid-template-columns: 1fr; }
+  .home-metsloomad-visual .metsloomad-preview-art { min-height: 290px; }
+  .metsloomad-catalog-art { min-height: 0; }
+}
+@media (max-width: 520px) {
+  .metsloomad-page { padding-top: 34px; }
+  .metsloomad-preview-panel { padding: 10px; }
+  .metsloomad-preview-art {
+    min-height: 290px;
+    padding: 20px;
+  }
+  .metsloomad-info-panel { padding: 24px 20px; }
+  .metsloomad-actions { margin-top: 24px; }
+  .metsloomad-actions .button {
+    min-height: 52px;
+    font-size: .88rem;
+  }
+  .home-metsloomad-visual .metsloomad-preview-art { min-height: 240px; }
+  .metsloomad-catalog-art { min-height: 0; }
+}
