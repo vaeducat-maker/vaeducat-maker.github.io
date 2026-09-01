@@ -3,6 +3,23 @@
   "release": "v122",
   "products": [
     {
+      "id": "ristsonad-sugis",
+      "title": "Ristsõnad: Sügis",
+      "type": "material",
+      "status": "published",
+      "priceType": "free",
+      "category": "eesti-keel",
+      "description": "Viis piltidega sügisteemalist ristsõna koos vastustega: sügis, turg, kodu, aed ning mardi- ja kadrisandid.",
+      "page": "/materials/ristsonad-sugis/",
+      "catalogPage": "/materials/",
+      "catalogHref": "ristsonad-sugis/",
+      "preview": "/assets/ristsonad-sugis-preview.png",
+      "previewAlt": "Ristsõnad: Sügis — viie sügisteemalise ristsõna ja vastuste komplekti eelvaade",
+      "downloads": [
+        "/downloads/ristsonad-sugis.pdf"
+      ]
+    },
+    {
       "id": "metsloomad",
       "title": "Metsloomad",
       "type": "material",
