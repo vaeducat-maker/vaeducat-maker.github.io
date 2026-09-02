@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="et">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#fffdf8">
+  <link rel="icon" href="/favicon.ico?v=108" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png?v=108">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=108">
+  <link rel="canonical" href="https://edukass.ee/materials/ristsonad-sugis/online/">
+  <title>Sügis on käes! · Ristsõnad · EDUKASS</title>
+  <meta name="description" content="Lahenda EDUKASSi sügisteemalist pildiristsõna telefonis, tahvelarvutis või arvutis.">
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="stylesheet" href="crossword.css?v=1">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="game-header">
+      <a class="brand-link" href="../" aria-label="Tagasi materjali lehele">
+        <img src="../../../games/korrutamine-test/assets/edukass-cat-transparent.png" alt="">
+        <span class="brand-name"><b>EDU</b>KASS</span>
+      </a>
+
+      <div class="header-actions">
+        <button class="icon-action" id="soundButton" type="button" aria-pressed="true">
+          <svg class="sound-on-icon" aria-hidden="true" viewBox="0 0 24 24">
+            <path d="M4 9v6h4l5 4V5L8 9H4Z"></path>
+            <path d="M16 8.5a5 5 0 0 1 0 7M18.7 6a8.5 8.5 0 0 1 0 12"></path>
+          </svg>
+          <svg class="sound-off-icon" aria-hidden="true" viewBox="0 0 24 24">
+            <path d="M4 9v6h4l5 4V5L8 9H4Z"></path>
+            <path d="m17 9 4 4m0-4-4 4"></path>
+          </svg>
+          <span class="action-label">HELI</span>
+        </button>
+
+        <button class="icon-action" id="shareButton" type="button">
+          <svg aria-hidden="true" viewBox="0 0 24 24">
+            <circle cx="18" cy="5" r="2.3"></circle>
+            <circle cx="6" cy="12" r="2.3"></circle>
+            <circle cx="18" cy="19" r="2.3"></circle>
+            <path d="m8 11 7.8-4.6M8 13l7.8 4.6"></path>
+          </svg>
+          <span class="action-label">JAGA</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="puzzle-screen" id="puzzleScreen">
+      <section class="title-band" aria-labelledby="puzzleTitle">
+        <div>
+          <p class="eyebrow" id="puzzleTheme">RISTSÕNAD · SÜGIS</p>
+          <h1 id="puzzleTitle">SÜGIS ON KÄES!</h1>
+        </div>
+        <a class="pdf-link" href="../../../downloads/ristsonad-sugis.pdf" download>PDF</a>
+      </section>
+
+      <nav class="word-navigation" aria-label="Ristsõna vihjed">
+        <button class="round-nav" id="previousWordButton" type="button" aria-label="Eelmine sõna">
+          <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m15 5-7 7 7 7"></path></svg>
+        </button>
+        <div class="progress-dots" id="progressDots"></div>
+        <button class="round-nav" id="nextWordButton" type="button" aria-label="Järgmine sõna">
+          <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"></path></svg>
+        </button>
+      </nav>
+
+      <div class="play-layout">
+        <article class="clue-area" aria-labelledby="clueHeading">
+          <div class="clue-copy">
+            <p class="clue-number" id="clueHeading"><span id="clueNumber">1</span> <span id="clueDirection">↓</span></p>
+            <p class="clue-text" id="clueText">See puhub ja liigutab lehti.</p>
+          </div>
+
+          <figure class="clue-figure">
+            <img id="clueImage" src="assets/01-tuul.webp" alt="Tuul puhub sügislehti">
+          </figure>
+
+          <div class="word-entry-wrap">
+            <p class="entry-label" id="entryLabel">SÕNA 1 / 10</p>
+            <div class="word-entry" id="wordEntry" role="group" aria-labelledby="entryLabel"></div>
+          </div>
+
+          <div class="special-letters" aria-label="Eesti tähed">
+            <span>ET</span>
+            <button type="button" data-letter="Õ">Õ</button>
+            <button type="button" data-letter="Ä">Ä</button>
+            <button type="button" data-letter="Ö">Ö</button>
+            <button type="button" data-letter="Ü">Ü</button>
+          </div>
+
+          <p class="feedback" id="feedback" aria-live="polite"></p>
+        </article>
+
+        <section class="grid-area" aria-label="Ristsõna ruudustik">
+          <div class="grid-heading">
+            <strong>RISTSÕNA</strong>
+            <span>Puuduta ruutu või vali vihje.</span>
+          </div>
+          <div class="crossword-grid" id="crosswordGrid" role="grid" aria-label="11 rea ja 11 veeruga ristsõna"></div>
+        </section>
+      </div>
+
+      <div class="bottom-actions">
+        <button class="text-action" id="restartButton" type="button">ALUSTA UUESTI</button>
+        <a class="text-action" href="../">MATERJALI JUURDE</a>
+      </div>
+    </main>
+
+    <section class="finish-screen" id="finishScreen" hidden aria-labelledby="finishTitle">
+      <div class="finish-mark" aria-hidden="true">✓</div>
+      <p class="eyebrow">SÜGIS · RISTSÕNA</p>
+      <h1 id="finishTitle">RISTSÕNA VALMIS!</h1>
+      <img src="../../../games/korrutamine-test/assets/edukass-cat-reward-joy.png" alt="Rõõmus EDUKASS">
+      <div class="finish-actions">
+        <button class="primary-action" id="playAgainButton" type="button">LAHENDA UUESTI</button>
+        <a class="secondary-action" href="../">TAGASI MATERJALI JUURDE</a>
+      </div>
+    </section>
+
+    <footer class="game-footer">
+      <span>edukass.ee</span>
+      <span>·</span>
+      <span>RISTSÕNAD: SÜGIS</span>
+    </footer>
+  </div>
+
+  <dialog class="restart-dialog" id="restartDialog">
+    <form method="dialog">
+      <h2>Alustame algusest?</h2>
+      <p>Praegune ristsõna tühjendatakse.</p>
+      <div class="dialog-actions">
+        <button class="secondary-action" value="cancel">JÄTKA RISTSÕNA</button>
+        <button class="primary-action" id="confirmRestartButton" value="restart">ALUSTA UUESTI</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="crossword-data.js?v=1"></script>
+  <script src="crossword-engine.js?v=1"></script>
+  <script src="app.js?v=1"></script>
+</body>
+</html>
