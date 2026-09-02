@@ -21,6 +21,8 @@ const publicFiles = [
   'assets/korrutustabel.png',
   'assets/loika-kosmoserada.png',
   'assets/metsloomad-preview.png',
+  'assets/metsloomad-social-preview.jpg',
+  'assets/metsloomad-social-preview-v2.jpg',
   'assets/minu-tanased-ulesanded.jpg',
   'assets/minu-tunniplaan.png',
   'assets/mis-on-koolikotis-edukass.png',
