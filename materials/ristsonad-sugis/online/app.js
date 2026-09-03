@@ -24,6 +24,7 @@
     clueImage: document.getElementById('clueImage'),
     entryLabel: document.getElementById('entryLabel'),
     wordEntry: document.getElementById('wordEntry'),
+    letterKeyboard: document.getElementById('letterKeyboard'),
     feedback: document.getElementById('feedback'),
     crosswordGrid: document.getElementById('crosswordGrid'),
     progressDots: document.getElementById('progressDots'),
@@ -43,7 +44,7 @@
   let checkTimer = null;
   let toastTimer = null;
   let audioContext = null;
-  let lastFocusedIndex = 0;
+  let activeLetterIndex = 0;
   let lastGridKey = null;
 
   function createEmptyState() {
@@ -236,6 +237,19 @@
     const answerLetters = Array.from(word.answer);
     const fragment = document.createDocumentFragment();
 
+    if (focusIndex !== null) {
+      activeLetterIndex = focusIndex;
+    }
+
+    if (
+      !Number.isInteger(activeLetterIndex)
+      || activeLetterIndex < 0
+      || activeLetterIndex >= word.cellKeys.length
+      || locked.has(word.cellKeys[activeLetterIndex])
+    ) {
+      activeLetterIndex = firstEditableIndex(word);
+    }
+
     elements.clueNumber.textContent = String(word.number);
     elements.clueDirection.textContent = directionArrow(word.direction);
     elements.clueText.textContent = word.clue;
@@ -244,38 +258,31 @@
     elements.entryLabel.textContent = `SÕNA ${word.number} / ${crossword.words.length}`;
 
     word.cellKeys.forEach((key, index) => {
-      const input = document.createElement('input');
+      const cellButton = document.createElement('button');
       const isLocked = locked.has(key) || solved.has(word.id);
       const revealLetter = feedbackState && feedbackState.wordId === word.id
         && ['reveal', 'correct'].includes(feedbackState.type);
       const visibleValue = revealLetter ? answerLetters[index] : (state.values[key] || '');
 
-      input.className = 'letter-input';
-      input.type = 'text';
-      input.inputMode = 'text';
-      input.autocomplete = 'off';
-      input.autocapitalize = 'characters';
-      input.spellcheck = false;
-      input.maxLength = 1;
-      input.value = visibleValue;
-      input.dataset.index = String(index);
-      input.dataset.key = key;
-      input.readOnly = isLocked || Boolean(feedbackState);
-      input.classList.toggle('is-locked', isLocked);
-      input.classList.toggle(
+      cellButton.className = 'letter-cell';
+      cellButton.type = 'button';
+      cellButton.textContent = visibleValue;
+      cellButton.dataset.index = String(index);
+      cellButton.dataset.key = key;
+      cellButton.disabled = isLocked || Boolean(feedbackState);
+      cellButton.classList.toggle('is-locked', isLocked);
+      cellButton.classList.toggle('is-current', !isLocked && index === activeLetterIndex);
+      cellButton.classList.toggle(
         'is-wrong',
         Boolean(feedbackState && feedbackState.type === 'wrong' && feedbackState.wrongKeys.has(key))
       );
-      input.setAttribute('aria-label', `${word.number}. sõna, ${index + 1}. täht`);
-
-      input.addEventListener('focus', () => {
-        lastFocusedIndex = index;
-        document.body.classList.add('input-active');
-        syncViewportHeight();
-      });
-      input.addEventListener('input', handleLetterInput);
-      input.addEventListener('keydown', handleLetterKeydown);
-      fragment.append(input);
+      cellButton.setAttribute(
+        'aria-label',
+        `${word.number}. sõna, ${index + 1}. täht${visibleValue ? `, ${visibleValue}` : ''}`
+      );
+      cellButton.setAttribute('aria-current', index === activeLetterIndex ? 'true' : 'false');
+      cellButton.addEventListener('click', () => selectEntryCell(index));
+      fragment.append(cellButton);
     });
 
     elements.wordEntry.replaceChildren(fragment);
@@ -285,11 +292,13 @@
       elements.wordEntry.classList.add(`is-${feedbackState.type}`);
     }
 
-    renderFeedback();
+    const keyboardDisabled = Boolean(feedbackState) || solved.has(word.id);
+    elements.letterKeyboard.classList.toggle('is-disabled', keyboardDisabled);
+    elements.letterKeyboard.querySelectorAll('button').forEach((button) => {
+      button.disabled = keyboardDisabled;
+    });
 
-    if (focusIndex !== null && !feedbackState && !solved.has(word.id)) {
-      window.requestAnimationFrame(() => focusEntryInput(focusIndex));
-    }
+    renderFeedback();
   }
 
   function renderFeedback() {
@@ -329,6 +338,10 @@
 
       letterElement.textContent = shownLetter;
       button.classList.toggle('is-active', activeKeys.has(key));
+      button.classList.toggle(
+        'is-current',
+        activeKeys.has(key) && key === word.cellKeys[activeLetterIndex] && !feedbackState
+      );
       button.classList.toggle('is-locked', locked.has(key));
       button.classList.toggle('is-wrong', Boolean(isWrong));
       button.classList.toggle(
@@ -365,7 +378,7 @@
 
     clearTimeout(checkTimer);
     state.activeWordId = wordId;
-    lastFocusedIndex = focusIndex === null ? 0 : focusIndex;
+    activeLetterIndex = focusIndex === null ? firstEditableIndex(crossword.wordsById.get(wordId)) : focusIndex;
     saveState();
     renderAll(focusIndex);
   }
@@ -422,14 +435,21 @@
     return firstUnlocked >= 0 ? firstUnlocked : 0;
   }
 
-  function focusEntryInput(index) {
-    const inputs = Array.from(elements.wordEntry.querySelectorAll('.letter-input'));
-    const input = inputs[index] || inputs.find((candidate) => !candidate.readOnly);
-
-    if (input && !input.readOnly) {
-      input.focus({ preventScroll: true });
-      input.select();
+  function selectEntryCell(index) {
+    if (feedbackState) {
+      return;
     }
+
+    const word = activeWord();
+    const locked = lockedCellKeys();
+
+    if (!word.cellKeys[index] || locked.has(word.cellKeys[index])) {
+      return;
+    }
+
+    activeLetterIndex = index;
+    renderActiveWord(index);
+    updateGrid();
   }
 
   function nextEditableIndex(word, startIndex, includeFilled = false) {
@@ -481,129 +501,118 @@
     }
   }
 
-  function handleLetterInput(event) {
+  function insertLetter(letter) {
     if (feedbackState) {
       return;
     }
 
-    unlockAudio();
-    const word = activeWord();
-    const input = event.currentTarget;
-    const startIndex = Number(input.dataset.index);
-    const letters = Array.from(engine.normalizeAnswer(input.value));
-
-    if (letters.length === 0) {
-      setCellValue(word, startIndex, '');
-      input.value = '';
-      updateGrid();
-      saveState();
+    const normalizedLetter = engine.normalizeAnswer(letter).slice(0, 1);
+    if (!normalizedLetter) {
       return;
     }
 
-    let currentIndex = startIndex;
-    letters.forEach((letter, letterIndex) => {
-      if (letterIndex > 0) {
-        const nextIndex = nextEditableIndex(word, currentIndex, true);
-        if (nextIndex < 0 || nextIndex === startIndex) {
-          return;
-        }
-        currentIndex = nextIndex;
-      }
-      setCellValue(word, currentIndex, letter);
-    });
-
-    input.value = state.values[word.cellKeys[startIndex]] || '';
-    updateGrid();
-    saveState();
+    clearTimeout(checkTimer);
+    unlockAudio();
+    const word = activeWord();
+    const currentIndex = activeLetterIndex;
+    setCellValue(word, currentIndex, normalizedLetter);
 
     const nextIndex = nextEditableIndex(word, currentIndex);
     if (nextIndex >= 0) {
-      focusEntryInput(nextIndex);
-    } else if (isWordComplete(word)) {
+      activeLetterIndex = nextIndex;
+    }
+
+    renderActiveWord(activeLetterIndex);
+    updateGrid();
+    saveState();
+
+    if (isWordComplete(word)) {
       scheduleWordCheck();
     }
   }
 
-  function handleLetterKeydown(event) {
+  function deleteLetter() {
     if (feedbackState) {
       return;
     }
 
+    clearTimeout(checkTimer);
     unlockAudio();
     const word = activeWord();
-    const input = event.currentTarget;
-    const index = Number(input.dataset.index);
+    const currentKey = word.cellKeys[activeLetterIndex];
 
-    if (event.key === 'Backspace') {
-      event.preventDefault();
-      if (state.values[word.cellKeys[index]]) {
-        setCellValue(word, index, '');
-        input.value = '';
-        lastFocusedIndex = index;
-      } else {
-        const previousIndex = previousEditableIndex(word, index);
-        if (previousIndex >= 0) {
-          setCellValue(word, previousIndex, '');
-          focusEntryInput(previousIndex);
-        }
+    if (state.values[currentKey]) {
+      setCellValue(word, activeLetterIndex, '');
+    } else {
+      const previousIndex = previousEditableIndex(word, activeLetterIndex);
+      if (previousIndex >= 0) {
+        activeLetterIndex = previousIndex;
+        setCellValue(word, activeLetterIndex, '');
       }
-      updateGrid();
-      saveState();
+    }
+
+    renderActiveWord(activeLetterIndex);
+    updateGrid();
+    saveState();
+  }
+
+  function moveActiveLetter(offset) {
+    const word = activeWord();
+    const targetIndex = offset < 0
+      ? previousEditableIndex(word, activeLetterIndex)
+      : nextEditableIndex(word, activeLetterIndex, true);
+
+    if (targetIndex < 0) {
+      return;
+    }
+
+    activeLetterIndex = targetIndex;
+    renderActiveWord(activeLetterIndex);
+    updateGrid();
+  }
+
+  function handleHardwareKeyboard(event) {
+    if (
+      feedbackState
+      || elements.puzzleScreen.hidden
+      || elements.restartDialog.open
+      || event.ctrlKey
+      || event.metaKey
+      || event.altKey
+    ) {
+      return;
+    }
+
+    if (event.key === 'Backspace' || event.key === 'Delete') {
+      event.preventDefault();
+      deleteLetter();
       return;
     }
 
     if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
       event.preventDefault();
-      const previousIndex = previousEditableIndex(word, index);
-      if (previousIndex >= 0) {
-        focusEntryInput(previousIndex);
-      }
+      moveActiveLetter(-1);
       return;
     }
 
     if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
       event.preventDefault();
-      const nextIndex = nextEditableIndex(word, index, true);
-      if (nextIndex >= 0) {
-        focusEntryInput(nextIndex);
-      }
+      moveActiveLetter(1);
       return;
     }
 
-    if (event.key === 'Enter' && isWordComplete(word)) {
+    if (event.key === 'Enter' && isWordComplete(activeWord())) {
       event.preventDefault();
-      checkWord(word);
-    }
-  }
-
-  function insertSpecialLetter(letter) {
-    if (feedbackState) {
+      checkWord(activeWord());
       return;
     }
 
-    unlockAudio();
-    const word = activeWord();
-    const inputs = Array.from(elements.wordEntry.querySelectorAll('.letter-input'));
-    const focusedInput = document.activeElement && document.activeElement.classList.contains('letter-input')
-      ? document.activeElement
-      : null;
-    let index = focusedInput ? Number(focusedInput.dataset.index) : lastFocusedIndex;
-
-    if (!inputs[index] || inputs[index].readOnly) {
-      index = firstEditableIndex(word);
-    }
-
-    setCellValue(word, index, letter);
-    inputs[index].value = letter;
-    lastFocusedIndex = index;
-    updateGrid();
-    saveState();
-
-    const nextIndex = nextEditableIndex(word, index);
-    if (nextIndex >= 0) {
-      focusEntryInput(nextIndex);
-    } else if (isWordComplete(word)) {
-      scheduleWordCheck();
+    if (event.key.length === 1) {
+      const letter = engine.normalizeAnswer(event.key);
+      if (letter.length === 1) {
+        event.preventDefault();
+        insertLetter(letter);
+      }
     }
   }
 
@@ -742,7 +751,6 @@
     if (activeElement && typeof activeElement.blur === 'function') {
       activeElement.blur();
     }
-    document.body.classList.remove('input-active');
     elements.puzzleScreen.hidden = true;
     elements.finishScreen.hidden = false;
   }
@@ -758,7 +766,6 @@
       // Reset still works in memory when storage is unavailable.
     }
 
-    document.body.classList.remove('input-active');
     elements.finishScreen.hidden = true;
     elements.puzzleScreen.hidden = false;
     renderAll(0);
@@ -887,7 +894,6 @@
     if (activeElement && typeof activeElement.blur === 'function') {
       activeElement.blur();
     }
-    document.body.classList.remove('input-active');
 
     if (typeof elements.restartDialog.showModal === 'function') {
       elements.restartDialog.returnValue = '';
@@ -897,26 +903,15 @@
     }
   }
 
-  function syncViewportHeight() {
-    const viewport = window.visualViewport;
-    const height = viewport ? viewport.height : window.innerHeight;
-    document.documentElement.style.setProperty('--app-height', `${Math.round(height)}px`);
-  }
-
   elements.previousWordButton.addEventListener('click', () => moveWord(-1));
   elements.nextWordButton.addEventListener('click', () => moveWord(1));
 
   document.querySelectorAll('[data-letter]').forEach((button) => {
-    button.addEventListener('pointerdown', (event) => {
-      event.preventDefault();
-      insertSpecialLetter(button.dataset.letter);
-    });
-    button.addEventListener('click', (event) => {
-      if (event.detail === 0) {
-        insertSpecialLetter(button.dataset.letter);
-      }
-    });
+    button.addEventListener('click', () => insertLetter(button.dataset.letter));
   });
+
+  document.querySelector('[data-action="backspace"]').addEventListener('click', deleteLetter);
+  document.addEventListener('keydown', handleHardwareKeyboard);
 
   elements.soundButton.addEventListener('click', () => {
     soundEnabled = !soundEnabled;
@@ -938,23 +933,7 @@
     }
   });
 
-  document.addEventListener('focusout', () => {
-    window.setTimeout(() => {
-      if (!document.activeElement || !document.activeElement.classList.contains('letter-input')) {
-        document.body.classList.remove('input-active');
-        syncViewportHeight();
-      }
-    }, 80);
-  });
-
-  window.addEventListener('resize', syncViewportHeight);
-  window.addEventListener('orientationchange', () => window.setTimeout(syncViewportHeight, 120));
-  if (window.visualViewport) {
-    window.visualViewport.addEventListener('resize', syncViewportHeight);
-  }
-
   renderGridSkeleton();
-  syncViewportHeight();
 
   if (state.solvedWordIds.length === crossword.words.length) {
     showFinishScreen();

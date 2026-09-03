@@ -16,10 +16,25 @@ assert.match(html, /<html lang="et">/);
 assert.match(html, /viewport-fit=cover/);
 assert.match(html, /id="soundButton"/);
 assert.match(html, /id="shareButton"/);
-assert.match(html, /data-letter="Õ"/);
-assert.match(html, /data-letter="Ä"/);
-assert.match(html, /data-letter="Ö"/);
-assert.match(html, /data-letter="Ü"/);
+assert.match(html, /id="letterKeyboard"/);
+assert.match(html, /data-action="backspace"/);
+assert.doesNotMatch(html, /<input\b/i, 'Leht ei tohi avada telefoni süsteemiklaviatuuri.');
+assert.doesNotMatch(app, /createElement\(['"]input['"]\)|inputMode|visualViewport|input-active/);
+
+const keyboardLetters = Array.from(
+  html.matchAll(/class="letter-key"[^>]*data-letter="([A-ZÕÄÖÜŠŽ])"/g),
+  (match) => match[1]
+);
+
+assert.deepEqual(
+  keyboardLetters,
+  [
+    'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', 'Ü', 'Õ',
+    'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Ö', 'Ä',
+    'Z', 'X', 'C', 'V', 'B', 'N', 'M', 'Š', 'Ž'
+  ],
+  'Ristsõnal peab olema üks täielik eesti klaviatuur.'
+);
 assert.ok(html.indexOf('crossword-data.js') < html.indexOf('crossword-engine.js'));
 assert.ok(html.indexOf('crossword-engine.js') < html.indexOf('app.js'));
 

@@ -11,7 +11,7 @@
   <title>Sügis on käes! · Ristsõnad · EDUKASS</title>
   <meta name="description" content="Lahenda EDUKASSi sügisteemalist pildiristsõna telefonis, tahvelarvutis või arvutis.">
   <meta name="robots" content="noindex,nofollow">
-  <link rel="stylesheet" href="crossword.css?v=1">
+  <link rel="stylesheet" href="crossword.css?v=2">
 </head>
 <body>
   <div class="app-shell">
@@ -81,12 +81,51 @@
             <div class="word-entry" id="wordEntry" role="group" aria-labelledby="entryLabel"></div>
           </div>
 
-          <div class="special-letters" aria-label="Eesti tähed">
-            <span>ET</span>
-            <button type="button" data-letter="Õ">Õ</button>
-            <button type="button" data-letter="Ä">Ä</button>
-            <button type="button" data-letter="Ö">Ö</button>
-            <button type="button" data-letter="Ü">Ü</button>
+          <div class="letter-keyboard" id="letterKeyboard" aria-label="Eesti klaviatuur">
+            <div class="keyboard-row keyboard-row--12">
+              <button class="letter-key" type="button" data-letter="Q">Q</button>
+              <button class="letter-key" type="button" data-letter="W">W</button>
+              <button class="letter-key" type="button" data-letter="E">E</button>
+              <button class="letter-key" type="button" data-letter="R">R</button>
+              <button class="letter-key" type="button" data-letter="T">T</button>
+              <button class="letter-key" type="button" data-letter="Y">Y</button>
+              <button class="letter-key" type="button" data-letter="U">U</button>
+              <button class="letter-key" type="button" data-letter="I">I</button>
+              <button class="letter-key" type="button" data-letter="O">O</button>
+              <button class="letter-key" type="button" data-letter="P">P</button>
+              <button class="letter-key" type="button" data-letter="Ü">Ü</button>
+              <button class="letter-key" type="button" data-letter="Õ">Õ</button>
+            </div>
+            <div class="keyboard-row keyboard-row--11">
+              <button class="letter-key" type="button" data-letter="A">A</button>
+              <button class="letter-key" type="button" data-letter="S">S</button>
+              <button class="letter-key" type="button" data-letter="D">D</button>
+              <button class="letter-key" type="button" data-letter="F">F</button>
+              <button class="letter-key" type="button" data-letter="G">G</button>
+              <button class="letter-key" type="button" data-letter="H">H</button>
+              <button class="letter-key" type="button" data-letter="J">J</button>
+              <button class="letter-key" type="button" data-letter="K">K</button>
+              <button class="letter-key" type="button" data-letter="L">L</button>
+              <button class="letter-key" type="button" data-letter="Ö">Ö</button>
+              <button class="letter-key" type="button" data-letter="Ä">Ä</button>
+            </div>
+            <div class="keyboard-row keyboard-row--10">
+              <button class="letter-key" type="button" data-letter="Z">Z</button>
+              <button class="letter-key" type="button" data-letter="X">X</button>
+              <button class="letter-key" type="button" data-letter="C">C</button>
+              <button class="letter-key" type="button" data-letter="V">V</button>
+              <button class="letter-key" type="button" data-letter="B">B</button>
+              <button class="letter-key" type="button" data-letter="N">N</button>
+              <button class="letter-key" type="button" data-letter="M">M</button>
+              <button class="letter-key" type="button" data-letter="Š">Š</button>
+              <button class="letter-key" type="button" data-letter="Ž">Ž</button>
+              <button class="letter-key letter-key--delete" type="button" data-action="backspace" aria-label="Kustuta täht">
+                <svg aria-hidden="true" viewBox="0 0 24 24">
+                  <path d="M9.5 6H20v12H9.5L4 12l5.5-6Z"></path>
+                  <path d="m12 9 5 6m0-6-5 6"></path>
+                </svg>
+              </button>
+            </div>
           </div>
 
           <p class="feedback" id="feedback" aria-live="polite"></p>
@@ -138,8 +177,8 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <script src="crossword-data.js?v=1"></script>
-  <script src="crossword-engine.js?v=1"></script>
-  <script src="app.js?v=1"></script>
+  <script src="crossword-data.js?v=2"></script>
+  <script src="crossword-engine.js?v=2"></script>
+  <script src="app.js?v=2"></script>
 </body>
 </html>
