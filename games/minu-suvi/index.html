@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="et">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Minu suvi — EDUKASS</title>
+<meta name="description" content="EDUKASSi suvine vestlusmäng: ava kaart ja vasta eesti keeles küsimusele.">
+<link rel="canonical" href="https://edukass.ee/games/minu-suvi/">
+<style>
+:root{--blue:#1237b8;--blue2:#0f2f93;--green:#2f8a3b;--yellow:#f4b71f;--line:#d8dff6;--text:#173278}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:"Trebuchet MS","Arial Rounded MT Bold",Arial,sans-serif;color:var(--text);background:radial-gradient(circle at 15% 8%,rgba(244,183,31,.10),transparent 18%),radial-gradient(circle at 85% 18%,rgba(47,138,59,.06),transparent 18%),linear-gradient(#fffefb,#fffefb)}
+button{font:inherit}
+.app{max-width:860px;margin:auto;padding:16px 14px 34px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
+.iconbtn{border:2px solid var(--blue);color:var(--blue);background:#fff;padding:10px 13px;border-radius:999px;font-weight:900;font-size:14px;box-shadow:0 3px 0 rgba(18,55,184,.08);cursor:pointer}
+.iconbtn:active{transform:translateY(1px)}
+.iconbtn:focus-visible,.random:focus-visible,.card:focus-visible{outline:4px solid rgba(244,183,31,.55);outline-offset:3px}
+.hero{text-align:center;padding:6px 0 10px}
+.kicker{font-size:15px;color:var(--green);font-weight:900;letter-spacing:.08em}
+h1{margin:6px 0 2px;font-size:clamp(40px,10vw,72px);line-height:.95;color:var(--blue);font-weight:1000;letter-spacing:.02em}
+.rule{width:82px;height:7px;border-radius:999px;background:var(--green);margin:12px auto}
+.subtitle{font-size:clamp(18px,4vw,26px);font-weight:900}
+.stats{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;margin:14px 0}
+.counter{border:2px solid var(--blue);border-radius:999px;background:#fff;padding:10px 14px;font-weight:900;white-space:nowrap}
+.progress{height:18px;border-radius:999px;background:#eceef4;overflow:hidden;border:1px solid #e0e4f0}
+.bar{height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,var(--yellow),#ffd665);transition:width .35s ease}
+.percent{font-weight:1000;color:var(--blue)}
+.random{width:100%;border:0;border-radius:22px;padding:18px 20px;background:var(--yellow);color:var(--blue2);font-size:22px;font-weight:1000;margin:2px 0 18px;box-shadow:0 6px 0 #d69800;cursor:pointer}
+.random:active{transform:translateY(2px);box-shadow:0 4px 0 #d69800}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.card{position:relative;min-height:180px;perspective:1100px;border:0;padding:0;background:transparent;color:inherit;cursor:pointer;text-align:inherit}
+.card-inner{position:relative;width:100%;height:100%;min-height:180px;transition:transform .7s cubic-bezier(.2,.7,.2,1);transform-style:preserve-3d}
+.card.flipped .card-inner{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;border:2px solid var(--line);border-radius:22px;background:#fff;box-shadow:0 4px 12px rgba(27,48,111,.08);backface-visibility:hidden;overflow:hidden}
+.face.front{display:flex;align-items:center;justify-content:center;font-size:56px;background:linear-gradient(135deg,rgba(244,183,31,.08),transparent 55%),#fff}
+.face.back{transform:rotateY(180deg);display:flex;align-items:center;justify-content:center;padding:24px 16px 18px}
+.card.opened .face{border-color:var(--green)}
+.num{position:absolute;top:14px;left:14px;min-width:50px;height:34px;padding:0 11px;border-radius:999px;background:#f2f4fb;color:var(--blue);display:grid;place-items:center;font-size:16px;font-weight:1000;z-index:4}
+.q{width:100%;text-align:center;font-size:18px;line-height:1.25;font-weight:1000;padding-top:28px}
+.footer{border-top:2px solid var(--blue);margin-top:22px;padding-top:12px;display:flex;justify-content:space-between;align-items:center;gap:12px;font-weight:900;color:var(--blue)}
+.footer-brand{display:flex;align-items:center;gap:6px}.footer-brand img{width:32px;height:32px;object-fit:contain}
+.note{font-size:12px;color:#6e7896;font-weight:700}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(22px);background:var(--blue2);color:#fff;padding:11px 16px;border-radius:999px;font-weight:900;opacity:0;pointer-events:none;transition:.25s;z-index:99}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.card.highlight .face{box-shadow:0 0 0 5px rgba(244,183,31,.18),0 10px 22px rgba(27,48,111,.16)}
+@media(max-width:520px){.app{padding:12px 10px 26px}.topbar{gap:6px}.iconbtn{font-size:12px;padding:8px 9px}.stats{grid-template-columns:auto 1fr;gap:8px}.percent{grid-column:2;text-align:right;margin-top:-4px;font-size:13px}.counter{font-size:13px;padding:9px 11px}.random{font-size:20px;padding:16px;border-radius:18px}.grid{gap:10px}.card,.card-inner{min-height:154px}.face.front{font-size:48px}.num{min-width:46px;height:32px;top:12px;left:12px;font-size:15px}.q{font-size:16px;line-height:1.22;padding-top:24px}.footer{flex-direction:column;align-items:flex-start}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.card-inner,.bar,.toast{transition-duration:.01ms!important}.card.highlight .face{box-shadow:0 0 0 4px rgba(244,183,31,.28),0 6px 14px rgba(27,48,111,.12)}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <button class="iconbtn" id="soundBtn" type="button" aria-pressed="true">🔊 Heli: sees</button>
+    <button class="iconbtn" id="shareBtn" type="button">↗ Jaga</button>
+    <button class="iconbtn" id="resetBtn" type="button">↻ Alusta uuesti</button>
+  </div>
+
+  <section class="hero">
+    <div class="kicker">RÄÄGI • MÕTLE • MEENUTA</div>
+    <h1>MINU SUVI</h1>
+    <div class="rule"></div>
+    <div class="subtitle">Ava kaart ja vasta küsimusele!</div>
+  </section>
+
+  <div class="stats">
+    <div class="counter" aria-live="polite">🧩 <span id="opened">0</span> / 20 avatud</div>
+    <div class="progress" role="progressbar" aria-label="Avatud kaardid" aria-valuemin="0" aria-valuemax="20" aria-valuenow="0"><div class="bar" id="bar"></div></div>
+    <div class="percent" id="percent">0%</div>
+  </div>
+
+  <button class="random" id="randomBtn" type="button">🎲 Üllata mind!</button>
+  <main class="grid" id="grid" aria-label="Suvekaardid"></main>
+
+  <footer class="footer">
+    <div class="footer-brand"><img src="../korrutamine-test/assets/edukass-cat-transparent.png" alt=""><span>edukass.ee</span></div>
+    <div class="note">Õppimine algab uudishimust.</div>
+  </footer>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+const cards=[
+ {e:"🍉",q:"Mis oli sinu lemmiktoit sel suvel?"},{e:"🏖️",q:"Kas sa käisid sel suvel rannas?"},{e:"☀️",q:"Milline ilm sulle sel suvel kõige rohkem meeldis?"},{e:"🕶️",q:"Mida sa sel suvel sageli kandsid?"},{e:"🍓",q:"Milliseid marju või puuvilju sa sel suvel sõid?"},{e:"🍦",q:"Mis maitsega jäätis sulle sel suvel kõige rohkem meeldis?"},{e:"🗺️",q:"Mis oli sinu lemmikkoht sel suvel?"},{e:"👍",q:"Mis oli sel suvel sinu kõige toredam hetk?"},{e:"⚽",q:"Mida sa sel suvel õues mängisid?"},{e:"🏊",q:"Kas sa sel suvel ujusid? Kus?"},{e:"🐚",q:"Mida huvitavat sa looduses leidsid?"},{e:"🧃",q:"Mida sa kuuma ilmaga jõid?"},{e:"🎨",q:"Mida sa sel suvel joonistasid või meisterdasid?"},{e:"🌳",q:"Kas sa mängisid sel suvel pargis? Mis sulle seal meeldis?"},{e:"🎢",q:"Mis oli sel suvel kõige põnevam?"},{e:"🥵",q:"Mida sa tegid väga palava ilmaga?"},{e:"🪁",q:"Mida uut sa sel suvel proovisid?"},{e:"😊",q:"Mis tegi sind sel suvel rõõmsaks?"},{e:"👨‍👩‍👧",q:"Kellega sa sel suvel kõige rohkem aega veetsid?"},{e:"⭐",q:"Kui sinu suvi oleks üks sõna, mis sõna see oleks?"}
+];
+const SOUND_KEY='edukass-minu-suvi-sound-enabled';
+const SHARE_URL='https://edukass.ee/games/minu-suvi/';
+let opened=new Set();
+let soundOn=localStorage.getItem(SOUND_KEY)!=='false';
+let audioCtx=null;
+const grid=document.getElementById('grid');
+const openedEl=document.getElementById('opened');
+const bar=document.getElementById('bar');
+const percent=document.getElementById('percent');
+const toast=document.getElementById('toast');
+const soundBtn=document.getElementById('soundBtn');
+const progress=document.querySelector('.progress');
+const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function syncSoundButton(){soundBtn.textContent=soundOn?'🔊 Heli: sees':'🔇 Heli: väljas';soundBtn.setAttribute('aria-pressed',String(soundOn))}
+function getAudioCtx(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx}
+function tone(freq=660,start=0,duration=.12,type='triangle',volume=.024){if(!soundOn)return;try{const ctx=getAudioCtx(),now=ctx.currentTime+start,osc=ctx.createOscillator(),gain=ctx.createGain();osc.type=type;osc.frequency.setValueAtTime(freq,now);gain.gain.setValueAtTime(.0001,now);gain.gain.linearRampToValueAtTime(volume,now+.015);gain.gain.exponentialRampToValueAtTime(.0001,now+duration);osc.connect(gain);gain.connect(ctx.destination);osc.start(now);osc.stop(now+duration+.02)}catch(e){}}
+function soundFlip(){tone(660,0,.10,'triangle',.020)}
+function soundRandom(){tone(523,0,.08,'triangle',.018);tone(659,.06,.11,'triangle',.020)}
+function soundReset(){tone(587,0,.08,'triangle',.018);tone(440,.07,.12,'triangle',.016)}
+function soundFinish(){tone(523,0,.10,'triangle',.020);tone(659,.09,.10,'triangle',.021);tone(784,.18,.16,'triangle',.022)}
+function updateProgress(){const n=opened.size,p=Math.round(n/20*100);openedEl.textContent=n;bar.style.width=p+'%';percent.textContent=p+'%';progress.setAttribute('aria-valuenow',String(n))}
+function showToast(text){toast.textContent=text;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),1200)}
+function flipCard(el,i){if(el.classList.contains('flipped'))return;el.classList.add('flipped','opened');opened.add(i);el.setAttribute('aria-label',`Kaart ${i+1}: ${cards[i].q}`);updateProgress();soundFlip();if(opened.size===20){setTimeout(()=>showToast('Kõik 20 kaarti tehtud! 🌟'),350);soundFinish()}}
+function makeCard(c,i){const el=document.createElement('button');el.type='button';el.className='card';el.dataset.i=i;el.setAttribute('aria-label',`Ava kaart ${i+1}`);el.innerHTML=`<span class="card-inner"><span class="face front"><span class="num">${String(i+1).padStart(2,'0')}</span><span aria-hidden="true">${c.e}</span></span><span class="face back"><span class="num">${String(i+1).padStart(2,'0')}</span><span class="q">${c.q}</span></span></span>`;el.addEventListener('click',()=>flipCard(el,i));return el}
+cards.forEach((c,i)=>grid.appendChild(makeCard(c,i)));
+document.getElementById('randomBtn').addEventListener('click',()=>{let choices=cards.map((_,i)=>i).filter(i=>!opened.has(i));if(!choices.length)choices=cards.map((_,i)=>i);const i=choices[Math.floor(Math.random()*choices.length)],el=document.querySelector(`.card[data-i="${i}"]`);el.classList.add('highlight');el.scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'center'});setTimeout(()=>{flipCard(el,i);setTimeout(()=>el.classList.remove('highlight'),reduceMotion?120:900)},reduceMotion?120:500);soundRandom()});
+soundBtn.addEventListener('click',()=>{soundOn=!soundOn;localStorage.setItem(SOUND_KEY,String(soundOn));syncSoundButton();if(soundOn)tone(698,0,.11,'triangle',.018)});
+document.getElementById('resetBtn').addEventListener('click',()=>{opened.clear();updateProgress();document.querySelectorAll('.card').forEach((el,i)=>{el.classList.remove('flipped','opened','highlight');el.setAttribute('aria-label',`Ava kaart ${i+1}`)});window.scrollTo({top:0,behavior:reduceMotion?'auto':'smooth'});soundReset()});
+document.getElementById('shareBtn').addEventListener('click',async()=>{const data={title:'Minu suvi — EDUKASS',text:'Ava kaart ja vasta eesti keeles küsimusele!',url:SHARE_URL};try{if(navigator.share){await navigator.share(data);return}if(navigator.clipboard){await navigator.clipboard.writeText(SHARE_URL);showToast('Link kopeeritud!');return}}catch(e){if(e&&e.name==='AbortError')return}window.prompt('Kopeeri mängu link:',SHARE_URL)});
+syncSoundButton();updateProgress();
+</script>
+</body>
+</html>
