@@ -26,6 +26,7 @@ const publicFiles = [
   'assets/minu-tanased-ulesanded.jpg',
   'assets/minu-tunniplaan.png',
   'assets/mis-on-koolikotis-edukass.png',
+  'assets/pildidetektiiv-preview.png',
   'assets/ristsonad-sugis-preview.png',
   'assets/umbermoot-pindala.png',
 
@@ -37,6 +38,7 @@ const publicFiles = [
   'downloads/metsloomad.pdf',
   'downloads/minu-tanased-ulesanded.pdf',
   'downloads/minu-tunniplaan.pdf',
+  'downloads/pildidetektiiv-kes-siin-tootab.pdf',
   'downloads/ristsonad-sugis.pdf',
   'downloads/umbermoot-pindala-A4-4-kaarti.pdf',
   'downloads/umbermoot-pindala-A7.pdf',
@@ -89,6 +91,7 @@ const publicFiles = [
   'materials/matemaatika/index.html',
   'materials/metsloomad/index.html',
   'materials/metsloomad/mobiilne-toovihik/index.html',
+  'materials/pildidetektiiv/index.html',
   'materials/ristsonad-sugis/index.html',
   'materials/ristsonad-sugis/online/app.js',
   'materials/ristsonad-sugis/online/assets/01-tuul.webp',

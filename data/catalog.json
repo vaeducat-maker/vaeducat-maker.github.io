@@ -1,7 +1,25 @@
 {
   "schemaVersion": 1,
-  "release": "v122",
+  "release": "v123",
   "products": [
+    {
+      "id": "pildidetektiiv",
+      "title": "Pildidetektiiv: Kes siin töötab?",
+      "type": "material",
+      "status": "published",
+      "priceType": "free",
+      "category": "eesti-keel",
+      "description": "20 pildipõhist töölehte, millega õppida ametite sõnavara, teha vihjete põhjal järeldusi ning põhjendada oma arvamust eesti keeles.",
+      "page": "/materials/pildidetektiiv/",
+      "catalogPage": "/materials/",
+      "catalogHref": "pildidetektiiv/",
+      "featuredPages": ["/"],
+      "preview": "/assets/pildidetektiiv-preview.png",
+      "previewAlt": "Pildidetektiiv: Kes siin töötab? — ametiteemalise töölehekomplekti eelvaade",
+      "downloads": [
+        "/downloads/pildidetektiiv-kes-siin-tootab.pdf"
+      ]
+    },
     {
       "id": "ristsonad-sugis",
       "title": "Ristsõnad: Sügis",
