@@ -85,3 +85,26 @@
     window.setTimeout(armReturnToTop, 140);
   });
 })();
+
+(() => {
+  const grid = document.querySelector('.home-new-grid');
+  if (!grid || grid.querySelector('[data-edukass-minu-suvi]')) return;
+
+  const card = document.createElement('article');
+  card.className = 'home-new-card home-new-game';
+  card.setAttribute('data-edukass-minu-suvi', '');
+  card.innerHTML = `
+    <div class="home-new-card-visual home-memory-visual" aria-hidden="true">
+      <span class="home-memory-card memory-blue" style="font-size:3rem">🍉</span>
+      <span class="home-memory-card memory-white" style="font-size:2.8rem">☀️</span>
+      <span class="home-memory-card memory-word">MINU<br>SUVI</span>
+    </div>
+    <div class="home-new-card-copy">
+      <div class="home-card-meta">EESTI KEEL · TASUTA</div>
+      <h3>Minu suvi</h3>
+      <p>Ava kaart ja vasta suvistele küsimustele eesti keeles. Võid valida kaardi ise või lasta mängul üllatada.</p>
+      <a class="home-text-link" href="games/minu-suvi/">Mängi kohe <span aria-hidden="true">→</span></a>
+    </div>`;
+
+  grid.prepend(card);
+})();
