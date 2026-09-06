@@ -105,15 +105,15 @@
 <script>
 (() => {
   const words = [
-    {et:"tee kokkuvõte", ru:"сделай краткое изложение / подведи итог"},
+    {et:"tee kokkuvõte", ru:"сделай краткое изложение"},
     {et:"lugeja", ru:"читатель"},
-    {et:"minu meelest", ru:"по-моему / по моему мнению"},
-    {et:"mõnus", ru:"приятный / уютный / классный"},
-    {et:"toovad vanemad", ru:"родители приносят / привозят"},
+    {et:"minu meelest", ru:"по-моему"},
+    {et:"mõnus", ru:"приятный"},
+    {et:"toovad vanemad", ru:"родители приносят"},
     {et:"soovitama", ru:"рекомендовать"},
-    {et:"meelt lahutama", ru:"развлекаться / развлекать себя"},
+    {et:"meelt lahutama", ru:"развлекаться"},
     {et:"paremini aru saama", ru:"лучше понимать"},
-    {et:"enamasti", ru:"в основном / чаще всего"},
+    {et:"enamasti", ru:"в основном"},
     {et:"valima", ru:"выбирать"}
   ];
 
@@ -127,7 +127,6 @@
   let stage = 1;
   let queue = [];
   let index = 0;
-  let retry = [];
   let locked = false;
 
   function shuffle(list){
@@ -154,7 +153,6 @@
     stage = number;
     queue = number === 1 ? [...items] : shuffle(items);
     index = 0;
-    retry = [];
     locked = false;
     updateChrome();
     render();
@@ -169,15 +167,6 @@
       return;
     }
 
-    if(retry.length){
-      queue = shuffle(retry);
-      retry = [];
-      index = 0;
-      updateChrome();
-      render();
-      return;
-    }
-
     if(stage === 1) return startStage(2);
     if(stage === 2) return startStage(3);
     finish();
@@ -185,6 +174,14 @@
 
   function delayNext(ms){
     window.setTimeout(next, ms);
+  }
+
+  function repeatCurrent(ms){
+    window.setTimeout(()=>{
+      locked = false;
+      updateChrome();
+      render();
+    }, ms);
   }
 
   function render(){
@@ -246,8 +243,7 @@
     if(correctButton) correctButton.classList.add("correct");
     feedback.className = "feedback bad";
     feedback.textContent = `Õige vastus: ${item.et}`;
-    retry.push(item);
-    delayNext(1250);
+    repeatCurrent(1250);
   }
 
   function renderType(item){
@@ -297,8 +293,7 @@
     input.classList.add("wrong");
     feedback.className = "feedback bad";
     feedback.innerHTML = `Õige vastus: <strong>${escapeHtml(item.et)}</strong>`;
-    retry.push(item);
-    delayNext(1450);
+    repeatCurrent(1450);
   }
 
   function finish(){
@@ -309,7 +304,7 @@
       <div class="done">
         <div class="big" aria-hidden="true">🌿</div>
         <h2>Kõik tehtud!</h2>
-        <p>Ты прошёл все 10 слов и выражений.<br>Ошибки уже вернулись на повторение, поэтому можно закончить.</p>
+        <p>Ты прошёл все 10 слов и выражений.<br>Каждая карточка засчитана только после правильного ответа.</p>
         <button type="button" class="primary" id="againBtn">Tee veel üks ring</button>
       </div>
     `;
