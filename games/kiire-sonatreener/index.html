@@ -1,492 +1,63 @@
 <!doctype html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="robots" content="noindex,nofollow,noarchive">
-  <meta name="theme-color" content="#2f6f58">
-  <title>Kiire sõnatreener — EDUKASS</title>
-  <link rel="icon" href="../../favicon-32.png">
-  <style>
-    :root{
-      --bg:#fbfaf5;--card:#ffffff;--ink:#1f2a25;--muted:#68736d;--green:#2f6f58;
-      --green-soft:#eaf4ee;--line:#dfe7e2;--red:#b64f4f;--red-soft:#faecec;
-      --shadow:0 16px 40px rgba(42,70,56,.09);
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;background:var(--bg);color:var(--ink);
-      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-      min-height:100vh;display:flex;justify-content:center;padding:18px;
-    }
-    .app{width:min(720px,100%);display:flex;flex-direction:column;gap:14px}
-    .brand{font-size:12px;letter-spacing:.18em;font-weight:800;color:var(--green);padding-left:4px}
-    .top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
-    h1{font-size:clamp(24px,6vw,36px);line-height:1.05;margin:0;color:var(--green)}
-    .sub{margin:7px 0 0;color:var(--muted);font-size:14px}
-    .stage-pill{
-      flex:0 0 auto;border:1px solid var(--line);background:#fff;border-radius:999px;
-      padding:9px 12px;font-weight:700;font-size:13px;color:var(--green)
-    }
-    .progress{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
-    .progress span{height:7px;border-radius:999px;background:#dde5e0}
-    .progress span.on{background:var(--green)}
-    .card{
-      background:var(--card);border:1px solid var(--line);border-radius:24px;
-      box-shadow:var(--shadow);padding:clamp(20px,5vw,34px);min-height:460px;
-      display:flex;flex-direction:column;justify-content:center;
-    }
-    .prompt{font-size:clamp(28px,7vw,42px);line-height:1.15;font-weight:800;margin:0 0 12px;overflow-wrap:anywhere}
-    .translation{font-size:clamp(18px,4.8vw,25px);line-height:1.35;color:#3c4942;margin:0 0 24px}
-    .choices{display:grid;gap:10px;margin-top:8px}
-    button,input{font:inherit}
-    button{
-      min-height:52px;border-radius:15px;border:1px solid var(--line);background:#fff;
-      padding:12px 16px;color:var(--ink);font-weight:750;cursor:pointer;transition:.15s ease;touch-action:manipulation
-    }
-    button:hover{border-color:#b7c8be}
-    button:focus-visible,input:focus-visible{outline:3px solid rgba(47,111,88,.24);outline-offset:2px}
-    .choice{text-align:left}
-    .primary{background:var(--green);border-color:var(--green);color:white}
-    .secondary{background:var(--green-soft);border-color:#cee0d5;color:var(--green)}
-    .wrong{background:var(--red-soft)!important;border-color:#e2bcbc!important;color:#8f3f3f!important}
-    .correct{background:var(--green-soft)!important;border-color:#9cc9af!important;color:#256148!important}
-    .input-row{display:flex;gap:10px;margin-top:10px}
-    input{
-      flex:1;min-width:0;min-height:54px;border-radius:15px;border:1px solid #cdd8d1;background:#fff;
-      padding:12px 15px;font-size:18px;color:var(--ink)
-    }
-    .feedback{min-height:46px;margin-top:16px;font-size:15px;font-weight:750;line-height:1.35}
-    .feedback.ok{color:#256148}.feedback.bad{color:#934646}
-    .tiny{font-size:12px;color:var(--muted);margin-top:14px}
-    .actions{display:flex;justify-content:space-between;gap:10px;align-items:center}
-    .ghost{background:transparent;border-color:transparent;color:var(--muted);min-height:44px}
-    .done{text-align:center}.done .big{font-size:58px;margin-bottom:8px}
-    .done h2{font-size:32px;margin:0 0 10px;color:var(--green)}
-    .done p{color:var(--muted);margin:0 0 20px;line-height:1.5}
-
-    .build-zone{
-      min-height:72px;border:2px dashed #cad8d0;border-radius:18px;background:#fcfdfc;
-      display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;padding:10px;margin:10px 0 14px;
-    }
-    .build-zone.has-pieces{justify-content:flex-start}
-    .build-placeholder{color:#8a958f;font-size:14px}
-    .brick-bank{display:flex;flex-wrap:wrap;gap:9px;margin:8px 0 14px}
-    .brick{
-      min-width:58px;min-height:48px;padding:10px 14px;border-radius:12px;background:#fff;
-      border:2px solid #d9e2dc;font-size:19px;font-weight:850;letter-spacing:.01em;box-shadow:0 4px 10px rgba(42,70,56,.05)
-    }
-    .brick.selected{opacity:.28}
-    .brick-answer{background:#f8faf8}
-    .brick-answer.wrong-brick{background:var(--red-soft);border-color:#d98989;color:#913e3e}
-    .brick-answer.correct-brick{background:var(--green-soft);border-color:#7fbc97;color:#1f6846}
-    .build-actions{display:flex;gap:10px;flex-wrap:wrap}
-    .build-actions button{flex:1 1 150px}
-    .correct-panel{
-      margin-top:16px;padding:16px;border-radius:18px;background:var(--green-soft);border:2px solid #91c4a5;
-      animation:pop .2s ease-out;
-    }
-    .correct-panel-label{font-size:12px;font-weight:800;color:#3a7558;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
-    .correct-bricks{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:10px}
-    .correct-bricks span{
-      display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:8px 11px;border-radius:10px;
-      background:#fff;border:2px solid #76b58f;color:#1f6846;font-size:18px;font-weight:850
-    }
-    .correct-word{font-size:clamp(28px,7vw,42px);line-height:1.12;color:#167047;font-weight:900;overflow-wrap:anywhere}
-    .built-word{font-size:18px;font-weight:800;margin:0 0 4px;color:#435048;min-height:24px}
-    @keyframes pop{from{transform:scale(.98);opacity:.4}to{transform:scale(1);opacity:1}}
-
-    @media (max-width:560px){
-      body{padding:12px}.card{min-height:430px;border-radius:20px}
-      .top{align-items:center}.sub{font-size:13px}.stage-pill{font-size:12px;padding:8px 10px}
-      .input-row{flex-direction:column}.input-row button{width:100%}
-      .brick{min-width:52px;padding:9px 12px;font-size:18px}
-    }
-    @media (prefers-reduced-motion: reduce){button{transition:none}.correct-panel{animation:none}}
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="theme-color" content="#2f6f58">
+<title>Kiire sõnatreener — EDUKASS</title>
+<link rel="icon" href="../../favicon-32.png">
+<style>
+:root{--bg:#fbfaf5;--card:#fff;--ink:#1f2a25;--muted:#68736d;--green:#2f6f58;--gs:#eaf4ee;--line:#dfe7e2;--red:#934646;--rs:#faecec}
+*{box-sizing:border-box}body{-webkit-user-select:none;user-select:none;margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh;display:flex;justify-content:center;padding:16px}.app{width:min(720px,100%);display:flex;flex-direction:column;gap:14px}.brand{font-size:12px;letter-spacing:.18em;font-weight:800;color:var(--green)}.top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}h1{margin:0;color:var(--green);font-size:clamp(24px,6vw,36px);line-height:1.05}.sub{margin:7px 0 0;color:var(--muted);font-size:14px}.pill{white-space:nowrap;border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 12px;color:var(--green);font-weight:750;font-size:13px}.progress{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}.progress span{height:7px;border-radius:99px;background:#dde5e0}.progress span.on{background:var(--green)}.card{min-height:450px;background:var(--card);border:1px solid var(--line);border-radius:24px;padding:clamp(20px,5vw,34px);box-shadow:0 16px 40px rgba(42,70,56,.09);display:flex;flex-direction:column;justify-content:center}.prompt{font-size:clamp(28px,7vw,42px);line-height:1.15;font-weight:850;margin:0 0 14px;overflow-wrap:anywhere}.translation{font-size:clamp(18px,5vw,25px);color:#3c4942;margin:0 0 24px}.choices{display:grid;gap:10px}button,input{font:inherit}button{min-height:52px;border-radius:15px;border:1px solid var(--line);background:#fff;padding:12px 16px;color:var(--ink);font-weight:750;cursor:pointer;touch-action:manipulation}.choice{text-align:left}.primary{background:var(--green);border-color:var(--green);color:#fff}.secondary{background:var(--gs);border-color:#cee0d5;color:var(--green)}.wrong{background:var(--rs)!important;border-color:#e2bcbc!important;color:var(--red)!important}.correct{background:var(--gs)!important;border-color:#86bf9d!important;color:#216547!important}.feedback{min-height:44px;margin-top:14px;font-weight:800}.feedback.ok{color:#216547}.feedback.bad{color:var(--red)}.input-row{display:flex;gap:10px}.input-row input{-webkit-user-select:text;user-select:text;flex:1;min-width:0;min-height:54px;border:1px solid #cdd8d1;border-radius:15px;padding:12px 15px;font-size:18px}.actions{display:flex;justify-content:space-between;align-items:center;gap:10px}.ghost{background:transparent;border-color:transparent;color:var(--muted);min-height:44px}.tiny{font-size:12px;color:var(--muted)}.build-zone{min-height:72px;border:2px dashed #cad8d0;border-radius:18px;background:#fcfdfc;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;padding:10px;margin:8px 0 12px}.build-zone.has{justify-content:flex-start}.placeholder{color:#8a958f;font-size:14px}.bank{display:flex;flex-wrap:wrap;gap:9px;margin:8px 0 14px}.brick{min-width:56px;min-height:48px;padding:10px 13px;border-radius:12px;border:2px solid #d9e2dc;background:#fff;font-size:19px;font-weight:850}.brick.used{opacity:.25}.brick.red{background:var(--rs);border-color:#d98989;color:var(--red)}.brick.green{background:var(--gs);border-color:#7fbc97;color:#1f6846}.build-actions{display:flex;gap:10px}.build-actions button{flex:1}.built{min-height:24px;font-size:18px;font-weight:800;color:#435048}.panel{margin-top:14px;padding:16px;border-radius:18px;background:var(--gs);border:2px solid #91c4a5}.panel-label{font-size:12px;font-weight:850;color:#3a7558;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}.panel-bricks{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:10px}.panel-bricks span{padding:8px 11px;border-radius:10px;border:2px solid #76b58f;background:#fff;color:#1f6846;font-size:18px;font-weight:850}.panel-word{font-size:clamp(28px,7vw,42px);line-height:1.12;color:#167047;font-weight:900;overflow-wrap:anywhere}.done{text-align:center}.done .big{font-size:58px}.done h2{color:var(--green);font-size:32px;margin:8px 0 20px}@media(max-width:560px){body{padding:12px}.card{min-height:420px;border-radius:20px}.pill{font-size:12px;padding:8px 10px}.input-row{flex-direction:column}.brick{min-width:50px;padding:9px 11px;font-size:18px}}
+</style>
 </head>
 <body>
-<main class="app" id="app">
-  <div class="brand">EDUKASS</div>
-  <header class="top">
-    <div>
-      <h1>Kiire sõnatreener</h1>
-      <p class="sub">10 sõna ja väljendit · eesti keel</p>
-    </div>
-    <div class="stage-pill" id="stagePill">1 / 5 · Tutvu</div>
-  </header>
-
-  <div class="progress" aria-label="Õppimise edenemine">
-    <span class="on" id="p1"></span><span id="p2"></span><span id="p3"></span><span id="p4"></span><span id="p5"></span>
-  </div>
-
-  <section class="card" id="card" aria-live="polite"></section>
-
-  <div class="actions">
-    <button type="button" class="ghost" id="restartBtn">↻ Alusta uuesti</button>
-    <div class="tiny" id="counter">1 / 10</div>
-  </div>
+<main class="app">
+<div class="brand">EDUKASS</div>
+<header class="top"><div><h1>Kiire sõnatreener</h1><p class="sub">10 sõna ja väljendit · eesti keel</p></div><div class="pill" id="pill">1 / 5 · Tutvu</div></header>
+<div class="progress"><span id="p1" class="on"></span><span id="p2"></span><span id="p3"></span><span id="p4"></span><span id="p5"></span></div>
+<section class="card" id="card" aria-live="polite"></section>
+<div class="actions"><button class="ghost" id="restart">↻ Alusta uuesti</button><div class="tiny" id="counter"></div></div>
 </main>
-
 <script>
-(() => {
-  const words = [
-    {et:"tee kokkuvõte", ru:"подведи итог", chunks:["tee ","kok","ku","võ","te"], fake:["la","mi"]},
-    {et:"lugeja", ru:"читатель", chunks:["lu","ge","ja"], fake:["va","si"]},
-    {et:"minu meelest", ru:"по-моему", chunks:["mi","nu ","mee","lest"], fake:["va","ta"]},
-    {et:"mõnus", ru:"приятный", chunks:["mõ","nus"], fake:["ka","li"]},
-    {et:"toovad vanemad", ru:"родители приносят", chunks:["too","vad ","va","ne","mad"], fake:["si","ku"]},
-    {et:"soovitama", ru:"рекомендовать", chunks:["soo","vi","ta","ma"], fake:["le","ga"]},
-    {et:"meelt lahutama", ru:"развлекаться", chunks:["meelt ","la","hu","ta","ma"], fake:["si","ko"]},
-    {et:"paremini aru saama", ru:"лучше понимать", chunks:["pa","re","mi","ni ","a","ru ","saa","ma"], fake:["ve","lo"]},
-    {et:"enamasti", ru:"в основном", chunks:["e","na","mas","ti"], fake:["lu","va"]},
-    {et:"valima", ru:"выбирать", chunks:["va","li","ma"], fake:["ga","si"]}
-  ];
-
-  const card = document.getElementById("card");
-  const stagePill = document.getElementById("stagePill");
-  const counter = document.getElementById("counter");
-  const restartBtn = document.getElementById("restartBtn");
-  const progressEls = [
-    document.getElementById("p1"),document.getElementById("p2"),document.getElementById("p3"),
-    document.getElementById("p4"),document.getElementById("p5")
-  ];
-
-  let stage = 1;
-  let queue = [];
-  let index = 0;
-  let locked = false;
-  let mastered = new Set();
-
-  function shuffle(list){
-    const out = [...list];
-    for(let i=out.length-1;i>0;i--){
-      const j = Math.floor(Math.random()*(i+1));
-      [out[i],out[j]] = [out[j],out[i]];
-    }
-    return out;
-  }
-
-  function norm(value){
-    return value.toLocaleLowerCase("et").trim().replace(/[.!?,;:]+$/g,"").replace(/\s+/g," ");
-  }
-
-  function visibleChunk(value){ return value.trim(); }
-
-  function updateChrome(){
-    const names = {1:"Tutvu",2:"Vali",3:"Koosta",4:"Koosta +",5:"Kirjuta"};
-    stagePill.textContent = `${stage} / 5 · ${names[stage]}`;
-    progressEls.forEach((el,i)=>el.classList.toggle("on", i < stage));
-    if(!queue.length){
-      counter.textContent = "";
-      return;
-    }
-    if(stage === 1){
-      counter.textContent = `${Math.min(index+1,words.length)} / ${words.length}`;
-      return;
-    }
-    const current = queue[index];
-    const shown = current && mastered.has(current.et) ? mastered.size : Math.min(mastered.size + 1, words.length);
-    counter.textContent = `${shown} / ${words.length}`;
-  }
-
-  function startStage(number, items = words){
-    stage = number;
-    queue = number === 1 ? [...items] : shuffle(items);
-    index = 0;
-    locked = false;
-    mastered = new Set();
-    updateChrome();
-    render();
-  }
-
-  function next(){
-    index += 1;
-    locked = false;
-    if(index < queue.length){
-      updateChrome();
-      render();
-      return;
-    }
-    if(stage < 5) return startStage(stage + 1);
-    finish();
-  }
-
-  function delayNext(ms, item){
-    if(item && stage > 1) mastered.add(item.et);
-    window.setTimeout(next, ms);
-  }
-
-  function deferCurrent(item, ms){
-    if(stage > 1) mastered.delete(item.et);
-
-    if(index >= queue.length - 1){
-      const alternatives = words.filter(w=>w.et !== item.et);
-      const filler = shuffle(alternatives)[0];
-      if(filler) queue.push(filler);
-    }
-    queue.push(item);
-
-    window.setTimeout(()=>{
-      index += 1;
-      locked = false;
-      updateChrome();
-      render();
-    }, ms);
-  }
-
-  function render(){
-    const item = queue[index];
-    if(!item) return finish();
-    if(stage === 1) renderStudy(item);
-    if(stage === 2) renderChoice(item);
-    if(stage === 3) renderBuild(item, false);
-    if(stage === 4) renderBuild(item, true);
-    if(stage === 5) renderType(item);
-  }
-
-  function renderStudy(item){
-    card.innerHTML = `
-      <div class="prompt">${escapeHtml(item.et)}</div>
-      <div class="translation">${escapeHtml(item.ru)}</div>
-      <button type="button" class="primary" id="nextStudy">Edasi →</button>
-    `;
-    card.querySelector("#nextStudy").addEventListener("click", next);
-  }
-
-  function renderChoice(item){
-    const others = shuffle(words.filter(w=>w.et!==item.et)).slice(0,3);
-    const options = shuffle([item,...others]);
-    card.innerHTML = `
-      <div class="prompt">${escapeHtml(item.ru)}</div>
-      <div class="choices" id="choices"></div>
-      <div class="feedback" id="feedback"></div>
-    `;
-    const choices = card.querySelector("#choices");
-    options.forEach(option=>{
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "choice";
-      btn.textContent = option.et;
-      btn.addEventListener("click",()=>checkChoice(btn, option.et===item.et, item, choices));
-      choices.appendChild(btn);
-    });
-  }
-
-  function checkChoice(button, isCorrect, item, choices){
-    if(locked) return;
-    locked = true;
-    const feedback = card.querySelector("#feedback");
-    [...choices.children].forEach(btn=>btn.disabled=true);
-
-    if(isCorrect){
-      button.classList.add("correct");
-      feedback.className = "feedback ok";
-      feedback.textContent = "✓ Õige!";
-      delayNext(850, item);
-      return;
-    }
-
-    button.classList.add("wrong");
-    const correctButton = [...choices.children].find(btn=>btn.textContent===item.et);
-    if(correctButton) correctButton.classList.add("correct");
-    feedback.className = "feedback bad";
-    feedback.innerHTML = `Õige vastus: <strong style="color:#167047">${escapeHtml(item.et)}</strong>`;
-    deferCurrent(item, 2400);
-  }
-
-  function renderBuild(item, withFakes){
-    const correctPieces = item.chunks.map((value,i)=>({id:`c${i}`,value,correct:true}));
-    const fakePieces = withFakes ? item.fake.map((value,i)=>({id:`f${i}`,value,correct:false})) : [];
-    const pieces = shuffle([...correctPieces, ...fakePieces]);
-    const selected = [];
-
-    card.innerHTML = `
-      <div class="prompt">${escapeHtml(item.ru)}</div>
-      <div class="build-zone" id="buildZone"><span class="build-placeholder">Собери здесь</span></div>
-      <div class="built-word" id="builtWord"></div>
-      <div class="brick-bank" id="brickBank"></div>
-      <div class="build-actions">
-        <button type="button" class="secondary" id="clearBuild">Очистить</button>
-        <button type="button" class="primary" id="checkBuild">Kontrolli</button>
-      </div>
-      <div class="feedback" id="feedback"></div>
-      <div id="correctPanelHost"></div>
-    `;
-
-    const zone = card.querySelector("#buildZone");
-    const bank = card.querySelector("#brickBank");
-    const builtWord = card.querySelector("#builtWord");
-    const checkBtn = card.querySelector("#checkBuild");
-    const clearBtn = card.querySelector("#clearBuild");
-
-    function redrawSelected(){
-      zone.innerHTML = "";
-      if(!selected.length){
-        zone.classList.remove("has-pieces");
-        zone.innerHTML = '<span class="build-placeholder">Собери здесь</span>';
-      } else {
-        zone.classList.add("has-pieces");
-        selected.forEach(piece=>{
-          const btn = document.createElement("button");
-          btn.type = "button";
-          btn.className = "brick brick-answer";
-          btn.textContent = visibleChunk(piece.value);
-          btn.title = "Убрать кирпичик";
-          btn.addEventListener("click",()=>{
-            if(locked) return;
-            const pos = selected.findIndex(x=>x.id===piece.id);
-            if(pos>=0) selected.splice(pos,1);
-            const source = bank.querySelector(`[data-id="${piece.id}"]`);
-            if(source){source.disabled=false;source.classList.remove("selected")}
-            redrawSelected();
-          });
-          zone.appendChild(btn);
-        });
-      }
-      builtWord.textContent = selected.length ? selected.map(x=>x.value).join("").trim() : "";
-    }
-
-    pieces.forEach(piece=>{
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "brick";
-      btn.dataset.id = piece.id;
-      btn.textContent = visibleChunk(piece.value);
-      btn.addEventListener("click",()=>{
-        if(locked || btn.disabled) return;
-        selected.push(piece);
-        btn.disabled = true;
-        btn.classList.add("selected");
-        redrawSelected();
-      });
-      bank.appendChild(btn);
-    });
-
-    clearBtn.addEventListener("click",()=>{
-      if(locked) return;
-      selected.length = 0;
-      [...bank.children].forEach(btn=>{btn.disabled=false;btn.classList.remove("selected")});
-      redrawSelected();
-    });
-
-    checkBtn.addEventListener("click",()=>checkBuild(item, selected, zone, bank, checkBtn, clearBtn));
-  }
-
-  function correctPanel(item){
-    return `
-      <div class="correct-panel">
-        <div class="correct-panel-label">Õige vastus</div>
-        <div class="correct-bricks">${item.chunks.map(chunk=>`<span>${escapeHtml(visibleChunk(chunk))}</span>`).join("")}</div>
-        <div class="correct-word">${escapeHtml(item.et)}</div>
-      </div>
-    `;
-  }
-
-  function checkBuild(item, selected, zone, bank, checkBtn, clearBtn){
-    if(locked) return;
-    const feedback = card.querySelector("#feedback");
-    if(!selected.length){
-      feedback.className = "feedback bad";
-      feedback.textContent = "Выбери кирпичики.";
-      return;
-    }
-
-    locked = true;
-    checkBtn.disabled = true;
-    clearBtn.disabled = true;
-    [...bank.children].forEach(btn=>btn.disabled=true);
-    const assembled = selected.map(x=>x.value).join("");
-    const correct = norm(assembled) === norm(item.et);
-    const answerBricks = [...zone.querySelectorAll(".brick-answer")];
-
-    if(correct){
-      answerBricks.forEach(btn=>btn.classList.add("correct-brick"));
-      feedback.className = "feedback ok";
-      feedback.textContent = "✓ Õige!";
-      card.querySelector("#correctPanelHost").innerHTML = correctPanel(item);
-      delayNext(1250, item);
-      return;
-    }
-
-    answerBricks.forEach(btn=>btn.classList.add("wrong-brick"));
-    feedback.className = "feedback bad";
-    feedback.textContent = "";
-    card.querySelector("#correctPanelHost").innerHTML = correctPanel(item);
-    deferCurrent(item, 3800);
-  }
-
-  function renderType(item){
-    card.innerHTML = `
-      <div class="prompt">${escapeHtml(item.ru)}</div>
-      <form class="input-row" id="answerForm">
-        <input id="answerInput" autocomplete="off" autocapitalize="none" spellcheck="false" aria-label="Vastus eesti keeles">
-        <button type="submit" class="primary">Kontrolli</button>
-      </form>
-      <div class="feedback" id="feedback"></div>
-      <div id="correctPanelHost"></div>
-    `;
-    const form = card.querySelector("#answerForm");
-    const input = card.querySelector("#answerInput");
-    input.focus();
-    form.addEventListener("submit",(event)=>{
-      event.preventDefault();
-      if(locked) return;
-      if(!input.value.trim()){
-        const feedback = card.querySelector("#feedback");
-        feedback.className = "feedback bad";
-        feedback.textContent = "Kirjuta kõigepealt vastus.";
-        return;
-      }
-      checkTyped(item, input, form.querySelector("button"));
-    });
-  }
-
-  function checkTyped(item,input,button){
-    if(locked) return;
-    locked = true;
-    const feedback = card.querySelector("#feedback");
-    const correct = norm(input.value) === norm(item.et);
-    input.disabled = true;
-    button.disabled = true;
-
-    if(correct){
-      input.classList.add("correct");
-      feedback.className = "feedback ok";
-      feedback.textContent = "✓ Õige!";
-      delayNext(900, item);
-      return;
-    }
-
-    input.classList.add("wrong");
-    feedback.className = "feedback bad";
-    feedback.textContent = "";
-    card.querySelector("#correctPanelHost").innerHTML = correctPanel(item);
-    deferCurrent(item, 3200);
-  }
-
-  function finish(){
-    counter.textContent = "";
-    stagePill.textContent = "Valmis";
-    progressEls.forEach(el=>el.classList.add("on"));
-    card.innerHTML = `
-      <div class="done">
-        <div class="big" aria-hidden="true">🌿</div>
-        <h2>Kõik tehtud!</h2>
-        <button type="button" class="primary" id="againBtn">Tee veel üks ring</button>
-      </div>
-    `;
-    card.querySelector("#againBtn").addEventListener("click",()=>startStage(1));
-  }
-
-  function escapeHtml(value){
-    return String(value).replace(/[&<>"']/g, ch => ({
-      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
-    })[ch]);
-  }
-
-  restartBtn.addEventListener("click",()=>startStage(1));
-  startStage(1);
+(()=>{
+const words=[
+{et:"tee kokkuvõte",ru:"подведи итог",chunks:["tee ","kok","ku","võ","te"],fake:["la","mi"]},
+{et:"lugeja",ru:"читатель",chunks:["lu","ge","ja"],fake:["va","si"]},
+{et:"minu meelest",ru:"по-моему",chunks:["mi","nu ","mee","lest"],fake:["va","ta"]},
+{et:"mõnus",ru:"приятный",chunks:["mõ","nus"],fake:["ka","li"]},
+{et:"toovad vanemad",ru:"родители приносят",chunks:["too","vad ","va","ne","mad"],fake:["si","ku"]},
+{et:"soovitama",ru:"рекомендовать",chunks:["soo","vi","ta","ma"],fake:["le","ga"]},
+{et:"meelt lahutama",ru:"развлекаться",chunks:["meelt ","la","hu","ta","ma"],fake:["si","ko"]},
+{et:"paremini aru saama",ru:"лучше понимать",chunks:["pa","re","mi","ni ","a","ru ","saa","ma"],fake:["ve","lo"]},
+{et:"enamasti",ru:"в основном",chunks:["e","na","mas","ti"],fake:["lu","va"]},
+{et:"valima",ru:"выбирать",chunks:["va","li","ma"],fake:["ga","si"]}
+];
+const card=document.getElementById("card"),pill=document.getElementById("pill"),counter=document.getElementById("counter"),ps=[1,2,3,4,5].map(n=>document.getElementById("p"+n));
+let stage=1,queue=[],index=0,locked=false,mastered=new Set();
+const shuffle=a=>{a=[...a];for(let i=a.length-1;i;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const norm=s=>s.toLocaleLowerCase("et").trim().replace(/[.!?,;:]+$/g,"").replace(/\s+/g," ");
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"})[c]);
+const vis=s=>s.trim();
+document.addEventListener("copy",e=>e.preventDefault());document.addEventListener("cut",e=>e.preventDefault());document.addEventListener("contextmenu",e=>e.preventDefault());
+function chrome(){const names={1:"Tutvu",2:"Vali",3:"Koosta",4:"Koosta +",5:"Kirjuta"};pill.textContent=`${stage} / 5 · ${names[stage]}`;ps.forEach((p,i)=>p.classList.toggle("on",i<stage));counter.textContent=stage===1?`${Math.min(index+1,10)} / 10`:`${Math.min(mastered.size+1,10)} / 10`}
+function start(n){stage=n;queue=n===1?[...words]:shuffle(words);index=0;locked=false;mastered=new Set();chrome();render()}
+function next(){index++;locked=false;if(index<queue.length){chrome();render();return}stage<5?start(stage+1):finish()}
+function good(item,ms){if(stage>1)mastered.add(item.et);setTimeout(next,ms)}
+function defer(item,ms){mastered.delete(item.et);if(index>=queue.length-1){const alt=shuffle(words.filter(w=>w.et!==item.et))[0];if(alt)queue.push(alt)}queue.push(item);setTimeout(()=>{index++;locked=false;chrome();render()},ms)}
+function render(){const item=queue[index];if(stage===1)study(item);else if(stage===2)choice(item);else if(stage===3)build(item,false);else if(stage===4)build(item,true);else type(item)}
+function study(item){card.innerHTML=`<div class="prompt">${esc(item.et)}</div><div class="translation">${esc(item.ru)}</div><button class="primary" id="next">Edasi →</button>`;card.querySelector("#next").onclick=next}
+function choice(item){const opts=shuffle([item,...shuffle(words.filter(w=>w.et!==item.et)).slice(0,3)]);card.innerHTML=`<div class="prompt">${esc(item.ru)}</div><div class="choices" id="choices"></div><div class="feedback" id="fb"></div>`;const box=card.querySelector("#choices");opts.forEach(o=>{const b=document.createElement("button");b.className="choice";b.textContent=o.et;b.onclick=()=>checkChoice(b,o.et===item.et,item,box);box.appendChild(b)})}
+function checkChoice(btn,ok,item,box){if(locked)return;locked=true;[...box.children].forEach(b=>b.disabled=true);const fb=card.querySelector("#fb");if(ok){btn.classList.add("correct");fb.className="feedback ok";fb.textContent="✓ Õige!";good(item,850);return}btn.classList.add("wrong");const right=[...box.children].find(b=>b.textContent===item.et);if(right)right.classList.add("correct");fb.className="feedback bad";fb.innerHTML=`<strong style="color:#167047">${esc(item.et)}</strong>`;defer(item,2500)}
+function panel(item){return `<div class="panel"><div class="panel-label">Õige vastus</div><div class="panel-bricks">${item.chunks.map(c=>`<span>${esc(vis(c))}</span>`).join("")}</div><div class="panel-word">${esc(item.et)}</div></div>`}
+function build(item,fakes){const pieces=shuffle([...item.chunks.map((v,i)=>({id:"c"+i,v})),...(fakes?item.fake.map((v,i)=>({id:"f"+i,v})):[])]),selected=[];card.innerHTML=`<div class="prompt">${esc(item.ru)}</div><div class="build-zone" id="zone"><span class="placeholder">Собери здесь</span></div><div class="built" id="built"></div><div class="bank" id="bank"></div><div class="build-actions"><button class="secondary" id="clear">Очистить</button><button class="primary" id="check">Kontrolli</button></div><div class="feedback" id="fb"></div><div id="host"></div>`;const zone=card.querySelector("#zone"),bank=card.querySelector("#bank"),built=card.querySelector("#built"),check=card.querySelector("#check"),clear=card.querySelector("#clear");
+function redraw(){zone.innerHTML="";if(!selected.length){zone.classList.remove("has");zone.innerHTML='<span class="placeholder">Собери здесь</span>'}else{zone.classList.add("has");selected.forEach(p=>{const b=document.createElement("button");b.className="brick";b.textContent=vis(p.v);b.onclick=()=>{if(locked)return;selected.splice(selected.findIndex(x=>x.id===p.id),1);const src=bank.querySelector(`[data-id="${p.id}"]`);if(src){src.disabled=false;src.classList.remove("used")}redraw()};zone.appendChild(b)})}built.textContent=selected.map(x=>x.v).join("").trim()}
+pieces.forEach(p=>{const b=document.createElement("button");b.className="brick";b.dataset.id=p.id;b.textContent=vis(p.v);b.onclick=()=>{if(locked||b.disabled)return;selected.push(p);b.disabled=true;b.classList.add("used");redraw()};bank.appendChild(b)});clear.onclick=()=>{if(locked)return;selected.length=0;[...bank.children].forEach(b=>{b.disabled=false;b.classList.remove("used")});redraw()};check.onclick=()=>checkBuild(item,selected,zone,bank,check,clear)}
+function checkBuild(item,selected,zone,bank,check,clear){if(locked)return;const fb=card.querySelector("#fb");if(!selected.length)return;locked=true;check.disabled=clear.disabled=true;[...bank.children].forEach(b=>b.disabled=true);const ok=norm(selected.map(x=>x.v).join(""))===norm(item.et),ans=[...zone.querySelectorAll(".brick")];if(ok){ans.forEach(b=>b.classList.add("green"));fb.className="feedback ok";fb.textContent="✓ Õige!";card.querySelector("#host").innerHTML=panel(item);good(item,1250);return}ans.forEach(b=>b.classList.add("red"));card.querySelector("#host").innerHTML=panel(item);defer(item,3800)}
+function type(item){card.innerHTML=`<div class="prompt">${esc(item.ru)}</div><form class="input-row" id="form"><input id="answer" autocomplete="off" autocapitalize="none" spellcheck="false"><button class="primary">Kontrolli</button></form><div class="feedback" id="fb"></div><div id="host"></div>`;const form=card.querySelector("#form"),input=card.querySelector("#answer");["paste","drop"].forEach(t=>input.addEventListener(t,e=>e.preventDefault()));input.addEventListener("beforeinput",e=>{if(["insertFromPaste","insertFromDrop","insertFromYank"].includes(e.inputType))e.preventDefault()});input.addEventListener("keydown",e=>{if(((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="v")||(e.shiftKey&&e.key==="Insert"))e.preventDefault()});input.focus();form.onsubmit=e=>{e.preventDefault();if(locked||!input.value.trim())return;locked=true;const ok=norm(input.value)===norm(item.et);input.disabled=true;form.querySelector("button").disabled=true;if(ok){input.classList.add("correct");card.querySelector("#fb").className="feedback ok";card.querySelector("#fb").textContent="✓ Õige!";good(item,900)}else{input.classList.add("wrong");card.querySelector("#host").innerHTML=panel(item);defer(item,3500)}}}
+function finish(){counter.textContent="";pill.textContent="Valmis";ps.forEach(p=>p.classList.add("on"));card.innerHTML='<div class="done"><div class="big">🌿</div><h2>Kõik tehtud!</h2><button class="primary" id="again">Tee veel üks ring</button></div>';card.querySelector("#again").onclick=()=>start(1)}
+document.getElementById("restart").onclick=()=>start(1);start(1)
 })();
 </script>
 </body>
