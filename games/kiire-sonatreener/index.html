@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="theme-color" content="#2f6f58">
+  <title>Kiire sõnatreener — EDUKASS</title>
+  <link rel="icon" href="../../favicon-32.png">
+  <style>
+    :root{
+      --bg:#fbfaf5;--card:#ffffff;--ink:#1f2a25;--muted:#68736d;--green:#2f6f58;
+      --green-2:#4d8b70;--green-soft:#eaf4ee;--line:#dfe7e2;--red:#b64f4f;--red-soft:#faecec;
+      --shadow:0 16px 40px rgba(42,70,56,.09);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;background:var(--bg);color:var(--ink);
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      min-height:100vh;display:flex;justify-content:center;padding:18px;
+    }
+    .app{width:min(720px,100%);display:flex;flex-direction:column;gap:14px}
+    .brand{font-size:12px;letter-spacing:.18em;font-weight:800;color:var(--green);padding-left:4px}
+    .top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+    h1{font-size:clamp(24px,6vw,36px);line-height:1.05;margin:0;color:var(--green)}
+    .sub{margin:7px 0 0;color:var(--muted);font-size:14px}
+    .stage-pill{
+      flex:0 0 auto;border:1px solid var(--line);background:#fff;border-radius:999px;
+      padding:9px 12px;font-weight:700;font-size:13px;color:var(--green)
+    }
+    .progress{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+    .progress span{height:7px;border-radius:999px;background:#dde5e0}
+    .progress span.on{background:var(--green)}
+    .card{
+      background:var(--card);border:1px solid var(--line);border-radius:24px;
+      box-shadow:var(--shadow);padding:clamp(20px,5vw,34px);min-height:430px;
+      display:flex;flex-direction:column;justify-content:center;
+    }
+    .eyebrow{font-size:13px;color:var(--muted);font-weight:700;margin-bottom:10px}
+    .prompt{
+      font-size:clamp(28px,7vw,42px);line-height:1.15;font-weight:800;margin:0 0 12px;
+      overflow-wrap:anywhere;
+    }
+    .translation{font-size:clamp(18px,4.8vw,25px);line-height:1.35;color:#3c4942;margin:0 0 24px}
+    .hint{color:var(--muted);font-size:13px;margin:0 0 14px}
+    .choices{display:grid;gap:10px;margin-top:8px}
+    button,input{font:inherit}
+    button{
+      min-height:52px;border-radius:15px;border:1px solid var(--line);background:#fff;
+      padding:12px 16px;color:var(--ink);font-weight:750;cursor:pointer;transition:.15s ease;
+      touch-action:manipulation
+    }
+    button:hover{border-color:#b7c8be}
+    button:focus-visible,input:focus-visible{outline:3px solid rgba(47,111,88,.24);outline-offset:2px}
+    .choice{text-align:left}
+    .primary{background:var(--green);border-color:var(--green);color:white}
+    .secondary{background:var(--green-soft);border-color:#cee0d5;color:var(--green)}
+    .wrong{background:var(--red-soft)!important;border-color:#e2bcbc!important;color:#8f3f3f!important}
+    .correct{background:var(--green-soft)!important;border-color:#9cc9af!important;color:#256148!important}
+    .input-row{display:flex;gap:10px;margin-top:10px}
+    input{
+      flex:1;min-width:0;min-height:54px;border-radius:15px;border:1px solid #cdd8d1;background:#fff;
+      padding:12px 15px;font-size:18px;color:var(--ink)
+    }
+    .feedback{min-height:46px;margin-top:16px;font-size:15px;font-weight:750;line-height:1.35}
+    .feedback.ok{color:#256148}.feedback.bad{color:#934646}
+    .tiny{font-size:12px;color:var(--muted);margin-top:14px}
+    .actions{display:flex;justify-content:space-between;gap:10px;align-items:center}
+    .ghost{background:transparent;border-color:transparent;color:var(--muted);min-height:44px}
+    .done{text-align:center}
+    .done .big{font-size:58px;margin-bottom:8px}
+    .done h2{font-size:32px;margin:0 0 10px;color:var(--green)}
+    .done p{color:var(--muted);margin:0 0 20px;line-height:1.5}
+    @media (max-width:560px){
+      body{padding:12px}.card{min-height:400px;border-radius:20px}
+      .top{align-items:center}.sub{font-size:13px}.stage-pill{font-size:12px;padding:8px 10px}
+      .input-row{flex-direction:column}.input-row button{width:100%}
+    }
+    @media (prefers-reduced-motion: reduce){button{transition:none}}
+  </style>
+</head>
+<body>
+<main class="app" id="app">
+  <div class="brand">EDUKASS</div>
+  <header class="top">
+    <div>
+      <h1>Kiire sõnatreener</h1>
+      <p class="sub">10 sõna ja väljendit · eesti keel</p>
+    </div>
+    <div class="stage-pill" id="stagePill">1 / 3 · Tutvu</div>
+  </header>
+
+  <div class="progress" aria-label="Õppimise edenemine">
+    <span class="on" id="p1"></span><span id="p2"></span><span id="p3"></span>
+  </div>
+
+  <section class="card" id="card" aria-live="polite"></section>
+
+  <div class="actions">
+    <button type="button" class="ghost" id="restartBtn">↻ Alusta uuesti</button>
+    <div class="tiny" id="counter">1 / 10</div>
+  </div>
+</main>
+
+<script>
+(() => {
+  const words = [
+    {et:"tee kokkuvõte", ru:"сделай краткое изложение / подведи итог"},
+    {et:"lugeja", ru:"читатель"},
+    {et:"minu meelest", ru:"по-моему / по моему мнению"},
+    {et:"mõnus", ru:"приятный / уютный / классный"},
+    {et:"toovad vanemad", ru:"родители приносят / привозят"},
+    {et:"soovitama", ru:"рекомендовать"},
+    {et:"meelt lahutama", ru:"развлекаться / развлекать себя"},
+    {et:"paremini aru saama", ru:"лучше понимать"},
+    {et:"enamasti", ru:"в основном / чаще всего"},
+    {et:"valima", ru:"выбирать"}
+  ];
+
+  const app = document.getElementById("app");
+  const card = document.getElementById("card");
+  const stagePill = document.getElementById("stagePill");
+  const counter = document.getElementById("counter");
+  const restartBtn = document.getElementById("restartBtn");
+  const progressEls = [document.getElementById("p1"),document.getElementById("p2"),document.getElementById("p3")];
+
+  let stage = 1;
+  let queue = [];
+  let index = 0;
+  let retry = [];
+  let locked = false;
+
+  function shuffle(list){
+    const out = [...list];
+    for(let i=out.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [out[i],out[j]] = [out[j],out[i]];
+    }
+    return out;
+  }
+
+  function norm(value){
+    return value.toLocaleLowerCase("et").trim().replace(/[.!?,;:]+$/g,"").replace(/\s+/g," ");
+  }
+
+  function updateChrome(){
+    const names = {1:"Tutvu",2:"Vali",3:"Kirjuta"};
+    stagePill.textContent = `${stage} / 3 · ${names[stage]}`;
+    progressEls.forEach((el,i)=>el.classList.toggle("on", i < stage));
+    counter.textContent = queue.length ? `${Math.min(index+1,queue.length)} / ${queue.length}` : "";
+  }
+
+  function startStage(number, items = words){
+    stage = number;
+    queue = number === 1 ? [...items] : shuffle(items);
+    index = 0;
+    retry = [];
+    locked = false;
+    updateChrome();
+    render();
+  }
+
+  function next(){
+    index += 1;
+    locked = false;
+    if(index < queue.length){
+      updateChrome();
+      render();
+      return;
+    }
+
+    if(retry.length){
+      queue = shuffle(retry);
+      retry = [];
+      index = 0;
+      updateChrome();
+      render();
+      return;
+    }
+
+    if(stage === 1) return startStage(2);
+    if(stage === 2) return startStage(3);
+    finish();
+  }
+
+  function delayNext(ms){
+    window.setTimeout(next, ms);
+  }
+
+  function render(){
+    const item = queue[index];
+    if(!item) return finish();
+    if(stage === 1) renderStudy(item);
+    if(stage === 2) renderChoice(item);
+    if(stage === 3) renderType(item);
+  }
+
+  function renderStudy(item){
+    card.innerHTML = `
+      <div class="eyebrow">Vaata ja ütle valjusti</div>
+      <div class="prompt">${escapeHtml(item.et)}</div>
+      <div class="translation">${escapeHtml(item.ru)}</div>
+      <p class="hint">Прочитай выражение по-эстонски и вспомни перевод.</p>
+      <button type="button" class="primary" id="nextStudy">Edasi →</button>
+    `;
+    card.querySelector("#nextStudy").addEventListener("click", next);
+  }
+
+  function renderChoice(item){
+    const others = shuffle(words.filter(w=>w.et!==item.et)).slice(0,3);
+    const options = shuffle([item,...others]);
+    card.innerHTML = `
+      <div class="eyebrow">Vali õige vaste</div>
+      <div class="prompt">${escapeHtml(item.ru)}</div>
+      <p class="hint">Выбери подходящий вариант по-эстонски.</p>
+      <div class="choices" id="choices"></div>
+      <div class="feedback" id="feedback"></div>
+    `;
+    const choices = card.querySelector("#choices");
+    options.forEach(option=>{
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "choice";
+      btn.textContent = option.et;
+      btn.addEventListener("click",()=>checkChoice(btn, option.et===item.et, item, choices));
+      choices.appendChild(btn);
+    });
+  }
+
+  function checkChoice(button, isCorrect, item, choices){
+    if(locked) return;
+    locked = true;
+    const feedback = card.querySelector("#feedback");
+    [...choices.children].forEach(btn=>btn.disabled=true);
+
+    if(isCorrect){
+      button.classList.add("correct");
+      feedback.className = "feedback ok";
+      feedback.textContent = "✓ Õige!";
+      delayNext(650);
+      return;
+    }
+
+    button.classList.add("wrong");
+    const correctButton = [...choices.children].find(btn=>btn.textContent===item.et);
+    if(correctButton) correctButton.classList.add("correct");
+    feedback.className = "feedback bad";
+    feedback.textContent = `Õige vastus: ${item.et}`;
+    retry.push(item);
+    delayNext(1250);
+  }
+
+  function renderType(item){
+    card.innerHTML = `
+      <div class="eyebrow">Kirjuta eesti keeles</div>
+      <div class="prompt">${escapeHtml(item.ru)}</div>
+      <p class="hint">Напиши слово или выражение по-эстонски.</p>
+      <form class="input-row" id="answerForm">
+        <input id="answerInput" autocomplete="off" autocapitalize="none" spellcheck="false" aria-label="Vastus eesti keeles">
+        <button type="submit" class="primary">Kontrolli</button>
+      </form>
+      <div class="feedback" id="feedback"></div>
+    `;
+    const form = card.querySelector("#answerForm");
+    const input = card.querySelector("#answerInput");
+    input.focus();
+    form.addEventListener("submit",(event)=>{
+      event.preventDefault();
+      if(locked) return;
+      const value = input.value;
+      if(!value.trim()){
+        const feedback = card.querySelector("#feedback");
+        feedback.className = "feedback bad";
+        feedback.textContent = "Kirjuta kõigepealt vastus.";
+        return;
+      }
+      checkTyped(item, input, form.querySelector("button"));
+    });
+  }
+
+  function checkTyped(item,input,button){
+    if(locked) return;
+    locked = true;
+    const feedback = card.querySelector("#feedback");
+    const correct = norm(input.value) === norm(item.et);
+    input.disabled = true;
+    button.disabled = true;
+
+    if(correct){
+      input.classList.add("correct");
+      feedback.className = "feedback ok";
+      feedback.textContent = "✓ Õige!";
+      delayNext(700);
+      return;
+    }
+
+    input.classList.add("wrong");
+    feedback.className = "feedback bad";
+    feedback.innerHTML = `Õige vastus: <strong>${escapeHtml(item.et)}</strong>`;
+    retry.push(item);
+    delayNext(1450);
+  }
+
+  function finish(){
+    counter.textContent = "";
+    stagePill.textContent = "Valmis";
+    progressEls.forEach(el=>el.classList.add("on"));
+    card.innerHTML = `
+      <div class="done">
+        <div class="big" aria-hidden="true">🌿</div>
+        <h2>Kõik tehtud!</h2>
+        <p>Ты прошёл все 10 слов и выражений.<br>Ошибки уже вернулись на повторение, поэтому можно закончить.</p>
+        <button type="button" class="primary" id="againBtn">Tee veel üks ring</button>
+      </div>
+    `;
+    card.querySelector("#againBtn").addEventListener("click",()=>startStage(1));
+  }
+
+  function escapeHtml(value){
+    return String(value).replace(/[&<>"']/g, ch => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+    })[ch]);
+  }
+
+  restartBtn.addEventListener("click",()=>startStage(1));
+  startStage(1);
+})();
+</script>
+</body>
+</html>
