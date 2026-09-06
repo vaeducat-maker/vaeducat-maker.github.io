@@ -28,12 +28,12 @@
       flex:0 0 auto;border:1px solid var(--line);background:#fff;border-radius:999px;
       padding:9px 12px;font-weight:700;font-size:13px;color:var(--green)
     }
-    .progress{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+    .progress{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
     .progress span{height:7px;border-radius:999px;background:#dde5e0}
     .progress span.on{background:var(--green)}
     .card{
       background:var(--card);border:1px solid var(--line);border-radius:24px;
-      box-shadow:var(--shadow);padding:clamp(20px,5vw,34px);min-height:430px;
+      box-shadow:var(--shadow);padding:clamp(20px,5vw,34px);min-height:460px;
       display:flex;flex-direction:column;justify-content:center;
     }
     .eyebrow{font-size:13px;color:var(--muted);font-weight:700;margin-bottom:10px}
@@ -71,12 +71,45 @@
     .done .big{font-size:58px;margin-bottom:8px}
     .done h2{font-size:32px;margin:0 0 10px;color:var(--green)}
     .done p{color:var(--muted);margin:0 0 20px;line-height:1.5}
+
+    .build-zone{
+      min-height:72px;border:2px dashed #cad8d0;border-radius:18px;background:#fcfdfc;
+      display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;padding:10px;margin:10px 0 14px;
+    }
+    .build-zone.has-pieces{justify-content:flex-start}
+    .build-placeholder{color:#8a958f;font-size:14px}
+    .brick-bank{display:flex;flex-wrap:wrap;gap:9px;margin:8px 0 14px}
+    .brick{
+      min-width:58px;min-height:48px;padding:10px 14px;border-radius:12px;background:#fff;
+      border:2px solid #d9e2dc;font-size:19px;font-weight:850;letter-spacing:.01em;box-shadow:0 4px 10px rgba(42,70,56,.05)
+    }
+    .brick.selected{opacity:.28}
+    .brick-answer{background:#f8faf8}
+    .brick-answer.wrong-brick{background:var(--red-soft);border-color:#d98989;color:#913e3e}
+    .brick-answer.correct-brick{background:var(--green-soft);border-color:#7fbc97;color:#1f6846}
+    .build-actions{display:flex;gap:10px;flex-wrap:wrap}
+    .build-actions button{flex:1 1 150px}
+    .correct-panel{
+      margin-top:16px;padding:16px;border-radius:18px;background:var(--green-soft);border:2px solid #91c4a5;
+      animation:pop .2s ease-out;
+    }
+    .correct-panel-label{font-size:12px;font-weight:800;color:#3a7558;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+    .correct-bricks{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:10px}
+    .correct-bricks span{
+      display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:8px 11px;border-radius:10px;
+      background:#fff;border:2px solid #76b58f;color:#1f6846;font-size:18px;font-weight:850
+    }
+    .correct-word{font-size:clamp(28px,7vw,42px);line-height:1.12;color:#167047;font-weight:900;overflow-wrap:anywhere}
+    .built-word{font-size:18px;font-weight:800;margin:0 0 4px;color:#435048;min-height:24px}
+    @keyframes pop{from{transform:scale(.98);opacity:.4}to{transform:scale(1);opacity:1}}
+
     @media (max-width:560px){
-      body{padding:12px}.card{min-height:400px;border-radius:20px}
+      body{padding:12px}.card{min-height:430px;border-radius:20px}
       .top{align-items:center}.sub{font-size:13px}.stage-pill{font-size:12px;padding:8px 10px}
       .input-row{flex-direction:column}.input-row button{width:100%}
+      .brick{min-width:52px;padding:9px 12px;font-size:18px}
     }
-    @media (prefers-reduced-motion: reduce){button{transition:none}}
+    @media (prefers-reduced-motion: reduce){button{transition:none}.correct-panel{animation:none}}
   </style>
 </head>
 <body>
@@ -87,11 +120,11 @@
       <h1>Kiire sõnatreener</h1>
       <p class="sub">10 sõna ja väljendit · eesti keel</p>
     </div>
-    <div class="stage-pill" id="stagePill">1 / 3 · Tutvu</div>
+    <div class="stage-pill" id="stagePill">1 / 4 · Tutvu</div>
   </header>
 
   <div class="progress" aria-label="Õppimise edenemine">
-    <span class="on" id="p1"></span><span id="p2"></span><span id="p3"></span>
+    <span class="on" id="p1"></span><span id="p2"></span><span id="p3"></span><span id="p4"></span>
   </div>
 
   <section class="card" id="card" aria-live="polite"></section>
@@ -105,24 +138,23 @@
 <script>
 (() => {
   const words = [
-    {et:"tee kokkuvõte", ru:"сделай краткое изложение"},
-    {et:"lugeja", ru:"читатель"},
-    {et:"minu meelest", ru:"по-моему"},
-    {et:"mõnus", ru:"приятный"},
-    {et:"toovad vanemad", ru:"родители приносят"},
-    {et:"soovitama", ru:"рекомендовать"},
-    {et:"meelt lahutama", ru:"развлекаться"},
-    {et:"paremini aru saama", ru:"лучше понимать"},
-    {et:"enamasti", ru:"в основном"},
-    {et:"valima", ru:"выбирать"}
+    {et:"tee kokkuvõte", ru:"сделай краткое изложение", chunks:["tee ","kok","ku","võ","te"], fake:["la","mi"]},
+    {et:"lugeja", ru:"читатель", chunks:["lu","ge","ja"], fake:["va","si"]},
+    {et:"minu meelest", ru:"по-моему", chunks:["mi","nu ","mee","lest"], fake:["va","ta"]},
+    {et:"mõnus", ru:"приятный", chunks:["mõ","nus"], fake:["ka","li"]},
+    {et:"toovad vanemad", ru:"родители приносят", chunks:["too","vad ","va","ne","mad"], fake:["si","ku"]},
+    {et:"soovitama", ru:"рекомендовать", chunks:["soo","vi","ta","ma"], fake:["le","ga"]},
+    {et:"meelt lahutama", ru:"развлекаться", chunks:["meelt ","la","hu","ta","ma"], fake:["si","ko"]},
+    {et:"paremini aru saama", ru:"лучше понимать", chunks:["pa","re","mi","ni ","a","ru ","saa","ma"], fake:["ve","lo"]},
+    {et:"enamasti", ru:"в основном", chunks:["e","na","mas","ti"], fake:["lu","va"]},
+    {et:"valima", ru:"выбирать", chunks:["va","li","ma"], fake:["ga","si"]}
   ];
 
-  const app = document.getElementById("app");
   const card = document.getElementById("card");
   const stagePill = document.getElementById("stagePill");
   const counter = document.getElementById("counter");
   const restartBtn = document.getElementById("restartBtn");
-  const progressEls = [document.getElementById("p1"),document.getElementById("p2"),document.getElementById("p3")];
+  const progressEls = [document.getElementById("p1"),document.getElementById("p2"),document.getElementById("p3"),document.getElementById("p4")];
 
   let stage = 1;
   let queue = [];
@@ -142,9 +174,13 @@
     return value.toLocaleLowerCase("et").trim().replace(/[.!?,;:]+$/g,"").replace(/\s+/g," ");
   }
 
+  function visibleChunk(value){
+    return value.trim();
+  }
+
   function updateChrome(){
-    const names = {1:"Tutvu",2:"Vali",3:"Kirjuta"};
-    stagePill.textContent = `${stage} / 3 · ${names[stage]}`;
+    const names = {1:"Tutvu",2:"Vali",3:"Koosta",4:"Kirjuta"};
+    stagePill.textContent = `${stage} / 4 · ${names[stage]}`;
     progressEls.forEach((el,i)=>el.classList.toggle("on", i < stage));
     counter.textContent = queue.length ? `${Math.min(index+1,queue.length)} / ${queue.length}` : "";
   }
@@ -166,9 +202,9 @@
       render();
       return;
     }
-
     if(stage === 1) return startStage(2);
     if(stage === 2) return startStage(3);
+    if(stage === 3) return startStage(4);
     finish();
   }
 
@@ -189,7 +225,8 @@
     if(!item) return finish();
     if(stage === 1) renderStudy(item);
     if(stage === 2) renderChoice(item);
-    if(stage === 3) renderType(item);
+    if(stage === 3) renderBuild(item);
+    if(stage === 4) renderType(item);
   }
 
   function renderStudy(item){
@@ -234,7 +271,7 @@
       button.classList.add("correct");
       feedback.className = "feedback ok";
       feedback.textContent = "✓ Õige!";
-      delayNext(650);
+      delayNext(850);
       return;
     }
 
@@ -242,20 +279,145 @@
     const correctButton = [...choices.children].find(btn=>btn.textContent===item.et);
     if(correctButton) correctButton.classList.add("correct");
     feedback.className = "feedback bad";
-    feedback.textContent = `Õige vastus: ${item.et}`;
-    repeatCurrent(1250);
+    feedback.innerHTML = `Õige vastus: <strong style="color:#167047">${escapeHtml(item.et)}</strong>`;
+    repeatCurrent(2400);
+  }
+
+  function renderBuild(item){
+    const pieces = shuffle([
+      ...item.chunks.map((value,i)=>({id:`c${i}`,value,correct:true})),
+      ...item.fake.map((value,i)=>({id:`f${i}`,value,correct:false}))
+    ]);
+    const selected = [];
+
+    card.innerHTML = `
+      <div class="eyebrow">Koosta sõna</div>
+      <div class="prompt">${escapeHtml(item.ru)}</div>
+      <p class="hint">Нажимай на кирпичики по порядку. Два кирпичика лишние.</p>
+      <div class="build-zone" id="buildZone"><span class="build-placeholder">Собери здесь</span></div>
+      <div class="built-word" id="builtWord"></div>
+      <div class="brick-bank" id="brickBank"></div>
+      <div class="build-actions">
+        <button type="button" class="secondary" id="clearBuild">Очистить</button>
+        <button type="button" class="primary" id="checkBuild">Kontrolli</button>
+      </div>
+      <div class="feedback" id="feedback"></div>
+      <div id="correctPanelHost"></div>
+    `;
+
+    const zone = card.querySelector("#buildZone");
+    const bank = card.querySelector("#brickBank");
+    const builtWord = card.querySelector("#builtWord");
+    const checkBtn = card.querySelector("#checkBuild");
+    const clearBtn = card.querySelector("#clearBuild");
+
+    function redrawSelected(){
+      zone.innerHTML = "";
+      if(!selected.length){
+        zone.classList.remove("has-pieces");
+        zone.innerHTML = '<span class="build-placeholder">Собери здесь</span>';
+      } else {
+        zone.classList.add("has-pieces");
+        selected.forEach(piece=>{
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "brick brick-answer";
+          btn.textContent = visibleChunk(piece.value);
+          btn.title = "Убрать кирпичик";
+          btn.addEventListener("click",()=>{
+            if(locked) return;
+            const pos = selected.findIndex(x=>x.id===piece.id);
+            if(pos>=0) selected.splice(pos,1);
+            const source = bank.querySelector(`[data-id="${piece.id}"]`);
+            if(source){source.disabled=false;source.classList.remove("selected")}
+            redrawSelected();
+          });
+          zone.appendChild(btn);
+        });
+      }
+      builtWord.textContent = selected.length ? selected.map(x=>x.value).join("").trim() : "";
+    }
+
+    pieces.forEach(piece=>{
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "brick";
+      btn.dataset.id = piece.id;
+      btn.textContent = visibleChunk(piece.value);
+      btn.addEventListener("click",()=>{
+        if(locked || btn.disabled) return;
+        selected.push(piece);
+        btn.disabled = true;
+        btn.classList.add("selected");
+        redrawSelected();
+      });
+      bank.appendChild(btn);
+    });
+
+    clearBtn.addEventListener("click",()=>{
+      if(locked) return;
+      selected.length = 0;
+      [...bank.children].forEach(btn=>{btn.disabled=false;btn.classList.remove("selected")});
+      redrawSelected();
+    });
+
+    checkBtn.addEventListener("click",()=>checkBuild(item, selected, zone, bank, checkBtn, clearBtn));
+  }
+
+  function correctPanel(item){
+    return `
+      <div class="correct-panel">
+        <div class="correct-panel-label">Õige vastus</div>
+        <div class="correct-bricks">${item.chunks.map(chunk=>`<span>${escapeHtml(visibleChunk(chunk))}</span>`).join("")}</div>
+        <div class="correct-word">${escapeHtml(item.et)}</div>
+      </div>
+    `;
+  }
+
+  function checkBuild(item, selected, zone, bank, checkBtn, clearBtn){
+    if(locked) return;
+    const feedback = card.querySelector("#feedback");
+    if(!selected.length){
+      feedback.className = "feedback bad";
+      feedback.textContent = "Выбери кирпичики.";
+      return;
+    }
+
+    locked = true;
+    checkBtn.disabled = true;
+    clearBtn.disabled = true;
+    [...bank.children].forEach(btn=>btn.disabled=true);
+    const assembled = selected.map(x=>x.value).join("");
+    const correct = norm(assembled) === norm(item.et);
+    const answerBricks = [...zone.querySelectorAll(".brick-answer")];
+
+    if(correct){
+      answerBricks.forEach(btn=>btn.classList.add("correct-brick"));
+      feedback.className = "feedback ok";
+      feedback.textContent = "✓ Õige!";
+      card.querySelector("#correctPanelHost").innerHTML = correctPanel(item);
+      delayNext(1250);
+      return;
+    }
+
+    answerBricks.forEach(btn=>btn.classList.add("wrong-brick"));
+    feedback.className = "feedback bad";
+    feedback.textContent = "Vaata õiget vastust.";
+    card.querySelector("#correctPanelHost").innerHTML = correctPanel(item);
+    repeatCurrent(3800);
   }
 
   function renderType(item){
     card.innerHTML = `
       <div class="eyebrow">Kirjuta eesti keeles</div>
       <div class="prompt">${escapeHtml(item.ru)}</div>
-      <p class="hint">Напиши слово или выражение по-эстонски.</p>
+      <p class="hint">Теперь напиши слово или выражение сам.</p>
       <form class="input-row" id="answerForm">
         <input id="answerInput" autocomplete="off" autocapitalize="none" spellcheck="false" aria-label="Vastus eesti keeles">
         <button type="submit" class="primary">Kontrolli</button>
       </form>
       <div class="feedback" id="feedback"></div>
+      <div id="correctPanelHost"></div>
     `;
     const form = card.querySelector("#answerForm");
     const input = card.querySelector("#answerInput");
@@ -263,8 +425,7 @@
     form.addEventListener("submit",(event)=>{
       event.preventDefault();
       if(locked) return;
-      const value = input.value;
-      if(!value.trim()){
+      if(!input.value.trim()){
         const feedback = card.querySelector("#feedback");
         feedback.className = "feedback bad";
         feedback.textContent = "Kirjuta kõigepealt vastus.";
@@ -286,14 +447,15 @@
       input.classList.add("correct");
       feedback.className = "feedback ok";
       feedback.textContent = "✓ Õige!";
-      delayNext(700);
+      delayNext(900);
       return;
     }
 
     input.classList.add("wrong");
     feedback.className = "feedback bad";
-    feedback.innerHTML = `Õige vastus: <strong>${escapeHtml(item.et)}</strong>`;
-    repeatCurrent(1450);
+    feedback.textContent = "Vaata õiget vastust.";
+    card.querySelector("#correctPanelHost").innerHTML = correctPanel(item);
+    repeatCurrent(3200);
   }
 
   function finish(){
