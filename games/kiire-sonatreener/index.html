@@ -156,6 +156,7 @@
   let queue = [];
   let index = 0;
   let locked = false;
+  let mastered = new Set();
 
   function shuffle(list){
     const out = [...list];
@@ -176,7 +177,17 @@
     const names = {1:"Tutvu",2:"Vali",3:"Koosta",4:"Koosta +",5:"Kirjuta"};
     stagePill.textContent = `${stage} / 5 · ${names[stage]}`;
     progressEls.forEach((el,i)=>el.classList.toggle("on", i < stage));
-    counter.textContent = queue.length ? `${Math.min(index+1,queue.length)} / ${queue.length}` : "";
+    if(!queue.length){
+      counter.textContent = "";
+      return;
+    }
+    if(stage === 1){
+      counter.textContent = `${Math.min(index+1,words.length)} / ${words.length}`;
+      return;
+    }
+    const current = queue[index];
+    const shown = current && mastered.has(current.et) ? mastered.size : Math.min(mastered.size + 1, words.length);
+    counter.textContent = `${shown} / ${words.length}`;
   }
 
   function startStage(number, items = words){
@@ -184,6 +195,7 @@
     queue = number === 1 ? [...items] : shuffle(items);
     index = 0;
     locked = false;
+    mastered = new Set();
     updateChrome();
     render();
   }
@@ -200,9 +212,23 @@
     finish();
   }
 
-  function delayNext(ms){ window.setTimeout(next, ms); }
-  function repeatCurrent(ms){
+  function delayNext(ms, item){
+    if(item && stage > 1) mastered.add(item.et);
+    window.setTimeout(next, ms);
+  }
+
+  function deferCurrent(item, ms){
+    if(stage > 1) mastered.delete(item.et);
+
+    if(index >= queue.length - 1){
+      const alternatives = words.filter(w=>w.et !== item.et);
+      const filler = shuffle(alternatives)[0];
+      if(filler) queue.push(filler);
+    }
+    queue.push(item);
+
     window.setTimeout(()=>{
+      index += 1;
       locked = false;
       updateChrome();
       render();
@@ -257,7 +283,7 @@
       button.classList.add("correct");
       feedback.className = "feedback ok";
       feedback.textContent = "✓ Õige!";
-      delayNext(850);
+      delayNext(850, item);
       return;
     }
 
@@ -266,7 +292,7 @@
     if(correctButton) correctButton.classList.add("correct");
     feedback.className = "feedback bad";
     feedback.innerHTML = `Õige vastus: <strong style="color:#167047">${escapeHtml(item.et)}</strong>`;
-    repeatCurrent(2400);
+    deferCurrent(item, 2400);
   }
 
   function renderBuild(item, withFakes){
@@ -379,7 +405,7 @@
       feedback.className = "feedback ok";
       feedback.textContent = "✓ Õige!";
       card.querySelector("#correctPanelHost").innerHTML = correctPanel(item);
-      delayNext(1250);
+      delayNext(1250, item);
       return;
     }
 
@@ -387,7 +413,7 @@
     feedback.className = "feedback bad";
     feedback.textContent = "";
     card.querySelector("#correctPanelHost").innerHTML = correctPanel(item);
-    repeatCurrent(3800);
+    deferCurrent(item, 3800);
   }
 
   function renderType(item){
@@ -428,7 +454,7 @@
       input.classList.add("correct");
       feedback.className = "feedback ok";
       feedback.textContent = "✓ Õige!";
-      delayNext(900);
+      delayNext(900, item);
       return;
     }
 
@@ -436,7 +462,7 @@
     feedback.className = "feedback bad";
     feedback.textContent = "";
     card.querySelector("#correctPanelHost").innerHTML = correctPanel(item);
-    repeatCurrent(3200);
+    deferCurrent(item, 3200);
   }
 
   function finish(){
