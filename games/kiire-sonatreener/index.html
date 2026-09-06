@@ -10,7 +10,7 @@
   <style>
     :root{
       --bg:#fbfaf5;--card:#ffffff;--ink:#1f2a25;--muted:#68736d;--green:#2f6f58;
-      --green-2:#4d8b70;--green-soft:#eaf4ee;--line:#dfe7e2;--red:#b64f4f;--red-soft:#faecec;
+      --green-soft:#eaf4ee;--line:#dfe7e2;--red:#b64f4f;--red-soft:#faecec;
       --shadow:0 16px 40px rgba(42,70,56,.09);
     }
     *{box-sizing:border-box}
@@ -28,7 +28,7 @@
       flex:0 0 auto;border:1px solid var(--line);background:#fff;border-radius:999px;
       padding:9px 12px;font-weight:700;font-size:13px;color:var(--green)
     }
-    .progress{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+    .progress{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
     .progress span{height:7px;border-radius:999px;background:#dde5e0}
     .progress span.on{background:var(--green)}
     .card{
@@ -37,18 +37,14 @@
       display:flex;flex-direction:column;justify-content:center;
     }
     .eyebrow{font-size:13px;color:var(--muted);font-weight:700;margin-bottom:10px}
-    .prompt{
-      font-size:clamp(28px,7vw,42px);line-height:1.15;font-weight:800;margin:0 0 12px;
-      overflow-wrap:anywhere;
-    }
+    .prompt{font-size:clamp(28px,7vw,42px);line-height:1.15;font-weight:800;margin:0 0 12px;overflow-wrap:anywhere}
     .translation{font-size:clamp(18px,4.8vw,25px);line-height:1.35;color:#3c4942;margin:0 0 24px}
     .hint{color:var(--muted);font-size:13px;margin:0 0 14px}
     .choices{display:grid;gap:10px;margin-top:8px}
     button,input{font:inherit}
     button{
       min-height:52px;border-radius:15px;border:1px solid var(--line);background:#fff;
-      padding:12px 16px;color:var(--ink);font-weight:750;cursor:pointer;transition:.15s ease;
-      touch-action:manipulation
+      padding:12px 16px;color:var(--ink);font-weight:750;cursor:pointer;transition:.15s ease;touch-action:manipulation
     }
     button:hover{border-color:#b7c8be}
     button:focus-visible,input:focus-visible{outline:3px solid rgba(47,111,88,.24);outline-offset:2px}
@@ -67,8 +63,7 @@
     .tiny{font-size:12px;color:var(--muted);margin-top:14px}
     .actions{display:flex;justify-content:space-between;gap:10px;align-items:center}
     .ghost{background:transparent;border-color:transparent;color:var(--muted);min-height:44px}
-    .done{text-align:center}
-    .done .big{font-size:58px;margin-bottom:8px}
+    .done{text-align:center}.done .big{font-size:58px;margin-bottom:8px}
     .done h2{font-size:32px;margin:0 0 10px;color:var(--green)}
     .done p{color:var(--muted);margin:0 0 20px;line-height:1.5}
 
@@ -120,11 +115,11 @@
       <h1>Kiire sõnatreener</h1>
       <p class="sub">10 sõna ja väljendit · eesti keel</p>
     </div>
-    <div class="stage-pill" id="stagePill">1 / 4 · Tutvu</div>
+    <div class="stage-pill" id="stagePill">1 / 5 · Tutvu</div>
   </header>
 
   <div class="progress" aria-label="Õppimise edenemine">
-    <span class="on" id="p1"></span><span id="p2"></span><span id="p3"></span><span id="p4"></span>
+    <span class="on" id="p1"></span><span id="p2"></span><span id="p3"></span><span id="p4"></span><span id="p5"></span>
   </div>
 
   <section class="card" id="card" aria-live="polite"></section>
@@ -154,7 +149,10 @@
   const stagePill = document.getElementById("stagePill");
   const counter = document.getElementById("counter");
   const restartBtn = document.getElementById("restartBtn");
-  const progressEls = [document.getElementById("p1"),document.getElementById("p2"),document.getElementById("p3"),document.getElementById("p4")];
+  const progressEls = [
+    document.getElementById("p1"),document.getElementById("p2"),document.getElementById("p3"),
+    document.getElementById("p4"),document.getElementById("p5")
+  ];
 
   let stage = 1;
   let queue = [];
@@ -174,13 +172,11 @@
     return value.toLocaleLowerCase("et").trim().replace(/[.!?,;:]+$/g,"").replace(/\s+/g," ");
   }
 
-  function visibleChunk(value){
-    return value.trim();
-  }
+  function visibleChunk(value){ return value.trim(); }
 
   function updateChrome(){
-    const names = {1:"Tutvu",2:"Vali",3:"Koosta",4:"Kirjuta"};
-    stagePill.textContent = `${stage} / 4 · ${names[stage]}`;
+    const names = {1:"Tutvu",2:"Vali",3:"Koosta",4:"Koosta +",5:"Kirjuta"};
+    stagePill.textContent = `${stage} / 5 · ${names[stage]}`;
     progressEls.forEach((el,i)=>el.classList.toggle("on", i < stage));
     counter.textContent = queue.length ? `${Math.min(index+1,queue.length)} / ${queue.length}` : "";
   }
@@ -202,16 +198,11 @@
       render();
       return;
     }
-    if(stage === 1) return startStage(2);
-    if(stage === 2) return startStage(3);
-    if(stage === 3) return startStage(4);
+    if(stage < 5) return startStage(stage + 1);
     finish();
   }
 
-  function delayNext(ms){
-    window.setTimeout(next, ms);
-  }
-
+  function delayNext(ms){ window.setTimeout(next, ms); }
   function repeatCurrent(ms){
     window.setTimeout(()=>{
       locked = false;
@@ -225,8 +216,9 @@
     if(!item) return finish();
     if(stage === 1) renderStudy(item);
     if(stage === 2) renderChoice(item);
-    if(stage === 3) renderBuild(item);
-    if(stage === 4) renderType(item);
+    if(stage === 3) renderBuild(item, false);
+    if(stage === 4) renderBuild(item, true);
+    if(stage === 5) renderType(item);
   }
 
   function renderStudy(item){
@@ -283,17 +275,16 @@
     repeatCurrent(2400);
   }
 
-  function renderBuild(item){
-    const pieces = shuffle([
-      ...item.chunks.map((value,i)=>({id:`c${i}`,value,correct:true})),
-      ...item.fake.map((value,i)=>({id:`f${i}`,value,correct:false}))
-    ]);
+  function renderBuild(item, withFakes){
+    const correctPieces = item.chunks.map((value,i)=>({id:`c${i}`,value,correct:true}));
+    const fakePieces = withFakes ? item.fake.map((value,i)=>({id:`f${i}`,value,correct:false})) : [];
+    const pieces = shuffle([...correctPieces, ...fakePieces]);
     const selected = [];
 
     card.innerHTML = `
-      <div class="eyebrow">Koosta sõna</div>
+      <div class="eyebrow">${withFakes ? "Koosta sõna · raskem" : "Koosta sõna"}</div>
       <div class="prompt">${escapeHtml(item.ru)}</div>
-      <p class="hint">Нажимай на кирпичики по порядку. Два кирпичика лишние.</p>
+      <p class="hint">${withFakes ? "Нажимай на кирпичики по порядку. Два кирпичика лишние." : "Все кирпичики правильные. Поставь их в правильном порядке."}</p>
       <div class="build-zone" id="buildZone"><span class="build-placeholder">Собери здесь</span></div>
       <div class="built-word" id="builtWord"></div>
       <div class="brick-bank" id="brickBank"></div>
