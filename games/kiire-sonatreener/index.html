@@ -36,10 +36,8 @@
       box-shadow:var(--shadow);padding:clamp(20px,5vw,34px);min-height:460px;
       display:flex;flex-direction:column;justify-content:center;
     }
-    .eyebrow{font-size:13px;color:var(--muted);font-weight:700;margin-bottom:10px}
     .prompt{font-size:clamp(28px,7vw,42px);line-height:1.15;font-weight:800;margin:0 0 12px;overflow-wrap:anywhere}
     .translation{font-size:clamp(18px,4.8vw,25px);line-height:1.35;color:#3c4942;margin:0 0 24px}
-    .hint{color:var(--muted);font-size:13px;margin:0 0 14px}
     .choices{display:grid;gap:10px;margin-top:8px}
     button,input{font:inherit}
     button{
@@ -223,10 +221,8 @@
 
   function renderStudy(item){
     card.innerHTML = `
-      <div class="eyebrow">Vaata ja ütle valjusti</div>
       <div class="prompt">${escapeHtml(item.et)}</div>
       <div class="translation">${escapeHtml(item.ru)}</div>
-      <p class="hint">Прочитай выражение по-эстонски и вспомни перевод.</p>
       <button type="button" class="primary" id="nextStudy">Edasi →</button>
     `;
     card.querySelector("#nextStudy").addEventListener("click", next);
@@ -236,9 +232,7 @@
     const others = shuffle(words.filter(w=>w.et!==item.et)).slice(0,3);
     const options = shuffle([item,...others]);
     card.innerHTML = `
-      <div class="eyebrow">Vali õige vaste</div>
       <div class="prompt">${escapeHtml(item.ru)}</div>
-      <p class="hint">Выбери подходящий вариант по-эстонски.</p>
       <div class="choices" id="choices"></div>
       <div class="feedback" id="feedback"></div>
     `;
@@ -282,9 +276,7 @@
     const selected = [];
 
     card.innerHTML = `
-      <div class="eyebrow">${withFakes ? "Koosta sõna · raskem" : "Koosta sõna"}</div>
       <div class="prompt">${escapeHtml(item.ru)}</div>
-      <p class="hint">${withFakes ? "Нажимай на кирпичики по порядку. Два кирпичика лишние." : "Все кирпичики правильные. Поставь их в правильном порядке."}</p>
       <div class="build-zone" id="buildZone"><span class="build-placeholder">Собери здесь</span></div>
       <div class="built-word" id="builtWord"></div>
       <div class="brick-bank" id="brickBank"></div>
@@ -393,16 +385,14 @@
 
     answerBricks.forEach(btn=>btn.classList.add("wrong-brick"));
     feedback.className = "feedback bad";
-    feedback.textContent = "Vaata õiget vastust.";
+    feedback.textContent = "";
     card.querySelector("#correctPanelHost").innerHTML = correctPanel(item);
     repeatCurrent(3800);
   }
 
   function renderType(item){
     card.innerHTML = `
-      <div class="eyebrow">Kirjuta eesti keeles</div>
       <div class="prompt">${escapeHtml(item.ru)}</div>
-      <p class="hint">Теперь напиши слово или выражение сам.</p>
       <form class="input-row" id="answerForm">
         <input id="answerInput" autocomplete="off" autocapitalize="none" spellcheck="false" aria-label="Vastus eesti keeles">
         <button type="submit" class="primary">Kontrolli</button>
@@ -444,7 +434,7 @@
 
     input.classList.add("wrong");
     feedback.className = "feedback bad";
-    feedback.textContent = "Vaata õiget vastust.";
+    feedback.textContent = "";
     card.querySelector("#correctPanelHost").innerHTML = correctPanel(item);
     repeatCurrent(3200);
   }
@@ -457,7 +447,6 @@
       <div class="done">
         <div class="big" aria-hidden="true">🌿</div>
         <h2>Kõik tehtud!</h2>
-        <p>Ты прошёл все 10 слов и выражений.<br>Каждая карточка засчитана только после правильного ответа.</p>
         <button type="button" class="primary" id="againBtn">Tee veel üks ring</button>
       </div>
     `;
