@@ -124,7 +124,6 @@ const forbiddenOutputPrefixes = [
   'brand/',
   'docs/',
   'EDUKASS-site-v55-living-world-kolm/',
-  'games/umbermoot-pindala/',
   'releases/',
   'scripts/',
   'tmp/'
