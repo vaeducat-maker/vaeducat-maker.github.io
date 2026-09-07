@@ -1,0 +1,1 @@
+(()=>{const P='./poster-vesi-ja-jogi-v2.webp?v=20260907-3';const fix=()=>document.querySelectorAll('img[src*="poster-vesi-ja-jogi"]').forEach(img=>{if(!img.src.includes('v2.webp'))img.src=P});new MutationObserver(fix).observe(document.getElementById('card'),{childList:true,subtree:true});fix();})();
