@@ -1,0 +1,19 @@
+{
+  "name": "EDUKASS · Sõnatreener",
+  "short_name": "Sõnatreener",
+  "description": "Kiire eesti keele sõnatreener",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#fbfaf5",
+  "theme_color": "#2f6f58",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
