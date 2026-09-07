@@ -1,0 +1,87 @@
+name: Fix Ristsonad Sugis PDF
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/fix-ristsonad-sugis.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  fix-pdf:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install PyMuPDF
+        run: python -m pip install --disable-pip-version-check PyMuPDF==1.26.7
+
+      - name: Replace broken TURUL crossword grid
+        shell: bash
+        run: |
+          python - <<'PY'
+          import fitz
+
+          path = 'downloads/ristsonad-sugis.pdf'
+          out = 'downloads/ristsonad-sugis.fixed.pdf'
+
+          doc = fitz.open(path)
+          if len(doc) != 6:
+              raise RuntimeError(f'Unexpected page count: {len(doc)}')
+
+          page = doc[1]
+          page.draw_rect(fitz.Rect(142, 178, 449, 565), color=None, fill=(1, 1, 1), overlay=True)
+
+          blue = (14/255, 48/255, 186/255)
+          rects = [
+              (320,242,346,268),(372,242,398,268),(320,268,346,294),(372,268,398,294),
+              (268,294,294,320),(320,294,346,320),(346,294,372,320),(372,294,398,320),(398,294,424,320),
+              (216,320,242,346),(268,320,294,346),(320,320,346,346),(372,320,398,346),
+              (216,346,242,372),(268,346,294,372),(320,346,346,372),
+              (164,372,190,398),(190,372,216,398),(216,372,242,398),(242,372,268,398),(268,372,294,398),(294,372,320,398),(320,372,346,398),
+              (216,398,242,424),(294,398,320,424),(398,398,424,424),
+              (164,424,190,450),(190,424,216,450),(216,424,242,450),(242,424,268,450),(294,424,320,450),(320,424,346,450),(346,424,372,450),(372,424,398,450),(398,424,424,450),
+              (216,450,242,476),(294,450,320,476),(398,450,424,476),
+              (216,476,242,502),(294,476,320,502),(398,476,424,502),
+          ]
+          for r in rects:
+              page.draw_rect(fitz.Rect(*r), color=blue, width=0.85, overlay=True)
+
+          numbers = [
+              ('1',322.6,249.2),('2',374.6,249.2),('3',270.6,301.2),('4',322.6,301.2),
+              ('5',218.6,327.2),('6',166.6,379.2),('7',296.6,379.2),('8',400.6,405.2),
+              ('9',166.6,431.2),('10',296.6,431.2),
+          ]
+          for text, x, y in numbers:
+              page.insert_text((x, y), text, fontsize=5.7, fontname='helv', color=blue, overlay=True)
+
+          doc.save(out, garbage=0, deflate=False)
+          doc.close()
+
+          check = fitz.open(out)
+          if len(check) != 6:
+              raise RuntimeError('Corrected PDF failed page-count check')
+          check.close()
+          PY
+          mv downloads/ristsonad-sugis.fixed.pdf downloads/ristsonad-sugis.pdf
+          test "$(head -c 5 downloads/ristsonad-sugis.pdf)" = "%PDF-"
+
+      - name: Commit corrected PDF and remove one-shot workflow
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add downloads/ristsonad-sugis.pdf
+          git rm .github/workflows/fix-ristsonad-sugis.yml
+          git commit -m "Fix TURUL crossword grid in autumn workbook"
+          git push
