@@ -12,10 +12,12 @@ for(const relative of [
   'downloads/korrutustabel-A4.pdf',
   'materials/tunniplaan/index.html',
   'assets/minu-tunniplaan.png',
-  'downloads/minu-tunniplaan.pdf'
+  'downloads/minu-tunniplaan.pdf',
+  'materials/umbermoot-pindala/index.html',
+  'assets/umbermoot-pindala.png',
+  'downloads/umbermoot-pindala-A4-4-kaarti.pdf',
+  'downloads/umbermoot-pindala-A7.pdf'
 ]) assert.ok(exists(relative),`Missing v121 public deliverable: ${relative}`);
-
-assert.ok(!exists('games/umbermoot-pindala/index.html'),'Geometry prototype must not be present in the public site build.');
 
 const materialsPage=read('materials/index.html');
 assert.match(materialsPage,/href="tunniplaan\/"/,'Materials catalog must contain Minu tunniplaan.');
@@ -28,6 +30,10 @@ assert.match(tunniPage,/assets\/minu-tunniplaan\.png/,'The timetable must have a
 
 const mathCatalog=read('materials/matemaatika/index.html');
 assert.match(mathCatalog,/href="\.\.\/korrutustabel\/"/,'Mathematics catalog must contain the multiplication-table material.');
-assert.doesNotMatch(mathCatalog,/games\/umbermoot-pindala\//,'Mathematics catalog must not expose the private geometry prototype.');
+assert.match(mathCatalog,/href="\.\.\/umbermoot-pindala\/"/,'Mathematics catalog must contain the perimeter-and-area printable material.');
 
-console.log('v121 public deliverables protected: Minu tunniplaan restored; geometry prototype remains private.');
+const geometryMaterial=read('materials/umbermoot-pindala/index.html');
+assert.match(geometryMaterial,/downloads\/umbermoot-pindala-A4-4-kaarti\.pdf/,'The A4 printable cards must be downloadable.');
+assert.match(geometryMaterial,/downloads\/umbermoot-pindala-A7\.pdf/,'The A7 printable card must be downloadable.');
+
+console.log('v121 public deliverables protected: timetable and printable mathematics materials are available.');
