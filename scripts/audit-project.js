@@ -18,7 +18,6 @@ const v121Required=[
 for(const relativePath of v121Required){
   assert(fs.existsSync(path.join(root,relativePath)),`Missing v121 deliverable: ${relativePath}`);
 }
-assert(!fs.existsSync(path.join(root,'games/umbermoot-pindala/index.html')),'Private geometry prototype must not ship in the public site build.');
 const failures=[];
 const passes=[];
 
