@@ -108,3 +108,37 @@
 
   grid.prepend(card);
 })();
+
+(() => {
+  const nav = document.querySelector('.home-nav');
+  if (!nav || nav.querySelector('[data-edukass-socials]')) return;
+
+  const style = document.createElement('style');
+  style.textContent = `
+    .home-socials{display:inline-flex;align-items:center;gap:7px;margin-left:2px}
+    .home-socials a{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;padding:0;border-radius:50%;color:var(--home-navy);text-decoration:none;transition:transform .15s ease,background .15s ease}
+    .home-socials a:hover{transform:translateY(-1px);background:rgba(23,54,95,.08);text-decoration:none}
+    .home-socials svg{width:20px;height:20px;display:block}
+    @media(max-width:620px){
+      .home-nav{gap:8px}
+      .home-socials{gap:4px;margin-left:0}
+      .home-socials a{width:24px;height:24px}
+      .home-socials svg{width:18px;height:18px}
+    }
+  `;
+  document.head.append(style);
+
+  const socials = document.createElement('span');
+  socials.className = 'home-socials';
+  socials.setAttribute('data-edukass-socials', '');
+  socials.setAttribute('aria-label', 'EDUKASS sotsiaalmeedias');
+  socials.innerHTML = `
+    <a href="https://www.facebook.com/share/1GH4qbcNqL/" target="_blank" rel="noopener noreferrer" aria-label="EDUKASS Facebookis" title="Facebook">
+      <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M13.7 22v-8.5h2.9l.43-3.32H13.7V8.06c0-.96.27-1.62 1.66-1.62h1.78V3.47a23.8 23.8 0 0 0-2.59-.14c-2.56 0-4.31 1.56-4.31 4.42v2.43H7.35v3.32h2.89V22h3.46Z"/></svg>
+    </a>
+    <a href="https://www.instagram.com/edukass.ee/" target="_blank" rel="noopener noreferrer" aria-label="EDUKASS Instagramis" title="Instagram">
+      <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+    </a>`;
+
+  nav.append(socials);
+})();
