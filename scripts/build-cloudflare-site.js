@@ -13,6 +13,7 @@ let source = fs.readFileSync(buildPath, 'utf8');
 const anchor = "  'games/metsarada/index.html',";
 const extraFiles = [
   'favicon-512.png',
+  'instagram/index.html',
   'assets/minu-suvi-preview.svg',
   'games/kiire-sonatreener/icon-192.png',
   'games/kiire-sonatreener/icon-512.png',
