@@ -23,6 +23,7 @@ const extraFiles = [
   'games/kiire-sonatreener/poster-fix.js',
   'games/kiire-sonatreener/poster-vesi-ja-jogi.webp',
   'games/kiire-sonatreener/poster-vesi-ja-jogi-v3.jpg',
+  'games/kiire-sonatreener/service-worker.js',
   'games/kiire-sonatreener/trainer.css',
   'games/kiire-sonatreener/trainer.js',
   'games/liitmine/app.js',
@@ -49,11 +50,7 @@ const INSTAGRAM_URL = 'https://www.instagram.com/edukass.ee/';
 const STYLE_MARKER = 'edukass-cloudflare-chrome';
 const SOCIAL_MARKER = 'edukass-social-links';
 const BACK_MARKER = 'edukass-game-back';
-const SHORTCUT_MARKER = 'edukass-shortcut-only';
-const SHORTCUT_ONLY_PAGES = new Set([
-  'games/kiire-sonatreener/index.html',
-  'games/korrutamine-test/index.html'
-]);
+const INSTALL_MARKER = 'edukass-simple-install';
 
 const sharedStyle = `
 <style id="${STYLE_MARKER}">
@@ -78,39 +75,86 @@ const socialMarkup = `
       </a>
     </div>`;
 
-const shortcutOnlyScript = `
-<script id="${SHORTCUT_MARKER}">
+const samsungSafeManifest = `
+<script id="edukass-smart-manifest">
+if(!/SamsungBrowser/i.test(navigator.userAgent)){
+  const manifest=document.createElement('link');
+  manifest.rel='manifest';
+  manifest.href='./manifest.webmanifest';
+  document.head.appendChild(manifest);
+}
+</script>`;
+
+const multiplicationInstallScript = `
+<script id="${INSTALL_MARKER}">
 (() => {
-  const button = document.getElementById('installGameButton');
-  const dialog = document.getElementById('installDialog');
-  const title = document.getElementById('installDialogTitle');
-  const help = document.getElementById('installHelpText');
-  const confirm = document.getElementById('confirmInstallButton');
-  const continueButton = document.getElementById('continueInBrowserButton');
-  if (!button || !dialog || !title || !help || !confirm) return;
+  const originalButton=document.getElementById('installGameButton');
+  if(!originalButton)return;
 
-  const safeButton = button.cloneNode(true);
-  button.replaceWith(safeButton);
+  const button=originalButton.cloneNode(true);
+  originalButton.replaceWith(button);
+  button.textContent='📲 LISA TELEFONI';
 
-  safeButton.addEventListener('click', () => {
-    const ios = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-    title.textContent = 'LISA TELEFONI AVAKUVALE';
-    help.textContent = ios
-      ? 'Ava Safari jagamise menüü ja vali „Lisa avakuvale“. See loob EDUKASSi veebilehe otsetee.'
-      : 'Ava brauseri menüü (⋮) ja vali „Lisa avakuvale“ või „Loo otsetee“. See loob EDUKASSi veebilehe otsetee, mitte Androidi rakendust.';
-    confirm.textContent = 'SELGE';
-    confirm.dataset.action = 'shortcut-close';
-    confirm.hidden = false;
-    if (continueButton) continueButton.hidden = true;
-    if (typeof dialog.showModal === 'function') dialog.showModal();
+  const dialog=document.getElementById('installDialog');
+  const title=document.getElementById('installDialogTitle');
+  const help=document.getElementById('installHelpText');
+  const confirm=document.getElementById('confirmInstallButton');
+  const continueButton=document.getElementById('continueInBrowserButton');
+  const ua=navigator.userAgent;
+  const samsung=/SamsungBrowser/i.test(ua);
+  const ios=/iPad|iPhone|iPod/.test(ua)&&!window.MSStream;
+  let installPrompt=null;
+
+  window.addEventListener('beforeinstallprompt',event=>{
+    event.preventDefault();
+    installPrompt=event;
   });
 
-  confirm.addEventListener('click', event => {
-    if (confirm.dataset.action !== 'shortcut-close') return;
-    event.preventDefault();
-    event.stopImmediatePropagation();
-    dialog.close();
-  }, true);
+  window.addEventListener('appinstalled',()=>{
+    installPrompt=null;
+    button.textContent='✓ TELEFONIS';
+    button.disabled=true;
+  });
+
+  function showMessage(head,message){
+    if(!dialog||!title||!help)return;
+    title.textContent=head;
+    help.textContent=message;
+    if(confirm){confirm.textContent='SELGE';confirm.dataset.action='simple-close';confirm.hidden=false;}
+    if(continueButton)continueButton.hidden=true;
+    if(typeof dialog.showModal==='function')dialog.showModal();
+  }
+
+  if(confirm){
+    confirm.addEventListener('click',event=>{
+      if(confirm.dataset.action!=='simple-close')return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      if(dialog&&dialog.open)dialog.close();
+    },true);
+  }
+
+  button.addEventListener('click',async()=>{
+    if(samsung){
+      location.href='intent://'+location.host+location.pathname+location.search+location.hash+'#Intent;scheme=https;package=com.android.chrome;end';
+      return;
+    }
+
+    if(ios){
+      showMessage('LISA TELEFONI','Vajuta „Jaga“ → „Lisa avakuvale“ → „Lisa“.');
+      return;
+    }
+
+    if(installPrompt){
+      const promptEvent=installPrompt;
+      installPrompt=null;
+      promptEvent.prompt();
+      try{await promptEvent.userChoice;}catch(e){}
+      return;
+    }
+
+    showMessage('ÜKS HETK','Oota paar sekundit ja vajuta nuppu veel kord.');
+  });
 })();
 </script>`;
 
@@ -132,36 +176,30 @@ function walkHtmlFiles(directory) {
 
 let socialPages = 0;
 let minuSuviBackLinks = 0;
-let shortcutOnlyPages = 0;
+let simplifiedInstallPages = 0;
 
 for (const filePath of walkHtmlFiles(output)) {
   const relativePath = path.relative(output, filePath).split(path.sep).join('/');
   let html = fs.readFileSync(filePath, 'utf8');
   let changed = false;
 
-  if (SHORTCUT_ONLY_PAGES.has(relativePath)) {
-    html = html.replace(/\s*<link\b[^>]*\brel=(['"])manifest\1[^>]*>\s*/i, '\n');
-
-    if (relativePath === 'games/kiire-sonatreener/index.html') {
-      html = html.replace(/\s*<meta\s+name=(['"])mobile-web-app-capable\1\s+content=(['"])yes\2\s*>\s*/i, '\n');
-      if (!html.includes('icon-192.png')) {
-        html = html.replace(
-          '<link rel="icon" href="./icon.svg" type="image/svg+xml">',
-          '<link rel="icon" href="./icon.svg" type="image/svg+xml">\n<link rel="icon" href="./icon-192.png" sizes="192x192" type="image/png">'
-        );
-      }
+  if (relativePath === 'games/kiire-sonatreener/index.html') {
+    if (!html.includes('edukass-smart-manifest') && !html.includes("SamsungBrowser")) {
+      throw new Error('Sõnatreener smart manifest loader missing');
     }
+    simplifiedInstallPages += 1;
+    changed = true;
+  }
 
-    if (relativePath === 'games/korrutamine-test/index.html' && !html.includes(`id="${SHORTCUT_MARKER}"`)) {
-      if (!html.includes('</body>')) throw new Error('Unable to add shortcut-only helper to Korrutustabel');
-      html = html.replace('</body>', `${shortcutOnlyScript}\n</body>`);
+  if (relativePath === 'games/korrutamine-test/index.html') {
+    const manifestLink = /\s*<link\b[^>]*\brel=(['"])manifest\1[^>]*>\s*/i;
+    if (!manifestLink.test(html)) throw new Error('Korrutustabel manifest link missing');
+    html = html.replace(manifestLink, `\n${samsungSafeManifest}\n`);
+    if (!html.includes(`id="${INSTALL_MARKER}"`)) {
+      if (!html.includes('</body>')) throw new Error('Unable to add simple install helper to Korrutustabel');
+      html = html.replace('</body>', `${multiplicationInstallScript}\n</body>`);
     }
-
-    if (/\brel=(['"])manifest\1/i.test(html)) {
-      throw new Error(`PWA manifest link still present on shortcut-only page: ${relativePath}`);
-    }
-
-    shortcutOnlyPages += 1;
+    simplifiedInstallPages += 1;
     changed = true;
   }
 
@@ -192,18 +230,8 @@ for (const filePath of walkHtmlFiles(output)) {
   if (changed) fs.writeFileSync(filePath, html, 'utf8');
 }
 
-const multiplicationJsPath = path.join(output, 'games/korrutamine-test/game.js');
-let multiplicationJs = fs.readFileSync(multiplicationJsPath, 'utf8');
-const serviceWorkerRegistration = "if('serviceWorker' in navigator)navigator.serviceWorker.register('./service-worker.js',{updateViaCache:'none'}).then(registration=>registration.update()).catch(()=>{});";
-const serviceWorkerCleanup = "if('serviceWorker' in navigator)navigator.serviceWorker.getRegistrations().then(registrations=>Promise.all(registrations.filter(registration=>registration.scope.includes('/games/korrutamine-test/')).map(registration=>registration.unregister()))).catch(()=>{});if('caches' in window)caches.keys().then(keys=>Promise.all(keys.filter(key=>key.startsWith('edukass-korrutustabel-')).map(key=>caches.delete(key)))).catch(()=>{});";
-if (!multiplicationJs.includes(serviceWorkerRegistration)) {
-  throw new Error('Unable to disable Korrutustabel service worker registration');
-}
-multiplicationJs = multiplicationJs.replace(serviceWorkerRegistration, serviceWorkerCleanup);
-fs.writeFileSync(multiplicationJsPath, multiplicationJs, 'utf8');
-
 if (socialPages === 0) throw new Error('No EDUKASS site-header pages were decorated with social links');
 if (minuSuviBackLinks !== 1) throw new Error(`Expected one Minu suvi back link, got ${minuSuviBackLinks}`);
-if (shortcutOnlyPages !== SHORTCUT_ONLY_PAGES.size) throw new Error(`Expected ${SHORTCUT_ONLY_PAGES.size} shortcut-only pages, got ${shortcutOnlyPages}`);
+if (simplifiedInstallPages !== 2) throw new Error(`Expected 2 simplified install pages, got ${simplifiedInstallPages}`);
 
-console.log(`Cloudflare chrome: social links added to ${socialPages} site pages; Minu suvi back link added; ${shortcutOnlyPages} trainers switched to shortcut-only mode.`);
+console.log(`Cloudflare chrome: social links added to ${socialPages} site pages; Minu suvi back link added; ${simplifiedInstallPages} trainers use simplified install flow.`);
