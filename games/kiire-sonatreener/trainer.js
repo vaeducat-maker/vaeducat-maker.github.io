@@ -3,79 +3,135 @@ const DATA={
   et:{label:"Eesti",langName:"eesti keel",locale:"et",categories:[
     {id:"loodus",label:"Loodus",icon:"🌿",topics:[
       {id:"vesi-ja-jogi",title:"Vesi ja jõgi",subtitle:"Loodusõpetus",active:true,poster:"./poster-vesi-ja-jogi.webp",words:[
-        {word:"veekogu",ru:"водоём",chunks:["vee","ko","gu"],fake:["maa","li"]},
-        {word:"uurimisobjekt",ru:"объект исследования",chunks:["uu","ri","mis","ob","jekt"],fake:["la","gi"]},
-        {word:"mõiste",ru:"понятие",chunks:["mõis","te"],fake:["ma","lik"]},
-        {word:"magevesi",ru:"пресная вода",chunks:["ma","ge","ve","si"],fake:["ko","la"]},
-        {word:"jõgi",ru:"река",chunks:["jõ","gi"],fake:["ma","nu"]},
-        {word:"jõesäng",ru:"русло реки",chunks:["jõe","säng"],fake:["tee","la"]},
-        {word:"jõelähe",ru:"исток реки",chunks:["jõe","lä","he"],fake:["su","ma"]},
-        {word:"jõesuue",ru:"устье реки",chunks:["jõe","suu","e"],fake:["lä","ma"]},
-        {word:"lisajõgi",ru:"приток",chunks:["li","sa","jõ","gi"],fake:["ma","te"]}
+        {word:"veekogu",ru:"водоём"},
+        {word:"uurimisobjekt",ru:"объект исследования"},
+        {word:"mõiste",ru:"понятие"},
+        {word:"magevesi",ru:"пресная вода"},
+        {word:"jõgi",ru:"река"},
+        {word:"jõesäng",ru:"русло реки"},
+        {word:"jõelähe",ru:"исток реки"},
+        {word:"jõesuue",ru:"устье реки"},
+        {word:"lisajõgi",ru:"приток"}
       ]}
     ]},
     {id:"inimene",label:"Inimene",icon:"👤",topics:[]},
     {id:"eesti-keel",label:"Eesti keel",icon:"💬",topics:[
       {id:"sonad-1",title:"Sõnad 1",subtitle:"Kordamine",active:false,poster:null,words:[
-        {word:"tee kokkuvõte",ru:"подведи итог",chunks:["tee ","kok","ku","võ","te"],fake:["la","mi"]},
-        {word:"lugeja",ru:"читатель",chunks:["lu","ge","ja"],fake:["va","si"]},
-        {word:"minu meelest",ru:"по-моему",chunks:["mi","nu ","mee","lest"],fake:["va","ta"]},
-        {word:"mõnus",ru:"приятный",chunks:["mõ","nus"],fake:["ka","li"]},
-        {word:"toovad vanemad",ru:"родители приносят",chunks:["too","vad ","va","ne","mad"],fake:["si","ku"]},
-        {word:"soovitama",ru:"рекомендовать",chunks:["soo","vi","ta","ma"],fake:["le","ga"]},
-        {word:"meelt lahutama",ru:"развлекаться",chunks:["meelt ","la","hu","ta","ma"],fake:["si","ko"]},
-        {word:"paremini aru saama",ru:"лучше понимать",chunks:["pa","re","mi","ni ","a","ru ","saa","ma"],fake:["ve","lo"]},
-        {word:"enamasti",ru:"в основном",chunks:["e","na","mas","ti"],fake:["lu","va"]},
-        {word:"valima",ru:"выбирать",chunks:["va","li","ma"],fake:["ga","si"]}
+        {word:"tee kokkuvõte",ru:"подведи итог"},
+        {word:"lugeja",ru:"читатель"},
+        {word:"minu meelest",ru:"по-моему"},
+        {word:"mõnus",ru:"приятный"},
+        {word:"toovad vanemad",ru:"родители приносят"},
+        {word:"soovitama",ru:"рекомендовать"},
+        {word:"meelt lahutama",ru:"развлекаться"},
+        {word:"paremini aru saama",ru:"лучше понимать"},
+        {word:"enamasti",ru:"в основном"},
+        {word:"valima",ru:"выбирать"}
       ]}
     ]}
   ]},
   de:{label:"Deutsch",langName:"saksa keel",locale:"de",categories:[]}
 };
-const card=document.getElementById("card"),pill=document.getElementById("pill"),counter=document.getElementById("counter"),progress=document.getElementById("progress"),restart=document.getElementById("restart"),reviewBtn=document.getElementById("reviewBtn"),libraryBtn=document.getElementById("libraryBtn"),sub=document.getElementById("sub"),tabEt=document.getElementById("tabEt"),tabDe=document.getElementById("tabDe"),ps=[1,2,3,4,5].map(n=>document.getElementById("p"+n));
-let lang="et",stage=1,words=[],queue=[],index=0,locked=false,mastered=new Set(),mode="home",reviewQueue=[],reviewIndex=0,reviewGood=0,reviewBad=0,reviewFlipped=false,currentTopic=null,currentCategory=null;
+
+const card=document.getElementById("card"),pill=document.getElementById("pill"),counter=document.getElementById("counter"),progress=document.getElementById("progress"),restart=document.getElementById("restart"),reviewBtn=document.getElementById("reviewBtn"),libraryBtn=document.getElementById("libraryBtn"),sub=document.getElementById("sub"),tabEt=document.getElementById("tabEt"),tabDe=document.getElementById("tabDe");
+let lang="et",mode="home",currentTopic=null,currentCategory=null,reviewQueue=[],reviewGood=0,reviewBad=0,reviewFlipped=false;
 const LOCK_KEY="sonatreenerPosterLocksV2",OLD_LOCK_KEY="sonatreenerLessonLockV1";
 const shuffle=a=>{a=[...a];for(let i=a.length-1;i;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
-const norm=s=>s.toLocaleLowerCase(DATA[lang].locale).trim().replace(/[.!?,;:]+$/g,"").replace(/\s+/g," ");
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"})[c]);
-const vis=s=>s.trim();
-document.addEventListener("copy",e=>e.preventDefault());document.addEventListener("cut",e=>e.preventDefault());document.addEventListener("contextmenu",e=>e.preventDefault());
+
+document.addEventListener("copy",e=>e.preventDefault());
+document.addEventListener("cut",e=>e.preventDefault());
+document.addEventListener("contextmenu",e=>e.preventDefault());
+
 function allTopics(l=lang){return (DATA[l].categories||[]).flatMap(c=>c.topics.map(t=>({...t,category:c})))}
 function activeTopic(){return allTopics().find(t=>t.active)||allTopics()[0]||null}
 function findTopic(id){return allTopics().find(t=>t.id===id)||null}
 function getLocks(){try{const v=JSON.parse(localStorage.getItem(LOCK_KEY)||"{}");return v&&typeof v==="object"?v:{}}catch{return {}}}
 function saveLocks(v){localStorage.setItem(LOCK_KEY,JSON.stringify(v))}
 function lockId(topic=currentTopic,l=lang){return topic?`${l}:${topic.id}`:""}
-function setLock(kind){if(!currentTopic)return;const v=getLocks();v[lockId()]={kind};saveLocks(v)}
+function setLock(){if(!currentTopic)return;const v=getLocks();v[lockId()]={kind:"cards"};saveLocks(v)}
 function clearLock(topic=currentTopic,l=lang){if(!topic)return;const v=getLocks();delete v[lockId(topic,l)];saveLocks(v)}
 function isTopicLocked(topic=currentTopic,l=lang){if(!topic)return false;return !!getLocks()[lockId(topic,l)]}
-function migrateOldLock(){try{const old=JSON.parse(localStorage.getItem(OLD_LOCK_KEY)||"null");if(old&&old.topicId){const v=getLocks();v[`${old.lang||"et"}:${old.topicId}`]={kind:old.kind||"trainer"};saveLocks(v)}localStorage.removeItem(OLD_LOCK_KEY)}catch{localStorage.removeItem(OLD_LOCK_KEY)}}
+function migrateOldLock(){try{const old=JSON.parse(localStorage.getItem(OLD_LOCK_KEY)||"null");if(old&&old.topicId){const v=getLocks();v[`${old.lang||"et"}:${old.topicId}`]={kind:"cards"};saveLocks(v)}localStorage.removeItem(OLD_LOCK_KEY)}catch{localStorage.removeItem(OLD_LOCK_KEY)}}
 function setNavLocked(on){tabEt.disabled=on;tabDe.disabled=on;libraryBtn.hidden=on;reviewBtn.hidden=on}
 function updateSub(){if(currentTopic)sub.textContent=`${currentTopic.subtitle} · ${currentTopic.words.length} слов`;else sub.textContent=DATA[lang].langName}
+
 function setLanguage(next){lang=next;tabEt.classList.toggle("active",lang==="et");tabDe.classList.toggle("active",lang==="de");currentTopic=null;currentCategory=null;renderHome()}
-function renderHome(){mode="home";setNavLocked(false);progress.hidden=true;restart.hidden=true;counter.textContent="";pill.textContent=DATA[lang].label;currentTopic=null;updateSub();if(lang==="de"){card.innerHTML=`<div class="empty"><div class="big">🇩🇪</div><h2>Deutsch</h2><p>Немецкая вкладка готова. Сюда будем добавлять уроки и наборы слов по той же системе.</p></div>`;return}const topic=activeTopic();if(!topic){renderLibrary();return}openTopic(topic.id)}
-function openTopic(id){const topic=findTopic(id);if(!topic)return;currentTopic=topic;currentCategory=topic.category;mode="topic";setNavLocked(false);progress.hidden=true;restart.hidden=true;counter.textContent="";pill.textContent=topic.category.label;updateSub();const posterLocked=isTopicLocked(topic);const poster=topic.poster&&!posterLocked?`<button class="poster-preview" id="posterOpen" aria-label="Открыть плакат"><img src="${topic.poster}" alt="${esc(topic.title)} — учебный плакат"></button>`:topic.poster?`<div class="topic-no-poster">🔒<div style="font-size:14px;margin-top:8px;color:var(--muted)">Плакат откроется после завершения</div></div>`:`<div class="topic-no-poster">💬</div>`;card.innerHTML=`<div class="topic-intro"><div class="topic-kicker">${topic.category.icon} ${esc(topic.category.label)}</div><h2>${esc(topic.title)}</h2>${poster}<div class="topic-actions">${topic.poster&&!posterLocked?'<button class="secondary" id="posterBtn">🖼 Смотреть плакат</button>':topic.poster?'<button class="secondary" disabled>🔒 Плакат после завершения</button>':''}<button class="primary" id="startBtn">Начать тренировку</button><button class="secondary" id="cardsBtn">🃏 Карточки</button></div></div>`;if(topic.poster&&!posterLocked){card.querySelector("#posterOpen").onclick=()=>showPoster(topic);card.querySelector("#posterBtn").onclick=()=>showPoster(topic)}card.querySelector("#startBtn").onclick=()=>startLesson(topic,"trainer");card.querySelector("#cardsBtn").onclick=()=>startLesson(topic,"review")}
-function showPoster(topic){if(isTopicLocked(topic)||!topic.poster)return;mode="poster";progress.hidden=true;restart.hidden=false;restart.textContent="← К уроку";pill.textContent="🖼 Плакат";counter.textContent="";card.innerHTML=`<div class="poster-view"><img src="${topic.poster}" alt="${esc(topic.title)} — учебный плакат"><button class="primary" id="posterStart">Начать тренировку</button></div>`;card.querySelector("#posterStart").onclick=()=>startLesson(topic,"trainer")}
-function renderLibrary(){mode="library";setNavLocked(false);progress.hidden=true;restart.hidden=true;counter.textContent="";pill.textContent="📚 Teemad";currentTopic=null;updateSub();if(lang==="de"){renderHome();return}const html=DATA.et.categories.map(c=>`<section class="library-section"><div class="library-title"><span>${c.icon}</span><strong>${esc(c.label)}</strong></div>${c.topics.length?`<div class="topic-grid">${c.topics.map(t=>`<button class="topic-tile" data-topic="${t.id}"><span class="topic-title">${esc(t.title)}</span><span class="topic-meta">${t.words.length} слов${t.poster?' · 🖼':''}</span></button>`).join("")}</div>`:`<div class="library-empty">Пока нет уроков</div>`}</section>`).join("");card.innerHTML=`<div><div class="library-heading">Все уроки</div><p class="chest-note">Здесь постепенно будет собираться его личная библиотека тем, слов и основных понятий.</p>${html}</div>`;card.querySelectorAll("[data-topic]").forEach(b=>b.onclick=()=>openTopic(b.dataset.topic))}
-function startLesson(topic,kind){currentTopic=topic;currentCategory=topic.category;words=topic.words;setLock(kind);setNavLocked(true);if(kind==="review")startReview(words);else start(1,words)}
-function chrome(){const names={1:"Tutvu",2:"Vali",3:"Koosta",4:"Koosta +",5:"Kirjuta"};pill.textContent=`${stage} / 5 · ${names[stage]}`;ps.forEach((p,i)=>p.classList.toggle("on",i<stage));const total=words.length;counter.textContent=stage===1?`${Math.min(index+1,total)} / ${total}`:`${Math.min(mastered.size+1,total)} / ${total}`;updateSub()}
-function start(n,set=words){mode="trainer";progress.hidden=false;restart.hidden=false;restart.textContent="← Выйти";stage=n;words=set;queue=n===1?[...words]:shuffle(words);index=0;locked=false;mastered=new Set();chrome();render()}
-function next(){index++;locked=false;if(index<queue.length){chrome();render();return}stage<5?start(stage+1,words):finish()}
-function good(item,ms){if(stage>1)mastered.add(item.word);setTimeout(next,ms)}
-function defer(item,ms){mastered.delete(item.word);if(index>=queue.length-1){const alt=shuffle(words.filter(w=>w.word!==item.word))[0];if(alt)queue.push(alt)}queue.push(item);setTimeout(()=>{index++;locked=false;chrome();render()},ms)}
-function render(){const item=queue[index];if(stage===1)study(item);else if(stage===2)choice(item);else if(stage===3)build(item,false);else if(stage===4)build(item,true);else type(item)}
-function study(item){card.innerHTML=`<div class="prompt">${esc(item.word)}</div><div class="translation">${esc(item.ru)}</div><button class="primary" id="next">Edasi →</button>`;card.querySelector("#next").onclick=next}
-function choice(item){const opts=shuffle([item,...shuffle(words.filter(w=>w.word!==item.word)).slice(0,3)]);card.innerHTML=`<div class="prompt">${esc(item.ru)}</div><div class="choices" id="choices"></div><div class="feedback" id="fb"></div>`;const box=card.querySelector("#choices");opts.forEach(o=>{const b=document.createElement("button");b.className="choice";b.textContent=o.word;b.onclick=()=>checkChoice(b,o.word===item.word,item,box);box.appendChild(b)})}
-function checkChoice(btn,ok,item,box){if(locked)return;locked=true;[...box.children].forEach(b=>b.disabled=true);const fb=card.querySelector("#fb");if(ok){btn.classList.add("correct");fb.className="feedback ok";fb.textContent="✓ Õige!";good(item,850);return}btn.classList.add("wrong");const right=[...box.children].find(b=>b.textContent===item.word);if(right)right.classList.add("correct");fb.className="feedback bad";fb.innerHTML=`<strong style="color:#167047">${esc(item.word)}</strong>`;defer(item,2500)}
-function panel(item){return `<div class="panel"><div class="panel-label">Õige vastus</div><div class="panel-bricks">${item.chunks.map(c=>`<span>${esc(vis(c))}</span>`).join("")}</div><div class="panel-word">${esc(item.word)}</div></div>`}
-function build(item,fakes){const pieces=shuffle([...item.chunks.map((v,i)=>({id:"c"+i,v})),...(fakes?item.fake.map((v,i)=>({id:"f"+i,v})):[])]),selected=[];card.innerHTML=`<div class="prompt">${esc(item.ru)}</div><div class="build-zone" id="zone"><span class="placeholder">Собери здесь</span></div><div class="built" id="built"></div><div class="bank" id="bank"></div><div class="build-actions"><button class="secondary" id="clear">Очистить</button><button class="primary" id="check">Kontrolli</button></div><div class="feedback" id="fb"></div><div id="host"></div>`;const zone=card.querySelector("#zone"),bank=card.querySelector("#bank"),built=card.querySelector("#built"),check=card.querySelector("#check"),clear=card.querySelector("#clear");function redraw(){zone.innerHTML="";if(!selected.length){zone.classList.remove("has");zone.innerHTML='<span class="placeholder">Собери здесь</span>'}else{zone.classList.add("has");selected.forEach(p=>{const b=document.createElement("button");b.className="brick";b.textContent=vis(p.v);b.onclick=()=>{if(locked)return;selected.splice(selected.findIndex(x=>x.id===p.id),1);const src=bank.querySelector(`[data-id="${p.id}"]`);if(src){src.disabled=false;src.classList.remove("used")}redraw()};zone.appendChild(b)})}built.textContent=selected.map(x=>x.v).join("").trim()}pieces.forEach(p=>{const b=document.createElement("button");b.className="brick";b.dataset.id=p.id;b.textContent=vis(p.v);b.onclick=()=>{if(locked||b.disabled)return;selected.push(p);b.disabled=true;b.classList.add("used");redraw()};bank.appendChild(b)});clear.onclick=()=>{if(locked)return;selected.length=0;[...bank.children].forEach(b=>{b.disabled=false;b.classList.remove("used")});redraw()};check.onclick=()=>checkBuild(item,selected,zone,bank,check,clear)}
-function checkBuild(item,selected,zone,bank,check,clear){if(locked)return;const fb=card.querySelector("#fb");if(!selected.length)return;locked=true;check.disabled=clear.disabled=true;[...bank.children].forEach(b=>b.disabled=true);const ok=norm(selected.map(x=>x.v).join(""))===norm(item.word),ans=[...zone.querySelectorAll(".brick")];if(ok){ans.forEach(b=>b.classList.add("green"));fb.className="feedback ok";fb.textContent="✓ Õige!";card.querySelector("#host").innerHTML=panel(item);good(item,1250);return}ans.forEach(b=>b.classList.add("red"));card.querySelector("#host").innerHTML=panel(item);defer(item,3800)}
-function type(item){card.innerHTML=`<div class="prompt">${esc(item.ru)}</div><form class="input-row" id="form"><input id="answer" autocomplete="off" autocapitalize="none" spellcheck="false"><button class="primary">Kontrolli</button></form><div class="feedback" id="fb"></div><div id="host"></div>`;const form=card.querySelector("#form"),input=card.querySelector("#answer");["paste","drop"].forEach(t=>input.addEventListener(t,e=>e.preventDefault()));input.addEventListener("beforeinput",e=>{if(["insertFromPaste","insertFromDrop","insertFromYank"].includes(e.inputType))e.preventDefault()});input.addEventListener("keydown",e=>{if(((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="v")||(e.shiftKey&&e.key==="Insert"))e.preventDefault()});input.focus();form.onsubmit=e=>{e.preventDefault();if(locked||!input.value.trim())return;locked=true;const ok=norm(input.value)===norm(item.word);input.disabled=true;form.querySelector("button").disabled=true;if(ok){input.classList.add("correct");card.querySelector("#fb").className="feedback ok";card.querySelector("#fb").textContent="✓ Õige!";good(item,900)}else{input.classList.add("wrong");card.querySelector("#host").innerHTML=panel(item);defer(item,3500)}}}
-function startReview(set=words){mode="review";progress.hidden=true;restart.hidden=false;restart.textContent="← Выйти";reviewQueue=shuffle(set);reviewIndex=0;reviewGood=0;reviewBad=0;reviewFlipped=false;pill.textContent=`🃏 ${set.length}`;renderReview()}
-function renderReview(){if(reviewIndex>=reviewQueue.length)return finishReview();reviewFlipped=false;const item=reviewQueue[reviewIndex],left=reviewQueue.length-reviewIndex;counter.textContent=`${left} осталось`;pill.textContent=`🃏 ${left}`;card.innerHTML=`<div class="review-wrap"><div class="flashcard" id="flash"><div class="flashcard-inner"><div class="flash-face flash-front">${esc(item.ru)}</div><div class="flash-face flash-back">${esc(item.word)}</div></div></div><div class="review-actions" id="reviewActions" hidden><button class="review-no" id="reviewNo">✕</button><button class="review-yes" id="reviewYes">✓</button></div><div class="review-stats"><span>✓ ${reviewGood}</span><span>✕ ${reviewBad}</span></div></div>`;const flash=card.querySelector("#flash"),actions=card.querySelector("#reviewActions");let x0=null;flash.onclick=()=>{if(reviewFlipped)return;reviewFlipped=true;flash.classList.add("flipped");actions.hidden=false};flash.addEventListener("pointerdown",e=>{x0=e.clientX});flash.addEventListener("pointerup",e=>{if(!reviewFlipped||x0===null)return;const dx=e.clientX-x0;x0=null;if(Math.abs(dx)>70)classifyReview(dx>0)});card.querySelector("#reviewNo").onclick=()=>classifyReview(false);card.querySelector("#reviewYes").onclick=()=>classifyReview(true)}
-function classifyReview(ok){if(!reviewFlipped||locked)return;locked=true;const flash=card.querySelector("#flash");flash.classList.add(ok?"fly-right":"fly-left");if(ok){reviewGood++;setTimeout(()=>{reviewIndex++;locked=false;renderReview()},260);return}reviewBad++;setTimeout(()=>{const [missed]=reviewQueue.splice(reviewIndex,1);const remaining=reviewQueue.length-reviewIndex;if(remaining>0){const minPos=Math.min(reviewIndex+1,reviewQueue.length);const pos=minPos+Math.floor(Math.random()*(reviewQueue.length-minPos+1));reviewQueue.splice(pos,0,missed)}else{reviewQueue.splice(reviewIndex,0,missed)}locked=false;renderReview()},260)}
-function finishReview(){clearLock();setNavLocked(false);counter.textContent="";pill.textContent="Valmis";card.innerHTML=`<div class="done"><div class="big">🃏</div><h2>Valmis!</h2><div class="review-stats" style="justify-content:center;margin-bottom:20px"><span>✓ ${reviewGood}</span><span>✕ ${reviewBad}</span></div><div class="finish-actions">${currentTopic&&currentTopic.poster?'<button class="secondary" id="seePoster">🖼 Посмотреть плакат</button>':''}<button class="primary" id="againCards">Ещё карточки</button><button class="secondary" id="backTopic">К уроку</button></div></div>`;if(currentTopic&&currentTopic.poster)card.querySelector("#seePoster").onclick=()=>showPoster(currentTopic);card.querySelector("#againCards").onclick=()=>startLesson(currentTopic,"review");card.querySelector("#backTopic").onclick=()=>openTopic(currentTopic.id)}
-function finish(){clearLock();setNavLocked(false);counter.textContent="";pill.textContent="Valmis";ps.forEach(p=>p.classList.add("on"));card.innerHTML=`<div class="done"><div class="big">🌿</div><h2>Kõik tehtud!</h2><div class="finish-actions">${currentTopic&&currentTopic.poster?'<button class="secondary" id="seePoster">🖼 Посмотреть плакат</button>':''}<button class="primary" id="again">Ещё один круг</button><button class="secondary" id="backTopic">К уроку</button></div></div>`;if(currentTopic&&currentTopic.poster)card.querySelector("#seePoster").onclick=()=>showPoster(currentTopic);card.querySelector("#again").onclick=()=>startLesson(currentTopic,"trainer");card.querySelector("#backTopic").onclick=()=>openTopic(currentTopic.id)}
-reviewBtn.onclick=()=>{const t=currentTopic||activeTopic();if(t)startLesson(t,"review")};libraryBtn.onclick=renderLibrary;tabEt.onclick=()=>setLanguage("et");tabDe.onclick=()=>setLanguage("de");restart.onclick=()=>{if(mode==="poster"&&currentTopic){openTopic(currentTopic.id);return}if((mode==="trainer"||mode==="review")&&currentTopic){openTopic(currentTopic.id);return}};
-migrateOldLock();setLanguage("et");
+
+function renderHome(){mode="home";setNavLocked(false);progress.hidden=true;restart.hidden=true;counter.textContent="";pill.textContent=DATA[lang].label;currentTopic=null;updateSub();if(lang==="de"){card.innerHTML=`<div class="empty"><div class="big">🇩🇪</div><h2>Deutsch</h2><p>Немецкая вкладка готова. Сюда будем добавлять отдельные наборы карточек.</p></div>`;return}const topic=activeTopic();if(!topic){renderLibrary();return}openTopic(topic.id)}
+
+function openTopic(id){
+  const topic=findTopic(id);if(!topic)return;
+  currentTopic=topic;currentCategory=topic.category;mode="topic";setNavLocked(false);progress.hidden=true;restart.hidden=true;counter.textContent="";pill.textContent=topic.category.label;updateSub();
+  const posterLocked=isTopicLocked(topic);
+  const poster=topic.poster&&!posterLocked
+    ?`<button class="poster-preview" id="posterOpen" aria-label="Открыть плакат"><img src="${topic.poster}" alt="${esc(topic.title)} — учебный плакат"></button>`
+    :topic.poster
+      ?`<div class="topic-no-poster">🔒<div style="font-size:14px;margin-top:8px;color:var(--muted)">Плакат откроется после завершения карточек</div></div>`
+      :`<div class="topic-no-poster">🃏</div>`;
+  card.innerHTML=`<div class="topic-intro"><div class="topic-kicker">${topic.category.icon} ${esc(topic.category.label)}</div><h2>${esc(topic.title)}</h2>${poster}<div class="topic-actions">${topic.poster&&!posterLocked?'<button class="secondary" id="posterBtn">🖼 Смотреть плакат</button>':topic.poster?'<button class="secondary" disabled>🔒 Плакат после карточек</button>':''}<button class="primary" id="cardsBtn">🃏 Учить карточками</button></div></div>`;
+  if(topic.poster&&!posterLocked){card.querySelector("#posterOpen").onclick=()=>showPoster(topic);card.querySelector("#posterBtn").onclick=()=>showPoster(topic)}
+  card.querySelector("#cardsBtn").onclick=()=>startReview(topic);
+}
+
+function showPoster(topic){
+  if(isTopicLocked(topic)||!topic.poster)return;
+  mode="poster";progress.hidden=true;restart.hidden=false;restart.textContent="← К уроку";pill.textContent="🖼 Плакат";counter.textContent="";
+  card.innerHTML=`<div class="poster-view"><img src="${topic.poster}" alt="${esc(topic.title)} — учебный плакат"><button class="primary" id="posterCards">🃏 Учить карточками</button></div>`;
+  card.querySelector("#posterCards").onclick=()=>startReview(topic);
+}
+
+function renderLibrary(){
+  mode="library";setNavLocked(false);progress.hidden=true;restart.hidden=true;counter.textContent="";pill.textContent="📚 Teemad";currentTopic=null;updateSub();
+  if(lang==="de"){renderHome();return}
+  const html=DATA.et.categories.map(c=>`<section class="library-section"><div class="library-title"><span>${c.icon}</span><strong>${esc(c.label)}</strong></div>${c.topics.length?`<div class="topic-grid">${c.topics.map(t=>`<button class="topic-tile" data-topic="${t.id}"><span class="topic-title">${esc(t.title)}</span><span class="topic-meta">${t.words.length} слов${t.poster?' · 🖼':''}</span></button>`).join("")}</div>`:`<div class="library-empty">Пока нет уроков</div>`}</section>`).join("");
+  card.innerHTML=`<div><div class="library-heading">Все уроки</div><p class="chest-note">Здесь постепенно будет собираться его личная библиотека тем, понятий и карточек.</p>${html}</div>`;
+  card.querySelectorAll("[data-topic]").forEach(b=>b.onclick=()=>openTopic(b.dataset.topic));
+}
+
+function startReview(topic){
+  currentTopic=topic;currentCategory=topic.category;mode="review";setLock();setNavLocked(true);progress.hidden=true;restart.hidden=false;restart.textContent="← Выйти";pill.textContent="🃏 Карточки";reviewQueue=shuffle(topic.words);reviewGood=0;reviewBad=0;reviewFlipped=false;renderReview();
+}
+
+function renderReview(){
+  if(!reviewQueue.length){finishReview();return}
+  const item=reviewQueue[0];reviewFlipped=false;counter.textContent=`Осталось: ${reviewQueue.length}`;updateSub();
+  card.innerHTML=`<div class="review-wrap"><div class="flashcard" id="flash"><div class="flashcard-inner"><div class="flash-face">${esc(item.ru)}</div><div class="flash-face flash-back">${esc(item.word)}</div></div></div><div class="review-stats"><span>✓ ${reviewGood}</span><span>✕ ${reviewBad}</span></div><div class="review-actions" id="reviewActions" hidden><button class="review-no" id="reviewNo">✕</button><button class="review-yes" id="reviewYes">✓</button></div><div class="tiny" style="text-align:center">Нажми на карточку, чтобы перевернуть</div></div>`;
+  const flash=card.querySelector("#flash"),actions=card.querySelector("#reviewActions");
+  flash.onclick=()=>{if(reviewFlipped)return;reviewFlipped=true;flash.classList.add("flipped");actions.hidden=false};
+  card.querySelector("#reviewYes").onclick=()=>decideReview(true);
+  card.querySelector("#reviewNo").onclick=()=>decideReview(false);
+  let startX=null,startY=null;
+  flash.addEventListener("touchstart",e=>{const t=e.changedTouches[0];startX=t.clientX;startY=t.clientY},{passive:true});
+  flash.addEventListener("touchend",e=>{if(!reviewFlipped||startX===null)return;const t=e.changedTouches[0],dx=t.clientX-startX,dy=t.clientY-startY;startX=startY=null;if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.2)decideReview(dx>0)},{passive:true});
+}
+
+function decideReview(ok){
+  if(!reviewQueue.length)return;
+  const item=reviewQueue.shift();
+  if(ok){reviewGood++;renderReview();return}
+  reviewBad++;
+  if(reviewQueue.length===0){const alt=shuffle(currentTopic.words.filter(w=>w.word!==item.word))[0];if(alt)reviewQueue.push(alt)}
+  const pos=Math.min(reviewQueue.length,Math.max(1,2+Math.floor(Math.random()*2)));
+  reviewQueue.splice(pos,0,item);
+  renderReview();
+}
+
+function finishReview(){
+  clearLock();setNavLocked(false);counter.textContent="";pill.textContent="Valmis";restart.hidden=true;
+  card.innerHTML=`<div class="done"><div class="big">🃏</div><h2>Готово!</h2><div class="finish-actions">${currentTopic&&currentTopic.poster?'<button class="secondary" id="seePoster">🖼 Посмотреть плакат</button>':''}<button class="primary" id="again">Ещё раз карточки</button><button class="secondary" id="backTopic">К уроку</button></div></div>`;
+  if(currentTopic&&currentTopic.poster)card.querySelector("#seePoster").onclick=()=>showPoster(currentTopic);
+  card.querySelector("#again").onclick=()=>startReview(currentTopic);
+  card.querySelector("#backTopic").onclick=()=>openTopic(currentTopic.id);
+}
+
+reviewBtn.onclick=()=>{const t=currentTopic||activeTopic();if(t)startReview(t)};
+libraryBtn.onclick=renderLibrary;
+tabEt.onclick=()=>setLanguage("et");
+tabDe.onclick=()=>setLanguage("de");
+restart.onclick=()=>{if((mode==="poster"||mode==="review")&&currentTopic)openTopic(currentTopic.id)};
+
+migrateOldLock();
+progress.hidden=true;
+setLanguage("et");
 })();
