@@ -34,7 +34,8 @@ const DATA={
 };
 
 const card=document.getElementById("card"),pill=document.getElementById("pill"),counter=document.getElementById("counter"),progress=document.getElementById("progress"),restart=document.getElementById("restart"),reviewBtn=document.getElementById("reviewBtn"),libraryBtn=document.getElementById("libraryBtn"),sub=document.getElementById("sub"),tabEt=document.getElementById("tabEt"),tabDe=document.getElementById("tabDe");
-let lang="et",mode="home",currentTopic=null,currentCategory=null,reviewQueue=[],reviewGood=0,reviewBad=0,reviewFlipped=false,posterReturnMode="topic";
+let lang="et",mode="home",currentTopic=null,currentCategory=null,reviewQueue=[],reviewGood=0,reviewBad=0,reviewFlipped=false,reviewDirection="ru-et",posterReturnMode="topic";
+try{const savedDirection=localStorage.getItem("sonatreenerReviewDirection");if(savedDirection==="ru-et"||savedDirection==="et-ru")reviewDirection=savedDirection}catch(e){}
 const shuffle=a=>{a=[...a];for(let i=a.length-1;i;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"})[c]);
 
@@ -48,6 +49,7 @@ function activeTopic(){return allTopics().find(t=>t.active)||allTopics()[0]||nul
 function findTopic(id){return allTopics().find(t=>t.id===id)||null}
 function setNavLocked(on){tabEt.disabled=on;tabDe.disabled=on;libraryBtn.hidden=on;reviewBtn.hidden=on}
 function updateSub(){if(currentTopic)sub.textContent=`${currentTopic.subtitle} · ${currentTopic.words.length} слов`;else sub.textContent=DATA[lang].langName}
+function saveReviewDirection(){try{localStorage.setItem("sonatreenerReviewDirection",reviewDirection)}catch(e){}}
 
 function setLanguage(next){lang=next;tabEt.classList.toggle("active",lang==="et");tabDe.classList.toggle("active",lang==="de");currentTopic=null;currentCategory=null;renderHome()}
 
@@ -59,9 +61,10 @@ function openTopic(id){
   const poster=topic.poster
     ?`<button class="poster-preview" id="posterOpen" aria-label="Открыть плакат"><img src="${topic.poster}" alt="${esc(topic.title)} — учебный плакат"></button>`
     :`<div class="topic-no-poster">🃏</div>`;
-  card.innerHTML=`<div class="topic-intro"><div class="topic-kicker">${topic.category.icon} ${esc(topic.category.label)}</div><h2>${esc(topic.title)}</h2>${poster}<div class="topic-actions">${topic.poster?'<button class="secondary" id="posterBtn">🖼 Смотреть плакат</button>':''}<button class="primary" id="cardsBtn">🃏 Учить карточками</button></div></div>`;
+  card.innerHTML=`<div class="topic-intro"><div class="topic-kicker">${topic.category.icon} ${esc(topic.category.label)}</div><h2>${esc(topic.title)}</h2>${poster}<div class="topic-actions">${topic.poster?'<button class="secondary" id="posterBtn">🖼 Смотреть плакат</button>':''}<button class="primary" id="cardsRuEt">🇷🇺 → 🇪🇪 Русский → эстонский</button><button class="secondary" id="cardsEtRu">🇪🇪 → 🇷🇺 Эстонский → русский</button></div></div>`;
   if(topic.poster){card.querySelector("#posterOpen").onclick=()=>showPoster(topic,"topic");card.querySelector("#posterBtn").onclick=()=>showPoster(topic,"topic")}
-  card.querySelector("#cardsBtn").onclick=()=>startReview(topic);
+  card.querySelector("#cardsRuEt").onclick=()=>startReview(topic,"ru-et");
+  card.querySelector("#cardsEtRu").onclick=()=>startReview(topic,"et-ru");
 }
 
 function showPoster(topic,returnMode="topic"){
@@ -72,7 +75,7 @@ function showPoster(topic,returnMode="topic"){
     :'<button class="primary" id="posterCards">🃏 Учить карточками</button>';
   card.innerHTML=`<div class="poster-view"><img src="${topic.poster}" alt="${esc(topic.title)} — учебный плакат">${action}</div>`;
   if(returnMode==="review")card.querySelector("#posterBack").onclick=resumeReview;
-  else card.querySelector("#posterCards").onclick=()=>startReview(topic);
+  else card.querySelector("#posterCards").onclick=()=>startReview(topic,reviewDirection);
 }
 
 function renderLibrary(){
@@ -83,8 +86,8 @@ function renderLibrary(){
   card.querySelectorAll("[data-topic]").forEach(b=>b.onclick=()=>openTopic(b.dataset.topic));
 }
 
-function startReview(topic){
-  currentTopic=topic;currentCategory=topic.category;mode="review";posterReturnMode="review";setNavLocked(true);progress.hidden=true;restart.hidden=false;restart.textContent="← Выйти";pill.textContent="🃏 Карточки";reviewQueue=shuffle(topic.words);reviewGood=0;reviewBad=0;reviewFlipped=false;renderReview();
+function startReview(topic,direction=reviewDirection){
+  currentTopic=topic;currentCategory=topic.category;reviewDirection=direction;saveReviewDirection();mode="review";posterReturnMode="review";setNavLocked(true);progress.hidden=true;restart.hidden=false;restart.textContent="← Выйти";pill.textContent="🃏 Карточки";reviewQueue=shuffle(topic.words);reviewGood=0;reviewBad=0;reviewFlipped=false;renderReview();
 }
 
 function resumeReview(){
@@ -92,11 +95,19 @@ function resumeReview(){
   mode="review";posterReturnMode="review";setNavLocked(true);progress.hidden=true;restart.hidden=false;restart.textContent="← Выйти";pill.textContent="🃏 Карточки";renderReview();
 }
 
+function switchReviewDirection(){
+  reviewDirection=reviewDirection==="ru-et"?"et-ru":"ru-et";saveReviewDirection();renderReview();
+}
+
 function renderReview(){
   if(!reviewQueue.length){finishReview();return}
   const item=reviewQueue[0];reviewFlipped=false;counter.textContent=`Осталось: ${reviewQueue.length}`;updateSub();
+  const front=reviewDirection==="ru-et"?item.ru:item.word;
+  const back=reviewDirection==="ru-et"?item.word:item.ru;
+  const directionLabel=reviewDirection==="ru-et"?"🇷🇺 → 🇪🇪 Русский → эстонский":"🇪🇪 → 🇷🇺 Эстонский → русский";
   const posterButton=currentTopic&&currentTopic.poster?'<button class="secondary" id="reviewPoster" style="width:100%">🖼 Посмотреть плакат</button>':'';
-  card.innerHTML=`<div class="review-wrap">${posterButton}<div class="flashcard" id="flash"><div class="flashcard-inner"><div class="flash-face">${esc(item.ru)}</div><div class="flash-face flash-back">${esc(item.word)}</div></div></div><div class="review-stats"><span>✓ ${reviewGood}</span><span>✕ ${reviewBad}</span></div><div class="review-actions" id="reviewActions" hidden><button class="review-no" id="reviewNo">✕</button><button class="review-yes" id="reviewYes">✓</button></div><div class="tiny" style="text-align:center">Нажми на карточку, чтобы перевернуть</div></div>`;
+  card.innerHTML=`<div class="review-wrap"><button class="secondary" id="directionBtn" style="width:100%">↔ ${directionLabel}</button>${posterButton}<div class="flashcard" id="flash"><div class="flashcard-inner"><div class="flash-face">${esc(front)}</div><div class="flash-face flash-back">${esc(back)}</div></div></div><div class="review-stats"><span>✓ ${reviewGood}</span><span>✕ ${reviewBad}</span></div><div class="review-actions" id="reviewActions" hidden><button class="review-no" id="reviewNo">✕</button><button class="review-yes" id="reviewYes">✓</button></div><div class="tiny" style="text-align:center">Нажми на карточку, чтобы перевернуть</div></div>`;
+  card.querySelector("#directionBtn").onclick=switchReviewDirection;
   if(currentTopic&&currentTopic.poster)card.querySelector("#reviewPoster").onclick=()=>showPoster(currentTopic,"review");
   const flash=card.querySelector("#flash"),actions=card.querySelector("#reviewActions");
   flash.onclick=()=>{if(reviewFlipped)return;reviewFlipped=true;flash.classList.add("flipped");actions.hidden=false};
@@ -122,11 +133,11 @@ function finishReview(){
   setNavLocked(false);counter.textContent="";pill.textContent="Valmis";restart.hidden=true;
   card.innerHTML=`<div class="done"><div class="big">🃏</div><h2>Готово!</h2><div class="finish-actions">${currentTopic&&currentTopic.poster?'<button class="secondary" id="seePoster">🖼 Посмотреть плакат</button>':''}<button class="primary" id="again">Ещё раз карточки</button><button class="secondary" id="backTopic">К уроку</button></div></div>`;
   if(currentTopic&&currentTopic.poster)card.querySelector("#seePoster").onclick=()=>showPoster(currentTopic,"topic");
-  card.querySelector("#again").onclick=()=>startReview(currentTopic);
+  card.querySelector("#again").onclick=()=>startReview(currentTopic,reviewDirection);
   card.querySelector("#backTopic").onclick=()=>openTopic(currentTopic.id);
 }
 
-reviewBtn.onclick=()=>{const t=currentTopic||activeTopic();if(t)startReview(t)};
+reviewBtn.onclick=()=>{const t=currentTopic||activeTopic();if(t)startReview(t,reviewDirection)};
 libraryBtn.onclick=renderLibrary;
 tabEt.onclick=()=>setLanguage("et");
 tabDe.onclick=()=>setLanguage("de");
