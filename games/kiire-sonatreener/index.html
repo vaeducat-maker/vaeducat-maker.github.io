@@ -38,9 +38,9 @@ if(!window.EDUKASS_SAMSUNG_BROWSER){
 <div class="brand">EDUKASS</div>
 <header class="top"><div><h1>Minu õppetunnid</h1><p class="sub" id="sub"></p></div><div class="top-tools"><button class="icon-button shortcut-button" id="shortcutBtn" aria-label="Добавить на главный экран" title="Добавить на главный экран">📲 На экран</button><button class="icon-button deck-button" id="reviewBtn" aria-label="Карточки" title="Карточки"><span class="deck-stack" aria-hidden="true"></span></button><button class="icon-button" id="libraryBtn" aria-label="Все уроки" title="Все уроки">📚</button><div class="pill" id="pill">Eesti</div></div></header>
 <div class="lang-tabs" role="tablist" aria-label="Язык тренажёра"><button class="lang-tab active" id="tabEt" role="tab">🇪🇪 Eesti</button><button class="lang-tab" id="tabDe" role="tab">🇩🇪 Deutsch</button></div>
-<div class="progress" id="progress"><span id="p1" class="on"></span><span id="p2"></span><span id="p3"></span><span id="p4"></span><span id="p5"></span></div>
+<div class="progress" id="progress" hidden><span id="p1"></span><span id="p2"></span><span id="p3"></span><span id="p4"></span><span id="p5"></span></div>
 <section class="card" id="card" aria-live="polite"></section>
-<div class="actions"><button class="ghost" id="restart">↻ Alusta uuesti</button><div class="tiny" id="counter"></div></div>
+<div class="actions"><button class="ghost" id="restart" hidden>← Выйти</button><div class="tiny" id="counter"></div></div>
 </main>
 <script>
 try{
@@ -138,7 +138,7 @@ try{
   }
 })();
 </script>
-<script src="./trainer.js?v=20260909-1"></script>
+<script src="./trainer.js?v=20260909-2"></script>
 <script src="./poster-fix.js?v=20260909-7"></script>
 </body>
 </html>
