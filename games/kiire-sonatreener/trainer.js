@@ -2,7 +2,7 @@
 const DATA={
   et:{label:"Eesti",langName:"eesti keel",locale:"et",categories:[
     {id:"loodus",label:"Loodus",icon:"🌿",topics:[
-      {id:"vesi-ja-jogi",title:"Vesi ja jõgi",subtitle:"Loodusõpetus",active:true,poster:"./poster-pretty.jpg?v=20260909-1",words:[
+      {id:"vesi-ja-jogi",title:"Vesi ja jõgi",subtitle:"Loodusõpetus",active:true,poster:"./poster-vesi-ja-jogi.svg?v=20260909-simple",words:[
         {word:"veekogu",ru:"водоём"},
         {word:"uurimisobjekt",ru:"объект исследования"},
         {word:"mõiste",ru:"понятие"},
