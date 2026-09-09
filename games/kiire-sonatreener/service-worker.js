@@ -1,5 +1,12 @@
-const CACHE='edukass-sonatreener-v1';
-const ASSETS=['./','./index.html','./trainer.css?v=20260909-1','./lesson-library.css?v=20260909-2','./trainer.js?v=20260909-1','./poster-fix.js?v=20260909-4','./icon-192.png','./icon-512.png','./icon.svg'];
+const CACHE='edukass-sonatreener-v2';
+const ASSETS=[
+  './','./index.html',
+  './trainer.css?v=20260909-1','./lesson-library.css?v=20260909-2',
+  './trainer.js?v=20260909-1','./poster-fix.js?v=20260909-6',
+  './poster-pretty/0.txt?v=20260909-1','./poster-pretty/1.txt?v=20260909-1','./poster-pretty/2.txt?v=20260909-1',
+  './poster-pretty/3.txt?v=20260909-1','./poster-pretty/4.txt?v=20260909-1','./poster-pretty/5.txt?v=20260909-1',
+  './icon-192.png','./icon-512.png','./icon.svg'
+];
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim())));
 self.addEventListener('fetch',event=>{
