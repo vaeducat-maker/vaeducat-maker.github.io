@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1260" viewBox="0 0 900 1260" role="img" aria-labelledby="title desc">
+<title id="title">Vesi ja jõgi</title>
+<desc id="desc">Õppeplakat: veekogu, magevesi, jõgi, jõelähe, lisajõgi, jõesäng ja jõesuue.</desc>
+<defs>
+  <linearGradient id="paper" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fffdf7"/><stop offset="1" stop-color="#f7f3e8"/></linearGradient>
+  <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#dff4ff"/><stop offset="1" stop-color="#f7fbef"/></linearGradient>
+  <linearGradient id="water" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#7fd3ee"/><stop offset=".55" stop-color="#48acd2"/><stop offset="1" stop-color="#2586b7"/></linearGradient>
+  <style>
+    .title{font-family:Georgia,'Times New Roman',serif;font-weight:700;fill:#123f52;letter-spacing:.5px}
+    .label{font-family:Arial,Helvetica,sans-serif;font-weight:700;fill:#163e37}
+    .small{font-family:Arial,Helvetica,sans-serif;fill:#5c5f58}
+    .box{fill:#fffdf8;stroke:#d1ddcf;stroke-width:2}
+    .line{stroke:#315f58;stroke-width:4;fill:none;stroke-linecap:round}
+    .tree{fill:#2d6d4d;stroke:#23573e;stroke-width:1}
+    .tree2{fill:#477c4e;stroke:#315e3b;stroke-width:1}
+  </style>
+</defs>
+<rect width="900" height="1260" rx="28" fill="url(#paper)"/>
+<g transform="translate(40 28)">
+  <path d="M10 50 C38 20 68 25 94 49 C67 43 44 54 22 72" fill="#fff" stroke="#97b3bc" stroke-width="3"/>
+  <path d="M28 48 L5 24 M52 44 L76 16" stroke="#718d96" stroke-width="4" stroke-linecap="round"/>
+  <text x="150" y="62" font-size="70" class="title">Vesi ja jõgi</text>
+  <text x="245" y="98" font-size="26" class="small">Eesti keele sõnad • loodusõpetus</text>
+  <g transform="translate(750 8)">
+    <circle cx="36" cy="34" r="24" fill="#ffd768"/>
+    <g stroke="#e6b544" stroke-width="4" stroke-linecap="round">
+      <path d="M36 0v-18M36 68v18M2 34h-18M70 34h18M12 10L0-2M60 58l12 12M60 10L72-2M12 58L0 70"/>
+    </g>
+  </g>
+</g>
+<g transform="translate(42 150)">
+  <g><rect class="box" width="250" height="260" rx="24"/>
+    <text x="125" y="42" text-anchor="middle" font-size="34" class="label">veekogu</text>
+    <text x="125" y="68" text-anchor="middle" font-size="20" class="small">водоём</text>
+    <rect x="18" y="92" width="214" height="140" rx="18" fill="#dff4f3"/>
+    <path d="M18 165 Q70 128 112 154 T232 152 V232 H18Z" fill="#5d8e55"/>
+    <ellipse cx="127" cy="181" rx="92" ry="40" fill="url(#water)"/>
+    <path d="M42 171 Q85 154 126 170 T214 169" stroke="#dff9ff" stroke-width="4" fill="none" opacity=".9"/>
+    <g class="tree"><path d="M36 151l18-40 18 40z"/><rect x="51" y="148" width="6" height="18"/><path d="M202 148l16-36 16 36z"/><rect x="215" y="145" width="6" height="18"/></g>
+  </g>
+  <g transform="translate(282 0)"><rect class="box" width="250" height="260" rx="24"/>
+    <text x="125" y="42" text-anchor="middle" font-size="34" class="label">magevesi</text>
+    <text x="125" y="68" text-anchor="middle" font-size="20" class="small">пресная вода</text>
+    <path d="M125 96 C95 139 75 165 75 193 C75 225 97 242 125 242 C153 242 175 225 175 193 C175 165 155 139 125 96Z" fill="#bdeeff" stroke="#39a6cf" stroke-width="5"/>
+    <path d="M108 175 C98 194 101 212 115 220" class="line" opacity=".55"/>
+    <path d="M62 221 Q125 250 188 221" stroke="#67bdd6" stroke-width="4" fill="none"/>
+    <path d="M72 235 Q125 257 178 235" stroke="#9ad9e7" stroke-width="3" fill="none"/>
+  </g>
+  <g transform="translate(564 0)"><rect class="box" width="250" height="260" rx="24"/>
+    <text x="125" y="42" text-anchor="middle" font-size="34" class="label">jõgi</text>
+    <text x="125" y="68" text-anchor="middle" font-size="20" class="small">река</text>
+    <rect x="18" y="92" width="214" height="140" rx="18" fill="url(#sky)"/>
+    <path d="M18 180 Q68 128 104 154 T232 137 V232 H18Z" fill="#5a8a4d"/>
+    <path d="M113 94 C145 128 135 151 113 167 C88 185 73 205 62 232 L138 232 C150 197 170 180 190 166 C209 152 220 126 232 108 L232 92Z" fill="url(#water)" opacity=".95"/>
+    <path d="M126 104 C151 131 145 151 124 166" stroke="#e4fbff" stroke-width="4" fill="none"/>
+  </g>
+</g>
+<g transform="translate(35 445)">
+  <rect width="830" height="760" rx="30" fill="url(#sky)" stroke="#d7e1d6" stroke-width="2"/>
+  <path d="M0 240 L120 92 L220 190 L350 56 L470 187 L590 92 L710 190 L830 72 V330 H0Z" fill="#9db1b1"/>
+  <path d="M0 240 L120 125 L220 210 L350 92 L470 205 L590 125 L710 212 L830 110 V330 H0Z" fill="#7f9c89"/>
+  <path d="M78 145 L120 92 L160 145 L132 136 L120 120 L108 140Z M315 105 L350 56 L392 119 L365 108 L350 91 L338 111Z M555 140 L590 92 L628 145 L602 134 L590 119 L577 139Z" fill="#eef4f2"/>
+  <path d="M0 260 Q160 220 300 260 T590 252 T830 240 V760 H0Z" fill="#5f8c50"/>
+  <path d="M0 350 Q130 300 260 330 T510 320 T830 300 V760 H0Z" fill="#3f7747" opacity=".85"/>
+  <path d="M360 105 C325 165 380 195 345 242 C310 290 230 310 250 362 C270 412 430 400 400 458 C368 515 250 540 300 595 C350 650 540 614 578 760 L805 760 C755 627 566 577 510 530 C458 486 553 455 560 405 C568 350 444 337 455 286 C465 241 525 220 500 174 C477 132 430 120 432 105Z" fill="url(#water)" stroke="#d2f6ff" stroke-width="8"/>
+  <path d="M399 132 C370 177 414 204 379 249 C340 299 288 317 298 353" stroke="#fff" stroke-width="5" fill="none" opacity=".7"/>
+  <path d="M338 580 Q450 620 555 586" stroke="#d9f9ff" stroke-width="5" fill="none" opacity=".65"/>
+  <path d="M690 295 C635 315 590 338 541 379" stroke="#55b8da" stroke-width="35" fill="none" stroke-linecap="round"/>
+  <path d="M690 294 C632 316 590 337 544 378" stroke="#d9f9ff" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M350 80 C355 116 344 138 335 156" stroke="#f3fbff" stroke-width="14" fill="none"/>
+  <path d="M352 83 C356 117 346 138 337 158" stroke="#58b9dc" stroke-width="8" fill="none"/>
+  <g opacity=".98">
+    <g transform="translate(25 300)"><g class="tree"><path d="M0 70l18-52 18 52z"/><path d="M30 95l22-65 22 65z"/><path d="M70 65l17-48 17 48z"/><path d="M100 105l24-72 24 72z"/><path d="M145 78l19-56 19 56z"/><path d="M180 110l25-75 25 75z"/></g></g>
+    <g transform="translate(560 335)"><g class="tree2"><path d="M0 80l20-60 20 60z"/><path d="M35 110l26-78 26 78z"/><path d="M82 82l21-62 21 62z"/><path d="M120 115l28-82 28 82z"/><path d="M170 90l23-69 23 69z"/></g></g>
+    <g transform="translate(30 520)"><g class="tree"><path d="M0 86l22-66 22 66z"/><path d="M42 118l30-90 30 90z"/><path d="M92 90l23-68 23 68z"/><path d="M135 120l30-90 30 90z"/></g></g>
+    <g transform="translate(610 550)"><g class="tree"><path d="M0 90l23-68 23 68z"/><path d="M42 120l31-92 31 92z"/><path d="M94 88l23-66 23 66z"/><path d="M138 120l31-92 31 92z"/></g></g>
+  </g>
+  <ellipse cx="98" cy="660" rx="62" ry="40" fill="#a1a8a2"/>
+  <ellipse cx="90" cy="642" rx="26" ry="18" fill="#1f8db7"/>
+  <path d="M74 648 Q95 670 116 648 Q101 693 79 674Z" fill="#e78d2e"/>
+  <path d="M112 639 l32 -8 -25 19z" fill="#d7a337"/>
+  <circle cx="101" cy="637" r="3" fill="#111"/>
+  <g>
+    <rect x="286" y="115" width="160" height="76" rx="18" class="box"/>
+    <text x="366" y="146" text-anchor="middle" font-size="28" class="label">jõelähe</text>
+    <text x="366" y="172" text-anchor="middle" font-size="18" class="small">исток реки</text>
+    <path d="M365 191 L350 210" class="line"/>
+    <rect x="585" y="300" width="158" height="76" rx="18" class="box"/>
+    <text x="664" y="331" text-anchor="middle" font-size="28" class="label">lisajõgi</text>
+    <text x="664" y="357" text-anchor="middle" font-size="18" class="small">приток</text>
+    <path d="M610 376 L575 397" class="line"/>
+    <rect x="276" y="400" width="168" height="76" rx="18" class="box"/>
+    <text x="360" y="431" text-anchor="middle" font-size="28" class="label">jõesäng</text>
+    <text x="360" y="457" text-anchor="middle" font-size="18" class="small">русло реки</text>
+    <path d="M392 477 L414 508" class="line"/>
+    <rect x="622" y="603" width="168" height="76" rx="18" class="box"/>
+    <text x="706" y="634" text-anchor="middle" font-size="28" class="label">jõesuue</text>
+    <text x="706" y="660" text-anchor="middle" font-size="18" class="small">устье реки</text>
+    <path d="M660 679 L622 720" class="line"/>
+  </g>
+  <text x="610" y="725" font-size="22" fill="#fff" font-family="Georgia,serif" font-style="italic">Vesi ühendab meid ♡</text>
+</g>
+</svg>
