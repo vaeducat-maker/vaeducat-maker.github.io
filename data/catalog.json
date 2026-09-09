@@ -1,7 +1,21 @@
 {
   "schemaVersion": 1,
-  "release": "v123",
+  "release": "v124",
   "products": [
+    {
+      "id": "minu-suvi",
+      "title": "Minu suvi",
+      "type": "game",
+      "status": "published",
+      "priceType": "free",
+      "category": "eesti-keel",
+      "description": "20 küsimusega suvine vestlusmäng: ava kaart ja vasta eesti keeles. Sobib rääkimise, meenutamise ja sõnavara harjutamiseks.",
+      "page": "/games/minu-suvi/",
+      "catalogPage": "/materials/",
+      "catalogHref": "../games/minu-suvi/",
+      "preview": "/assets/minu-suvi-preview.svg",
+      "previewAlt": "Minu suvi — suvise eestikeelse vestlusmängu eelvaade"
+    },
     {
       "id": "pildidetektiiv",
       "title": "Pildidetektiiv: Kes siin töötab?",

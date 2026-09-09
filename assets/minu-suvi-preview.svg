@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" role="img" aria-labelledby="title desc">
+  <title id="title">Minu suvi — EDUKASS</title>
+  <desc id="desc">Suvise eestikeelse vestlusmängu eelvaade</desc>
+  <rect width="1200" height="750" fill="#fffefb"/>
+  <circle cx="1050" cy="112" r="58" fill="#f4b71f" opacity=".95"/>
+  <g stroke="#1237b8" stroke-width="12" stroke-linecap="round" opacity=".16">
+    <path d="M1050 24v-40M1050 200v40M962 112h-40M1138 112h40M988 50l-29-29M1112 174l29 29M1112 50l29-29M988 174l-29 29"/>
+  </g>
+  <text x="82" y="92" font-family="Arial,Helvetica,sans-serif" font-size="28" font-weight="800" letter-spacing="5" fill="#2f8a3b">RÄÄGI • MÕTLE • MEENUTA</text>
+  <text x="80" y="205" font-family="Arial,Helvetica,sans-serif" font-size="98" font-weight="900" fill="#1237b8">MINU SUVI</text>
+  <rect x="82" y="232" width="132" height="12" rx="6" fill="#2f8a3b"/>
+  <text x="82" y="300" font-family="Arial,Helvetica,sans-serif" font-size="36" font-weight="700" fill="#173278">20 küsimusega vestlusmäng eesti keeles</text>
+  <g transform="translate(82 360)">
+    <rect width="316" height="238" rx="34" fill="#ffffff" stroke="#d8dff6" stroke-width="5"/>
+    <rect x="22" y="20" width="64" height="42" rx="21" fill="#f2f4fb"/>
+    <text x="54" y="49" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="20" font-weight="800" fill="#1237b8">01</text>
+    <circle cx="158" cy="122" r="54" fill="#f4b71f" opacity=".18"/>
+    <path d="M127 136c24-40 44-45 66-17-14 3-24 13-29 30-12-9-24-13-37-13Z" fill="#2f8a3b"/>
+    <circle cx="149" cy="108" r="30" fill="#f4b71f"/>
+    <text x="158" y="208" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="20" font-weight="700" fill="#173278">AVA KAART</text>
+  </g>
+  <g transform="translate(435 360)">
+    <rect width="316" height="238" rx="34" fill="#ffffff" stroke="#2f8a3b" stroke-width="5"/>
+    <rect x="22" y="20" width="64" height="42" rx="21" fill="#eef7f0"/>
+    <text x="54" y="49" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="20" font-weight="800" fill="#2f8a3b">07</text>
+    <text x="158" y="104" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="26" font-weight="800" fill="#173278">
+      <tspan x="158" dy="0">Mis oli sinu</tspan>
+      <tspan x="158" dy="36">lemmikkoht</tspan>
+      <tspan x="158" dy="36">sel suvel?</tspan>
+    </text>
+  </g>
+  <g transform="translate(788 360)">
+    <rect width="316" height="238" rx="34" fill="#fff7d8" stroke="#f4b71f" stroke-width="5"/>
+    <text x="158" y="96" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="52" font-weight="900" fill="#1237b8">🎲</text>
+    <text x="158" y="150" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="28" font-weight="900" fill="#1237b8">ÜLLATA MIND!</text>
+    <text x="158" y="190" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="18" font-weight="700" fill="#56658f">vali juhuslik küsimus</text>
+  </g>
+  <text x="82" y="690" font-family="Arial,Helvetica,sans-serif" font-size="24" font-weight="900" letter-spacing="3" fill="#2f6f58">EDUKASS</text>
+  <text x="1104" y="690" text-anchor="end" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="700" fill="#6e7896">edukass.ee</text>
+</svg>
