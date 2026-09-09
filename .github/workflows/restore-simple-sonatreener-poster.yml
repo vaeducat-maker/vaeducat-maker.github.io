@@ -1,0 +1,34 @@
+name: Restore simple Sõnatreener poster
+on:
+  push:
+    paths:
+      - '.github/workflows/restore-simple-sonatreener-poster.yml'
+permissions:
+  contents: write
+jobs:
+  restore:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Restore simple SVG poster
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          trainer = Path('games/kiire-sonatreener/trainer.js')
+          s = trainer.read_text(encoding='utf-8')
+          s = s.replace('./poster-pretty.jpg?v=20260909-1','./poster-vesi-ja-jogi.svg?v=20260909-simple')
+          trainer.write_text(s, encoding='utf-8')
+
+          index = Path('games/kiire-sonatreener/index.html')
+          h = index.read_text(encoding='utf-8')
+          h = h.replace('./trainer.js?v=20260909-5','./trainer.js?v=20260909-6')
+          index.write_text(h, encoding='utf-8')
+          PY
+          rm .github/workflows/restore-simple-sonatreener-poster.yml
+      - name: Commit restored poster
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add games/kiire-sonatreener/trainer.js games/kiire-sonatreener/index.html .github/workflows/restore-simple-sonatreener-poster.yml
+          git commit -m 'Use simple SVG poster in Sõnatreener'
+          git push
