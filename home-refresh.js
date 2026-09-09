@@ -142,3 +142,29 @@
 
   nav.append(socials);
 })();
+
+(() => {
+  const grid = document.querySelector('.home-category-grid');
+  if (!grid || grid.querySelector('[data-edukass-math-category]')) return;
+
+  const language = grid.querySelector('a[href="materials/#eesti-keel"]');
+  const planning = grid.querySelector('a[href="materials/#korraldus"]');
+  const skills = grid.querySelector('a[href="materials/#kaelised-oskused"]');
+  const more = grid.querySelector('a[href="materials/#veel-materjale"]');
+  if (!language || !planning || !skills || !more) return;
+
+  const math = document.createElement('a');
+  math.className = 'home-category-card category-math';
+  math.href = 'materials/matemaatika/';
+  math.setAttribute('data-edukass-math-category', '');
+  math.innerHTML = `
+    <span class="home-category-icon" aria-hidden="true">6 × 4</span>
+    <h3>Matemaatika</h3>
+    <p>Arvutamine, korrutamine ja geomeetria.</p>`;
+
+  skills.remove();
+  more.href = 'materials/';
+  more.querySelector('p').textContent = 'Käelised oskused, loovus, loodusõpetus, ajalugu ja uued teemad.';
+
+  grid.insertBefore(math, planning);
+})();
