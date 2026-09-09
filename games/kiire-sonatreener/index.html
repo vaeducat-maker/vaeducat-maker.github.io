@@ -11,7 +11,14 @@
 <meta name="apple-mobile-web-app-title" content="Sõnatreener">
 <meta name="mobile-web-app-capable" content="yes">
 <title>Sõnatreener — EDUKASS</title>
-<link rel="manifest" href="./manifest.webmanifest">
+<script>
+if(!/SamsungBrowser/i.test(navigator.userAgent)){
+  const manifest=document.createElement('link');
+  manifest.rel='manifest';
+  manifest.href='./manifest.webmanifest';
+  document.head.appendChild(manifest);
+}
+</script>
 <link rel="icon" href="./icon.svg" type="image/svg+xml">
 <link rel="icon" href="./icon-192.png" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="./icon-192.png">
@@ -19,20 +26,21 @@
 <link rel="stylesheet" href="./trainer.css?v=20260909-1">
 <link rel="stylesheet" href="./lesson-library.css?v=20260909-2">
 <style>
-.shortcut-button{font-size:20px}
-.shortcut-dialog{width:min(430px,calc(100% - 28px));border:0;border-radius:22px;padding:0;box-shadow:0 24px 80px rgba(31,42,37,.28);color:#1f2a25;background:#fff}
+.shortcut-button{font-size:14px;white-space:nowrap;padding:0 13px;min-width:auto;font-weight:850;color:#2f6f58;background:#eaf4ee;border-color:#cee0d5}
+.shortcut-button.is-ready{box-shadow:0 0 0 3px rgba(47,111,88,.12)}
+.shortcut-dialog{width:min(420px,calc(100% - 28px));border:0;border-radius:22px;padding:0;box-shadow:0 24px 80px rgba(31,42,37,.28);color:#1f2a25;background:#fff}
 .shortcut-dialog::backdrop{background:rgba(22,31,27,.55)}
 .shortcut-dialog-inner{padding:24px}
 .shortcut-dialog h2{margin:0 0 10px;color:#2f6f58;font-size:24px}
-.shortcut-dialog p{margin:0;color:#56635d;line-height:1.5;font-size:15px}
-.shortcut-dialog .shortcut-steps{margin:16px 0 0;padding:14px 16px;border-radius:16px;background:#eaf4ee;color:#294d3d;font-weight:700;line-height:1.5}
+.shortcut-dialog p{margin:0;color:#56635d;line-height:1.5;font-size:16px;font-weight:650}
 .shortcut-dialog .shortcut-close{width:100%;margin-top:18px;background:#2f6f58;border-color:#2f6f58;color:#fff}
+@media(max-width:560px){.shortcut-button{font-size:13px;padding:0 10px}}
 </style>
 </head>
 <body>
 <main class="app">
 <div class="brand">EDUKASS</div>
-<header class="top"><div><h1>Minu õppetunnid</h1><p class="sub" id="sub"></p></div><div class="top-tools"><button class="icon-button shortcut-button" id="shortcutBtn" aria-label="Добавить ярлык на главный экран" title="Добавить ярлык">📲</button><button class="icon-button deck-button" id="reviewBtn" aria-label="Карточки" title="Карточки"><span class="deck-stack" aria-hidden="true"></span></button><button class="icon-button" id="libraryBtn" aria-label="Все уроки" title="Все уроки">📚</button><div class="pill" id="pill">Eesti</div></div></header>
+<header class="top"><div><h1>Minu õppetunnid</h1><p class="sub" id="sub"></p></div><div class="top-tools"><button class="icon-button shortcut-button" id="shortcutBtn" aria-label="Добавить на главный экран" title="Добавить на главный экран">📲 На экран</button><button class="icon-button deck-button" id="reviewBtn" aria-label="Карточки" title="Карточки"><span class="deck-stack" aria-hidden="true"></span></button><button class="icon-button" id="libraryBtn" aria-label="Все уроки" title="Все уроки">📚</button><div class="pill" id="pill">Eesti</div></div></header>
 <div class="lang-tabs" role="tablist" aria-label="Язык тренажёра"><button class="lang-tab active" id="tabEt" role="tab">🇪🇪 Eesti</button><button class="lang-tab" id="tabDe" role="tab">🇩🇪 Deutsch</button></div>
 <div class="progress" id="progress"><span id="p1" class="on"></span><span id="p2"></span><span id="p3"></span><span id="p4"></span><span id="p5"></span></div>
 <section class="card" id="card" aria-live="polite"></section>
@@ -40,9 +48,8 @@
 </main>
 <dialog class="shortcut-dialog" id="shortcutDialog">
   <div class="shortcut-dialog-inner">
-    <h2>Добавить ярлык</h2>
-    <p>Это будет обычная иконка EDUKASS на главном экране телефона, а не отдельное Android-приложение.</p>
-    <div class="shortcut-steps" id="shortcutSteps"></div>
+    <h2 id="shortcutTitle">Добавить на экран</h2>
+    <p id="shortcutText"></p>
     <form method="dialog"><button class="shortcut-close" type="submit">Понятно</button></form>
   </div>
 </dialog>
@@ -58,20 +65,60 @@ try{
 (() => {
   const button=document.getElementById('shortcutBtn');
   const dialog=document.getElementById('shortcutDialog');
-  const steps=document.getElementById('shortcutSteps');
-  if(!button||!dialog||!steps)return;
-  button.addEventListener('click',()=>{
-    const ua=navigator.userAgent;
-    const ios=/iPad|iPhone|iPod/.test(ua)&&!window.MSStream;
-    const samsung=/SamsungBrowser/i.test(ua);
-    if(ios){
-      steps.textContent='Safari: нажми «Поделиться» → «На экран Домой» → «Добавить».';
-    }else if(samsung){
-      steps.textContent='Samsung Internet: открой меню браузера → «Добавить страницу» / «Добавить на главный экран» и выбери обычный ярлык. Не выбирай «Установить приложение».';
-    }else{
-      steps.textContent='Chrome: нажми ⋮ → «Добавить на главный экран» → «Создать ярлык».';
-    }
+  const title=document.getElementById('shortcutTitle');
+  const text=document.getElementById('shortcutText');
+  if(!button)return;
+
+  const ua=navigator.userAgent;
+  const samsung=/SamsungBrowser/i.test(ua);
+  const ios=/iPad|iPhone|iPod/.test(ua)&&!window.MSStream;
+  let deferredPrompt=null;
+
+  if(!samsung&&'serviceWorker' in navigator){
+    navigator.serviceWorker.register('./service-worker.js',{updateViaCache:'none'}).catch(()=>{});
+  }
+
+  window.addEventListener('beforeinstallprompt',event=>{
+    event.preventDefault();
+    deferredPrompt=event;
+    button.classList.add('is-ready');
+  });
+
+  window.addEventListener('appinstalled',()=>{
+    deferredPrompt=null;
+    button.textContent='✓ На экране';
+    button.disabled=true;
+  });
+
+  function showMessage(head,message){
+    if(!dialog||!title||!text)return;
+    title.textContent=head;
+    text.textContent=message;
     if(typeof dialog.showModal==='function')dialog.showModal();
+  }
+
+  button.addEventListener('click',async()=>{
+    if(samsung){
+      const target=`intent://${location.host}${location.pathname}${location.search}${location.hash}#Intent;scheme=https;package=com.android.chrome;end`;
+      location.href=target;
+      return;
+    }
+
+    if(ios){
+      showMessage('Почти готово','Нажми «Поделиться» → «На экран Домой» → «Добавить».');
+      return;
+    }
+
+    if(deferredPrompt){
+      const promptEvent=deferredPrompt;
+      deferredPrompt=null;
+      button.classList.remove('is-ready');
+      promptEvent.prompt();
+      try{await promptEvent.userChoice;}catch(e){}
+      return;
+    }
+
+    showMessage('Ещё секунду','Если окно добавления не открылось, подожди пару секунд и нажми «📲 На экран» ещё раз.');
   });
 })();
 </script>
