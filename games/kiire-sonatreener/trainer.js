@@ -34,10 +34,11 @@ const DATA={
 };
 
 const card=document.getElementById("card"),pill=document.getElementById("pill"),counter=document.getElementById("counter"),progress=document.getElementById("progress"),restart=document.getElementById("restart"),reviewBtn=document.getElementById("reviewBtn"),libraryBtn=document.getElementById("libraryBtn"),sub=document.getElementById("sub"),tabEt=document.getElementById("tabEt"),tabDe=document.getElementById("tabDe");
-let lang="et",mode="home",currentTopic=null,currentCategory=null,reviewQueue=[],reviewGood=0,reviewBad=0,reviewFlipped=false,reviewDirection="ru-et",posterReturnMode="topic";
+let lang="et",mode="home",currentTopic=null,currentCategory=null,reviewQueue=[],reviewGood=0,reviewBad=0,reviewFlipped=false,reviewDirection="ru-et",typingQueue=[],typingGood=0,typingBad=0,typingChecked=false,typingWasCorrect=false,posterReturnMode="topic";
 try{const savedDirection=localStorage.getItem("sonatreenerReviewDirection");if(savedDirection==="ru-et"||savedDirection==="et-ru")reviewDirection=savedDirection}catch(e){}
 const shuffle=a=>{a=[...a];for(let i=a.length-1;i;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"})[c]);
+const norm=s=>String(s).toLocaleLowerCase("et").trim().replace(/\s+/g," ");
 
 document.addEventListener("copy",e=>e.preventDefault());
 document.addEventListener("cut",e=>e.preventDefault());
@@ -61,20 +62,24 @@ function openTopic(id){
   const poster=topic.poster
     ?`<button class="poster-preview" id="posterOpen" aria-label="Открыть плакат"><img src="${topic.poster}" alt="${esc(topic.title)} — учебный плакат"></button>`
     :`<div class="topic-no-poster">🃏</div>`;
-  card.innerHTML=`<div class="topic-intro"><div class="topic-kicker">${topic.category.icon} ${esc(topic.category.label)}</div><h2>${esc(topic.title)}</h2>${poster}<div class="topic-actions">${topic.poster?'<button class="secondary" id="posterBtn">🖼 Смотреть плакат</button>':''}<button class="primary" id="cardsRuEt">🇷🇺 → 🇪🇪 Русский → эстонский</button><button class="secondary" id="cardsEtRu">🇪🇪 → 🇷🇺 Эстонский → русский</button></div></div>`;
+  card.innerHTML=`<div class="topic-intro"><div class="topic-kicker">${topic.category.icon} ${esc(topic.category.label)}</div><h2>${esc(topic.title)}</h2>${poster}<div class="topic-actions">${topic.poster?'<button class="secondary" id="posterBtn">🖼 Смотреть плакат</button>':''}<button class="primary" id="cardsRuEt">🇷🇺 → 🇪🇪 Русский → эстонский</button><button class="secondary" id="cardsEtRu">🇪🇪 → 🇷🇺 Эстонский → русский</button><button class="secondary" id="typingBtn">✍️ Написать по-эстонски</button></div></div>`;
   if(topic.poster){card.querySelector("#posterOpen").onclick=()=>showPoster(topic,"topic");card.querySelector("#posterBtn").onclick=()=>showPoster(topic,"topic")}
   card.querySelector("#cardsRuEt").onclick=()=>startReview(topic,"ru-et");
   card.querySelector("#cardsEtRu").onclick=()=>startReview(topic,"et-ru");
+  card.querySelector("#typingBtn").onclick=()=>startTyping(topic);
 }
 
 function showPoster(topic,returnMode="topic"){
   if(!topic.poster)return;
-  posterReturnMode=returnMode;mode="poster";progress.hidden=true;restart.hidden=false;restart.textContent=returnMode==="review"?"← К карточкам":"← К уроку";pill.textContent="🖼 Плакат";counter.textContent="";
+  posterReturnMode=returnMode;mode="poster";progress.hidden=true;restart.hidden=false;restart.textContent=returnMode==="review"?"← К карточкам":returnMode==="typing"?"← К письму":"← К уроку";pill.textContent="🖼 Плакат";counter.textContent="";
   const action=returnMode==="review"
     ?'<button class="primary" id="posterBack">← К карточкам</button>'
-    :'<button class="primary" id="posterCards">🃏 Учить карточками</button>';
+    :returnMode==="typing"
+      ?'<button class="primary" id="posterBackTyping">← К письму</button>'
+      :'<button class="primary" id="posterCards">🃏 Учить карточками</button>';
   card.innerHTML=`<div class="poster-view"><img src="${topic.poster}" alt="${esc(topic.title)} — учебный плакат">${action}</div>`;
   if(returnMode==="review")card.querySelector("#posterBack").onclick=resumeReview;
+  else if(returnMode==="typing")card.querySelector("#posterBackTyping").onclick=resumeTyping;
   else card.querySelector("#posterCards").onclick=()=>startReview(topic,reviewDirection);
 }
 
@@ -137,13 +142,93 @@ function finishReview(){
   card.querySelector("#backTopic").onclick=()=>openTopic(currentTopic.id);
 }
 
+function startTyping(topic){
+  currentTopic=topic;currentCategory=topic.category;mode="typing";posterReturnMode="typing";setNavLocked(true);progress.hidden=true;restart.hidden=false;restart.textContent="← Выйти";pill.textContent="✍️ Письмо";typingQueue=shuffle(topic.words);typingGood=0;typingBad=0;typingChecked=false;typingWasCorrect=false;renderTyping();
+}
+
+function resumeTyping(){
+  if(!currentTopic)return;
+  mode="typing";posterReturnMode="typing";setNavLocked(true);progress.hidden=true;restart.hidden=false;restart.textContent="← Выйти";pill.textContent="✍️ Письмо";renderTyping();
+}
+
+function highlightMistakes(typed,expected){
+  const a=[...typed],b=[...expected],n=a.length,m=b.length;
+  const d=Array.from({length:n+1},()=>Array(m+1).fill(0));
+  for(let i=0;i<=n;i++)d[i][0]=i;
+  for(let j=0;j<=m;j++)d[0][j]=j;
+  for(let i=1;i<=n;i++)for(let j=1;j<=m;j++){
+    const same=a[i-1].toLocaleLowerCase("et")===b[j-1].toLocaleLowerCase("et");
+    d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(same?0:1));
+  }
+  let i=n,j=m,out=[];
+  while(i>0||j>0){
+    if(i>0&&j>0&&a[i-1].toLocaleLowerCase("et")===b[j-1].toLocaleLowerCase("et")&&d[i][j]===d[i-1][j-1]){out.push(esc(a[i-1]));i--;j--;continue}
+    if(i>0&&j>0&&d[i][j]===d[i-1][j-1]+1){out.push(`<span class="type-bad">${esc(a[i-1])}</span>`);i--;j--;continue}
+    if(i>0&&d[i][j]===d[i-1][j]+1){out.push(`<span class="type-bad">${esc(a[i-1])}</span>`);i--;continue}
+    if(j>0){out.push('<span class="type-bad type-missing">□</span>');j--;continue}
+  }
+  return out.reverse().join("");
+}
+
+function renderTyping(){
+  if(!typingQueue.length){finishTyping();return}
+  const item=typingQueue[0];typingChecked=false;typingWasCorrect=false;counter.textContent=`Осталось: ${typingQueue.length}`;updateSub();
+  const posterButton=currentTopic&&currentTopic.poster?'<button class="secondary" id="typingPoster" style="width:100%">🖼 Посмотреть плакат</button>':'';
+  card.innerHTML=`<div class="typing-wrap">${posterButton}<div class="typing-kicker">Напиши по-эстонски</div><div class="typing-prompt">${esc(item.ru)}</div><div class="input-row"><input id="typeInput" class="typing-input" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" aria-label="Ответ по-эстонски"><button class="primary" id="typeCheck">Проверить</button></div><div class="review-stats"><span>✓ ${typingGood}</span><span>✕ ${typingBad}</span></div><div id="typeFeedback"></div></div>`;
+  if(currentTopic&&currentTopic.poster)card.querySelector("#typingPoster").onclick=()=>showPoster(currentTopic,"typing");
+  const input=card.querySelector("#typeInput"),check=card.querySelector("#typeCheck");
+  input.addEventListener("paste",e=>e.preventDefault());
+  input.addEventListener("drop",e=>e.preventDefault());
+  input.addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="v")e.preventDefault();if(e.key==="Insert"&&e.shiftKey)e.preventDefault();if(e.key==="Enter")checkTyping()});
+  check.onclick=checkTyping;
+  setTimeout(()=>input.focus(),0);
+}
+
+function checkTyping(){
+  if(typingChecked||!typingQueue.length)return;
+  const input=card.querySelector("#typeInput"),check=card.querySelector("#typeCheck"),feedback=card.querySelector("#typeFeedback"),item=typingQueue[0];
+  if(!input||!feedback)return;
+  const typed=input.value.trim();
+  if(!typed){input.focus();return}
+  typingChecked=true;typingWasCorrect=norm(typed)===norm(item.word);input.disabled=true;check.hidden=true;
+  if(typingWasCorrect){
+    typingGood++;
+    input.classList.add("typing-correct");
+    feedback.innerHTML=`<div class="typing-feedback ok">✓ Правильно: <strong>${esc(item.word)}</strong></div><button class="primary typing-next" id="typingNext">Дальше</button>`;
+  }else{
+    typingBad++;
+    input.classList.add("typing-wrong");
+    feedback.innerHTML=`<div class="typing-feedback bad"><div class="typed-label">Ты написал:</div><div class="typed-line">${highlightMistakes(typed,item.word)}</div><div class="typed-label">Правильно:</div><div class="correct-answer">${esc(item.word)}</div></div><button class="primary typing-next" id="typingNext">Дальше</button>`;
+  }
+  card.querySelector("#typingNext").onclick=advanceTyping;
+}
+
+function advanceTyping(){
+  if(!typingChecked||!typingQueue.length)return;
+  const item=typingQueue.shift();
+  if(!typingWasCorrect){
+    if(typingQueue.length===0){const alt=shuffle(currentTopic.words.filter(w=>w.word!==item.word))[0];if(alt)typingQueue.push(alt)}
+    const pos=Math.min(typingQueue.length,Math.max(1,2+Math.floor(Math.random()*2)));
+    typingQueue.splice(pos,0,item);
+  }
+  renderTyping();
+}
+
+function finishTyping(){
+  setNavLocked(false);counter.textContent="";pill.textContent="Valmis";restart.hidden=true;
+  card.innerHTML=`<div class="done"><div class="big">✍️</div><h2>Готово!</h2><div class="finish-actions">${currentTopic&&currentTopic.poster?'<button class="secondary" id="typingSeePoster">🖼 Посмотреть плакат</button>':''}<button class="primary" id="typingAgain">Ещё раз написать</button><button class="secondary" id="typingBackTopic">К уроку</button></div></div>`;
+  if(currentTopic&&currentTopic.poster)card.querySelector("#typingSeePoster").onclick=()=>showPoster(currentTopic,"topic");
+  card.querySelector("#typingAgain").onclick=()=>startTyping(currentTopic);
+  card.querySelector("#typingBackTopic").onclick=()=>openTopic(currentTopic.id);
+}
+
 reviewBtn.onclick=()=>{const t=currentTopic||activeTopic();if(t)startReview(t,reviewDirection)};
 libraryBtn.onclick=renderLibrary;
 tabEt.onclick=()=>setLanguage("et");
 tabDe.onclick=()=>setLanguage("de");
 restart.onclick=()=>{
-  if(mode==="poster"&&currentTopic){posterReturnMode==="review"?resumeReview():openTopic(currentTopic.id);return}
-  if(mode==="review"&&currentTopic)openTopic(currentTopic.id);
+  if(mode==="poster"&&currentTopic){posterReturnMode==="review"?resumeReview():posterReturnMode==="typing"?resumeTyping():openTopic(currentTopic.id);return}
+  if((mode==="review"||mode==="typing")&&currentTopic)openTopic(currentTopic.id);
 };
 
 progress.hidden=true;
