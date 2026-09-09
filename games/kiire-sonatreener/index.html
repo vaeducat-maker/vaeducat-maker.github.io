@@ -14,8 +14,8 @@
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" href="./icon.svg" type="image/svg+xml">
 <link rel="alternate icon" href="../../favicon-32.png">
-<link rel="stylesheet" href="./trainer.css?v=20260907-2">
-<link rel="stylesheet" href="./lesson-library.css?v=20260907-2">
+<link rel="stylesheet" href="./trainer.css?v=20260909-1">
+<link rel="stylesheet" href="./lesson-library.css?v=20260909-1">
 </head>
 <body>
 <main class="app">
@@ -26,7 +26,16 @@
 <section class="card" id="card" aria-live="polite"></section>
 <div class="actions"><button class="ghost" id="restart">↻ Alusta uuesti</button><div class="tiny" id="counter"></div></div>
 </main>
-<script src="./trainer.js?v=20260907-3"></script>
-<script src="./poster-fix.js?v=20260909-1"></script>
+<script>
+try{
+  if(!localStorage.getItem('posterSvgReset20260909b')){
+    localStorage.removeItem('sonatreenerPosterLocksV2');
+    localStorage.removeItem('sonatreenerLessonLockV1');
+    localStorage.setItem('posterSvgReset20260909b','1');
+  }
+}catch(e){}
+</script>
+<script src="./trainer.js?v=20260909-1"></script>
+<script src="./poster-fix.js?v=20260909-2"></script>
 </body>
 </html>
