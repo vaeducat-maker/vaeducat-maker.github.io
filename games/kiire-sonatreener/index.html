@@ -76,10 +76,13 @@ try{
 
   if(samsung){
     button.addEventListener('click',()=>{
-      const target=new URL(location.href);
-      target.searchParams.set('install','1');
-      const intentPath=`${target.host}${target.pathname}${target.search}${target.hash}`;
-      location.href=`intent://${intentPath}#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=${encodeURIComponent(target.href)};end`;
+      const params=new URLSearchParams(location.search);
+      params.set('install','1');
+      const query=params.toString();
+      const suffix=`${query?`?${query}`:''}${location.hash}`;
+      const targetHref=`${location.origin}${location.pathname}${suffix}`;
+      const intentPath=`${location.host}${location.pathname}${suffix}`;
+      location.href=`intent://${intentPath}#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=${encodeURIComponent(targetHref)};end`;
     });
     return;
   }
