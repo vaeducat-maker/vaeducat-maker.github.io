@@ -9,10 +9,10 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Sõnatreener">
-<meta name="mobile-web-app-capable" content="yes">
 <title>Sõnatreener — EDUKASS</title>
-<script>
-if(!/SamsungBrowser/i.test(navigator.userAgent)){
+<script id="edukass-smart-manifest">
+window.EDUKASS_SAMSUNG_BROWSER=/SamsungBrowser/i.test(navigator.userAgent);
+if(!window.EDUKASS_SAMSUNG_BROWSER){
   const manifest=document.createElement('link');
   manifest.rel='manifest';
   manifest.href='./manifest.webmanifest';
@@ -26,15 +26,11 @@ if(!/SamsungBrowser/i.test(navigator.userAgent)){
 <link rel="stylesheet" href="./trainer.css?v=20260909-1">
 <link rel="stylesheet" href="./lesson-library.css?v=20260909-2">
 <style>
-.shortcut-button{font-size:14px;white-space:nowrap;padding:0 13px;min-width:auto;font-weight:850;color:#2f6f58;background:#eaf4ee;border-color:#cee0d5}
-.shortcut-button.is-ready{box-shadow:0 0 0 3px rgba(47,111,88,.12)}
-.shortcut-dialog{width:min(420px,calc(100% - 28px));border:0;border-radius:22px;padding:0;box-shadow:0 24px 80px rgba(31,42,37,.28);color:#1f2a25;background:#fff}
-.shortcut-dialog::backdrop{background:rgba(22,31,27,.55)}
-.shortcut-dialog-inner{padding:24px}
-.shortcut-dialog h2{margin:0 0 10px;color:#2f6f58;font-size:24px}
-.shortcut-dialog p{margin:0;color:#56635d;line-height:1.5;font-size:16px;font-weight:650}
-.shortcut-dialog .shortcut-close{width:100%;margin-top:18px;background:#2f6f58;border-color:#2f6f58;color:#fff}
-@media(max-width:560px){.shortcut-button{font-size:13px;padding:0 10px}}
+.shortcut-button{width:auto;min-width:108px;padding:0 12px;font-size:14px;white-space:nowrap;font-weight:850;color:#2f6f58;background:#eaf4ee;border-color:#cee0d5}
+.shortcut-button:disabled{opacity:.62;cursor:default}
+.shortcut-button.install-focus{animation:installPulse 1s ease-in-out infinite}
+@keyframes installPulse{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(47,111,88,.18)}50%{transform:scale(1.04);box-shadow:0 0 0 8px rgba(47,111,88,0)}}
+@media(max-width:560px){.shortcut-button{min-width:100px;padding:0 10px;font-size:13px}}
 </style>
 </head>
 <body>
@@ -46,13 +42,6 @@ if(!/SamsungBrowser/i.test(navigator.userAgent)){
 <section class="card" id="card" aria-live="polite"></section>
 <div class="actions"><button class="ghost" id="restart">↻ Alusta uuesti</button><div class="tiny" id="counter"></div></div>
 </main>
-<dialog class="shortcut-dialog" id="shortcutDialog">
-  <div class="shortcut-dialog-inner">
-    <h2 id="shortcutTitle">Добавить на экран</h2>
-    <p id="shortcutText"></p>
-    <form method="dialog"><button class="shortcut-close" type="submit">Понятно</button></form>
-  </div>
-</dialog>
 <script>
 try{
   if(!localStorage.getItem('posterSvgReset20260909b')){
@@ -64,62 +53,86 @@ try{
 
 (() => {
   const button=document.getElementById('shortcutBtn');
-  const dialog=document.getElementById('shortcutDialog');
-  const title=document.getElementById('shortcutTitle');
-  const text=document.getElementById('shortcutText');
   if(!button)return;
 
   const ua=navigator.userAgent;
-  const samsung=/SamsungBrowser/i.test(ua);
+  const samsung=window.EDUKASS_SAMSUNG_BROWSER===true;
   const ios=/iPad|iPhone|iPod/.test(ua)&&!window.MSStream;
-  let deferredPrompt=null;
+  const android=/Android/i.test(ua);
+  const fromSamsung=new URLSearchParams(location.search).get('install')==='1';
+  const standalone=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;
+  let installEvent=null;
 
-  if(!samsung&&'serviceWorker' in navigator){
-    navigator.serviceWorker.register('./service-worker.js',{updateViaCache:'none'}).catch(()=>{});
+  function markInstalled(){
+    button.textContent='✓ Готово';
+    button.disabled=true;
+    button.classList.remove('install-focus');
   }
+
+  if(standalone){
+    markInstalled();
+    return;
+  }
+
+  if(samsung){
+    button.addEventListener('click',()=>{
+      const target=new URL(location.href);
+      target.searchParams.set('install','1');
+      const intentPath=`${target.host}${target.pathname}${target.search}${target.hash}`;
+      location.href=`intent://${intentPath}#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=${encodeURIComponent(target.href)};end`;
+    });
+    return;
+  }
+
+  if(ios){
+    button.addEventListener('click',()=>{
+      alert('Нажми «Поделиться» → «На экран Домой» → «Добавить».');
+    });
+    return;
+  }
+
+  if(!android){
+    button.hidden=true;
+    return;
+  }
+
+  button.disabled=true;
+  button.textContent='⏳ Подготовка…';
 
   window.addEventListener('beforeinstallprompt',event=>{
     event.preventDefault();
-    deferredPrompt=event;
-    button.classList.add('is-ready');
+    installEvent=event;
+    button.disabled=false;
+    button.textContent=fromSamsung?'📲 Нажми сюда':'📲 На экран';
+    button.classList.toggle('install-focus',fromSamsung);
   });
 
-  window.addEventListener('appinstalled',()=>{
-    deferredPrompt=null;
-    button.textContent='✓ На экране';
-    button.disabled=true;
-  });
-
-  function showMessage(head,message){
-    if(!dialog||!title||!text)return;
-    title.textContent=head;
-    text.textContent=message;
-    if(typeof dialog.showModal==='function')dialog.showModal();
-  }
+  window.addEventListener('appinstalled',markInstalled);
 
   button.addEventListener('click',async()=>{
-    if(samsung){
-      const target=`intent://${location.host}${location.pathname}${location.search}${location.hash}#Intent;scheme=https;package=com.android.chrome;end`;
-      location.href=target;
-      return;
+    if(!installEvent)return;
+    const event=installEvent;
+    installEvent=null;
+    button.disabled=true;
+    button.classList.remove('install-focus');
+    event.prompt();
+    try{
+      const choice=await event.userChoice;
+      if(choice.outcome==='accepted'){
+        markInstalled();
+      }else{
+        button.disabled=false;
+        button.textContent='📲 На экран';
+      }
+    }catch(e){
+      button.disabled=false;
+      button.textContent='📲 На экран';
     }
-
-    if(ios){
-      showMessage('Почти готово','Нажми «Поделиться» → «На экран Домой» → «Добавить».');
-      return;
-    }
-
-    if(deferredPrompt){
-      const promptEvent=deferredPrompt;
-      deferredPrompt=null;
-      button.classList.remove('is-ready');
-      promptEvent.prompt();
-      try{await promptEvent.userChoice;}catch(e){}
-      return;
-    }
-
-    showMessage('Ещё секунду','Если окно добавления не открылось, подожди пару секунд и нажми «📲 На экран» ещё раз.');
   });
+
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.register('./service-worker.js',{updateViaCache:'none'}).then(registration=>registration.update()).catch(()=>{});
+  }
 })();
 </script>
 <script src="./trainer.js?v=20260909-1"></script>
