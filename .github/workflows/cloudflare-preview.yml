@@ -23,7 +23,7 @@ jobs:
           node-version: 24
 
       - name: Build public EDUKASS site
-        run: node scripts/build-public-site.js
+        run: node scripts/build-cloudflare-site.js
 
       - name: Deploy edukass-preview
         uses: cloudflare/wrangler-action@v4
