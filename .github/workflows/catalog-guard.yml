@@ -25,6 +25,8 @@ jobs:
         run: node scripts/test-material-metadata.js
       - name: Validate catalog and permanent links
         run: node scripts/catalog-guard.js
+      - name: Build Cloudflare site
+        run: node scripts/build-cloudflare-site.js
       - name: Show release report
         if: always()
         run: cat RELEASE_REPORT_RU.md || true
