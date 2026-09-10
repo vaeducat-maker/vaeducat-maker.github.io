@@ -22,6 +22,12 @@ jobs:
         with:
           node-version: 24
 
+      - name: Include trainer back navigation in Cloudflare build
+        run: |
+          if ! grep -q "games/kiire-sonatreener/back-nav.js" scripts/build-cloudflare-site.js; then
+            sed -i "/games\/kiire-sonatreener\/icon.svg/a\\  'games/kiire-sonatreener/back-nav.js'," scripts/build-cloudflare-site.js
+          fi
+
       - name: Build public EDUKASS site
         run: node scripts/build-cloudflare-site.js
 
