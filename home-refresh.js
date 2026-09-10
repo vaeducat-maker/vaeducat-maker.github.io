@@ -134,3 +134,11 @@
 
   grid.insertBefore(math, planning);
 })();
+
+(() => {
+  const freshMaterials = document.querySelector('.home-new');
+  const newsletter = document.querySelector('section[aria-label="EDUKASSi uudiskiri"]');
+  if (!freshMaterials || !newsletter) return;
+
+  freshMaterials.insertAdjacentElement('afterend', newsletter);
+})();
