@@ -85,8 +85,4 @@
       }
     });
   }catch(e){}
-
-  const questionsScript=document.createElement('script');
-  questionsScript.src='./questions.js?v=20260912-1';
-  document.body.appendChild(questionsScript);
 })();
