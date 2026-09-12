@@ -1,1 +1,0 @@
-window.EDUKASS_TEST = true;
