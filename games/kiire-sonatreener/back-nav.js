@@ -78,11 +78,12 @@
 
     if(typing&&locked){
       document.body.classList.add('typing-exam-active');
-      restart.hidden=true;
+      restart.hidden=false;
+      restart.textContent='Закончить контрольную';
       const poster=card.querySelector('#typingPoster');
       if(poster){poster.hidden=true;poster.disabled=true}
       if(!typing.querySelector('.exam-lock-note')){
-        typing.insertAdjacentHTML('afterbegin','<div class="exam-lock-note">🔒 Контрольная: подсказки, карточки, плакат и конспект закрыты до конца.</div>');
+        typing.insertAdjacentHTML('afterbegin','<div class="exam-lock-note">🔒 Контрольная: подсказки, карточки, плакат и конспект закрыты до конца. Если совсем не идёт — можно закончить попытку, тогда контрольная считается не сданной.</div>');
       }
       sync();
       return;
@@ -100,7 +101,7 @@
     if(typingBtn)typingBtn.textContent='✍️ Пройти контрольную';
     const actions=card.querySelector('.topic-actions');
     if(actions&&!actions.querySelector('.exam-lock-note')){
-      actions.insertAdjacentHTML('afterbegin','<div class="exam-lock-note">🔒 Контрольная не завершена. Чтобы снова открыть карточки, плакат и конспект, сначала пройди написание до конца.</div>');
+      actions.insertAdjacentHTML('afterbegin','<div class="exam-lock-note">🔒 Контрольная не завершена. Чтобы снова открыть карточки, плакат и конспект, сначала пройди написание до конца или закончи попытку как не сданную.</div>');
     }
     sync();
   }
@@ -146,7 +147,12 @@
       return;
     }
 
-    if((btn.id==='restart'||btn.id==='appBackBtn')&&card.querySelector('.typing-wrap')){
+    if(btn.id==='restart'&&card.querySelector('.typing-wrap')){
+      clearExamLock();
+      return;
+    }
+
+    if(btn.id==='appBackBtn'&&card.querySelector('.typing-wrap')){
       e.preventDefault();
       e.stopImmediatePropagation();
     }
