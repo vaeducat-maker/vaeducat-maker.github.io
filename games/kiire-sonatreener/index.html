@@ -119,7 +119,7 @@ try{
   });
 })();
 </script>
-<script src="./trainer.js?v=20260912-1"></script>
+<script src="./trainer.js?v=20260912-2"></script>
 <script>
 (()=>{
   const QUESTIONS=[
@@ -154,7 +154,7 @@ try{
     const b=document.createElement('button');
     b.type='button';b.id='questionCardsBtn';b.className='secondary';b.textContent='❓ Вопросы и определения';b.onclick=start;
     actions.appendChild(b);
-    if(sub)sub.textContent='Loodusõpetus · 9 карточек · 6 вопросов';
+    if(sub)sub.textContent='Loodusõpetus · 16 карточек · 6 вопросов';
   }
   function start(){
     active=true;queue=shuffle(QUESTIONS);good=0;bad=0;flipped=false;lock(true);restart.hidden=false;restart.textContent='← Выйти';pill.textContent='❓ Вопросы';if(sub)sub.textContent='Loodusõpetus · 6 вопросов';render();
@@ -182,7 +182,7 @@ try{
     queue.splice(pos,0,x);render();
   }
   function finish(){
-    active=false;lock(false);counter.textContent='';pill.textContent='Готово';restart.hidden=true;if(sub)sub.textContent='Loodusõpetus · 9 карточек · 6 вопросов';
+    active=false;lock(false);counter.textContent='';pill.textContent='Готово';restart.hidden=true;if(sub)sub.textContent='Loodusõpetus · 16 карточек · 6 вопросов';
     card.innerHTML=`<div class="done"><div class="big">❓</div><h2>Готово!</h2><div class="finish-actions"><button class="primary" id="qagain">Ещё раз вопросы</button><button class="secondary" id="qback">К уроку</button></div></div>`;
     card.querySelector('#qagain').onclick=start;card.querySelector('#qback').onclick=back;
   }
