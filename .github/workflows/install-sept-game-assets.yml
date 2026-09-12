@@ -1,0 +1,29 @@
+name: Install Septembri Sõnamäng card sprite
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/install-sept-game-assets.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Decode card sprite
+        run: |
+          cat .tmp-sept-game/part*.txt | base64 -d > games/septembri-sonamang/cards.jpg
+          test "$(head -c 2 games/septembri-sonamang/cards.jpg | xxd -p)" = "ffd8"
+      - name: Commit final asset and clean temporary files
+        run: |
+          rm -rf .tmp-sept-game
+          git rm .github/workflows/install-sept-game-assets.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add games/septembri-sonamang/cards.jpg
+          git commit -m "Add September word game card artwork"
+          git push
