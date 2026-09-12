@@ -10,15 +10,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Sõnatreener">
 <title>Sõnatreener — EDUKASS</title>
-<script id="edukass-smart-manifest">
-window.EDUKASS_SAMSUNG_BROWSER=/SamsungBrowser/i.test(navigator.userAgent);
-if(!window.EDUKASS_SAMSUNG_BROWSER){
-  const manifest=document.createElement('link');
-  manifest.rel='manifest';
-  manifest.href='./manifest.webmanifest';
-  document.head.appendChild(manifest);
-}
-</script>
+<link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" href="./icon.svg" type="image/svg+xml">
 <link rel="icon" href="./icon-192.png" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="./icon-192.png">
@@ -28,98 +20,71 @@ if(!window.EDUKASS_SAMSUNG_BROWSER){
 <style>
 .shortcut-button{width:auto;min-width:108px;padding:0 12px;font-size:14px;white-space:nowrap;font-weight:850;color:#2f6f58;background:#eaf4ee;border-color:#cee0d5}
 .shortcut-button:disabled{opacity:.62;cursor:default}
-.shortcut-button.install-focus{animation:installPulse 1s ease-in-out infinite}
-@keyframes installPulse{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(47,111,88,.18)}50%{transform:scale(1.04);box-shadow:0 0 0 8px rgba(47,111,88,0)}}
+.lang-tabs,.deck-button{display:none!important}
 @media(max-width:560px){.shortcut-button{min-width:100px;padding:0 10px;font-size:13px}}
 </style>
 </head>
 <body>
 <main class="app">
 <div class="brand">EDUKASS</div>
-<header class="top"><div><h1>Minu õppetunnid</h1><p class="sub" id="sub"></p></div><div class="top-tools"><button class="icon-button shortcut-button" id="shortcutBtn" aria-label="Добавить на главный экран" title="Добавить на главный экран">📲 На экран</button><button class="icon-button deck-button" id="reviewBtn" aria-label="Карточки" title="Карточки"><span class="deck-stack" aria-hidden="true"></span></button><button class="icon-button" id="libraryBtn" aria-label="Все уроки" title="Все уроки">📚</button><div class="pill" id="pill">Eesti</div></div></header>
+<header class="top"><div><h1>Minu õppetunnid</h1><p class="sub" id="sub"></p></div><div class="top-tools"><button class="icon-button shortcut-button" id="shortcutBtn" aria-label="Добавить на главный экран" title="Добавить на главный экран">📲 На экран</button><button class="icon-button deck-button" id="reviewBtn" aria-label="Карточки" title="Карточки"><span class="deck-stack" aria-hidden="true"></span></button><button class="icon-button" id="libraryBtn" aria-label="Все предметы" title="Все предметы">📚</button><div class="pill" id="pill">Eesti</div></div></header>
 <div class="lang-tabs" role="tablist" aria-label="Язык тренажёра"><button class="lang-tab active" id="tabEt" role="tab">🇪🇪 Eesti</button><button class="lang-tab" id="tabDe" role="tab">🇩🇪 Deutsch</button></div>
 <div class="progress" id="progress" hidden><span id="p1"></span><span id="p2"></span><span id="p3"></span><span id="p4"></span><span id="p5"></span></div>
 <section class="card" id="card" aria-live="polite"></section>
 <div class="actions"><button class="ghost" id="restart" hidden>← Выйти</button><div class="tiny" id="counter"></div></div>
 </main>
 <script>
-try{
-  if(!localStorage.getItem('posterSvgReset20260909b')){
-    localStorage.removeItem('sonatreenerPosterLocksV2');
-    localStorage.removeItem('sonatreenerLessonLockV1');
-    localStorage.setItem('posterSvgReset20260909b','1');
-  }
-}catch(e){}
+(()=>{const b=document.getElementById('shortcutBtn');if(!b)return;const standalone=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;if(standalone){b.textContent='✓ Готово';b.disabled=true}else{b.onclick=()=>alert('Открой меню браузера и выбери «Добавить на главный экран».')}})();
+</script>
+<script src="./trainer.js?v=20260912-3"></script>
+<script>
+(()=>{
+  const card=document.getElementById('card'),libraryBtn=document.getElementById('libraryBtn'),reviewBtn=document.getElementById('reviewBtn'),tabEt=document.getElementById('tabEt'),tabDe=document.getElementById('tabDe'),pill=document.getElementById('pill'),sub=document.getElementById('sub');
+  if(!card||!libraryBtn||!tabEt||!tabDe)return;
+  const originalLibrary=libraryBtn.onclick;
+  if(reviewBtn)reviewBtn.hidden=true;
 
-(() => {
-  const button=document.getElementById('shortcutBtn');
-  if(!button)return;
-
-  const ua=navigator.userAgent;
-  const samsung=window.EDUKASS_SAMSUNG_BROWSER===true;
-  const ios=/iPad|iPhone|iPod/.test(ua)&&!window.MSStream;
-  const android=/Android/i.test(ua);
-  const fromSamsung=new URLSearchParams(location.search).get('install')==='1';
-  const standalone=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;
-  let installEvent=null;
-
-  function markInstalled(){
-    button.textContent='✓ Готово';
-    button.disabled=true;
-    button.classList.remove('install-focus');
+  function tidy(){
+    const h=card.querySelector('.topic-intro h2'),kicker=card.querySelector('.topic-kicker');
+    if(kicker&&kicker.textContent.includes('Eesti keel')){kicker.textContent='📖 Eesti kirjandus';if(pill)pill.textContent='Eesti kirjandus'}
+    if(h&&(h.textContent.trim()==='E → I / IE'||h.textContent.trim()==='A → Ä / AU → ÄU')){if(kicker)kicker.textContent='🇩🇪 Deutsch';if(pill)pill.textContent='Deutsch'}
+    const a=card.querySelector('#cardsRuEt'),b=card.querySelector('#cardsEtRu');
+    if(a&&!a.dataset.deckIcon){a.textContent='🃏 '+a.textContent;a.dataset.deckIcon='1'}
+    if(b&&!b.dataset.deckIcon){b.textContent='🃏 '+b.textContent;b.dataset.deckIcon='1'}
+    card.querySelectorAll('.library-title strong').forEach(x=>{if(x.textContent.trim()==='Eesti keel')x.textContent='Eesti kirjandus'});
   }
 
-  if(standalone){markInstalled();return}
-
-  if(samsung){
-    button.addEventListener('click',()=>{
-      const params=new URLSearchParams(location.search);
-      params.set('install','1');
-      const query=params.toString();
-      const suffix=`${query?`?${query}`:''}${location.hash}`;
-      const targetHref=`${location.origin}${location.pathname}${suffix}`;
-      const intentPath=`${location.host}${location.pathname}${suffix}`;
-      location.href=`intent://${intentPath}#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=${encodeURIComponent(targetHref)};end`;
-    });
-    return;
+  function openExisting(lang,topic){
+    if(lang==='de'){
+      tabDe.click();
+      setTimeout(()=>card.querySelector(`[data-topic="${topic}"]`)?.click(),0);
+      return;
+    }
+    tabEt.click();
+    setTimeout(()=>{
+      if(topic==='vesi-ja-jogi')return;
+      if(typeof originalLibrary==='function')originalLibrary();
+      setTimeout(()=>card.querySelector(`[data-topic="${topic}"]`)?.click(),0);
+    },0);
   }
 
-  if(ios){
-    button.addEventListener('click',()=>alert('Нажми «Поделиться» → «На экран Домой» → «Добавить».'));
-    return;
+  function renderSubjects(){
+    if(pill)pill.textContent='📚 Предметы';
+    if(sub)sub.textContent='Выбери предмет и тему';
+    card.innerHTML=`<div><div class="library-heading">Предметы</div><p class="chest-note">Все уроки в одном месте.</p>
+      <section class="library-section"><div class="library-title"><span>🌿</span><strong>Loodus</strong></div><div class="topic-grid"><button class="topic-tile" data-u-lang="et" data-u-topic="vesi-ja-jogi"><span class="topic-title">Vesi ja jõgi</span><span class="topic-meta">16 карточек · 6 вопросов · 🖼</span></button></div></section>
+      <section class="library-section"><div class="library-title"><span>👤</span><strong>Inimene</strong></div><div class="library-empty">Пока нет уроков</div></section>
+      <section class="library-section"><div class="library-title"><span>📖</span><strong>Eesti kirjandus</strong></div><div class="topic-grid"><button class="topic-tile" data-u-lang="et" data-u-topic="sonad-1"><span class="topic-title">Sõnad 1</span><span class="topic-meta">10 карточек</span></button></div></section>
+      <section class="library-section"><div class="library-title"><span>🇩🇪</span><strong>Deutsch</strong></div><div class="topic-grid"><button class="topic-tile" data-u-lang="de" data-u-topic="e-i-ie"><span class="topic-title">E → I / IE</span><span class="topic-meta">12 карточек</span></button><button class="topic-tile" data-u-lang="de" data-u-topic="a-ae-au-aeu"><span class="topic-title">A → Ä / AU → ÄU</span><span class="topic-meta">12 карточек</span></button></div></section>
+    </div>`;
+    card.querySelectorAll('[data-u-topic]').forEach(btn=>btn.onclick=()=>openExisting(btn.dataset.uLang,btn.dataset.uTopic));
   }
 
-  if(!android){button.hidden=true;return}
-
-  button.disabled=true;
-  button.textContent='⏳ Подготовка…';
-
-  window.addEventListener('beforeinstallprompt',event=>{
-    event.preventDefault();
-    installEvent=event;
-    button.disabled=false;
-    button.textContent=fromSamsung?'📲 Нажми сюда':'📲 На экран';
-    button.classList.toggle('install-focus',fromSamsung);
-  });
-
-  window.addEventListener('appinstalled',markInstalled);
-
-  button.addEventListener('click',async()=>{
-    if(!installEvent)return;
-    const event=installEvent;
-    installEvent=null;
-    button.disabled=true;
-    button.classList.remove('install-focus');
-    event.prompt();
-    try{
-      const choice=await event.userChoice;
-      if(choice.outcome==='accepted')markInstalled();
-      else{button.disabled=false;button.textContent='📲 На экран'}
-    }catch(e){button.disabled=false;button.textContent='📲 На экран'}
-  });
+  libraryBtn.onclick=renderSubjects;
+  new MutationObserver(tidy).observe(card,{childList:true,subtree:true});
+  tidy();
 })();
 </script>
-<script src="./trainer.js?v=20260912-2"></script>
 <script>
 (()=>{
   const QUESTIONS=[
@@ -130,69 +95,24 @@ try{
     {q:'Mis on jõesuue?',a:'Jõesuue on koht, kus jõgi lõpeb ja suubub teise veekogusse.'},
     {q:'Millised on vee omadused?',a:'Imavus, värvitu, lõhnatu, läbipaistev, voolavus, maitsetu.'}
   ];
-  const card=document.getElementById('card');
-  const restart=document.getElementById('restart');
-  const counter=document.getElementById('counter');
-  const pill=document.getElementById('pill');
-  const reviewBtn=document.getElementById('reviewBtn');
-  const libraryBtn=document.getElementById('libraryBtn');
-  const tabEt=document.getElementById('tabEt');
-  const tabDe=document.getElementById('tabDe');
-  const sub=document.getElementById('sub');
+  const card=document.getElementById('card'),restart=document.getElementById('restart'),counter=document.getElementById('counter'),pill=document.getElementById('pill'),reviewBtn=document.getElementById('reviewBtn'),libraryBtn=document.getElementById('libraryBtn'),tabEt=document.getElementById('tabEt'),tabDe=document.getElementById('tabDe'),sub=document.getElementById('sub');
   if(!card||!restart||!counter||!pill||!tabEt||!tabDe)return;
-
   let active=false,queue=[],good=0,bad=0,flipped=false;
   const shuffle=a=>{a=[...a];for(let i=a.length-1;i;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
   const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'})[c]);
-
-  function lock(on){tabEt.disabled=on;tabDe.disabled=on;if(reviewBtn)reviewBtn.hidden=on;if(libraryBtn)libraryBtn.hidden=on}
+  function lock(on){tabEt.disabled=on;tabDe.disabled=on;if(reviewBtn)reviewBtn.hidden=true;if(libraryBtn)libraryBtn.hidden=on}
   function isLesson(){const h=card.querySelector('.topic-intro h2');return !!h&&h.textContent.trim()==='Vesi ja jõgi'}
-  function addButton(){
-    if(active||!isLesson())return;
-    const actions=card.querySelector('.topic-actions');
-    if(!actions||actions.querySelector('#questionCardsBtn'))return;
-    const b=document.createElement('button');
-    b.type='button';b.id='questionCardsBtn';b.className='secondary';b.textContent='❓ Вопросы и определения';b.onclick=start;
-    actions.appendChild(b);
-    if(sub)sub.textContent='Loodusõpetus · 16 карточек · 6 вопросов';
-  }
-  function start(){
-    active=true;queue=shuffle(QUESTIONS);good=0;bad=0;flipped=false;lock(true);restart.hidden=false;restart.textContent='← Выйти';pill.textContent='❓ Вопросы';if(sub)sub.textContent='Loodusõpetus · 6 вопросов';render();
-  }
-  function render(){
-    if(!active)return;
-    if(!queue.length){finish();return}
-    const x=queue[0];flipped=false;counter.textContent=`Осталось: ${queue.length}`;
-    card.innerHTML=`<div class="review-wrap"><div class="tiny" style="text-align:center;margin-bottom:10px">Вопрос → ответ</div><div class="flashcard" id="qflash"><div class="flashcard-inner"><div class="flash-face">${esc(x.q)}</div><div class="flash-face flash-back">${esc(x.a)}</div></div></div><div class="review-stats"><span>✓ ${good}</span><span>✕ ${bad}</span></div><div class="review-actions" id="qactions" hidden><button class="review-no" id="qno">✕</button><button class="review-yes" id="qyes">✓</button></div><div class="tiny" style="text-align:center">Нажми на карточку, чтобы увидеть ответ</div></div>`;
-    const f=card.querySelector('#qflash'),a=card.querySelector('#qactions');
-    f.onclick=()=>{if(flipped)return;flipped=true;f.classList.add('flipped');a.hidden=false};
-    card.querySelector('#qyes').onclick=()=>decide(true);
-    card.querySelector('#qno').onclick=()=>decide(false);
-    let sx=null,sy=null;
-    f.addEventListener('touchstart',e=>{const t=e.changedTouches[0];sx=t.clientX;sy=t.clientY},{passive:true});
-    f.addEventListener('touchend',e=>{if(!flipped||sx===null)return;const t=e.changedTouches[0],dx=t.clientX-sx,dy=t.clientY-sy;sx=sy=null;if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.2)decide(dx>0)},{passive:true});
-  }
-  function decide(ok){
-    if(!queue.length)return;
-    const x=queue.shift();
-    if(ok){good++;render();return}
-    bad++;
-    if(queue.length===0){const alt=shuffle(QUESTIONS.filter(y=>y.q!==x.q))[0];if(alt)queue.push(alt)}
-    const pos=Math.min(queue.length,Math.max(1,2+Math.floor(Math.random()*2)));
-    queue.splice(pos,0,x);render();
-  }
-  function finish(){
-    active=false;lock(false);counter.textContent='';pill.textContent='Готово';restart.hidden=true;if(sub)sub.textContent='Loodusõpetus · 16 карточек · 6 вопросов';
-    card.innerHTML=`<div class="done"><div class="big">❓</div><h2>Готово!</h2><div class="finish-actions"><button class="primary" id="qagain">Ещё раз вопросы</button><button class="secondary" id="qback">К уроку</button></div></div>`;
-    card.querySelector('#qagain').onclick=start;card.querySelector('#qback').onclick=back;
-  }
+  function addButton(){if(active||!isLesson())return;const actions=card.querySelector('.topic-actions');if(!actions||actions.querySelector('#questionCardsBtn'))return;const b=document.createElement('button');b.type='button';b.id='questionCardsBtn';b.className='secondary';b.textContent='❓ Вопросы и определения';b.onclick=start;actions.appendChild(b);if(sub)sub.textContent='Loodusõpetus · 16 карточек · 6 вопросов'}
+  function start(){active=true;queue=shuffle(QUESTIONS);good=0;bad=0;flipped=false;lock(true);restart.hidden=false;restart.textContent='← Выйти';pill.textContent='❓ Вопросы';if(sub)sub.textContent='Loodusõpetus · 6 вопросов';render()}
+  function render(){if(!active)return;if(!queue.length){finish();return}const x=queue[0];flipped=false;counter.textContent=`Осталось: ${queue.length}`;card.innerHTML=`<div class="review-wrap"><div class="tiny" style="text-align:center;margin-bottom:10px">Вопрос → ответ</div><div class="flashcard" id="qflash"><div class="flashcard-inner"><div class="flash-face">${esc(x.q)}</div><div class="flash-face flash-back">${esc(x.a)}</div></div></div><div class="review-stats"><span>✓ ${good}</span><span>✕ ${bad}</span></div><div class="review-actions" id="qactions" hidden><button class="review-no" id="qno">✕</button><button class="review-yes" id="qyes">✓</button></div><div class="tiny" style="text-align:center">Нажми на карточку, чтобы увидеть ответ</div></div>`;const f=card.querySelector('#qflash'),a=card.querySelector('#qactions');f.onclick=()=>{if(flipped)return;flipped=true;f.classList.add('flipped');a.hidden=false};card.querySelector('#qyes').onclick=()=>decide(true);card.querySelector('#qno').onclick=()=>decide(false)}
+  function decide(ok){if(!queue.length)return;const x=queue.shift();if(ok){good++;render();return}bad++;if(queue.length===0){const alt=shuffle(QUESTIONS.filter(y=>y.q!==x.q))[0];if(alt)queue.push(alt)}const pos=Math.min(queue.length,Math.max(1,2+Math.floor(Math.random()*2)));queue.splice(pos,0,x);render()}
+  function finish(){active=false;lock(false);counter.textContent='';pill.textContent='Готово';restart.hidden=true;if(sub)sub.textContent='Loodusõpetus · 16 карточек · 6 вопросов';card.innerHTML=`<div class="done"><div class="big">❓</div><h2>Готово!</h2><div class="finish-actions"><button class="primary" id="qagain">Ещё раз вопросы</button><button class="secondary" id="qback">К уроку</button></div></div>`;card.querySelector('#qagain').onclick=start;card.querySelector('#qback').onclick=back}
   function back(){active=false;lock(false);restart.hidden=true;counter.textContent='';tabEt.click()}
   restart.addEventListener('click',e=>{if(!active)return;e.preventDefault();e.stopImmediatePropagation();back()},true);
-  new MutationObserver(addButton).observe(card,{childList:true,subtree:true});
-  addButton();
+  new MutationObserver(addButton).observe(card,{childList:true,subtree:true});addButton();
 })();
 </script>
 <script src="./poster-fix.js?v=20260909-11"></script>
-<script src="./back-nav.js?v=20260912-3"></script>
+<script src="./back-nav.js?v=20260912-4"></script>
 </body>
 </html>
