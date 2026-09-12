@@ -1,0 +1,1 @@
+Temporary marker; HQ assets will be committed atomically.
