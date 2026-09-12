@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="et">
+<head>
+  <meta charset="utf-8">
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0752b8">
+  <meta name="description" content="Neli lõbusat hommikulugu. Loe telefonis, vali vastused ja kontrolli neid. EDUKASS.">
+  <title>Hommikulood · EDUKASS</title>
+  <link rel="icon" type="image/png" href="assets/kiisu.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <a class="skip" href="#main">Liigu sisu juurde</a>
+  <header class="topbar"><div class="top-inner">
+    <button class="brand" data-action="home" aria-label="EDUKASS: kõik lood"><img src="assets/kiisu.png" width="28" height="34" alt=""><span>EDUKASS</span></button>
+  </div></header>
+  <main id="main" tabindex="-1"></main>
+  <div id="bottom"></div>
+  <dialog id="text-dialog" aria-labelledby="dialog-title"><div class="dialog-top"><h2 id="dialog-title">Lugu</h2><button class="icon-button" data-action="close" aria-label="Sulge tekst">✕</button></div><div id="dialog-body"></div><button class="primary wide" data-action="close">Tagasi küsimuse juurde</button></dialog>
+  <div id="live" role="status" aria-live="polite" class="sr-only"></div>
+  <noscript><p class="noscript">Lugude ja küsimuste avamiseks lülita brauseris JavaScript sisse.</p></noscript>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

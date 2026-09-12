@@ -84,6 +84,17 @@ const publicFiles = [
 
   'games/metsarada/index.html',
 
+  'materials/hommikulood/app.js',
+  'materials/hommikulood/assets/kiisu.png',
+  'materials/hommikulood/assets/story-1.jpg',
+  'materials/hommikulood/assets/story-2.jpg',
+  'materials/hommikulood/assets/story-3.jpg',
+  'materials/hommikulood/assets/story-4.jpg',
+  'materials/hommikulood/data.js',
+  'materials/hommikulood/engine.js',
+  'materials/hommikulood/index.html',
+  'materials/hommikulood/style.css',
+
   'materials/index.html',
   'materials/koolikott/index.html',
   'materials/korrutustabel/index.html',
