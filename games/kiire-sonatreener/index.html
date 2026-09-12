@@ -21,7 +21,21 @@
 .shortcut-button{width:auto;min-width:108px;padding:0 12px;font-size:14px;white-space:nowrap;font-weight:850;color:#2f6f58;background:#eaf4ee;border-color:#cee0d5}
 .shortcut-button:disabled{opacity:.62;cursor:default}
 .lang-tabs,.deck-button{display:none!important}
-@media(max-width:560px){.shortcut-button{min-width:100px;padding:0 10px;font-size:13px}}
+.summary-view{display:grid;gap:18px}
+.summary-head{text-align:center}
+.summary-head h2{margin:0 0 4px}
+.summary-poster{width:100%;display:block;border-radius:18px;border:1px solid #d9e5dc;background:#fff}
+.summary-section{display:grid;gap:10px}
+.summary-section h3{margin:0;color:#2f6f58;font-size:18px}
+.summary-words{display:grid;gap:7px}
+.summary-word{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:center;padding:10px 12px;border:1px solid #dfe8e2;border-radius:12px;background:#fff}
+.summary-word strong{font-size:16px}
+.summary-word span{text-align:right;color:#55645d}
+.summary-qa{display:grid;gap:9px}
+.summary-qa-item{padding:12px;border:1px solid #dfe8e2;border-radius:12px;background:#fff}
+.summary-qa-item strong{display:block;margin-bottom:5px;color:#2f6f58}
+.summary-qa-item p{margin:0;line-height:1.4}
+@media(max-width:560px){.shortcut-button{min-width:100px;padding:0 10px;font-size:13px}.summary-word{gap:8px;padding:9px 10px}.summary-word strong,.summary-word span{font-size:14px}}
 </style>
 </head>
 <body>
@@ -87,6 +101,9 @@
 </script>
 <script>
 (()=>{
+  const WORDS=[
+    ['veekogu','водоём'],['uurimisobjekt','объект исследования'],['mõiste','понятие'],['magevesi','пресная вода'],['jõgi','река'],['jõesäng','русло реки'],['jõelähe','исток реки'],['jõesuue','устье реки'],['lisajõgi','приток'],['imavus','впитываемость'],['värvitu','бесцветный'],['lõhnatu','без запаха'],['läbipaistev','прозрачный'],['voolavus','текучесть'],['maitsetu','без вкуса'],['suubuma','впадать']
+  ];
   const QUESTIONS=[
     {q:'Mis on veekogu?',a:'Veekogu on jõgi, järv, meri ja ookean.'},
     {q:'Mis on jõgi?',a:'Jõgi on mageveeline veekogu.'},
@@ -97,19 +114,37 @@
   ];
   const card=document.getElementById('card'),restart=document.getElementById('restart'),counter=document.getElementById('counter'),pill=document.getElementById('pill'),reviewBtn=document.getElementById('reviewBtn'),libraryBtn=document.getElementById('libraryBtn'),tabEt=document.getElementById('tabEt'),tabDe=document.getElementById('tabDe'),sub=document.getElementById('sub');
   if(!card||!restart||!counter||!pill||!tabEt||!tabDe)return;
-  let active=false,queue=[],good=0,bad=0,flipped=false;
+  let active=false,summaryOpen=false,queue=[],good=0,bad=0,flipped=false;
   const shuffle=a=>{a=[...a];for(let i=a.length-1;i;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
   const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'})[c]);
   function lock(on){tabEt.disabled=on;tabDe.disabled=on;if(reviewBtn)reviewBtn.hidden=true;if(libraryBtn)libraryBtn.hidden=on}
   function isLesson(){const h=card.querySelector('.topic-intro h2');return !!h&&h.textContent.trim()==='Vesi ja jõgi'}
-  function addButton(){if(active||!isLesson())return;const actions=card.querySelector('.topic-actions');if(!actions||actions.querySelector('#questionCardsBtn'))return;const b=document.createElement('button');b.type='button';b.id='questionCardsBtn';b.className='secondary';b.textContent='❓ Вопросы и определения';b.onclick=start;actions.appendChild(b);if(sub)sub.textContent='Loodusõpetus · 16 карточек · 6 вопросов'}
-  function start(){active=true;queue=shuffle(QUESTIONS);good=0;bad=0;flipped=false;lock(true);restart.hidden=false;restart.textContent='← Выйти';pill.textContent='❓ Вопросы';if(sub)sub.textContent='Loodusõpetus · 6 вопросов';render()}
+  function addButtons(){
+    if(active||summaryOpen||!isLesson())return;
+    const actions=card.querySelector('.topic-actions');
+    if(!actions)return;
+    if(!actions.querySelector('#lessonSummaryBtn')){
+      const s=document.createElement('button');s.type='button';s.id='lessonSummaryBtn';s.className='secondary';s.textContent='📘 Конспект урока';s.onclick=showSummary;actions.appendChild(s);
+    }
+    if(!actions.querySelector('#questionCardsBtn')){
+      const b=document.createElement('button');b.type='button';b.id='questionCardsBtn';b.className='secondary';b.textContent='❓ Вопросы и определения';b.onclick=start;actions.appendChild(b);
+    }
+    if(sub)sub.textContent='Loodusõpetus · 16 карточек · 6 вопросов';
+  }
+  function showSummary(){
+    summaryOpen=true;active=false;lock(true);restart.hidden=false;restart.textContent='← К уроку';counter.textContent='';pill.textContent='📘 Конспект';if(sub)sub.textContent='Loodusõpetus · весь урок';
+    const words=WORDS.map(([et,ru])=>`<div class="summary-word"><strong>${esc(et)}</strong><span>${esc(ru)}</span></div>`).join('');
+    const qa=QUESTIONS.map(x=>`<div class="summary-qa-item"><strong>${esc(x.q)}</strong><p>${esc(x.a)}</p></div>`).join('');
+    card.innerHTML=`<div class="summary-view"><div class="summary-head"><h2>Vesi ja jõgi</h2><div class="tiny">Конспект урока</div></div><img class="summary-poster" src="./poster-vesi-ja-jogi.svg?v=20260909-simple" alt="Vesi ja jõgi — плакат"><section class="summary-section"><h3>Sõnad · 16</h3><div class="summary-words">${words}</div></section><section class="summary-section"><h3>Mõisted ja määratlused</h3><div class="summary-qa">${qa}</div></section><button class="primary" id="summaryBack">← К уроку</button></div>`;
+    card.querySelector('#summaryBack').onclick=back;
+  }
+  function start(){active=true;summaryOpen=false;queue=shuffle(QUESTIONS);good=0;bad=0;flipped=false;lock(true);restart.hidden=false;restart.textContent='← Выйти';pill.textContent='❓ Вопросы';if(sub)sub.textContent='Loodusõpetus · 6 вопросов';render()}
   function render(){if(!active)return;if(!queue.length){finish();return}const x=queue[0];flipped=false;counter.textContent=`Осталось: ${queue.length}`;card.innerHTML=`<div class="review-wrap"><div class="tiny" style="text-align:center;margin-bottom:10px">Вопрос → ответ</div><div class="flashcard" id="qflash"><div class="flashcard-inner"><div class="flash-face">${esc(x.q)}</div><div class="flash-face flash-back">${esc(x.a)}</div></div></div><div class="review-stats"><span>✓ ${good}</span><span>✕ ${bad}</span></div><div class="review-actions" id="qactions" hidden><button class="review-no" id="qno">✕</button><button class="review-yes" id="qyes">✓</button></div><div class="tiny" style="text-align:center">Нажми на карточку, чтобы увидеть ответ</div></div>`;const f=card.querySelector('#qflash'),a=card.querySelector('#qactions');f.onclick=()=>{if(flipped)return;flipped=true;f.classList.add('flipped');a.hidden=false};card.querySelector('#qyes').onclick=()=>decide(true);card.querySelector('#qno').onclick=()=>decide(false)}
   function decide(ok){if(!queue.length)return;const x=queue.shift();if(ok){good++;render();return}bad++;if(queue.length===0){const alt=shuffle(QUESTIONS.filter(y=>y.q!==x.q))[0];if(alt)queue.push(alt)}const pos=Math.min(queue.length,Math.max(1,2+Math.floor(Math.random()*2)));queue.splice(pos,0,x);render()}
   function finish(){active=false;lock(false);counter.textContent='';pill.textContent='Готово';restart.hidden=true;if(sub)sub.textContent='Loodusõpetus · 16 карточек · 6 вопросов';card.innerHTML=`<div class="done"><div class="big">❓</div><h2>Готово!</h2><div class="finish-actions"><button class="primary" id="qagain">Ещё раз вопросы</button><button class="secondary" id="qback">К уроку</button></div></div>`;card.querySelector('#qagain').onclick=start;card.querySelector('#qback').onclick=back}
-  function back(){active=false;lock(false);restart.hidden=true;counter.textContent='';tabEt.click()}
-  restart.addEventListener('click',e=>{if(!active)return;e.preventDefault();e.stopImmediatePropagation();back()},true);
-  new MutationObserver(addButton).observe(card,{childList:true,subtree:true});addButton();
+  function back(){active=false;summaryOpen=false;lock(false);restart.hidden=true;counter.textContent='';tabEt.click()}
+  restart.addEventListener('click',e=>{if(!active&&!summaryOpen)return;e.preventDefault();e.stopImmediatePropagation();back()},true);
+  new MutationObserver(addButtons).observe(card,{childList:true,subtree:true});addButtons();
 })();
 </script>
 <script src="./poster-fix.js?v=20260909-11"></script>
