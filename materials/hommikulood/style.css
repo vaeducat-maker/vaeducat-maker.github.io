@@ -30,3 +30,13 @@ body:has(dialog[open]){overflow:hidden}
 @media(max-width:520px){.question-head .question-count{flex-basis:100%}.study-tools{width:100%}.study-tools .secondary{flex:1;font-size:1rem}.reading-tools{gap:10px}.reading-tools .read-count{gap:6px}.reading-tools .words-button{font-size:.94rem}.word-copy{padding:9px 10px 12px}}
 @media(max-width:359px){.words-grid{grid-template-columns:1fr}.word-picture{max-width:230px;margin:auto}}
 @media(min-width:640px){.words-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
+.word-picture-extra{background-image:url('assets/sonastik-lisa.webp');background-size:600% 600%}
+.words-controls{margin:0 0 16px}
+#words-search{width:100%;min-height:46px;padding:10px 13px;font:inherit;font-size:1rem;color:#183b65;background:#f5faff;border:1px solid #bdd5eb;border-radius:12px}
+#words-search:focus-visible{outline:3px solid #eb9e15;outline-offset:2px}
+.word-filters{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.word-filters button{min-height:44px;padding:9px 12px;border:1px solid #bdd5eb;border-radius:99px;font:inherit;font-size:.95rem;background:#fff;color:#0752b8}
+.word-filters button[aria-pressed="true"]{background:#0752b8;color:#fff;border-color:#0752b8}
+#words-count{font-size:.94rem;color:#52708a;margin:10px 0 0}
+.words-empty{grid-column:1/-1;padding:16px 0;line-height:1.5}

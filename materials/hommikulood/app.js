@@ -68,13 +68,27 @@ function openText(i){
   dialog.showModal();dialog.scrollTop=0;
 }
 const wordsDialog=document.querySelector('#words-dialog');
+let wordFilter='all';
+const normalizeWord=s=>s.toLocaleLowerCase('et').normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+function renderWords(){
+  const query=normalizeWord(document.querySelector('#words-search').value.trim());
+  const entries=vocabulary[state.story].filter(entry=>(wordFilter==='all'||entry.group===wordFilter)&&normalizeWord(`${entry.word} ${entry.form} ${entry.example}`).includes(query));
+  document.querySelector('#words-count').textContent=`${entries.length} / ${vocabulary[state.story].length} sõnakaarti`;
+  document.querySelector('#words-grid').innerHTML=entries.map(entry=>`<article class="word-card"><div class="word-picture${entry.sheet?' word-picture-extra':''}" role="img" aria-label="${esc(entry.alt)}" style="background-position:${entry.cell%6*20}% ${Math.floor(entry.cell/6)*100/(entry.sheet?5:3)}%"></div><div class="word-copy"><h3>${esc(entry.word)}</h3>${entry.form?`<p class="word-form"><span class="sr-only">Tekstis: </span><span aria-hidden="true">→ </span>${esc(entry.form)}</p>`:''}<p class="word-example">${esc(entry.example)}</p></div></article>`).join('')||'<p class="words-empty">Ühtegi sõna ei leitud. Proovi teist sõna või vali „Kõik”.</p>';
+  wordsDialog.querySelectorAll('[data-word-filter]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.wordFilter===wordFilter)));
+}
 function openWords(){
   document.querySelector('#words-story').textContent=stories[state.story].title;
-  document.querySelector('#words-grid').innerHTML=vocabulary[state.story].map(entry=>`<article class="word-card"><div class="word-picture" role="img" aria-label="${esc(entry.alt)}" style="background-position:${entry.cell%6*20}% ${Math.floor(entry.cell/6)*100/3}%"></div><div class="word-copy"><h3>${esc(entry.word)}</h3>${entry.form?`<p class="word-form"><span class="sr-only">Tekstis: </span><span aria-hidden="true">→ </span>${esc(entry.form)}</p>`:''}<p class="word-example">${esc(entry.example)}</p></div></article>`).join('');
+  wordFilter='all';document.querySelector('#words-search').value='';renderWords();
   document.querySelector('#words-return').textContent=dialog.open?'Tagasi teksti juurde':state.view==='quiz'?'Tagasi küsimuse juurde':state.view==='result'?'Tagasi tulemuse juurde':'Tagasi loo juurde';
   wordsDialog.showModal();
   wordsDialog.scrollTop=0;
 }
+document.querySelector('#words-search').addEventListener('input',renderWords);
+wordsDialog.addEventListener('click',e=>{
+  const button=e.target.closest('[data-word-filter]');if(!button)return;
+  wordFilter=button.dataset.wordFilter;renderWords();
+});
 wordsDialog.addEventListener('click',e=>{
   if(e.target.closest('[data-action="words-close"]'))wordsDialog.close();
   if(e.target===wordsDialog){const r=wordsDialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)wordsDialog.close();}

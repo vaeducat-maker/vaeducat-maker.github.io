@@ -21,6 +21,17 @@
   <dialog id="words-dialog" aria-labelledby="words-title" aria-describedby="words-story">
     <div class="words-top"><div><p id="words-story"></p><h2 id="words-title">Pildisõnastik</h2></div><button class="icon-button" data-action="words-close" aria-label="Sulge pildisõnastik" autofocus>✕</button></div>
     <p class="words-hint">Vaata pilti. Loe sõna ja näidet loost.</p>
+    <div class="words-controls">
+      <label for="words-search" class="sr-only">Otsi pildisõnastikust</label>
+      <input id="words-search" type="search" placeholder="Otsi sõna…" autocomplete="off" spellcheck="false">
+      <div class="word-filters" role="group" aria-label="Sõnade rühmad">
+        <button type="button" data-word-filter="all" aria-pressed="true">Kõik</button>
+        <button type="button" data-word-filter="things" aria-pressed="false">Kes? Mis?</button>
+        <button type="button" data-word-filter="actions" aria-pressed="false">Tegevused</button>
+        <button type="button" data-word-filter="qualities" aria-pressed="false">Milline? Kuidas?</button>
+      </div>
+      <p id="words-count" role="status" aria-live="polite"></p>
+    </div>
     <div id="words-grid" class="words-grid"></div>
     <button id="words-return" class="primary wide" data-action="words-close">Tagasi loo juurde</button>
   </dialog>

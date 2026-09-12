@@ -87,6 +87,7 @@ const publicFiles = [
   'materials/hommikulood/app.js',
   'materials/hommikulood/vocabulary.js',
   'materials/hommikulood/assets/sonastik.webp',
+  'materials/hommikulood/assets/sonastik-lisa.webp',
   'materials/hommikulood/assets/kiisu.png',
   'materials/hommikulood/assets/story-1.jpg',
   'materials/hommikulood/assets/story-2.jpg',
