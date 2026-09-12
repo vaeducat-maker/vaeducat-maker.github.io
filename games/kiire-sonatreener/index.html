@@ -68,18 +68,28 @@
     card.querySelectorAll('.library-title strong').forEach(x=>{if(x.textContent.trim()==='Eesti keel')x.textContent='Eesti kirjandus'});
   }
 
+  function clickTopicWhenReady(topic,tries=0){
+    const target=card.querySelector(`[data-topic="${topic}"]`);
+    if(target){target.click();return}
+    if(tries<20)setTimeout(()=>clickTopicWhenReady(topic,tries+1),25);
+  }
+
+  function activateHiddenLanguage(tab){
+    tab.disabled=false;
+    if(typeof tab.onclick==='function')tab.onclick();
+    else tab.click();
+  }
+
   function openExisting(lang,topic){
     if(lang==='de'){
-      tabDe.click();
-      setTimeout(()=>card.querySelector(`[data-topic="${topic}"]`)?.click(),0);
+      activateHiddenLanguage(tabDe);
+      clickTopicWhenReady(topic);
       return;
     }
-    tabEt.click();
-    setTimeout(()=>{
-      if(topic==='vesi-ja-jogi')return;
-      if(typeof originalLibrary==='function')originalLibrary();
-      setTimeout(()=>card.querySelector(`[data-topic="${topic}"]`)?.click(),0);
-    },0);
+    activateHiddenLanguage(tabEt);
+    if(topic==='vesi-ja-jogi')return;
+    if(typeof originalLibrary==='function')originalLibrary();
+    clickTopicWhenReady(topic);
   }
 
   function renderSubjects(){
