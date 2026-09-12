@@ -28,6 +28,21 @@ jobs:
             sed -i "/games\/kiire-sonatreener\/icon.svg/a\\  'games/kiire-sonatreener/back-nav.js'," scripts/build-cloudflare-site.js
           fi
 
+      - name: Make Sõnatreener manifest Cloudflare-build compatible
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const file = 'games/kiire-sonatreener/index.html';
+          let html = fs.readFileSync(file, 'utf8');
+          if (!html.includes('edukass-smart-manifest')) {
+            html = html.replace(
+              '<link rel="manifest" href="./manifest.webmanifest">',
+              `<script id="edukass-smart-manifest">\nif(!/SamsungBrowser/i.test(navigator.userAgent)){\n  const manifest=document.createElement('link');\n  manifest.rel='manifest';\n  manifest.href='./manifest.webmanifest';\n  document.head.appendChild(manifest);\n}\n</script>`
+            );
+            fs.writeFileSync(file, html, 'utf8');
+          }
+          NODE
+
       - name: Build public EDUKASS site
         run: node scripts/build-cloudflare-site.js
 
