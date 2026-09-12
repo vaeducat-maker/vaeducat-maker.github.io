@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="et">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Septembri sõnamäng — EDUKASS</title>
+<meta name="description" content="EDUKASSi septembrikuu sõnamäng: vali omadussõna, nimisõna ja tegusõna ning tee lause.">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<link rel="canonical" href="https://edukass.ee/games/septembri-sonamang/">
+<style>
+:root{
+  --blue:#1237b8;
+  --blue2:#0f2f93;
+  --green:#2f8a3b;
+  --yellow:#f4b71f;
+  --line:#d8dff6;
+  --text:#173278;
+  --soft-blue:#eef6ff;
+  --soft-green:#effaf0;
+  --soft-yellow:#fff8df;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:"Trebuchet MS","Arial Rounded MT Bold",Arial,sans-serif;color:var(--text);background:#fff}
+button{font:inherit}
+.app{max-width:980px;margin:auto;padding:16px 14px 34px}
+.topbar{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin-bottom:4px}
+.iconbtn{border:2px solid var(--blue);color:var(--blue);background:#fff;padding:9px 12px;border-radius:999px;font-weight:900;font-size:14px;cursor:pointer}
+.iconbtn:active{transform:translateY(1px)}
+.iconbtn:focus-visible,.roll:focus-visible,.swap:focus-visible,.tab:focus-visible{outline:4px solid rgba(244,183,31,.5);outline-offset:3px}
+.hero{text-align:center;padding:4px 0 12px}
+.kicker{font-size:14px;color:var(--green);font-weight:900;letter-spacing:.08em}
+h1{margin:6px 0 4px;font-size:clamp(36px,8vw,68px);line-height:.98;color:var(--blue);font-weight:1000;letter-spacing:.02em}
+.rule{width:86px;height:7px;border-radius:999px;background:var(--green);margin:11px auto}
+.subtitle{font-size:clamp(18px,4vw,25px);font-weight:900}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:8px 0 16px}
+.tab{min-height:44px;border:2px solid var(--line);border-radius:999px;padding:9px 14px;background:#fff;font-weight:900;color:var(--blue);cursor:pointer}
+.tab[aria-selected="true"]{border-color:var(--blue);background:#f3f6ff}
+.panel{border:2px solid var(--line);border-radius:24px;padding:16px;background:#fff}
+.roll{width:100%;border:0;border-radius:20px;padding:17px 20px;background:var(--yellow);color:var(--blue2);font-size:22px;font-weight:1000;margin-bottom:16px;box-shadow:0 5px 0 #d69800;cursor:pointer}
+.roll:active{transform:translateY(2px);box-shadow:0 3px 0 #d69800}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.card{min-width:0;border-radius:22px;padding:12px 10px 11px;border:3px solid var(--line);background:#fff;text-align:center;box-shadow:0 4px 12px rgba(27,48,111,.06)}
+.card.adj{background:var(--soft-blue);border-color:#b9dcff}
+.card.noun{background:var(--soft-green);border-color:#bfe7c2}
+.card.verb{background:var(--soft-yellow);border-color:#f6dc82}
+.cat{font-size:13px;font-weight:1000;color:var(--blue);letter-spacing:.06em;margin-bottom:2px}
+.question{font-size:13px;font-weight:800;color:#62709b;margin-bottom:6px}
+.pic{font-size:clamp(62px,9vw,92px);line-height:1.05;margin:4px 0 7px}
+.word{font-size:clamp(26px,4.3vw,38px);line-height:1.05;font-weight:1000;color:var(--blue);overflow-wrap:anywhere}
+.swap{margin-top:12px;min-height:44px;border-radius:14px;border:2px solid rgba(18,55,184,.15);background:#fff;font-weight:900;color:var(--blue);padding:8px 12px;cursor:pointer}
+.task{text-align:center;margin:18px 0 0;font-size:clamp(23px,4.2vw,32px);font-weight:1000;color:var(--blue)}
+.hint{text-align:center;color:#68769b;font-size:14px;font-weight:700;margin-top:5px}
+.onewrap{display:grid;place-items:center;padding:4px}
+.onecard{width:min(350px,100%)}
+.wordlists{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.wordlist{border:2px solid var(--line);border-radius:20px;padding:13px;background:#fff;min-width:0}
+.wordlist h2{margin:0 0 4px;color:var(--blue);font-size:20px}
+.wordlist .q2{font-size:13px;color:#6c7898;font-weight:800;margin-bottom:10px}
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{border-radius:999px;padding:6px 9px;background:#f5f7fb;color:var(--text);font-size:13px;font-weight:900}
+.footer{border-top:2px solid var(--blue);margin-top:20px;padding-top:12px;display:flex;justify-content:space-between;align-items:center;gap:12px;font-weight:900;color:var(--blue)}
+.brand{display:flex;align-items:center;gap:7px}.brand img{width:34px;height:34px;object-fit:contain}.note{font-size:12px;color:#6e7896}
+[hidden]{display:none!important}
+@media(max-width:640px){
+  .app{padding:12px 10px 28px}.panel{padding:12px}.cards{grid-template-columns:1fr}.wordlists{grid-template-columns:1fr}.card{padding:12px}.pic{font-size:72px}.word{font-size:34px}.footer{flex-direction:column;align-items:flex-start}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.roll,.iconbtn{transition:none}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <button class="iconbtn" id="resetBtn" type="button">↻ Alusta uuesti</button>
+  </div>
+
+  <section class="hero">
+    <div class="kicker">VAATA • VALI • RÄÄGI</div>
+    <h1>SEPTEMBRI SÕNAMÄNG</h1>
+    <div class="rule"></div>
+    <div class="subtitle">Veereta ja tee kolmest sõnast lause!</div>
+  </section>
+
+  <div class="tabs" role="tablist" aria-label="Mängurežiim">
+    <button class="tab" type="button" role="tab" aria-selected="true" data-mode="trio">🎲 3 sõna</button>
+    <button class="tab" type="button" role="tab" aria-selected="false" data-mode="one">🃏 1 kaart</button>
+    <button class="tab" type="button" role="tab" aria-selected="false" data-mode="words">👀 Kõik sõnad</button>
+  </div>
+
+  <section class="panel" id="mode-trio">
+    <button class="roll" id="rollBtn" type="button">🎲 VEERETA!</button>
+    <div class="cards" aria-live="polite">
+      <article class="card adj" data-card="adj">
+        <div class="cat">OMADUSSÕNA</div><div class="question">Milline? Missugune?</div>
+        <div class="pic" data-pic></div><div class="word" data-word></div>
+        <button class="swap" type="button" data-swap="adj">↻ Vaheta</button>
+      </article>
+      <article class="card noun" data-card="noun">
+        <div class="cat">NIMISÕNA</div><div class="question">Mis?</div>
+        <div class="pic" data-pic></div><div class="word" data-word></div>
+        <button class="swap" type="button" data-swap="noun">↻ Vaheta</button>
+      </article>
+      <article class="card verb" data-card="verb">
+        <div class="cat">TEGUSÕNA</div><div class="question">Mida tegema?</div>
+        <div class="pic" data-pic></div><div class="word" data-word></div>
+        <button class="swap" type="button" data-swap="verb">↻ Vaheta</button>
+      </article>
+    </div>
+    <div class="task">Tee lause! 💬</div>
+    <div class="hint">Muuda tegusõna vajadusel sobivasse vormi. Naljakas lause? Veel parem! 😄</div>
+  </section>
+
+  <section class="panel" id="mode-one" hidden>
+    <button class="roll" id="oneRollBtn" type="button">🎲 UUS KAART</button>
+    <div class="onewrap">
+      <article class="card onecard" id="oneCard">
+        <div class="cat" id="oneCat"></div><div class="question" id="oneQuestion"></div>
+        <div class="pic" id="onePic"></div><div class="word" id="oneWord"></div>
+      </article>
+    </div>
+    <div class="task">Ütle sõna ja tee sellega lause.</div>
+  </section>
+
+  <section class="panel" id="mode-words" hidden>
+    <div class="wordlists">
+      <div class="wordlist"><h2>OMADUSSÕNAD</h2><div class="q2">Milline? Missugune?</div><div class="chips" id="adjList"></div></div>
+      <div class="wordlist"><h2>NIMISÕNAD</h2><div class="q2">Mis?</div><div class="chips" id="nounList"></div></div>
+      <div class="wordlist"><h2>TEGUSÕNAD</h2><div class="q2">Mida tegema?</div><div class="chips" id="verbList"></div></div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="brand"><img src="../korrutamine-test/assets/edukass-cat-transparent.png" alt=""><span>edukass.ee</span></div>
+    <div class="note">Õppimine algab uudishimust.</div>
+  </footer>
+</div>
+
+<script>
+const DATA={
+  adj:[
+    {w:'jahe',e:'🧣'},{w:'vihmane',e:'🌧️'},{w:'pilvine',e:'☁️'},{w:'värviline',e:'🍁'},{w:'kuldne',e:'🍂'},
+    {w:'soe',e:'🧶'},{w:'uus',e:'📗'},{w:'rõõmus',e:'😄'},{w:'märg',e:'💧'},{w:'tuuline',e:'🌬️'},
+    {w:'porine',e:'🥾'},{w:'päikeseline',e:'☀️'},{w:'oranž',e:'🟠'},{w:'magus',e:'🍎'},{w:'väike',e:'🦔'}
+  ],
+  noun:[
+    {w:'kool',e:'🏫'},{w:'raamat',e:'📚'},{w:'vihik',e:'📒'},{w:'pliiats',e:'✏️'},{w:'leht',e:'🍁'},
+    {w:'kõrvaklapid',e:'🎧'},{w:'saapad',e:'🥾'},{w:'õun',e:'🍎'},{w:'seen',e:'🍄'},{w:'koolikott',e:'🎒'},
+    {w:'jope',e:'🧥'},{w:'vihmavari',e:'☂️'},{w:'kastan',e:'🌰'},{w:'porgand',e:'🥕'},{w:'vaher',e:'🌳'}
+  ],
+  verb:[
+    {w:'õppima',e:'📚'},{w:'lugema',e:'📖'},{w:'kirjutama',e:'✏️'},{w:'kuulama',e:'🎧'},{w:'rääkima',e:'💬'},
+    {w:'mängima',e:'⚽'},{w:'jalutama',e:'🚶'},{w:'korjama',e:'🧺'},{w:'joonistama',e:'🎨'},{w:'kordama',e:'🔁'},
+    {w:'riietuma',e:'🧥'},{w:'meisterdama',e:'✂️'},{w:'aitama',e:'🤝'},{w:'avastama',e:'🔎'},{w:'naeratama',e:'😊'}
+  ]
+};
+const LABELS={adj:['OMADUSSÕNA','Milline? Missugune?'],noun:['NIMISÕNA','Mis?'],verb:['TEGUSÕNA','Mida tegema?']};
+let current={adj:null,noun:null,verb:null};
+function pick(type,avoid){const arr=DATA[type];let item=arr[Math.floor(Math.random()*arr.length)];if(arr.length>1&&avoid){for(let i=0;i<10&&item.w===avoid;i++)item=arr[Math.floor(Math.random()*arr.length)]}return item}
+function render(type){const card=document.querySelector(`[data-card="${type}"]`);const item=current[type];card.querySelector('[data-pic]').textContent=item.e;card.querySelector('[data-word]').textContent=item.w}
+function rollAll(){['adj','noun','verb'].forEach(t=>{current[t]=pick(t,current[t]?.w);render(t)})}
+function rollOne(){const types=['adj','noun','verb'];const t=types[Math.floor(Math.random()*types.length)];const item=pick(t);const card=document.getElementById('oneCard');card.className='card onecard '+t;document.getElementById('oneCat').textContent=LABELS[t][0];document.getElementById('oneQuestion').textContent=LABELS[t][1];document.getElementById('onePic').textContent=item.e;document.getElementById('oneWord').textContent=item.w}
+document.getElementById('rollBtn').addEventListener('click',rollAll);
+document.getElementById('oneRollBtn').addEventListener('click',rollOne);
+document.querySelectorAll('[data-swap]').forEach(btn=>btn.addEventListener('click',()=>{const t=btn.dataset.swap;current[t]=pick(t,current[t]?.w);render(t)}));
+document.getElementById('resetBtn').addEventListener('click',()=>{rollAll();window.scrollTo({top:0,behavior:'smooth'})});
+document.querySelectorAll('.tab').forEach(tab=>tab.addEventListener('click',()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.setAttribute('aria-selected','false'));tab.setAttribute('aria-selected','true');
+  const mode=tab.dataset.mode;['trio','one','words'].forEach(m=>document.getElementById('mode-'+m).hidden=m!==mode);if(mode==='one')rollOne();
+}));
+[['adj','adjList'],['noun','nounList'],['verb','verbList']].forEach(([type,id])=>{
+  const box=document.getElementById(id);DATA[type].forEach(item=>{const span=document.createElement('span');span.className='chip';span.textContent=item.w;box.appendChild(span)});
+});
+rollAll();rollOne();
+</script>
+</body>
+</html>
