@@ -4,7 +4,14 @@
   const restart=document.getElementById('restart');
   if(!card||!libraryBtn||!restart)return;
 
-  const EXAM_KEY='sonatreenerTypingExamTopicV1';
+  const OLD_EXAM_KEY='sonatreenerTypingExamTopicV1';
+  const EXAM_KEY='sonatreenerTypingExamTopicV2';
+  try{
+    // A page/app restart means the previous control attempt was abandoned.
+    // Clear stale locks so the trainer can never become trapped after an unusual exit.
+    localStorage.removeItem(OLD_EXAM_KEY);
+    localStorage.removeItem(EXAM_KEY);
+  }catch(e){}
   const getExamLock=()=>{try{return localStorage.getItem(EXAM_KEY)||''}catch(e){return ''}};
   const setExamLock=value=>{try{localStorage.setItem(EXAM_KEY,value)}catch(e){}};
   const clearExamLock=()=>{try{localStorage.removeItem(EXAM_KEY)}catch(e){}document.body.classList.remove('typing-exam-active')};
