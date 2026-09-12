@@ -31,7 +31,9 @@ const extraFiles = [
   'games/liitmine/index.html',
   'games/liitmine/manifest.webmanifest',
   'games/liitmine/service-worker.js',
-  'games/minu-suvi/index.html'
+  'games/minu-suvi/index.html',
+  'games/septembri-sonamang/index.html',
+  'games/septembri-sonamang/cards.webp'
 ];
 
 if (!source.includes(anchor)) {
@@ -219,10 +221,7 @@ for (const filePath of walkHtmlFiles(output)) {
     if (!html.includes('<div class="app">')) {
       throw new Error('Unable to add EDUKASS back link to Minu suvi');
     }
-    html = html.replace(
-      '<div class="app">',
-      `<div class="app">\n  <a class="${BACK_MARKER}" href="/" aria-label="Tagasi EDUKASSi avalehele">← EDUKASS</a>`
-    );
+    html = html.replace('<div class="app">', `<div class="app">\n  <a class="${BACK_MARKER}" href="/" aria-label="Tagasi EDUKASSi avalehele">← EDUKASS</a>`);
     html = injectSharedStyle(html);
     minuSuviBackLinks += 1;
     changed = true;
