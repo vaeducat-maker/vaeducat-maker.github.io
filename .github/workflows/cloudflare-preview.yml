@@ -61,6 +61,9 @@ jobs:
       - name: Build public EDUKASS site
         run: node scripts/build-cloudflare-site.js
 
+      - name: Add swipeable adjective cards
+        run: node scripts/patch-sept-adj-carousel.js
+
       - name: Deploy edukass-preview
         uses: cloudflare/wrangler-action@v4
         with:
