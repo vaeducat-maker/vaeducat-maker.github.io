@@ -18,6 +18,12 @@
   <main id="main" tabindex="-1"></main>
   <div id="bottom"></div>
   <dialog id="text-dialog" aria-labelledby="dialog-title"><div class="dialog-top"><h2 id="dialog-title">Lugu</h2><button class="icon-button" data-action="close" aria-label="Sulge tekst">✕</button></div><div id="dialog-body"></div><button class="primary wide" data-action="close">Tagasi küsimuse juurde</button></dialog>
+  <dialog id="words-dialog" aria-labelledby="words-title" aria-describedby="words-story">
+    <div class="words-top"><div><p id="words-story"></p><h2 id="words-title">Pildisõnastik</h2></div><button class="icon-button" data-action="words-close" aria-label="Sulge pildisõnastik" autofocus>✕</button></div>
+    <p class="words-hint">Vaata pilti. Loe sõna ja näidet loost.</p>
+    <div id="words-grid" class="words-grid"></div>
+    <button id="words-return" class="primary wide" data-action="words-close">Tagasi loo juurde</button>
+  </dialog>
   <div id="live" role="status" aria-live="polite" class="sr-only"></div>
   <noscript><p class="noscript">Lugude ja küsimuste avamiseks lülita brauseris JavaScript sisse.</p></noscript>
   <script type="module" src="app.js"></script>

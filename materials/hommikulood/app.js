@@ -1,4 +1,5 @@
 import {stories} from './data.js';
+import {vocabulary} from './vocabulary.js';
 import {freshProgress,choose,check,score,isCorrect,errorCount,firstCorrectCount} from './engine.js';
 
 const main=document.querySelector('#main'),bottom=document.querySelector('#bottom'),dialog=document.querySelector('#text-dialog');
@@ -36,20 +37,21 @@ function home(){
   }).join('')}</div>${footer()}`;
   bottom.innerHTML='';
 }
+const wordsButton=()=>'<button class="secondary words-button" data-action="words" aria-haspopup="dialog" aria-controls="words-dialog"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 5c-3-2-7-2-10-1v15c3-1 7-1 10 1 3-2 7-2 10-1V4c-3-1-7-1-10 1Z"/><path d="M12 5v15"/></svg>Pildisõnastik</button>';
 function reading(){
   const s=stories[state.story],plan=plans[state.story][state.page],last=state.page===plans[state.story].length-1;
   state.progress[state.story].page=state.page;
-  main.innerHTML=`<section class="lesson">${frame()}<div class="read-count"><span>Loe · ${state.page+1} / ${plans[state.story].length}</span>${plans[state.story].map((_,i)=>`<i class="${i===state.page?'on':''}" aria-hidden="true"></i>`).join('')}</div><article class="reading">${plan.crop?crop(state.story,plan.crop,plan.alt):''}${plan.caption?`<p class="caption">${plan.caption}</p>`:''}<div class="reading-text">${text(s.paras.slice(...plan.range))}</div></article>${last?'<p class="mini-label">Nüüd saad vastata viiele küsimusele. Teksti saab küsimuste juures uuesti avada.</p>':''}</section>`;
+  main.innerHTML=`<section class="lesson">${frame()}<div class="reading-tools"><div class="read-count"><span>Loe · ${state.page+1} / ${plans[state.story].length}</span>${plans[state.story].map((_,i)=>`<i class="${i===state.page?'on':''}" aria-hidden="true"></i>`).join('')}</div>${wordsButton()}</div><article class="reading">${plan.crop?crop(state.story,plan.crop,plan.alt):''}${plan.caption?`<p class="caption">${plan.caption}</p>`:''}<div class="reading-text">${text(s.paras.slice(...plan.range))}</div></article>${last?'<p class="mini-label">Nüüd saad vastata viiele küsimusele. Teksti saab küsimuste juures uuesti avada.</p>':''}</section>`;
   bottom.innerHTML=`<nav class="fixed-bottom" aria-label="Loo leheküljed"><div class="bottom-inner"><button class="secondary" data-action="prev-read" ${state.page===0?'disabled':''} aria-label="Eelmine lehekülg">←</button><button class="primary" data-action="next-read">${last?'Küsimuste juurde':'Järgmine lehekülg'} <span aria-hidden="true">→</span></button></div></nav>`;
 }
 function quiz(){
   const s=stories[state.story],p=state.progress[state.story],q=state.question,[question,options]=s.questions[q],checked=p.checked[q],correct=isCorrect(state.progress,stories,state.story,q);
-  main.innerHTML=`<section class="lesson">${frame()}<div class="question-head"><span class="question-count">Küsimus ${q+1} / 5</span><button class="secondary" data-action="text">Loe teksti</button></div><div class="question-card"><fieldset><legend>${esc(question)}</legend><div class="options">${options.map((o,i)=>`<label class="option ${p.answers[q]===i?'selected '+(checked?(correct?'correct':'wrong'):''):''}" for="option-${i}"><input type="radio" name="answer" id="option-${i}" value="${i}" ${p.answers[q]===i?'checked':''}><span class="letter" aria-hidden="true">${String.fromCharCode(65+i)}</span><span>${esc(o)}</span></label>`).join('')}</div></fieldset>${checked?`<div class="feedback ${correct?'':'wrong'}" role="status"><strong>${correct?'✓ Õige!':'Veel mitte. Proovi uuesti.'}</strong><p>${correct?esc(evidence[state.story][q]):'Ava tekst ja otsi kohta, mis aitab vastata. Seejärel vali teine vastus.'}</p></div>`:state.empty?'<p class="empty-feedback" role="alert">Vali kõigepealt üks vastus.</p>':''}</div><nav class="question-dots" aria-label="Vali küsimus">${s.questions.map((_,i)=>`<button data-action="question" data-q="${i}" class="${i===q?'active ':''}${p.checked[i]?(isCorrect(state.progress,stories,state.story,i)?'correct':'wrong'):''}" aria-label="Küsimus ${i+1}${p.checked[i]?(isCorrect(state.progress,stories,state.story,i)?', õige':', proovi uuesti'):p.answers[i]!==null?', valitud, kontrollimata':''}" ${i===q?'aria-current="step"':''}>${i+1}</button>`).join('')}</nav></section>`;
+  main.innerHTML=`<section class="lesson">${frame()}<div class="question-head"><span class="question-count">Küsimus ${q+1} / 5</span><div class="study-tools"><button class="secondary" data-action="text">Loe teksti</button>${wordsButton()}</div></div><div class="question-card"><fieldset><legend>${esc(question)}</legend><div class="options">${options.map((o,i)=>`<label class="option ${p.answers[q]===i?'selected '+(checked?(correct?'correct':'wrong'):''):''}" for="option-${i}"><input type="radio" name="answer" id="option-${i}" value="${i}" ${p.answers[q]===i?'checked':''}><span class="letter" aria-hidden="true">${String.fromCharCode(65+i)}</span><span>${esc(o)}</span></label>`).join('')}</div></fieldset>${checked?`<div class="feedback ${correct?'':'wrong'}" role="status"><strong>${correct?'✓ Õige!':'Veel mitte. Proovi uuesti.'}</strong><p>${correct?esc(evidence[state.story][q]):'Ava tekst ja otsi kohta, mis aitab vastata. Seejärel vali teine vastus.'}</p></div>`:state.empty?'<p class="empty-feedback" role="alert">Vali kõigepealt üks vastus.</p>':''}</div><nav class="question-dots" aria-label="Vali küsimus">${s.questions.map((_,i)=>`<button data-action="question" data-q="${i}" class="${i===q?'active ':''}${p.checked[i]?(isCorrect(state.progress,stories,state.story,i)?'correct':'wrong'):''}" aria-label="Küsimus ${i+1}${p.checked[i]?(isCorrect(state.progress,stories,state.story,i)?', õige':', proovi uuesti'):p.answers[i]!==null?', valitud, kontrollimata':''}" ${i===q?'aria-current="step"':''}>${i+1}</button>`).join('')}</nav></section>`;
   bottom.innerHTML=`<nav class="fixed-bottom" aria-label="Küsimuste leheküljed"><div class="bottom-inner"><button class="secondary" data-action="prev-question" aria-label="${q===0?'Tagasi loo juurde':'Eelmine küsimus'}">←</button><button class="primary" data-action="${checked?'next-question':'check'}">${checked?(q===4?'Vaata tulemust':'Järgmine küsimus'):'Kontrolli vastust'}${checked?' <span aria-hidden="true">→</span>':''}</button></div></nav>`;
 }
 function result(){
   const p=state.progress[state.story],n=score(state.progress,stories,state.story),missing=p.checked.filter(c=>!c).length,errors=errorCount(state.progress,state.story),first=firstCorrectCount(state.progress,state.story);
-  main.innerHTML=`<section class="lesson"><div class="lesson-nav"><button class="back-link" data-action="home">‹ Kõik lood</button><span class="lesson-label">Lugu ${state.story+1} / 4</span></div></section><section class="result"><p class="eyebrow">${esc(stories[state.story].title)}</p><div class="score">${n}<small>/ 5</small></div><div class="result-stats"><div><strong>${errors}</strong><span>Eksimusi kokku</span></div><div><strong>${first}<small> / 5</small></strong><span>Õige esimesel katsel</span></div></div><p class="stats-note">Iga kontrollitud vale vastus loeb ühe eksimusena. Parandamine eksimuste arvu ei vähenda.</p><h1>${n===5?(errors?'Kõik vastused on nüüd õiged!':'Kõik vastused on õiged!'):missing?'Lõpeta vastamine':'Vaata vastused üle'}</h1><p>${n===5?'Tubli töö! Oled selle loo läbi lugenud ja küsimustele vastanud.':missing?`${missing} ${missing===1?'vastus on':'vastust on'} veel kontrollimata.`:'Õiged vastused on alles. Saad teisi vastuseid uuesti proovida.'}</p>${stories[state.story].questions.map((_,q)=>`<div class="review-row"><span>Küsimus ${q+1}<small class="question-history">${p.errors[q]} ${p.errors[q]===1?'eksimus':'eksimust'}</small></span><span class="status ${isCorrect(state.progress,stories,state.story,q)?'green':'orange'}">${isCorrect(state.progress,stories,state.story,q)?'✓ Õige':p.checked[q]?'Proovi uuesti':'Kontrollimata'}</span><button data-action="question" data-q="${q}" aria-label="Ava küsimus ${q+1}">Vaata</button></div>`).join('')}<div class="result-actions">${n<5?'<button class="primary" data-action="retry">Proovi ülejäänuid uuesti</button>':state.story<3?`<button class="primary" data-action="start" data-story="${state.story+1}">Järgmine lugu →</button>`:'<button class="primary" data-action="home">Kõik lood</button>'}<button class="secondary" data-action="reread">Loe lugu uuesti</button><button class="text-link" data-action="reset">Alusta seda lugu otsast</button></div></section>${footer()}`;
+  main.innerHTML=`<section class="lesson"><div class="lesson-nav"><button class="back-link" data-action="home">‹ Kõik lood</button><span class="lesson-label">Lugu ${state.story+1} / 4</span></div></section><section class="result"><p class="eyebrow">${esc(stories[state.story].title)}</p><div class="score">${n}<small>/ 5</small></div><div class="result-stats"><div><strong>${errors}</strong><span>Eksimusi kokku</span></div><div><strong>${first}<small> / 5</small></strong><span>Õige esimesel katsel</span></div></div><p class="stats-note">Iga kontrollitud vale vastus loeb ühe eksimusena. Parandamine eksimuste arvu ei vähenda.</p><h1>${n===5?(errors?'Kõik vastused on nüüd õiged!':'Kõik vastused on õiged!'):missing?'Lõpeta vastamine':'Vaata vastused üle'}</h1><p>${n===5?'Tubli töö! Oled selle loo läbi lugenud ja küsimustele vastanud.':missing?`${missing} ${missing===1?'vastus on':'vastust on'} veel kontrollimata.`:'Õiged vastused on alles. Saad teisi vastuseid uuesti proovida.'}</p>${stories[state.story].questions.map((_,q)=>`<div class="review-row"><span>Küsimus ${q+1}<small class="question-history">${p.errors[q]} ${p.errors[q]===1?'eksimus':'eksimust'}</small></span><span class="status ${isCorrect(state.progress,stories,state.story,q)?'green':'orange'}">${isCorrect(state.progress,stories,state.story,q)?'✓ Õige':p.checked[q]?'Proovi uuesti':'Kontrollimata'}</span><button data-action="question" data-q="${q}" aria-label="Ava küsimus ${q+1}">Vaata</button></div>`).join('')}<div class="result-actions">${n<5?'<button class="primary" data-action="retry">Proovi ülejäänuid uuesti</button>':state.story<3?`<button class="primary" data-action="start" data-story="${state.story+1}">Järgmine lugu →</button>`:'<button class="primary" data-action="home">Kõik lood</button>'}<button class="secondary" data-action="reread">Loe lugu uuesti</button>${wordsButton()}<button class="text-link" data-action="reset">Alusta seda lugu otsast</button></div></section>${footer()}`;
   bottom.innerHTML='';
 }
 function render(scroll=false,focusId=null){
@@ -61,10 +63,22 @@ function render(scroll=false,focusId=null){
 }
 function openText(i){
   document.querySelector('#dialog-title').textContent=stories[i].title;
-  document.querySelector('#dialog-body').innerHTML=text(stories[i].paras);
+  document.querySelector('#dialog-body').innerHTML=wordsButton()+text(stories[i].paras);
   dialog.querySelector('.primary').textContent='Tagasi küsimuse juurde';
   dialog.showModal();dialog.scrollTop=0;
 }
+const wordsDialog=document.querySelector('#words-dialog');
+function openWords(){
+  document.querySelector('#words-story').textContent=stories[state.story].title;
+  document.querySelector('#words-grid').innerHTML=vocabulary[state.story].map(entry=>`<article class="word-card"><div class="word-picture" role="img" aria-label="${esc(entry.alt)}" style="background-position:${entry.cell%6*20}% ${Math.floor(entry.cell/6)*100/3}%"></div><div class="word-copy"><h3>${esc(entry.word)}</h3>${entry.form?`<p class="word-form"><span class="sr-only">Tekstis: </span><span aria-hidden="true">→ </span>${esc(entry.form)}</p>`:''}<p class="word-example">${esc(entry.example)}</p></div></article>`).join('');
+  document.querySelector('#words-return').textContent=dialog.open?'Tagasi teksti juurde':state.view==='quiz'?'Tagasi küsimuse juurde':state.view==='result'?'Tagasi tulemuse juurde':'Tagasi loo juurde';
+  wordsDialog.showModal();
+  wordsDialog.scrollTop=0;
+}
+wordsDialog.addEventListener('click',e=>{
+  if(e.target.closest('[data-action="words-close"]'))wordsDialog.close();
+  if(e.target===wordsDialog){const r=wordsDialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)wordsDialog.close();}
+});
 function start(i){
   if(!Number.isInteger(i)||i<0||i>=stories.length)throw Error('Unknown story');
   const p=state.progress[i];
@@ -91,6 +105,7 @@ document.addEventListener('click',e=>{
   if(action==='prev-question')state.question>0?move('quiz',{question:state.question-1}):move('read',{page:plans[state.story].length-1});
   if(action==='question')move('quiz',{question:Number(b.dataset.q)});
   if(action==='text')openText(state.story);
+  if(action==='words')openWords();
   if(action==='close')dialog.close();
   if(action==='reread')move('read',{page:0});
   if(action==='retry'){const q=state.progress[state.story].answers.findIndex((_,q)=>!isCorrect(state.progress,stories,state.story,q));move('quiz',{question:Math.max(q,0)});}
@@ -98,7 +113,7 @@ document.addEventListener('click',e=>{
 });
 document.addEventListener('change',e=>{if(e.target.matches('input[name="answer"]'))select(state.question,Number(e.target.value));});
 dialog.addEventListener('click',e=>{if(e.target===dialog){const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)dialog.close();}});
-document.addEventListener('keydown',e=>{if(dialog.open||e.target.matches('input,button,a,summary'))return;if(state.view==='read'&&e.key==='ArrowRight'){e.preventDefault();document.querySelector('[data-action="next-read"]')?.click();}if(state.view==='read'&&e.key==='ArrowLeft'&&state.page>0){e.preventDefault();move('read',{page:state.page-1});}});
+document.addEventListener('keydown',e=>{if(dialog.open||wordsDialog.open||e.target.matches('input,button,a,summary'))return;if(state.view==='read'&&e.key==='ArrowRight'){e.preventDefault();document.querySelector('[data-action="next-read"]')?.click();}if(state.view==='read'&&e.key==='ArrowLeft'&&state.page>0){e.preventDefault();move('read',{page:state.page-1});}});
 render();
 
 let touchStart=null;

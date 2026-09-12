@@ -5,3 +5,28 @@
 .fixed-bottom{position:fixed;left:0;right:0}body.in-lesson main{padding-bottom:126px}.reading{touch-action:pan-y}
 .result-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:0 0 14px}.result-stats>div{padding:17px 10px;border:1px solid #c5def0;border-radius:16px;background:#f3f8fd;display:flex;flex-direction:column;gap:7px}.result-stats strong{font-size:1.85rem;color:#0752b8}.result-stats strong small{font-size:1rem;font-weight:500}.result-stats span{font-size:.94rem;line-height:1.4}.result .stats-note{font-size:.9rem;color:#52708a;line-height:1.5;margin:0 0 25px}.question-history{display:block;font-size:.88rem;color:#52708a;margin-top:5px}.review-row{flex-wrap:wrap}
 @media print{.topbar,#bottom,.teacher-controls,.back-link{display:none}body{background:#fff}.teacher details{break-inside:avoid}.teacher summary{color:#111}main{width:100%}}
+
+/* Picture dictionary: the worksheet underneath is left intact. */
+body:has(dialog[open]){overflow:hidden}
+.reading-tools{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.reading-tools .read-count{margin-bottom:0}
+.study-tools{display:flex;gap:8px;flex-wrap:wrap}
+.question-head{flex-wrap:wrap}
+.words-button{gap:8px;min-height:46px;padding:10px 13px;font-size:1rem}
+.words-button svg{flex-shrink:0}
+#dialog-body>.words-button{margin-bottom:18px}
+#words-dialog{padding:0 18px 20px;width:min(100% - 20px,700px);max-height:90dvh;overflow-y:auto}
+.words-top{position:sticky;top:0;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 0 12px;background:white;border-bottom:1px solid #d6e8f6}
+.words-top h2{font-size:1.6rem;margin:0}
+#words-story{font-size:.95rem;line-height:1.35;margin:0 0 5px;color:#52708a}
+.words-hint{font-size:1rem;margin:14px 0;line-height:1.5}
+.words-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:20px}
+.word-card{border:1px solid #c5def0;border-radius:16px;overflow:hidden;background:#fff;min-width:0}
+.word-picture{width:100%;aspect-ratio:1;background-image:url('assets/sonastik.webp');background-size:600% 400%;background-repeat:no-repeat}
+.word-copy{padding:10px 12px 14px}
+.word-copy h3{font-size:1.15rem;line-height:1.25;color:#0752b8;margin:0 0 8px;overflow-wrap:anywhere}
+.word-form{font-size:1rem;line-height:1.4;font-weight:700;margin:0 0 8px;overflow-wrap:anywhere}
+.word-example{font-size:1rem;line-height:1.45;margin:0;color:#426482;overflow-wrap:anywhere}
+@media(max-width:520px){.question-head .question-count{flex-basis:100%}.study-tools{width:100%}.study-tools .secondary{flex:1;font-size:1rem}.reading-tools{gap:10px}.reading-tools .read-count{gap:6px}.reading-tools .words-button{font-size:.94rem}.word-copy{padding:9px 10px 12px}}
+@media(max-width:359px){.words-grid{grid-template-columns:1fr}.word-picture{max-width:230px;margin:auto}}
+@media(min-width:640px){.words-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
