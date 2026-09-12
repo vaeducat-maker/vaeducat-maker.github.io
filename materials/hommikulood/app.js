@@ -55,6 +55,7 @@ function result(){
   bottom.innerHTML='';
 }
 function render(scroll=false,focusId=null){
+  document.querySelector('#all-words-button').hidden=state.view!=='home';
   document.body.classList.toggle('in-lesson',state.view==='read'||state.view==='quiz');
   ({home,read:reading,quiz,result}[state.view])();
   document.title=state.view==='home'?'Hommikulood · EDUKASS':`${stories[state.story].title} · EDUKASS`;
@@ -68,19 +69,22 @@ function openText(i){
   dialog.showModal();dialog.scrollTop=0;
 }
 const wordsDialog=document.querySelector('#words-dialog');
-let wordFilter='all';
+let wordFilter='all',allWords=false;
+const combinedVocabulary=[...new Map(vocabulary.flat().map(entry=>[entry.word,entry])).values()].sort((a,b)=>a.word.localeCompare(b.word,'et'));
+const activeVocabulary=()=>allWords?combinedVocabulary:vocabulary[state.story];
 const normalizeWord=s=>s.toLocaleLowerCase('et').normalize('NFD').replace(/[\u0300-\u036f]/g,'');
 function renderWords(){
   const query=normalizeWord(document.querySelector('#words-search').value.trim());
-  const entries=vocabulary[state.story].filter(entry=>(wordFilter==='all'||entry.group===wordFilter)&&normalizeWord(`${entry.word} ${entry.form} ${entry.example}`).includes(query));
-  document.querySelector('#words-count').textContent=`${entries.length} / ${vocabulary[state.story].length} sõnakaarti`;
+  const entries=activeVocabulary().filter(entry=>(wordFilter==='all'||entry.group===wordFilter)&&normalizeWord(`${entry.word} ${entry.form} ${entry.example}`).includes(query));
+  document.querySelector('#words-count').textContent=`${entries.length} / ${activeVocabulary().length} sõnakaarti`;
   document.querySelector('#words-grid').innerHTML=entries.map(entry=>`<article class="word-card"><div class="word-picture${entry.sheet?' word-picture-extra':''}" role="img" aria-label="${esc(entry.alt)}" style="background-position:${entry.cell%6*20}% ${Math.floor(entry.cell/6)*100/(entry.sheet?5:3)}%"></div><div class="word-copy"><h3>${esc(entry.word)}</h3>${entry.form?`<p class="word-form"><span class="sr-only">Tekstis: </span><span aria-hidden="true">→ </span>${esc(entry.form)}</p>`:''}<p class="word-example">${esc(entry.example)}</p></div></article>`).join('')||'<p class="words-empty">Ühtegi sõna ei leitud. Proovi teist sõna või vali „Kõik”.</p>';
   wordsDialog.querySelectorAll('[data-word-filter]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.wordFilter===wordFilter)));
 }
-function openWords(){
-  document.querySelector('#words-story').textContent=stories[state.story].title;
+function openWords(all=false){
+  allWords=all;
+  document.querySelector('#words-story').textContent=allWords?'Kõigi lugude sõnad':stories[state.story].title;
   wordFilter='all';document.querySelector('#words-search').value='';renderWords();
-  document.querySelector('#words-return').textContent=dialog.open?'Tagasi teksti juurde':state.view==='quiz'?'Tagasi küsimuse juurde':state.view==='result'?'Tagasi tulemuse juurde':'Tagasi loo juurde';
+  document.querySelector('#words-return').textContent=allWords?'Tagasi avalehele':dialog.open?'Tagasi teksti juurde':state.view==='quiz'?'Tagasi küsimuse juurde':state.view==='result'?'Tagasi tulemuse juurde':'Tagasi loo juurde';
   wordsDialog.showModal();
   wordsDialog.scrollTop=0;
 }
@@ -119,7 +123,7 @@ document.addEventListener('click',e=>{
   if(action==='prev-question')state.question>0?move('quiz',{question:state.question-1}):move('read',{page:plans[state.story].length-1});
   if(action==='question')move('quiz',{question:Number(b.dataset.q)});
   if(action==='text')openText(state.story);
-  if(action==='words')openWords();
+  if(action==='words')openWords(b.dataset.scope==='all');
   if(action==='close')dialog.close();
   if(action==='reread')move('read',{page:0});
   if(action==='retry'){const q=state.progress[state.story].answers.findIndex((_,q)=>!isCorrect(state.progress,stories,state.story,q));move('quiz',{question:Math.max(q,0)});}

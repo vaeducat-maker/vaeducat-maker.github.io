@@ -40,3 +40,7 @@ body:has(dialog[open]){overflow:hidden}
 .word-filters button[aria-pressed="true"]{background:#0752b8;color:#fff;border-color:#0752b8}
 #words-count{font-size:.94rem;color:#52708a;margin:10px 0 0}
 .words-empty{grid-column:1/-1;padding:16px 0;line-height:1.5}
+
+#all-words-button{margin-left:auto;flex-shrink:0}
+#all-words-button[hidden]{display:none}
+@media(max-width:360px){.top-inner{gap:8px}.top-inner .brand{font-size:1rem;gap:6px}#all-words-button{font-size:.94rem;padding:10px}}
