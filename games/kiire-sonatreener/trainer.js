@@ -11,7 +11,14 @@ const DATA={
         {word:"jõesäng",ru:"русло реки"},
         {word:"jõelähe",ru:"исток реки"},
         {word:"jõesuue",ru:"устье реки"},
-        {word:"lisajõgi",ru:"приток"}
+        {word:"lisajõgi",ru:"приток"},
+        {word:"imavus",ru:"впитываемость"},
+        {word:"värvitu",ru:"бесцветный"},
+        {word:"lõhnatu",ru:"без запаха"},
+        {word:"läbipaistev",ru:"прозрачный"},
+        {word:"voolavus",ru:"текучесть"},
+        {word:"maitsetu",ru:"без вкуса"},
+        {word:"suubuma",ru:"впадать"}
       ]}
     ]},
     {id:"inimene",label:"Inimene",icon:"👤",topics:[]},
