@@ -2,6 +2,7 @@ const assert = require('node:assert/strict');
 const crypto = require('node:crypto');
 const fs = require('node:fs');
 const path = require('node:path');
+require('./restore-hommikulood-pdf.js');
 
 const root = path.resolve(__dirname, '..');
 const output = path.resolve(root, 'dist');
