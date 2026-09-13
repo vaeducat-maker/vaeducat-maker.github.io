@@ -1,6 +1,6 @@
 import {stories} from './data.js';
 import {vocabulary} from './vocabulary.js';
-import {freshProgress,choose,check,score,isCorrect,errorCount,firstCorrectCount} from './engine.js';
+import {freshProgress,choose,check,score,isCorrect,errorCount,firstCorrectCount,progressKey,encodeProgress,decodeProgress} from './engine.js';
 
 const main=document.querySelector('#main'),bottom=document.querySelector('#bottom'),dialog=document.querySelector('#text-dialog');
 const state={view:'home',story:0,page:0,question:0,progress:freshProgress(stories.length),empty:false};
@@ -10,6 +10,22 @@ const plans=[
   [{range:[0,3],crop:[0,820,439,610],alt:'Poisil on jalas musta-valgetriibuline ja roheline täpiline sokk.'},{range:[3,5],crop:[0,0,1100,793],alt:'Buss sõidab ära. Karl lehvitab poisile aknast.'},{range:[5,8],crop:[461,822,639,608],alt:'Poiss vaatab peatuses telefoni. Talle tulevad meelde koju jäänud spordiriided.'},{range:[8,10],crop:null}],
   [{range:[0,4],crop:[0,0,1098,706],alt:'Markus märkab poisi tagurpidi pusa.'},{range:[4,9],crop:[0,729,1098,704],alt:'Pusa on tagurpidi: eesmine tasku on poisi seljal.',caption:'Nii oli pusa enne seljas.'},{range:[9,12],crop:null}]
 ];
+let saveAvailable=true,saveNotice='';
+try{
+  const restored=decodeProgress(window.localStorage.getItem(progressKey),plans.map(p=>p.length));
+  if(restored)Object.assign(state,restored);
+}catch{
+  saveAvailable=false;
+  saveNotice='Varasemat tööd ei saanud taastada. Uus töö salvestatakse selles brauseris.';
+}
+function saveProgress(write=true){
+  if(write){
+    try{window.localStorage.setItem(progressKey,encodeProgress(state));saveAvailable=true;}
+    catch{saveAvailable=false;}
+  }
+  const note=document.querySelector('#save-status');
+  if(note)note.textContent=saveAvailable?(saveNotice||'Sinu töö salvestatakse automaatselt selles brauseris.'): 'Tööd ei saa selles brauseris salvestada. Lehe sulgemisel või uuendamisel võib töö kaduda.';
+}
 const evidence=[
  ['„Ma ei leidnud oma telefoni.”','„Otsisin telefoni koolikotist, jope taskust ja isegi vannitoast.”','„Siis vaatasin voodi alla. Seal oli liiga pime.”','„Vaata oma kätt,” ütles ema.','„Olin juba mitu minutit telefoni otsinud, kuigi see oli mul kogu aeg käes.”'],
  ['„Leidsin ühe sinise soki, aga teist ei olnud kuskil.”','„Võtsin sahtlist teise paari, aga nüüd oli mul kolm sokki: kaks halli ja üks sinine.”','„Miisu pea all oli midagi sinist. Minu sokk!”','„Võtsin sahtlist teise paari” on tekstis enne nurrumise kuulmist.','„Võtsin soki ettevaatlikult Miisu pea alt ära. Miisu ei olnud üldse rahul.”'],
@@ -34,7 +50,7 @@ function home(){
   main.innerHTML=`<section class="intro"><p class="eyebrow">Eesti keel · Minilood</p><h1>Hommikulood</h1><p>Loe üks lugu. Vali vastused.<br>Vaata, kuidas sul läks.</p><span class="pill">4 lugu · 5 küsimust igas loos</span></section><div class="story-grid">${stories.map((s,i)=>{
     const p=state.progress[i],done=p.checked.every(Boolean),started=p.page>0||p.answers.some(a=>a!==null);
     return `<article class="story-card">${crop(i,plans[i][0].crop,plans[i][0].alt,true)}<div class="card-copy"><div class="card-meta"><span>Lugu ${i+1}</span><span>${done?`${score(state.progress,stories,i)} / 5 õiget`:'5 küsimust'}</span></div><h2>${esc(s.title)}</h2><p>${descriptions[i]}</p><button class="primary" data-action="start" data-story="${i}">${done?'Vaata tulemust':started?'Jätka lugu':'Loe lugu'} <span aria-hidden="true">→</span></button></div></article>`;
-  }).join('')}</div>${footer()}`;
+  }).join('')}</div><div class="result-actions"><button class="secondary" data-action="reset-all">Alusta kõiki lugusid otsast</button></div>${footer()}`;
   bottom.innerHTML='';
 }
 const wordsButton=()=>'<button class="secondary words-button" data-action="words" aria-haspopup="dialog" aria-controls="words-dialog"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 5c-3-2-7-2-10-1v15c3-1 7-1 10 1 3-2 7-2 10-1V4c-3-1-7-1-10 1Z"/><path d="M12 5v15"/></svg>Pildisõnastik</button>';
@@ -54,10 +70,12 @@ function result(){
   main.innerHTML=`<section class="lesson"><div class="lesson-nav"><button class="back-link" data-action="home">‹ Kõik lood</button><span class="lesson-label">Lugu ${state.story+1} / 4</span></div></section><section class="result"><p class="eyebrow">${esc(stories[state.story].title)}</p><div class="score">${n}<small>/ 5</small></div><div class="result-stats"><div><strong>${errors}</strong><span>Eksimusi kokku</span></div><div><strong>${first}<small> / 5</small></strong><span>Õige esimesel katsel</span></div></div><p class="stats-note">Iga kontrollitud vale vastus loeb ühe eksimusena. Parandamine eksimuste arvu ei vähenda.</p><h1>${n===5?(errors?'Kõik vastused on nüüd õiged!':'Kõik vastused on õiged!'):missing?'Lõpeta vastamine':'Vaata vastused üle'}</h1><p>${n===5?'Tubli töö! Oled selle loo läbi lugenud ja küsimustele vastanud.':missing?`${missing} ${missing===1?'vastus on':'vastust on'} veel kontrollimata.`:'Õiged vastused on alles. Saad teisi vastuseid uuesti proovida.'}</p>${stories[state.story].questions.map((_,q)=>`<div class="review-row"><span>Küsimus ${q+1}<small class="question-history">${p.errors[q]} ${p.errors[q]===1?'eksimus':'eksimust'}</small></span><span class="status ${isCorrect(state.progress,stories,state.story,q)?'green':'orange'}">${isCorrect(state.progress,stories,state.story,q)?'✓ Õige':p.checked[q]?'Proovi uuesti':'Kontrollimata'}</span><button data-action="question" data-q="${q}" aria-label="Ava küsimus ${q+1}">Vaata</button></div>`).join('')}<div class="result-actions">${n<5?'<button class="primary" data-action="retry">Proovi ülejäänuid uuesti</button>':state.story<3?`<button class="primary" data-action="start" data-story="${state.story+1}">Järgmine lugu →</button>`:'<button class="primary" data-action="home">Kõik lood</button>'}<button class="secondary" data-action="reread">Loe lugu uuesti</button>${wordsButton()}<button class="text-link" data-action="reset">Alusta seda lugu otsast</button></div></section>${footer()}`;
   bottom.innerHTML='';
 }
-function render(scroll=false,focusId=null){
+function render(scroll=false,focusId=null,persist=true){
   document.querySelector('#all-words-button').hidden=state.view!=='home';
   document.body.classList.toggle('in-lesson',state.view==='read'||state.view==='quiz');
   ({home,read:reading,quiz,result}[state.view])();
+  main.insertAdjacentHTML('beforeend','<p id="save-status" class="stats-note" role="status"></p>');
+  saveProgress(persist);
   document.title=state.view==='home'?'Hommikulood · EDUKASS':`${stories[state.story].title} · EDUKASS`;
   if(scroll){window.scrollTo({top:0,behavior:'instant'});main.focus({preventScroll:true});}
   if(focusId)document.getElementById(focusId)?.focus({preventScroll:true});
@@ -127,12 +145,26 @@ document.addEventListener('click',e=>{
   if(action==='close')dialog.close();
   if(action==='reread')move('read',{page:0});
   if(action==='retry'){const q=state.progress[state.story].answers.findIndex((_,q)=>!isCorrect(state.progress,stories,state.story,q));move('quiz',{question:Math.max(q,0)});}
-  if(action==='reset'&&window.confirm('Kas alustada seda lugu otsast? Selle loo vastused ja eksimuste arv kustutatakse.')){state.progress[state.story]=freshProgress(1)[0];move('read',{page:0});}
+  if(action==='reset-all'&&window.confirm('Kas alustada kõiki lugusid otsast? Kõigi nelja loo vastused ja eksimuste arv kustutatakse.')){state.progress=freshProgress(stories.length);saveNotice='';move('home',{story:0,page:0,question:0});}
+  if(action==='reset'&&window.confirm('Kas alustada seda lugu otsast? Selle loo vastused ja eksimuste arv kustutatakse.')){state.progress[state.story]=freshProgress(1)[0];saveNotice='';move('read',{page:0,question:0});}
 });
 document.addEventListener('change',e=>{if(e.target.matches('input[name="answer"]'))select(state.question,Number(e.target.value));});
 dialog.addEventListener('click',e=>{if(e.target===dialog){const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)dialog.close();}});
 document.addEventListener('keydown',e=>{if(dialog.open||wordsDialog.open||e.target.matches('input,button,a,summary'))return;if(state.view==='read'&&e.key==='ArrowRight'){e.preventDefault();document.querySelector('[data-action="next-read"]')?.click();}if(state.view==='read'&&e.key==='ArrowLeft'&&state.page>0){e.preventDefault();move('read',{page:state.page-1});}});
 render();
+// Keep another open tab in step, including an explicit reset for a new pupil.
+window.addEventListener('storage',e=>{
+  if(e.key!==progressKey&&e.key!==null)return;
+  try{
+    if(e.storageArea!==window.localStorage)return;
+    const restored=decodeProgress(e.newValue,plans.map(p=>p.length));
+    Object.assign(state,restored||{view:'home',story:0,page:0,question:0,progress:freshProgress(stories.length),empty:false});
+    saveNotice='';saveAvailable=true;
+    if(dialog.open)dialog.close();
+    if(wordsDialog.open)wordsDialog.close();
+    render(true,null,false);
+  }catch{ /* Ignore malformed data from another tab; keep this tab usable. */ }
+});
 
 let touchStart=null;
 main.addEventListener('touchstart',e=>{if(state.view==='read'&&e.touches.length===1&&e.target.closest('.reading'))touchStart={x:e.touches[0].clientX,y:e.touches[0].clientY};else touchStart=null;},{passive:true});
