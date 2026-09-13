@@ -19,6 +19,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+      - name: Restore canonical Hommikulood PDF
+        run: node scripts/restore-hommikulood-pdf.js
       - name: Test guard itself
         run: node scripts/test-catalog-guard.js
       - name: Test public metadata guard

@@ -2,6 +2,7 @@ const assert = require('node:assert/strict');
 const crypto = require('node:crypto');
 const fs = require('node:fs');
 const path = require('node:path');
+require('./restore-hommikulood-pdf.js');
 
 const root = path.resolve(__dirname, '..');
 const output = path.resolve(root, 'dist');
@@ -32,6 +33,7 @@ const publicFiles = [
 
   'data/catalog.json',
 
+  'downloads/hommikulood.pdf',
   'downloads/korrutustabel-A4.pdf',
   'downloads/korrutustabel.pdf',
   'downloads/loika-kosmoserada.pdf',
@@ -97,6 +99,7 @@ const publicFiles = [
   'materials/hommikulood/engine.js',
   'materials/hommikulood/index.html',
   'materials/hommikulood/style.css',
+  'materials/hommikulood/online/index.html',
 
   'materials/index.html',
   'materials/koolikott/index.html',
