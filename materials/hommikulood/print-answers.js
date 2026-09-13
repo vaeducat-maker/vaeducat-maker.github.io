@@ -1,0 +1,10 @@
+import {stories} from './data.js';
+const root=document.querySelector('#print-root');
+const page=document.createElement('section');page.className='sheet answers';
+const title=document.createElement('h1');title.className='title';title.textContent='VASTUSED';page.append(title);
+const grid=document.createElement('div');grid.className='answers-grid';
+stories.forEach((story,si)=>{const card=document.createElement('article');card.className='answer-card';const h=document.createElement('h2');h.textContent=`${si+1}. ${story.title}`;const p=document.createElement('p');p.innerHTML=story.questions.map((q,qi)=>`${qi+1} – ${q[2]}`).join('<br>');card.append(h,p);grid.append(card)});
+page.append(grid);
+const note=document.createElement('p');note.className='answer-note';note.textContent='Online-versioonis saab laps lugeda teksti osade kaupa, kasutada pildisõnastikku ja jätkata pooleli jäänud tööd samas brauseris.';page.append(note);
+const foot=document.createElement('footer');foot.className='footer';foot.innerHTML='<span class="footer-brand"><img src="assets/kiisu.png" alt=""><span>edukass.ee</span></span><span>Online: <a href="./">edukass.ee/materials/hommikulood/</a></span>';page.append(foot);
+root.append(page);
