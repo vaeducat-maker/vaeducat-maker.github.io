@@ -1,9 +1,6 @@
 name: Deploy EDUKASS preview to Cloudflare
 
 on:
-  push:
-    branches: [main]
-    paths: ['.github/workflows/cloudflare-preview.yml']
   workflow_dispatch:
 
 permissions:
