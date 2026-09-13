@@ -110,6 +110,27 @@
 })();
 
 (() => {
+  const grid = document.querySelector('.home-new-grid');
+  if (!grid || grid.querySelector('[data-edukass-hommikulood]')) return;
+
+  const card = document.createElement('article');
+  card.className = 'home-new-card home-new-material';
+  card.setAttribute('data-edukass-hommikulood', '');
+  card.innerHTML = `
+    <div class="home-new-card-visual">
+      <img src="materials/hommikulood/assets/story-3.jpg" alt="Hommikulood — lühikesed eestikeelsed lood ja lugemismõistmise ülesanded">
+    </div>
+    <div class="home-new-card-copy">
+      <div class="home-card-meta">EESTI KEEL · ONLINE + PRINDITAV · TASUTA</div>
+      <h3>Hommikulood</h3>
+      <p>Neli humoorikat hommikulugu küsimuste, pildisõnastiku, võtmeväljendite ja rääkimisülesannetega.</p>
+      <a class="home-text-link" href="materials/hommikulood/">Vaata materjali <span aria-hidden="true">→</span></a>
+    </div>`;
+
+  grid.prepend(card);
+})();
+
+(() => {
   const grid = document.querySelector('.home-category-grid');
   if (!grid || grid.querySelector('[data-edukass-math-category]')) return;
 
