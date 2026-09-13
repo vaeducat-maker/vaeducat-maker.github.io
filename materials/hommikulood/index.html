@@ -1,1 +1,82 @@
-<!doctype html><html lang="et"><head><meta charset="utf-8"><meta name="robots" content="index, follow"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0752b8"><meta name="description" content="Neli lõbusat hommikulugu: lugemine, küsimused, pildisõnastik, väljendid ja rääkimine."><link rel="canonical" href="https://edukass.ee/materials/hommikulood/"><title>Hommikulood · EDUKASS</title><link rel="icon" type="image/png" href="assets/kiisu.png"><link rel="stylesheet" href="style.css"></head><body><a class="skip" href="#main">Liigu sisu juurde</a><header class="topbar"><div class="top-inner"><button class="brand" data-action="home" aria-label="EDUKASS: kõik lood"><img src="assets/kiisu.png" width="28" height="34" alt=""><span>EDUKASS</span></button><button id="all-words-button" class="secondary words-button" data-action="words" data-scope="all" aria-haspopup="dialog" aria-controls="words-dialog">Pildisõnastik</button></div></header><main id="main" tabindex="-1"></main><div id="bottom"></div><dialog id="text-dialog" aria-labelledby="dialog-title"><div class="dialog-top"><h2 id="dialog-title">Lugu</h2><button class="icon-button" data-action="close" aria-label="Sulge tekst">✕</button></div><div id="dialog-body"></div><button class="primary wide" data-action="close">Tagasi küsimuse juurde</button></dialog><dialog id="words-dialog" aria-labelledby="words-title" aria-describedby="words-story"><div class="words-top"><div><p id="words-story"></p><h2 id="words-title">Pildisõnastik</h2></div><button class="icon-button" data-action="words-close" aria-label="Sulge pildisõnastik" autofocus>✕</button></div><p class="words-hint">Vaata pilti. Loe sõna või väljendit ja näidet loost.</p><div class="words-controls"><label for="words-search" class="sr-only">Otsi pildisõnastikust</label><input id="words-search" type="search" placeholder="Otsi sõna või väljendit…" autocomplete="off" spellcheck="false"><div class="word-filters" role="group" aria-label="Sõnade ja väljendite rühmad"><button type="button" data-word-filter="all" aria-pressed="true">Kõik</button><button type="button" data-word-filter="things" aria-pressed="false">Kes? Mis?</button><button type="button" data-word-filter="actions" aria-pressed="false">Tegevused</button><button type="button" data-word-filter="qualities" aria-pressed="false">Milline? Kuidas?</button></div><p id="words-count" role="status" aria-live="polite"></p></div><div id="words-grid" class="words-grid"></div><button id="words-return" class="primary wide" data-action="words-close">Tagasi loo juurde</button></dialog><div id="live" role="status" aria-live="polite" class="sr-only"></div><noscript><p class="noscript">Lugude ja küsimuste avamiseks lülita brauseris JavaScript sisse.</p></noscript><script type="module" src="app.js"></script></body></html>
+<!doctype html>
+<html lang="et">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="/favicon.ico?v=108" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png?v=108">
+  <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png?v=108">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=108">
+  <title>Hommikulood — EDUKASS</title>
+  <meta name="description" content="Neli lühikest humoorikat hommikulugu lugemismõistmise küsimuste, pildisõnastiku, võtmeväljendite ja rääkimisülesannetega.">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="et_EE">
+  <meta property="og:site_name" content="EDUKASS">
+  <meta property="og:title" content="Hommikulood — EDUKASS">
+  <meta property="og:description" content="Neli lühikest humoorikat hommikulugu lugemismõistmise küsimuste, pildisõnastiku, võtmeväljendite ja rääkimisülesannetega.">
+  <meta property="og:url" content="https://edukass.ee/materials/hommikulood/">
+  <meta property="og:image" content="https://edukass.ee/materials/hommikulood/assets/story-3.jpg">
+  <meta property="og:image:secure_url" content="https://edukass.ee/materials/hommikulood/assets/story-3.jpg">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:alt" content="Hommikulood — lühikesed eestikeelsed lood ja lugemismõistmise ülesanded">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Hommikulood — EDUKASS">
+  <meta name="twitter:description" content="Neli lühikest humoorikat hommikulugu lugemismõistmise küsimuste, pildisõnastiku, võtmeväljendite ja rääkimisülesannetega.">
+  <meta name="twitter:image" content="https://edukass.ee/materials/hommikulood/assets/story-3.jpg">
+  <link rel="canonical" href="https://edukass.ee/materials/hommikulood/">
+  <link rel="stylesheet" href="../../styles.css?v=119">
+  <script async src="https://plausible.io/js/pa-3mkwYCn93BZZKvx5orDK8.js"></script>
+  <script>
+    window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
+    plausible.init()
+  </script>
+</head>
+<body>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="../../" aria-label="EDUKASSi avaleht">
+      <img src="../../games/korrutamine-test/assets/edukass-cat-transparent.png" alt="">
+      <span class="brand-name"><b>EDU</b>KASS</span>
+    </a>
+    <nav class="nav" aria-label="Põhinavigatsioon">
+      <a href="../../#uus">UUS!!!</a>
+      <a class="nav-current" href="../">Materjalid</a>
+      <a href="../../#mangud">Mängud</a>
+    </nav>
+  </div>
+</header>
+
+<main class="material-page metsloomad-page">
+  <div class="container">
+    <div class="breadcrumbs"><a href="../../">Avaleht</a> → <a href="../">Materjalid</a> → <span>Eesti keel</span> → <span>Hommikulood</span></div>
+
+    <div class="material-layout metsloomad-layout">
+      <div class="material-preview metsloomad-preview-panel">
+        <div class="metsloomad-preview-art" role="img" style="--material-preview: url(&quot;assets/story-3.jpg&quot;)" aria-label="Hommikulood — lühikesed eestikeelsed lood ja lugemismõistmise ülesanded"></div>
+      </div>
+
+      <article class="info-panel metsloomad-info-panel">
+        <div class="meta metsloomad-meta">EESTI KEEL · TASUTA</div>
+        <h1>Hommikulood</h1>
+        <p>Neli lühikest humoorikat hommikulugu lugemismõistmise küsimuste, pildisõnastiku, võtmeväljendite ja rääkimisülesannetega.</p>
+
+        <div class="metsloomad-actions" aria-label="Hommikulugude õppematerjali valikud">
+          <a class="button secondary" href="online/">AVA MOBIILNE TÖÖVIHIK</a>
+          <a class="button metsloomad-print-button" href="../../downloads/hommikulood.pdf" target="_blank" rel="noopener">LAADI ALLA / PRINDI</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <div class="footer-brand">
+      <img src="../../games/korrutamine-test/assets/edukass-cat-transparent.png" alt="">
+      <strong class="brand-name"><b>EDU</b>KASS</strong>
+    </div>
+    <div class="footer-note">© 2026 EDUKASS · <a href="mailto:va.educat@gmail.com">va.educat@gmail.com</a> · <a href="/privaatsus/">Privaatsus</a></div>
+  </div>
+</footer>
+</body>
+</html>
