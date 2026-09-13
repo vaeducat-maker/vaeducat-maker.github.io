@@ -188,8 +188,8 @@ for (const filePath of walkHtmlFiles(output)) {
   let changed = false;
 
   if (relativePath === 'games/kiire-sonatreener/index.html') {
-    if (!html.includes('edukass-smart-manifest') && !html.includes("SamsungBrowser")) {
-      throw new Error('Sõnatreener smart manifest loader missing');
+    if (!html.includes('rel="manifest"') && !html.includes("SamsungBrowser")) {
+      throw new Error('Sõnatreener manifest setup missing');
     }
     simplifiedInstallPages += 1;
     changed = true;
