@@ -32,6 +32,7 @@ const publicFiles = [
 
   'data/catalog.json',
 
+  'downloads/hommikulood.pdf',
   'downloads/korrutustabel-A4.pdf',
   'downloads/korrutustabel.pdf',
   'downloads/loika-kosmoserada.pdf',
@@ -97,6 +98,7 @@ const publicFiles = [
   'materials/hommikulood/engine.js',
   'materials/hommikulood/index.html',
   'materials/hommikulood/style.css',
+  'materials/hommikulood/online/index.html',
 
   'materials/index.html',
   'materials/koolikott/index.html',
