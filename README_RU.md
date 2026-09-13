@@ -17,6 +17,7 @@ EDUKASS — статический образовательный сайт на 
 
 - `Minu suvi`;
 - `Pildidetektiiv: Kes siin töötab?`;
+- `Hommikulood`;
 - `Ristsõnad: Sügis`;
 - `Metsloomad`;
 - `Mis on koolikotis?`;
@@ -62,4 +63,4 @@ node scripts/audit-project.js
 Публичная сборка формируется через `scripts/build-public-site.js` и проверяет
 разрешённый список файлов, локальные ссылки, каталог, manifest и service worker.
 
-Текущий реестр материалов соответствует выпуску `v124`.
+Текущий реестр материалов соответствует выпуску `v125`.
