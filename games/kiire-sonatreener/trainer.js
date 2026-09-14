@@ -22,7 +22,26 @@ const DATA={
       ]}
     ]},
     {id:"inimene",label:"Inimene",icon:"👤",topics:[]},
-    {id:"eesti-keel",label:"Eesti keel",icon:"💬",topics:[
+    {id:"eesti-keel",label:"Eesti keel",icon:"📝",topics:[
+      {id:"eesti-keel-1",title:"Sõnad 1",subtitle:"Eesti keel",active:false,poster:null,words:[
+        {word:"uudised",ru:"новости"},
+        {word:"põnev",ru:"интересный, увлекательный"},
+        {word:"kõigepealt",ru:"сначала, прежде всего"},
+        {word:"valima",ru:"выбирать, избирать"},
+        {word:"klassivanem",ru:"староста класса"},
+        {word:"jagama",ru:"делиться, распределять"},
+        {word:"tähtis",ru:"важный"},
+        {word:"juba",ru:"уже"},
+        {word:"valimised",ru:"выборы"},
+        {word:"tõesti",ru:"действительно, правда"},
+        {word:"nüüd",ru:"сейчас, теперь"},
+        {word:"kujutama ette",ru:"представлять себе"},
+        {word:"raadiosaated",ru:"радиопередачи"},
+        {word:"ees",ru:"впереди, перед"},
+        {word:"kaasa lööma",ru:"принимать участие"}
+      ]}
+    ]},
+    {id:"eesti-kirjandus",label:"Eesti kirjandus",icon:"📖",topics:[
       {id:"sonad-1",title:"Sõnad 1",subtitle:"Kordamine",active:false,poster:null,words:[
         {word:"tee kokkuvõte",ru:"подведи итог"},
         {word:"lugeja",ru:"читатель"},
