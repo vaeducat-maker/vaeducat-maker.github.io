@@ -125,7 +125,7 @@
   if(!card||!restart||!counter||!pill||!tabEt||!tabDe)return;
   let active=false,summaryOpen=false,queue=[],good=0,bad=0,flipped=false;
   const shuffle=a=>{a=[...a];for(let i=a.length-1;i;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
-  const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#039;'})[c]);
+  const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'})[c]);
   function lock(on){tabEt.disabled=on;tabDe.disabled=on;if(reviewBtn)reviewBtn.hidden=true;if(libraryBtn)libraryBtn.hidden=on}
   function isLesson(){const h=card.querySelector('.topic-intro h2');return !!h&&h.textContent.trim()==='Vesi ja jõgi'}
   function addButtons(){
@@ -157,6 +157,6 @@
 })();
 </script>
 <script src="./poster-fix.js?v=20260909-11"></script>
-<script src="./back-nav.js?v=20260916-1"></script>
+<script src="./back-nav.js?v=20260916-2"></script>
 </body>
 </html>
