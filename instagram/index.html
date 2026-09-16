@@ -31,7 +31,6 @@
     .desc{display:block;color:var(--muted);font-size:13px;line-height:1.35;margin-top:4px}
     .arrow{color:var(--green);font-size:24px;font-weight:800;flex:0 0 auto}
     .all{margin-top:6px;background:transparent;border-style:dashed;box-shadow:none}
-    .status{color:var(--muted);font-size:13px;padding:10px 2px}
     .footer{text-align:center;color:#84908a;font-size:12px;margin-top:24px}
     @media(max-width:420px){body{padding:18px 12px 28px}.link{padding:13px 14px}.emoji{width:43px;height:43px}.title{font-size:16px}}
   </style>
@@ -85,12 +84,10 @@
       };
 
       function trackedHref(page, id) {
-        const url = new URL(page, window.location.origin);
-        url.searchParams.set('utm_source', 'instagram');
-        url.searchParams.set('utm_medium', 'social');
-        url.searchParams.set('utm_campaign', id);
-        url.searchParams.set('utm_content', 'bio_linkpage');
-        return `${url.pathname}${url.search}${url.hash}`;
+        const target = document.createElement('a');
+        target.href = page;
+        const separator = target.search ? '&' : '?';
+        return `${target.pathname}${target.search}${separator}utm_source=instagram&utm_medium=social&utm_campaign=${encodeURIComponent(id)}&utm_content=bio_linkpage${target.hash}`;
       }
 
       function labelFor(item) {
