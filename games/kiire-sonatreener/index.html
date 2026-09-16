@@ -50,7 +50,7 @@
 <script>
 (()=>{const b=document.getElementById('shortcutBtn');if(!b)return;const standalone=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;if(standalone){b.textContent='✓ Готово';b.disabled=true}else{b.onclick=()=>alert('Открой меню браузера и выбери «Добавить на главный экран».')}})();
 </script>
-<script src="./trainer.js?v=20260914-1"></script>
+<script src="./trainer.js?v=20260916-2"></script>
 <script>
 (()=>{
   const card=document.getElementById('card'),libraryBtn=document.getElementById('libraryBtn'),reviewBtn=document.getElementById('reviewBtn'),tabEt=document.getElementById('tabEt'),tabDe=document.getElementById('tabDe'),pill=document.getElementById('pill'),sub=document.getElementById('sub');
@@ -96,7 +96,7 @@
     card.innerHTML=`<div><div class="library-heading">Предметы</div><p class="chest-note">Все уроки в одном месте.</p>
       <section class="library-section"><div class="library-title"><span>🌿</span><strong>Loodus</strong></div><div class="topic-grid"><button class="topic-tile" data-u-lang="et" data-u-topic="vesi-ja-jogi"><span class="topic-title">Vesi ja jõgi</span><span class="topic-meta">16 карточек · 6 вопросов · 🖼</span></button></div></section>
       <section class="library-section"><div class="library-title"><span>👤</span><strong>Inimene</strong></div><div class="library-empty">Пока нет уроков</div></section>
-      <section class="library-section"><div class="library-title"><span>📝</span><strong>Eesti keel</strong></div><div class="topic-grid"><button class="topic-tile" data-u-lang="et" data-u-topic="eesti-keel-1"><span class="topic-title">Sõnad 1</span><span class="topic-meta">15 карточек</span></button></div></section>
+      <section class="library-section"><div class="library-title"><span>📝</span><strong>Eesti keel</strong></div><div class="topic-grid"><button class="topic-tile" data-u-lang="et" data-u-topic="eesti-keel-1"><span class="topic-title">Sõnad 1</span><span class="topic-meta">15 карточек</span></button><button class="topic-tile" data-u-lang="et" data-u-topic="eesti-keel-2"><span class="topic-title">Sõnad 2</span><span class="topic-meta">21 карточка</span></button></div></section>
       <section class="library-section"><div class="library-title"><span>📖</span><strong>Eesti kirjandus</strong></div><div class="topic-grid"><button class="topic-tile" data-u-lang="et" data-u-topic="sonad-1"><span class="topic-title">Sõnad 1</span><span class="topic-meta">10 карточек</span></button></div></section>
       <section class="library-section"><div class="library-title"><span>🇩🇪</span><strong>Deutsch</strong></div><div class="topic-grid"><button class="topic-tile" data-u-lang="de" data-u-topic="e-i-ie"><span class="topic-title">E → I / IE</span><span class="topic-meta">12 карточек</span></button><button class="topic-tile" data-u-lang="de" data-u-topic="a-ae-au-aeu"><span class="topic-title">A → Ä / AU → ÄU</span><span class="topic-meta">12 карточек</span></button></div></section>
     </div>`;
@@ -125,7 +125,7 @@
   if(!card||!restart||!counter||!pill||!tabEt||!tabDe)return;
   let active=false,summaryOpen=false,queue=[],good=0,bad=0,flipped=false;
   const shuffle=a=>{a=[...a];for(let i=a.length-1;i;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
-  const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'})[c]);
+  const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#039;'})[c]);
   function lock(on){tabEt.disabled=on;tabDe.disabled=on;if(reviewBtn)reviewBtn.hidden=true;if(libraryBtn)libraryBtn.hidden=on}
   function isLesson(){const h=card.querySelector('.topic-intro h2');return !!h&&h.textContent.trim()==='Vesi ja jõgi'}
   function addButtons(){
@@ -157,6 +157,6 @@
 })();
 </script>
 <script src="./poster-fix.js?v=20260909-11"></script>
-<script src="./back-nav.js?v=20260912-4"></script>
+<script src="./back-nav.js?v=20260916-1"></script>
 </body>
 </html>
