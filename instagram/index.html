@@ -6,9 +6,11 @@
   <meta name="theme-color" content="#fbfaf5">
   <meta name="robots" content="index,follow">
   <title>EDUKASS · Instagram</title>
-  <meta name="description" content="EDUKASSi Instagramis mainitud mängud ja õppematerjalid ühes kohas.">
+  <meta name="description" content="EDUKASSi Instagramis jagatud mängud ja õppematerjalid ühes kohas.">
   <link rel="icon" href="/favicon.ico" sizes="any">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+  <script async src="https://plausible.io/js/pa-3mkwYCn93BZZKvx5orDK8.js"></script>
+  <script>window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};plausible.init()</script>
   <style>
     :root{--bg:#fbfaf5;--card:#fff;--ink:#203029;--muted:#66736d;--green:#2f6f58;--soft:#eaf4ee;--line:#dce7e1;--sun:#fff5cf}
     *{box-sizing:border-box}
@@ -21,15 +23,15 @@
     .link{display:flex;align-items:center;gap:14px;min-height:78px;padding:14px 16px;border:1px solid var(--line);border-radius:20px;background:var(--card);color:var(--ink);text-decoration:none;box-shadow:0 8px 24px rgba(36,72,54,.07);transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease}
     .link:active{transform:translateY(1px)}
     .link:focus-visible{outline:4px solid rgba(47,111,88,.18);outline-offset:3px}
-    .link.featured{background:var(--sun);border:2px solid #ead985;min-height:92px}
+    .link:hover{border-color:#b9d3c6;box-shadow:0 10px 28px rgba(36,72,54,.10)}
     .emoji{width:46px;height:46px;display:grid;place-items:center;border-radius:15px;background:var(--soft);font-size:27px;flex:0 0 auto}
-    .featured .emoji{background:#fff9df}
     .copy{min-width:0;flex:1}
     .title{display:block;font-size:17px;font-weight:900;line-height:1.22}
+    .meta{display:block;color:var(--green);font-size:11px;font-weight:900;letter-spacing:.04em;text-transform:uppercase;margin-top:5px}
     .desc{display:block;color:var(--muted);font-size:13px;line-height:1.35;margin-top:4px}
     .arrow{color:var(--green);font-size:24px;font-weight:800;flex:0 0 auto}
-    .latest{display:inline-flex;align-items:center;gap:6px;margin-bottom:7px;padding:5px 9px;border-radius:999px;background:#fff;color:#7a6419;font-size:11px;font-weight:900;letter-spacing:.04em;text-transform:uppercase}
-    .all{margin-top:18px;background:transparent;border-style:dashed;box-shadow:none}
+    .all{margin-top:6px;background:transparent;border-style:dashed;box-shadow:none}
+    .status{color:var(--muted);font-size:13px;padding:10px 2px}
     .footer{text-align:center;color:#84908a;font-size:12px;margin-top:24px}
     @media(max-width:420px){body{padding:18px 12px 28px}.link{padding:13px 14px}.emoji{width:43px;height:43px}.title{font-size:16px}}
   </style>
@@ -38,34 +40,15 @@
   <main class="wrap">
     <a class="brand" href="/">EDUKASS</a>
     <h1>Instagramist siia 👋</h1>
-    <p class="lead">Siin on mängud ja õppematerjalid, mida EDUKASSi postitustes jagame.</p>
+    <p class="lead">Siit leiad EDUKASSi postitustes jagatud mängud ja õppematerjalid.</p>
 
-    <section class="links" aria-label="EDUKASSi Instagrami lingid">
-      <a class="link featured" href="/games/minu-suvi/">
-        <span class="emoji" aria-hidden="true">🌞</span>
-        <span class="copy"><span class="latest">Uusim postitus</span><span class="title">MINU SUVI</span><span class="desc">Ava vestlusmäng ja mängi</span></span>
+    <section class="links" id="instagramLinks" aria-label="EDUKASSi Instagrami lingid">
+      <a class="link" href="/materials/hommikulood/?utm_source=instagram&amp;utm_medium=social&amp;utm_campaign=hommikulood&amp;utm_content=bio_linkpage">
+        <span class="emoji" aria-hidden="true">☀️</span>
+        <span class="copy"><span class="title">Hommikulood</span><span class="meta">EESTI KEEL · TASUTA</span><span class="desc">4 humoorikat lugu ja lugemismõistmise ülesanded</span></span>
         <span class="arrow" aria-hidden="true">→</span>
       </a>
-
-      <a class="link" href="/materials/ristsonad-sugis/">
-        <span class="emoji" aria-hidden="true">🍂</span>
-        <span class="copy"><span class="title">RISTSÕNAD: SÜGIS</span><span class="desc">5 tasuta sügisteemalist ristsõna</span></span>
-        <span class="arrow" aria-hidden="true">→</span>
-      </a>
-
-      <a class="link" href="/materials/metsloomad/">
-        <span class="emoji" aria-hidden="true">🐻</span>
-        <span class="copy"><span class="title">METSLOOMAD</span><span class="desc">Metsarada, mobiilne töövihik ja PDF</span></span>
-        <span class="arrow" aria-hidden="true">→</span>
-      </a>
-
-      <a class="link" href="/games/koolikott/">
-        <span class="emoji" aria-hidden="true">🎒</span>
-        <span class="copy"><span class="title">MIS ON KOOLIKOTIS?</span><span class="desc">Mängi ja korda kooliasjade sõnavara</span></span>
-        <span class="arrow" aria-hidden="true">→</span>
-      </a>
-
-      <a class="link all" href="/materials/">
+      <a class="link all" href="/materials/?utm_source=instagram&amp;utm_medium=social&amp;utm_campaign=instagram_bio&amp;utm_content=all_materials">
         <span class="emoji" aria-hidden="true">✨</span>
         <span class="copy"><span class="title">KÕIK EDUKASSI MATERJALID</span><span class="desc">Vaata kogu valikut</span></span>
         <span class="arrow" aria-hidden="true">→</span>
@@ -74,5 +57,120 @@
 
     <p class="footer">edukass.ee</p>
   </main>
+
+  <script>
+    (() => {
+      const container = document.getElementById('instagramLinks');
+      if (!container) return;
+
+      const emojiById = {
+        'hommikulood': '☀️',
+        'minu-suvi': '🌞',
+        'pildidetektiiv': '🔎',
+        'ristsonad-sugis': '🍂',
+        'metsloomad': '🐻',
+        'koolikott': '🎒',
+        'tanased-ulesanded': '✅',
+        'tunniplaan': '📅',
+        'loika-kosmoserada': '✂️',
+        'korrutustabel': '✖️',
+        'umbermoot-pindala': '📐'
+      };
+
+      const categoryLabels = {
+        'eesti-keel': 'EESTI KEEL',
+        'korraldus-ja-planeerimine': 'PLANEERIMINE',
+        'kaelised-oskused': 'KÄELISED OSKUSED',
+        'matemaatika': 'MATEMAATIKA'
+      };
+
+      function trackedHref(page, id) {
+        const url = new URL(page, window.location.origin);
+        url.searchParams.set('utm_source', 'instagram');
+        url.searchParams.set('utm_medium', 'social');
+        url.searchParams.set('utm_campaign', id);
+        url.searchParams.set('utm_content', 'bio_linkpage');
+        return `${url.pathname}${url.search}${url.hash}`;
+      }
+
+      function labelFor(item) {
+        const parts = [];
+        if (item.category && categoryLabels[item.category]) parts.push(categoryLabels[item.category]);
+        if (item.type === 'game') parts.push('ONLINE');
+        if (item.priceType === 'free') parts.push('TASUTA');
+        return parts.join(' · ');
+      }
+
+      function fallbackDescription(item) {
+        if (item.type === 'game') return 'Ava mäng ja harjuta veebis.';
+        return 'Ava õppematerjal EDUKASSi veebis.';
+      }
+
+      function createCard(item) {
+        const link = document.createElement('a');
+        link.className = 'link';
+        link.href = trackedHref(item.page, item.id);
+
+        const emoji = document.createElement('span');
+        emoji.className = 'emoji';
+        emoji.setAttribute('aria-hidden', 'true');
+        emoji.textContent = emojiById[item.id] || (item.type === 'game' ? '🎮' : '📘');
+
+        const copy = document.createElement('span');
+        copy.className = 'copy';
+
+        const title = document.createElement('span');
+        title.className = 'title';
+        title.textContent = item.title;
+        copy.appendChild(title);
+
+        const metaText = labelFor(item);
+        if (metaText) {
+          const meta = document.createElement('span');
+          meta.className = 'meta';
+          meta.textContent = metaText;
+          copy.appendChild(meta);
+        }
+
+        const desc = document.createElement('span');
+        desc.className = 'desc';
+        desc.textContent = item.description || fallbackDescription(item);
+        copy.appendChild(desc);
+
+        const arrow = document.createElement('span');
+        arrow.className = 'arrow';
+        arrow.setAttribute('aria-hidden', 'true');
+        arrow.textContent = '→';
+
+        link.append(emoji, copy, arrow);
+        return link;
+      }
+
+      function createAllCard() {
+        const link = document.createElement('a');
+        link.className = 'link all';
+        link.href = '/materials/?utm_source=instagram&utm_medium=social&utm_campaign=instagram_bio&utm_content=all_materials';
+        link.innerHTML = '<span class="emoji" aria-hidden="true">✨</span><span class="copy"><span class="title">KÕIK EDUKASSI MATERJALID</span><span class="desc">Vaata kogu valikut</span></span><span class="arrow" aria-hidden="true">→</span>';
+        return link;
+      }
+
+      fetch('/data/catalog.json', {cache: 'no-store'})
+        .then(response => {
+          if (!response.ok) throw new Error(`catalog ${response.status}`);
+          return response.json();
+        })
+        .then(catalog => {
+          const products = Array.isArray(catalog.products)
+            ? catalog.products.filter(item => item && item.status === 'published' && item.page && item.id && item.title)
+            : [];
+          if (!products.length) return;
+
+          container.replaceChildren(...products.map(createCard), createAllCard());
+        })
+        .catch(() => {
+          // Static fallback above remains usable if the catalog cannot be loaded.
+        });
+    })();
+  </script>
 </body>
 </html>
