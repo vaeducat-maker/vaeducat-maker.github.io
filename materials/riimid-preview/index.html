@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="et">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="/favicon.ico?v=108" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png?v=108">
+  <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png?v=108">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=108">
+  <title>Riimikaardid — EDUKASS</title>
+  <meta name="description" content="18 lõbusat eesti keele riimikaarti. Sirvi kaarte telefonis ühe kaupa ja harjuta sõnu pildi abil.">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <link rel="canonical" href="https://edukass.ee/materials/riimid-preview/">
+  <link rel="stylesheet" href="../../styles.css?v=119">
+  <style>
+    .riimid-page { background:#fff; min-height:70vh; }
+    .riimid-wrap { max-width:760px; margin:0 auto; padding:18px 14px 34px; }
+    .riimid-breadcrumbs { margin-bottom:12px; }
+    .riimid-heading { text-align:center; margin:4px 0 14px; }
+    .riimid-heading h1 { margin:0 0 6px; font-size:clamp(1.7rem,6vw,2.35rem); line-height:1.05; }
+    .riimid-heading p { margin:0; color:#5f6670; font-size:.98rem; }
+    .riimid-viewer { max-width:640px; margin:0 auto; outline:none; }
+    .riimid-card-frame { position:relative; overflow:hidden; border-radius:22px; background:#fff; border:1px solid #e9dfd0; box-shadow:0 5px 18px rgba(31,43,55,.08); touch-action:pan-y; user-select:none; -webkit-user-select:none; }
+    .riimid-card-frame img { display:block; width:100%; height:auto; aspect-ratio:527/497; object-fit:cover; background:#fff; }
+    .riimid-status { display:flex; align-items:center; justify-content:center; gap:10px; margin-top:12px; min-height:24px; }
+    .riimid-count { font-weight:800; color:#183b2d; min-width:68px; text-align:center; }
+    .riimid-progress { flex:1; max-width:300px; height:6px; border-radius:999px; overflow:hidden; background:#e8ece9; }
+    .riimid-progress>span { display:block; height:100%; width:0; border-radius:inherit; background:#1d6a48; transition:width .2s ease; }
+    .riimid-controls { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px; }
+    .riimid-nav-button { min-height:48px; border:0; border-radius:14px; font:inherit; font-weight:800; cursor:pointer; background:#eef4f1; color:#174f37; padding:10px 14px; }
+    .riimid-nav-button:active { transform:translateY(1px); }
+    .riimid-nav-button:focus-visible,.riimid-viewer:focus-visible { outline:3px solid #6ea98c; outline-offset:3px; }
+    .riimid-hint { text-align:center; margin:10px 0 0; color:#737b82; font-size:.9rem; }
+    @media(min-width:720px){.riimid-wrap{padding-top:26px}.riimid-card-frame{border-radius:26px}}
+    @media(prefers-reduced-motion:reduce){.riimid-progress>span{transition:none}.riimid-nav-button:active{transform:none}}
+  </style>
+  <script async src="https://plausible.io/js/pa-3mkwYCn93BZZKvx5orDK8.js"></script>
+  <script>window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};plausible.init()</script>
+</head>
+<body>
+<header class="site-header"><div class="container header-inner"><a class="brand" href="../../" aria-label="EDUKASSi avaleht"><img src="../../games/korrutamine-test/assets/edukass-cat-transparent.png" alt=""><span class="brand-name"><b>EDU</b>KASS</span></a><nav class="nav" aria-label="Põhinavigatsioon"><a href="../../#uus">UUS!!!</a><a class="nav-current" href="../">Materjalid</a><a href="../../#mangud">Mängud</a></nav></div></header>
+<main class="riimid-page"><div class="container riimid-wrap"><div class="breadcrumbs riimid-breadcrumbs"><a href="../../">Avaleht</a> → <a href="../">Materjalid</a> → <span>Eesti keel</span> → <span>Riimikaardid</span></div><section class="riimid-heading"><h1>Riimikaardid</h1><p>18 lõbusat sõnapaari. Libista kaarti vasakule või paremale.</p></section><section class="riimid-viewer" id="riimidViewer" tabindex="0" aria-label="Riimikaartide sirvija"><div class="riimid-card-frame" id="cardFrame"><img id="cardImage" alt=""></div><div class="riimid-status"><span class="riimid-count" id="cardCount" aria-live="polite">1 / 18</span><div class="riimid-progress" aria-hidden="true"><span id="cardProgress"></span></div></div><div class="riimid-controls" aria-label="Kaartide navigeerimine"><button class="riimid-nav-button" id="prevCard" type="button" aria-label="Eelmine kaart">← Eelmine</button><button class="riimid-nav-button" id="nextCard" type="button" aria-label="Järgmine kaart">Järgmine →</button></div><p class="riimid-hint">Telefonis saad kaarti sõrmega libistada.</p></section></div></main>
+<footer class="site-footer"><div class="container footer-inner"><div class="footer-brand"><img src="../../games/korrutamine-test/assets/edukass-cat-transparent.png" alt=""><strong class="brand-name"><b>EDU</b>KASS</strong></div><div class="footer-note">© 2026 EDUKASS · <a href="mailto:va.educat@gmail.com">va.educat@gmail.com</a> · <a href="/privaatsus/">Privaatsus</a></div></div></footer>
+<script src="cards-1.js"></script><script src="cards-2.js"></script><script src="cards-3.js"></script><script src="cards-4.js"></script><script src="cards-5.js"></script><script src="cards-6.js"></script>
+<script>(()=>{const cards=window.RIIMID_CARDS||[];const viewer=document.getElementById('riimidViewer'),frame=document.getElementById('cardFrame'),image=document.getElementById('cardImage'),count=document.getElementById('cardCount'),progress=document.getElementById('cardProgress'),prev=document.getElementById('prevCard'),next=document.getElementById('nextCard');let index=0,startX=0,startY=0,tracking=false;function render(){if(!cards.length){count.textContent='0 / 0';return}const card=cards[index];image.src=card.src;image.alt=`Riimikaart: ${card.title}`;count.textContent=`${index+1} / ${cards.length}`;progress.style.width=`${((index+1)/cards.length)*100}%`;[cards[(index+1)%cards.length],cards[(index-1+cards.length)%cards.length]].forEach(c=>{const p=new Image();p.src=c.src})}function go(d){index=(index+d+cards.length)%cards.length;render()}prev.addEventListener('click',()=>go(-1));next.addEventListener('click',()=>go(1));frame.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'&&e.button!==0)return;startX=e.clientX;startY=e.clientY;tracking=true});frame.addEventListener('pointerup',e=>{if(!tracking)return;tracking=false;const dx=e.clientX-startX,dy=e.clientY-startY;if(Math.abs(dx)>=45&&Math.abs(dx)>Math.abs(dy)*1.15)go(dx<0?1:-1)});frame.addEventListener('pointercancel',()=>{tracking=false});viewer.addEventListener('keydown',e=>{if(e.key==='ArrowLeft'){e.preventDefault();go(-1)}else if(e.key==='ArrowRight'){e.preventDefault();go(1)}});render()})();</script>
+</body>
+</html>
