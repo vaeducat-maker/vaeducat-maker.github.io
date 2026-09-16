@@ -7,17 +7,14 @@
   const OLD_EXAM_KEY='sonatreenerTypingExamTopicV1';
   const EXAM_KEY='sonatreenerTypingExamTopicV2';
   try{
-    // A page/app restart means the previous control attempt was abandoned.
-    // Clear stale locks so the trainer can never become trapped after an unusual exit.
     localStorage.removeItem(OLD_EXAM_KEY);
     localStorage.removeItem(EXAM_KEY);
   }catch(e){}
+
   const getExamLock=()=>{try{return localStorage.getItem(EXAM_KEY)||''}catch(e){return ''}};
   const setExamLock=value=>{try{localStorage.setItem(EXAM_KEY,value)}catch(e){}};
   const clearExamLock=()=>{try{localStorage.removeItem(EXAM_KEY)}catch(e){}document.body.classList.remove('typing-exam-active')};
   const topicName=()=>card.querySelector('.topic-intro h2')?.textContent.trim()||'';
-  const topicKicker=()=>card.querySelector('.topic-intro .topic-kicker')?.textContent.trim()||'';
-  const isGermanTopic=()=>topicKicker().includes('Deutsch');
   const isTypingExamActive=()=>!!(getExamLock()&&card.querySelector('.typing-wrap'));
 
   const style=document.createElement('style');
@@ -75,10 +72,6 @@
   }
 
   function guardExam(){
-    if(isGermanTopic()&&getExamLock()){
-      clearExamLock();
-    }
-
     const locked=getExamLock();
     const typing=card.querySelector('.typing-wrap');
     const finishedTyping=card.querySelector('.done #typingAgain');
@@ -146,10 +139,6 @@
     if(!btn)return;
 
     if(btn.id==='typingBtn'){
-      if(isGermanTopic()){
-        clearExamLock();
-        return;
-      }
       const current=topicName();
       if(current)setExamLock(current);
       return;
@@ -158,18 +147,28 @@
     const locked=getExamLock();
     if(!locked)return;
 
-    if(['posterOpen','posterBtn','cardsRuEt','cardsEtRu','lessonSummaryBtn','questionCardsBtn','typingPoster'].includes(btn.id)){
+    const current=topicName();
+    const sameLesson=!!current&&locked===current;
+    const typingActive=!!card.querySelector('.typing-wrap');
+
+    if(['posterOpen','posterBtn','cardsRuEt','cardsEtRu','lessonSummaryBtn','questionCardsBtn'].includes(btn.id)&&sameLesson){
       e.preventDefault();
       e.stopImmediatePropagation();
       return;
     }
 
-    if(btn.id==='restart'&&card.querySelector('.typing-wrap')){
+    if(btn.id==='typingPoster'&&typingActive){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      return;
+    }
+
+    if(btn.id==='restart'&&typingActive){
       clearExamLock();
       return;
     }
 
-    if(btn.id==='appBackBtn'&&card.querySelector('.typing-wrap')){
+    if(btn.id==='appBackBtn'&&typingActive){
       e.preventDefault();
       e.stopImmediatePropagation();
     }
