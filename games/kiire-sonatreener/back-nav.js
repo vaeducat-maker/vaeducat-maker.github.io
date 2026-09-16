@@ -2,7 +2,15 @@
   const card=document.getElementById('card');
   const libraryBtn=document.getElementById('libraryBtn');
   const restart=document.getElementById('restart');
+  const tabDe=document.getElementById('tabDe');
   if(!card||!libraryBtn||!restart)return;
+
+  if(tabDe){tabDe.disabled=true;tabDe.hidden=true;}
+  try{
+    localStorage.removeItem('sonatreenerReviewDirection');
+    localStorage.removeItem('sonatreenerTypingExamTopicV1');
+    localStorage.removeItem('sonatreenerTypingExamTopicV2');
+  }catch(e){}
 
   const style=document.createElement('style');
   style.textContent=`
@@ -31,6 +39,17 @@
   const brand=document.querySelector('.brand');
   (brand||document.querySelector('.app')).insertAdjacentElement('afterend',back);
 
+  function removeDeutsch(){
+    card.querySelectorAll('.library-section').forEach(section=>{
+      const title=section.querySelector('.library-title strong')?.textContent.trim();
+      if(title==='Deutsch')section.remove();
+    });
+    const lessonTitle=card.querySelector('.topic-intro h2')?.textContent.trim()||'';
+    if(lessonTitle==='E → I / IE'||lessonTitle==='A → Ä / AU → ÄU'){
+      setTimeout(()=>libraryBtn.click(),0);
+    }
+  }
+
   function isLibrary(){
     return !!card.querySelector('.library-heading') ||
       (!!card.querySelector('.empty') && !card.querySelector('.topic-intro'));
@@ -47,6 +66,7 @@
   }
 
   function sync(){
+    removeDeutsch();
     back.hidden=isLibrary()||!canGoBackInside();
   }
 
@@ -65,19 +85,6 @@
 
     return false;
   }
-
-  // German lessons previously had their action clicks swallowed by later navigation logic.
-  // Rescue those three actions at capture phase and invoke their trainer handlers directly.
-  document.addEventListener('click',e=>{
-    const btn=e.target.closest('button');
-    if(!btn||!['cardsRuEt','cardsEtRu','typingBtn'].includes(btn.id))return;
-    const title=card.querySelector('.topic-intro h2')?.textContent.trim()||'';
-    const isGerman=title==='E → I / IE'||title==='A → Ä / AU → ÄU';
-    if(!isGerman||typeof btn.onclick!=='function')return;
-    e.preventDefault();
-    e.stopImmediatePropagation();
-    btn.onclick.call(btn,e);
-  },true);
 
   back.addEventListener('click',goBackInside);
 
