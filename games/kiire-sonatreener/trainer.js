@@ -39,6 +39,29 @@ const DATA={
         {word:"raadiosaated",ru:"радиопередачи"},
         {word:"ees",ru:"впереди, перед"},
         {word:"kaasa lööma",ru:"принимать участие"}
+      ]},
+      {id:"eesti-keel-2",title:"Sõnad 2",subtitle:"Eesti keel",active:false,poster:null,words:[
+        {word:"otsustama",ru:"решать"},
+        {word:"täis",ru:"полный"},
+        {word:"üllatus",ru:"сюрприз"},
+        {word:"lootma",ru:"надеяться"},
+        {word:"tema arvates",ru:"по его мнению"},
+        {word:"võib-olla",ru:"возможно"},
+        {word:"kõige rohkem",ru:"больше всего"},
+        {word:"vahepeal",ru:"иногда"},
+        {word:"imestama",ru:"удивляться"},
+        {word:"keset päeva",ru:"посреди дня"},
+        {word:"mõlemad",ru:"оба"},
+        {word:"lärmakas",ru:"шумный"},
+        {word:"ei ole harjunud",ru:"не привык"},
+        {word:"meie ümber",ru:"вокруг нас"},
+        {word:"ma loodan",ru:"я надеюсь"},
+        {word:"emal on õigus",ru:"мама права"},
+        {word:"haigutama",ru:"зевать"},
+        {word:"kontrast",ru:"контраст"},
+        {word:"kummaline",ru:"странный"},
+        {word:"rütm",ru:"ритм"},
+        {word:"sipelgapesa",ru:"муравейник"}
       ]}
     ]},
     {id:"eesti-kirjandus",label:"Eesti kirjandus",icon:"📖",topics:[
@@ -296,4 +319,21 @@ restart.onclick=()=>{
 
 progress.hidden=true;
 setLanguage("et");
+setTimeout(()=>{
+  const externalLibrary=libraryBtn.onclick;
+  if(typeof externalLibrary!=="function"||externalLibrary===renderLibrary)return;
+  libraryBtn.onclick=()=>{
+    externalLibrary();
+    const section=[...card.querySelectorAll(".library-section")].find(s=>s.querySelector(".library-title strong")?.textContent.trim()==="Eesti keel");
+    const grid=section?.querySelector(".topic-grid");
+    if(!grid||grid.querySelector('[data-u-topic="eesti-keel-2"]'))return;
+    const button=document.createElement("button");
+    button.className="topic-tile";
+    button.dataset.uLang="et";
+    button.dataset.uTopic="eesti-keel-2";
+    button.innerHTML='<span class="topic-title">Sõnad 2</span><span class="topic-meta">21 карточка</span>';
+    button.onclick=()=>{if(lang!=="et")setLanguage("et");openTopic("eesti-keel-2")};
+    grid.appendChild(button);
+  };
+},0);
 })();
