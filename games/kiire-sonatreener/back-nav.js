@@ -16,6 +16,8 @@
   const setExamLock=value=>{try{localStorage.setItem(EXAM_KEY,value)}catch(e){}};
   const clearExamLock=()=>{try{localStorage.removeItem(EXAM_KEY)}catch(e){}document.body.classList.remove('typing-exam-active')};
   const topicName=()=>card.querySelector('.topic-intro h2')?.textContent.trim()||'';
+  const topicKicker=()=>card.querySelector('.topic-intro .topic-kicker')?.textContent.trim()||'';
+  const isGermanTopic=()=>topicKicker().includes('Deutsch');
   const isTypingExamActive=()=>!!(getExamLock()&&card.querySelector('.typing-wrap'));
 
   const style=document.createElement('style');
@@ -73,6 +75,10 @@
   }
 
   function guardExam(){
+    if(isGermanTopic()&&getExamLock()){
+      clearExamLock();
+    }
+
     const locked=getExamLock();
     const typing=card.querySelector('.typing-wrap');
     const finishedTyping=card.querySelector('.done #typingAgain');
@@ -140,6 +146,10 @@
     if(!btn)return;
 
     if(btn.id==='typingBtn'){
+      if(isGermanTopic()){
+        clearExamLock();
+        return;
+      }
       const current=topicName();
       if(current)setExamLock(current);
       return;
