@@ -66,6 +66,19 @@
     return false;
   }
 
+  // German lessons previously had their action clicks swallowed by later navigation logic.
+  // Rescue those three actions at capture phase and invoke their trainer handlers directly.
+  document.addEventListener('click',e=>{
+    const btn=e.target.closest('button');
+    if(!btn||!['cardsRuEt','cardsEtRu','typingBtn'].includes(btn.id))return;
+    const title=card.querySelector('.topic-intro h2')?.textContent.trim()||'';
+    const isGerman=title==='E → I / IE'||title==='A → Ä / AU → ÄU';
+    if(!isGerman||typeof btn.onclick!=='function')return;
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    btn.onclick.call(btn,e);
+  },true);
+
   back.addEventListener('click',goBackInside);
 
   new MutationObserver(sync).observe(card,{childList:true,subtree:true});
