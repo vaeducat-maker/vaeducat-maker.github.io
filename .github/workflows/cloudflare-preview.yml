@@ -68,6 +68,7 @@ jobs:
           cp materials/riimid-preview/cards-*.js dist/materials/riimid-preview/
           cp -R materials/riimid-preview/online dist/materials/riimid-preview/online
           cp -R materials/riimid-preview/files dist/materials/riimid-preview/files
+          cp _headers dist/_headers
 
       - name: Add swipeable adjective cards
         run: node scripts/patch-sept-adj-carousel.js
