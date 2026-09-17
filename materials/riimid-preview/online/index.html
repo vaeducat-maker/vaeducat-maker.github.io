@@ -1,13 +1,63 @@
 <!doctype html>
-<html lang="et"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow,noarchive,nosnippet,noimageindex"><meta http-equiv="Cache-Control" content="no-store,no-cache,must-revalidate"><title>Riimikaardid — EDUKASS</title><style>
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:#f7f5f0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:#173f30}body{overflow:hidden}.page{height:100dvh;display:grid;grid-template-rows:auto minmax(0,1fr) auto;justify-items:center;gap:7px;padding:max(9px,env(safe-area-inset-top)) 12px max(9px,env(safe-area-inset-bottom))}.title{padding:7px 14px;background:#fff;border:1px solid #e7e1d8;border-radius:999px;font-size:14px;font-weight:800;box-shadow:0 2px 10px #0000000a}.stage{width:100%;min-height:0;display:grid;place-items:center}.card-shell{width:min(92vw,560px,calc((100dvh - 128px)*1.0634));aspect-ratio:520/489;display:grid;place-items:center;background:#fff;border-radius:15px;box-shadow:0 8px 28px rgba(50,45,35,.10);overflow:hidden}.card-shell canvas{display:block;width:100%;height:100%;object-fit:fill;touch-action:pan-y;user-select:none;-webkit-user-select:none;transition:transform .16s ease,opacity .16s ease}.controls{display:flex;align-items:center;justify-content:center;gap:11px}.nav{display:grid;place-items:center;width:42px;height:42px;border:1px solid #dce7e0;border-radius:50%;background:#eef5f1;color:#174f37;font-size:25px;font-weight:800;cursor:pointer}.nav:hover{background:#e4efe9}.nav:active{transform:scale(.96)}.count{min-width:72px;text-align:center;padding:8px 12px;background:#fff;border:1px solid #e7e1d8;border-radius:999px;font-weight:800;box-shadow:0 2px 9px #0000000a}.hint{position:fixed;right:10px;bottom:max(58px,calc(env(safe-area-inset-bottom) + 50px));padding:5px 8px;border-radius:9px;background:#fffffff0;color:#6b7470;font-size:12px}.loading{position:absolute;font-size:14px;color:#6b7470}@media(min-width:601px){.hint{display:none}}@media(max-width:600px){.page{padding-left:6px;padding-right:6px}.card-shell{width:min(96vw,calc((100dvh - 118px)*1.0634));border-radius:12px;box-shadow:0 5px 18px rgba(50,45,35,.08)}.title{font-size:13px;padding:6px 12px}.nav{width:40px;height:40px}}
-</style></head><body><main class="page"><div class="title">EDUKASS · Riimikaardid</div><div class="stage"><div class="card-shell"><span id="loading" class="loading">Laen…</span><canvas id="card" aria-label=""></canvas></div></div><div class="controls"><button id="prev" class="nav" aria-label="Eelmine kaart">‹</button><div id="count" class="count">1 / 18</div><button id="next" class="nav" aria-label="Järgmine kaart">›</button></div><div id="hint" class="hint">svaibi ↔</div></main><script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script><script>
-pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+<html lang="et">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow,noarchive,nosnippet,noimageindex">
+<meta http-equiv="Cache-Control" content="no-store,no-cache,must-revalidate">
+<title>Riimikaardid — EDUKASS</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:#f7f5f0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:#173f30}body{overflow:hidden}.page{height:100dvh;display:grid;grid-template-rows:auto minmax(0,1fr) auto;justify-items:center;gap:8px;padding:max(9px,env(safe-area-inset-top)) 12px max(9px,env(safe-area-inset-bottom))}.title{padding:7px 14px;background:#fff;border:1px solid #e7e1d8;border-radius:999px;font-size:14px;font-weight:800;box-shadow:0 2px 10px #0000000a}.stage{width:100%;min-height:0;display:grid;place-items:center}.card-shell{width:min(92vw,560px,calc((100dvh - 128px)*1.06965));aspect-ratio:430/402;display:grid;place-items:center;background:#fff;box-shadow:0 8px 28px rgba(50,45,35,.10);overflow:hidden}.card-shell canvas{display:block;width:100%;height:100%;touch-action:pan-y;user-select:none;-webkit-user-select:none;transition:transform .16s ease,opacity .16s ease;cursor:grab}.card-shell canvas:active{cursor:grabbing}.controls{display:flex;align-items:center;justify-content:center;gap:11px}.nav{display:grid;place-items:center;width:42px;height:42px;border:1px solid #dce7e0;border-radius:50%;background:#eef5f1;color:#174f37;font-size:25px;font-weight:800;cursor:pointer}.nav:hover{background:#e4efe9}.nav:active{transform:scale(.96)}.count{min-width:72px;text-align:center;padding:8px 12px;background:#fff;border:1px solid #e7e1d8;border-radius:999px;font-weight:800;box-shadow:0 2px 9px #0000000a}.hint{position:fixed;right:10px;bottom:max(58px,calc(env(safe-area-inset-bottom) + 50px));padding:5px 8px;border-radius:9px;background:#fffffff0;color:#6b7470;font-size:12px}.loading{position:absolute;font-size:14px;color:#6b7470}@media(min-width:601px){.hint{display:none}}@media(max-width:600px){.page{padding-left:6px;padding-right:6px}.card-shell{width:min(96vw,calc((100dvh - 118px)*1.06965));box-shadow:0 5px 18px rgba(50,45,35,.08)}.title{font-size:13px;padding:6px 12px}.nav{width:40px;height:40px}}
+</style>
+</head>
+<body>
+<main class="page">
+  <div class="title">EDUKASS · Riimikaardid</div>
+  <div class="stage">
+    <div class="card-shell">
+      <span id="loading" class="loading">Laen…</span>
+      <canvas id="card" aria-label=""></canvas>
+    </div>
+  </div>
+  <div class="controls">
+    <button id="prev" class="nav" aria-label="Eelmine kaart">‹</button>
+    <div id="count" class="count">1 / 18</div>
+    <button id="next" class="nav" aria-label="Järgmine kaart">›</button>
+  </div>
+  <div id="hint" class="hint">svaibi ↔</div>
+</main>
+<script>
 const titles=['kass – tass','kurk – purk','vann – kann','mesi – vesi','vaas – kaas','puur – juur','piim – liim','kook – jook','tool – kool','päike – äike','pott – kott','konn – onn','sokk – kokk','lill – pill','sall – pall','kamm – tamm','kuu – puu','lammas – hammas'];
-const xRects=[[64,583],[607,1127]],yRects=[[79,567],[598,1087],[1116,1597]],BASE_SCALE=2,RENDER_SCALE=3,OUT_W=1040,OUT_H=978;
-const canvas=document.getElementById('card'),ctx=canvas.getContext('2d',{alpha:false}),count=document.getElementById('count'),hint=document.getElementById('hint'),loading=document.getElementById('loading');let pdf=null,i=0,startX=0,startY=0,renderToken=0;const pageCache=new Map();
-async function getPageCanvas(pageNo){if(pageCache.has(pageNo))return pageCache.get(pageNo);const page=await pdf.getPage(pageNo),viewport=page.getViewport({scale:RENDER_SCALE}),c=document.createElement('canvas');c.width=Math.ceil(viewport.width);c.height=Math.ceil(viewport.height);await page.render({canvasContext:c.getContext('2d',{alpha:false}),viewport}).promise;pageCache.set(pageNo,c);return c}
-async function show(dir=0){const token=++renderToken,local=i,pageNo=Math.floor(local/6)+1,pos=local%6,row=Math.floor(pos/2),col=pos%2;count.textContent=`${local+1} / 18`;canvas.setAttribute('aria-label',titles[local]);canvas.style.opacity='.25';canvas.style.transform=`translateX(${dir*8}px)`;const p=await getPageCanvas(pageNo);if(token!==renderToken)return;const factor=RENDER_SCALE/BASE_SCALE,[x1,x2]=xRects[col],[y1,y2]=yRects[row];canvas.width=OUT_W;canvas.height=OUT_H;ctx.fillStyle='#fff';ctx.fillRect(0,0,OUT_W,OUT_H);ctx.drawImage(p,x1*factor,y1*factor,(x2-x1)*factor,(y2-y1)*factor,0,0,OUT_W,OUT_H);loading.style.display='none';canvas.style.opacity='1';canvas.style.transform='translateX(0)';if(pageNo<3)getPageCanvas(pageNo+1).catch(()=>{})}
-function go(step){i=(i+step+18)%18;show(step)}document.getElementById('prev').onclick=()=>go(-1);document.getElementById('next').onclick=()=>go(1);canvas.addEventListener('touchstart',e=>{const t=e.changedTouches[0];startX=t.clientX;startY=t.clientY},{passive:true});canvas.addEventListener('touchend',e=>{const t=e.changedTouches[0],dx=t.clientX-startX,dy=t.clientY-startY;if(Math.abs(dx)>45&&Math.abs(dx)>Math.abs(dy)*1.2){go(dx<0?1:-1);hint.style.opacity='0'}},{passive:true});document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')go(1);if(e.key==='ArrowLeft')go(-1)});
-pdfjsLib.getDocument('../files/EDUKASS_Riimikaardid_A4_6_kaarti.pdf?v=2').promise.then(doc=>{pdf=doc;show()}).catch(()=>{loading.textContent='PDF ei laaditud';});
-</script></body></html>
+const COLS=6, CARD_W=430, CARD_H=402, OUT_W=860, OUT_H=804;
+const canvas=document.getElementById('card');
+const ctx=canvas.getContext('2d',{alpha:false});
+const count=document.getElementById('count');
+const hint=document.getElementById('hint');
+const loading=document.getElementById('loading');
+const sprite=new Image();
+let i=0,startX=0,startY=0;
+
+function show(dir=0){
+  const row=Math.floor(i/COLS), col=i%COLS;
+  count.textContent=`${i+1} / 18`;
+  canvas.setAttribute('aria-label',titles[i]);
+  canvas.style.opacity='.3';
+  canvas.style.transform=`translateX(${dir*8}px)`;
+  canvas.width=OUT_W; canvas.height=OUT_H;
+  ctx.fillStyle='#fff'; ctx.fillRect(0,0,OUT_W,OUT_H);
+  ctx.drawImage(sprite,col*CARD_W,row*CARD_H,CARD_W,CARD_H,0,0,OUT_W,OUT_H);
+  loading.style.display='none';
+  requestAnimationFrame(()=>{canvas.style.opacity='1';canvas.style.transform='translateX(0)'});
+}
+function go(step){i=(i+step+18)%18;show(step)}
+document.getElementById('prev').onclick=()=>go(-1);
+document.getElementById('next').onclick=()=>go(1);
+canvas.addEventListener('pointerdown',e=>{startX=e.clientX;startY=e.clientY;canvas.setPointerCapture?.(e.pointerId)});
+canvas.addEventListener('pointerup',e=>{const dx=e.clientX-startX,dy=e.clientY-startY;if(Math.abs(dx)>45&&Math.abs(dx)>Math.abs(dy)*1.2){go(dx<0?1:-1);hint.style.opacity='0'}});
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')go(1);if(e.key==='ArrowLeft')go(-1)});
+sprite.onload=()=>show();
+sprite.onerror=()=>{loading.textContent='Pilt ei laaditud'};
+sprite.src='riimikaardid-sprite-clean.webp?v=20260917-2';
+</script>
+</body>
+</html>
