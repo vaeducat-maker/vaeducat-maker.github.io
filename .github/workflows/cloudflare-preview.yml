@@ -66,7 +66,7 @@ jobs:
           test -f materials/riimid-preview/files/EDUKASS_Riimikaardid_A4_6_kaarti.pdf
           test -f materials/riimid-preview/files/EDUKASS_Riimikaardid_A4_9_kaarti.pdf
 
-      - name: Include hidden Riimikaardid preview
+      - name: Include Riimikaardid material
         run: |
           mkdir -p dist/materials/riimid-preview
           cp materials/riimid-preview/index.html dist/materials/riimid-preview/index.html
@@ -74,6 +74,7 @@ jobs:
           cp -R materials/riimid-preview/online dist/materials/riimid-preview/online
           cp -R materials/riimid-preview/files dist/materials/riimid-preview/files
           cp _headers dist/_headers
+          node scripts/publish-riimikaardid.js
 
       - name: Add swipeable adjective cards
         run: node scripts/patch-sept-adj-carousel.js
