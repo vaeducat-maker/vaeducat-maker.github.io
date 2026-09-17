@@ -61,10 +61,10 @@ jobs:
       - name: Build public EDUKASS site
         run: node scripts/build-cloudflare-site.js
 
-      - name: Build Riimikaardid print PDFs
+      - name: Verify committed Riimikaardid print PDFs
         run: |
-          python -m pip install --quiet pillow pillow-avif-plugin
-          python scripts/build-riimid-pdfs.py
+          test -f materials/riimid-preview/files/EDUKASS_Riimikaardid_A4_6_kaarti.pdf
+          test -f materials/riimid-preview/files/EDUKASS_Riimikaardid_A4_9_kaarti.pdf
 
       - name: Include hidden Riimikaardid preview
         run: |
