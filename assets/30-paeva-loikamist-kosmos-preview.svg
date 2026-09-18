@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1180" role="img" aria-labelledby="t d">
+<title id="t">30 päeva lõikamist: Kosmos</title>
+<desc id="d">EDUKASSi kosmoseteemalise lõikamiskomplekti eelvaade</desc>
+<rect width="900" height="1180" rx="34" fill="#fff"/>
+<rect x="65" y="55" width="770" height="1050" rx="34" fill="#fff" stroke="#dbe9f7" stroke-width="5"/>
+<circle cx="128" cy="132" r="50" fill="#ffd85a"/><text x="128" y="149" text-anchor="middle" font-family="Arial,sans-serif" font-size="46" font-weight="700" fill="#114a96">30</text>
+<rect x="205" y="87" width="500" height="86" rx="43" fill="#e8f3ff"/><text x="455" y="143" text-anchor="middle" font-family="Arial,sans-serif" font-size="36" font-weight="700" fill="#164f9d">30 PÄEVA LÕIKAMIST</text>
+<text x="455" y="205" text-anchor="middle" font-family="Arial,sans-serif" font-size="34" font-weight="700" fill="#164f9d">KOSMOS</text>
+<g fill="none" stroke="#182231" stroke-width="9" stroke-linecap="round" stroke-dasharray="20 18">
+  <path d="M145 890 C250 805 195 690 320 650 C445 610 380 500 505 465 C630 430 560 330 730 280"/>
+</g>
+<g>
+  <circle cx="255" cy="345" r="84" fill="#8d75df" stroke="#4f419f" stroke-width="8"/><ellipse cx="255" cy="345" rx="130" ry="35" fill="none" stroke="#c9bdf7" stroke-width="18"/>
+  <circle cx="620" cy="720" r="90" fill="#4aa8ef" stroke="#2377ba" stroke-width="8"/>
+  <path d="M575 700c25-40 75-43 105-10M585 742c25 25 70 30 99 0" fill="none" stroke="#83d35c" stroke-width="25" stroke-linecap="round"/>
+  <circle cx="675" cy="405" r="55" fill="#777f9f" stroke="#444d70" stroke-width="7"/>
+  <circle cx="655" cy="390" r="12" fill="#515a79"/><circle cx="692" cy="425" r="15" fill="#515a79"/><circle cx="690" cy="375" r="9" fill="#515a79"/>
+</g>
+<g transform="translate(105 895) rotate(-28)">
+  <path d="M0 55 C18 15 75 3 110 40 L115 70 C75 103 18 95 0 55Z" fill="#fff" stroke="#164f9d" stroke-width="7"/>
+  <path d="M86 26l45-14-16 40" fill="#ef3f3f" stroke="#164f9d" stroke-width="7"/>
+  <path d="M88 82l44 17-20-42" fill="#ef3f3f" stroke="#164f9d" stroke-width="7"/>
+  <circle cx="58" cy="53" r="19" fill="#68bdf5" stroke="#164f9d" stroke-width="7"/>
+  <path d="M-3 48l-45-18 26 27-27 24 47-18" fill="#ffb52c" stroke="#ef6c22" stroke-width="7"/>
+</g>
+<g fill="#ffc928">
+  <path d="M735 235l14 29 32 5-23 23 6 32-29-15-29 15 6-32-23-23 32-5z"/>
+  <path d="M168 535l10 21 24 3-17 17 4 24-21-11-22 11 5-24-18-17 24-3z"/>
+  <path d="M733 850l10 21 24 3-17 17 4 24-21-11-22 11 5-24-18-17 24-3z"/>
+</g>
+<g fill="#80b9ef"><circle cx="154" cy="260" r="9"/><circle cx="410" cy="300" r="8"/><circle cx="530" cy="845" r="9"/><circle cx="760" cy="670" r="8"/></g>
+<text x="455" y="1045" text-anchor="middle" font-family="Arial,sans-serif" font-size="28" fill="#5b6f86">30 prinditavat lõikamisrada</text>
+</svg>
