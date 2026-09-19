@@ -226,3 +226,41 @@
 @media(max-width:370px){
   .home-page .site-header .brand .brand-name{display:block}
 }
+
+
+/* v119: UUS!!! is a five-item, newest-first full-width stream. */
+.home-new-grid{
+  grid-template-columns:1fr;
+  gap:24px;
+}
+.home-new-card{
+  grid-column:1 / -1;
+  width:100%;
+  grid-template-columns:minmax(420px,.95fr) minmax(0,1.05fr);
+  min-height:360px;
+}
+.home-new-card:nth-child(even)>:first-child{order:2}
+.home-new-card:nth-child(even)>.home-new-card-copy{order:1}
+.home-new-card-visual>img{
+  width:min(92%,620px);
+  max-height:330px;
+}
+.home-new-card-copy{
+  padding:38px 42px;
+}
+.home-new-card h3{
+  font-size:clamp(1.9rem,3vw,2.8rem);
+}
+@media(max-width:980px){
+  .home-new-card{
+    grid-template-columns:1fr;
+    min-height:0;
+  }
+  .home-new-card:nth-child(even)>:first-child,
+  .home-new-card:nth-child(even)>.home-new-card-copy{
+    order:initial;
+  }
+  .home-new-card-visual{
+    min-height:300px;
+  }
+}
