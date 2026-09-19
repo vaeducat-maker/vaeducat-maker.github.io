@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="et">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+<meta name="googlebot" content="noindex,nofollow,noarchive,nosnippet">
+<meta name="theme-color" content="#72c7f4">
+<title>LUMESADU — EDUKASS prototüüp</title>
+<style>
+:root{
+  --ink:#0d4e87;--ink2:#07355f;--ice:#e9fbff;--ice2:#a8e9ff;--blue:#53b9ef;
+  --wood:#c98a51;--wood2:#754526;--green:#49d567;--green2:#20a846;
+  --red:#ff6775;--red2:#dc3148;--row:clamp(42px,6.1svh,58px);--wall-offset:0px;
+}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0d3158}
+body{font-family:"Trebuchet MS",system-ui,-apple-system,Segoe UI,sans-serif;color:var(--ink2);touch-action:manipulation}
+button{font:inherit;-webkit-tap-highlight-color:transparent}
+.app{position:relative;width:min(100%,520px);height:100svh;min-height:560px;margin:auto;overflow:hidden;isolation:isolate;background:linear-gradient(#57b8f0,#d7f3ff 62%,#74c9ed);box-shadow:0 0 70px #041d38}
+.scene{position:absolute;inset:0;z-index:-4;overflow:hidden;background:
+  radial-gradient(circle at 78% 18%,rgba(255,247,208,.95) 0 22px,rgba(255,247,208,.16) 23px 72px,transparent 73px),
+  linear-gradient(180deg,#54b8f2 0%,#bfe9ff 46%,#8fd4ef 72%,#dff7ff 100%)}
+.aurora{position:absolute;top:-5%;left:25%;width:95%;height:36%;transform:rotate(-10deg);background:linear-gradient(100deg,transparent,rgba(126,255,224,.22),rgba(179,127,255,.12),transparent);filter:blur(18px)}
+.mountain{position:absolute;left:-18%;width:138%;bottom:22%;height:36%;clip-path:polygon(0 100%,8% 62%,16% 80%,27% 35%,37% 78%,49% 30%,61% 71%,72% 43%,82% 71%,92% 36%,100% 100%);background:#6ca1c9;opacity:.65}
+.mountain.front{bottom:15%;height:31%;background:#5689b4;opacity:.75}
+.pine{position:absolute;bottom:19%;width:92px;height:245px;background:linear-gradient(90deg,transparent 45%,#6b4933 46% 54%,transparent 55%)}
+.pine:before,.pine:after{content:"";position:absolute;left:0;width:0;height:0;border-left:46px solid transparent;border-right:46px solid transparent;border-bottom:115px solid #186b79;filter:drop-shadow(0 10px 0 rgba(255,255,255,.85))}
+.pine:before{top:18px}.pine:after{top:72px;transform:scale(.9);transform-origin:50% 0}
+.pine.a{left:-28px;transform:scale(1.22)}.pine.b{right:-34px;transform:scale(1.42)}.pine.c{right:19%;bottom:29%;transform:scale(.58);opacity:.6}
+.cottage{position:absolute;right:8%;bottom:26%;width:88px;height:76px;border:4px solid #66391f;border-radius:8px;background:#8c5738;filter:drop-shadow(0 8px 6px rgba(10,50,80,.25))}
+.cottage:before{content:"";position:absolute;left:-16px;top:-47px;border-left:58px solid transparent;border-right:58px solid transparent;border-bottom:58px solid #6d432e;filter:drop-shadow(0 -9px 0 #f5fbff)}
+.cottage:after{content:"";position:absolute;right:13px;bottom:15px;width:27px;height:32px;border-radius:14px 14px 3px 3px;background:#ffd76e;box-shadow:0 0 20px #ffd45e}
+.lantern{position:absolute;width:18px;height:28px;border:3px solid #5d4028;border-radius:4px;background:#ffd86c;box-shadow:0 0 18px #ffce4a}.lantern:before{content:"";position:absolute;left:5px;top:-12px;width:3px;height:12px;background:#5d4028}.lantern.l1{left:16%;top:30%}.lantern.l2{right:11%;top:42%;transform:scale(.8)}
+.snowbank{position:absolute;bottom:-2%;width:60%;height:26%;background:linear-gradient(#fbfeff,#bdeaff);border-radius:58% 58% 0 0;box-shadow:inset 0 14px 0 rgba(255,255,255,.8)}.snowbank.left{left:-18%}.snowbank.right{right:-20%}
+.snow{position:absolute;inset:0;pointer-events:none;z-index:20;overflow:hidden}.flake{position:absolute;top:-25px;color:white;opacity:.82;text-shadow:0 0 7px #fff;animation:snow linear infinite}.flake:nth-child(3n){opacity:.45}
+@keyframes snow{to{transform:translate3d(var(--drift),112svh,0) rotate(180deg)}}
+.screen{position:absolute;inset:0;display:none}.screen.on{display:block}
+.logo{font-weight:1000;letter-spacing:.03em;color:#f6fdff;-webkit-text-stroke:2px #1978b8;text-shadow:0 4px 0 #1978b8,0 8px 0 #0a578e,0 10px 18px rgba(0,45,90,.3);line-height:.95}
+.wood{display:inline-block;border:3px solid var(--wood2);border-radius:13px;background:linear-gradient(#dda36d,#b9733c);box-shadow:inset 0 3px #f4c490,0 4px 0 #6f3d21;color:#54301c;font-weight:900}
+.ice-btn{border:3px solid #2d90ca;border-radius:19px;background:linear-gradient(#f3fdff,#a9eaff);box-shadow:inset 0 4px white,0 6px 0 #197ab8,0 10px 18px rgba(0,70,120,.22);color:#0b4e87;font-weight:1000;min-height:54px;padding:10px 22px;cursor:pointer}
+.ice-btn:active{transform:translateY(3px);box-shadow:inset 0 3px white,0 3px 0 #197ab8}
+.start{padding:max(20px,env(safe-area-inset-top)) 18px max(18px,env(safe-area-inset-bottom));text-align:center}
+.start .logo{font-size:clamp(52px,14vw,76px);margin-top:4svh}.start .mark{font-size:40px;margin-bottom:-6px;color:white}.start .wood{font-size:clamp(21px,5.8vw,30px);padding:8px 24px;margin-top:13px}
+.start-art{height:39svh;min-height:220px;position:relative}.start-art .bird{position:absolute;left:10%;bottom:30%;font-size:46px;filter:drop-shadow(0 5px 3px rgba(0,50,90,.25))}.start-art .snowman{position:absolute;right:7%;bottom:8%;font-size:76px;filter:drop-shadow(0 7px 4px rgba(0,50,90,.25))}
+.start .main{width:min(86%,360px);font-size:clamp(25px,7vw,34px);text-transform:uppercase}.tools{display:flex;justify-content:center;gap:18px;margin-top:24px}.icon-btn,.hud-btn{border:2px solid #2d90ca;background:linear-gradient(#effcff,#a7e7ff);box-shadow:inset 0 3px white,0 4px 0 #1979b6;border-radius:16px;color:#0a4b84;font-weight:1000}.icon-btn{width:58px;height:54px;font-size:25px}.tiny{margin-top:20px;font-size:11px;font-weight:800;color:rgba(6,55,96,.62);letter-spacing:.06em}
+.hud{position:absolute;top:max(10px,env(safe-area-inset-top));left:12px;right:12px;height:52px;display:grid;grid-template-columns:48px 1fr 48px;gap:8px;align-items:center;z-index:9}.hud-btn{height:44px;font-size:22px}.progress{justify-self:center;padding:7px 14px;font-weight:1000;font-size:20px}.progress.wood{display:block}
+.game-brand{position:absolute;top:calc(max(10px,env(safe-area-inset-top)) + 54px);left:50%;transform:translateX(-50%);text-align:center;z-index:7;width:80%}.game-brand .logo{font-size:clamp(35px,9vw,50px)}.game-brand .wood{font-size:16px;padding:5px 15px;margin-top:5px}
+.mode{position:absolute;right:13px;top:calc(max(10px,env(safe-area-inset-top)) + 124px);z-index:7;border:2px solid #2eabd0;border-radius:19px;padding:7px 12px;background:linear-gradient(#efffff,#aef0ef);box-shadow:inset 0 3px white,0 3px 8px rgba(0,90,120,.18);font-weight:1000;color:#176184}
+.fall-zone{position:absolute;top:20%;left:10%;right:10%;bottom:calc(25% + var(--wall-offset));transition:bottom .45s ease;z-index:4;pointer-events:none}.word-card{position:absolute;left:50%;top:2%;transform:translate(-50%,-50%);width:clamp(148px,39vw,198px);aspect-ratio:1.08;display:flex;align-items:center;justify-content:center;text-align:center;padding:14px;border:4px solid #2f9ad5;border-radius:28% 28% 34% 34%;background:radial-gradient(circle at 50% 35%,#fff 0 8%,#e8fbff 32%,#bceeff 78%);box-shadow:inset 0 0 0 7px rgba(255,255,255,.45),0 9px 20px rgba(0,85,140,.2);color:#0d4c85;font-size:clamp(25px,7.4vw,39px);font-weight:1000;text-transform:uppercase;letter-spacing:.02em}
+.word-card:before,.word-card:after{content:"❄";position:absolute;color:rgba(47,154,213,.18);font-size:27px}.word-card:before{top:10px}.word-card:after{bottom:9px}
+.word-card.fall{animation:fall var(--fall-ms) linear forwards}@keyframes fall{from{top:3%}to{top:88%}}
+.answer-dock{position:absolute;left:12px;right:12px;bottom:calc(max(16px,env(safe-area-inset-bottom)) + var(--wall-offset));z-index:8;transition:bottom .48s cubic-bezier(.2,.75,.25,1)}
+.answers{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.answer{min-width:0;aspect-ratio:.86;border:3px solid #2d93cb;border-radius:18px;background:linear-gradient(#f5feff,#c5f1ff 60%,#a9e7fb);box-shadow:inset 0 4px white,0 5px 0 #1c79b2,0 8px 12px rgba(0,75,120,.18);display:flex;align-items:center;justify-content:center;font-size:clamp(35px,10vw,55px);cursor:pointer;transition:transform .12s,background .18s,box-shadow .18s,border-color .18s}.answer:active{transform:translateY(3px)}.answer:disabled{cursor:default}
+.answer.wrong{border-color:var(--red2);background:linear-gradient(#fff1f3,#ff9ca6);box-shadow:inset 0 4px #fff,0 5px 0 var(--red2),0 0 22px rgba(255,55,80,.48);animation:shake .32s ease}.answer.correct{border-color:var(--green2);background:linear-gradient(#f1fff3,#83ee96);box-shadow:inset 0 4px white,0 5px 0 var(--green2),0 0 25px rgba(39,220,83,.6);transform:translateY(-2px) scale(1.035)}.answer.correct:after{content:"✓";position:absolute;margin-top:58px;margin-left:48px;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:#24b34a;color:#fff;font-size:21px;border:3px solid white}.answer{position:relative}@keyframes shake{25%{transform:translateX(-5px)}50%{transform:translateX(5px)}75%{transform:translateX(-3px)}}
+.ice-wall{position:absolute;left:12px;right:12px;bottom:max(0px,env(safe-area-inset-bottom));z-index:6;display:flex;flex-direction:column-reverse;gap:2px;pointer-events:none}.ice-row{height:var(--row);display:grid;grid-template-columns:repeat(4,1fr);gap:3px;animation:rowIn .46s cubic-bezier(.1,.8,.2,1)}@keyframes rowIn{from{transform:translateY(105%);opacity:.2}to{transform:none;opacity:1}}
+.cube{border:3px solid #45a9dd;border-radius:11px;background:linear-gradient(145deg,#e7fbff 0 13%,#a9e8ff 14% 52%,#69c5ee 53% 100%);box-shadow:inset 5px 5px 0 rgba(255,255,255,.52),inset -5px -5px 0 rgba(21,129,191,.18),0 2px 0 #2187c2;position:relative}.cube:after{content:"";position:absolute;inset:8px 10px;border-top:2px solid rgba(255,255,255,.55);transform:rotate(-22deg)}
+.game.rumble{animation:rumble .11s linear 7}@keyframes rumble{0%,100%{transform:translate(0)}25%{transform:translate(-4px,2px)}50%{transform:translate(4px,-1px)}75%{transform:translate(-2px,-2px)}}
+.ice-wall.crack:after{content:"";position:absolute;inset:-8px 7% 0;background:linear-gradient(68deg,transparent 47%,#174e72 48% 50%,transparent 51%),linear-gradient(112deg,transparent 49%,#174e72 50% 52%,transparent 53%);filter:drop-shadow(0 0 2px white);animation:flash .6s ease}.crack-flash{position:absolute;inset:0;background:white;opacity:0;pointer-events:none;z-index:18}.crack-flash.on{animation:flash .7s ease}@keyframes flash{0%{opacity:0}20%{opacity:.5}100%{opacity:0}}
+.ice-wall.collapse .cube{animation:collapse .8s cubic-bezier(.3,.65,.6,1) forwards;animation-delay:var(--d)}@keyframes collapse{to{transform:translate(var(--x),55svh) rotate(var(--r));opacity:0}}
+.modal,.overlay{position:absolute;inset:0;display:none;z-index:30;align-items:center;justify-content:center;padding:22px;background:rgba(5,39,72,.45);backdrop-filter:blur(5px)}.modal.on,.overlay.on{display:flex}
+.card{width:min(92%,380px);padding:24px;text-align:center;border:4px solid #2d91ca;border-radius:28px;background:linear-gradient(#f7feff,#c8efff);box-shadow:inset 0 5px white,0 10px 0 #1c75ad,0 20px 40px rgba(0,35,70,.3)}.card h2{margin:4px 0 12px;font-size:clamp(34px,10vw,54px);color:#0c4f8c}.card p{font-weight:800;line-height:1.4}.card .ice-btn{width:100%;margin-top:12px}.character{font-size:66px}.result{font-size:clamp(40px,12vw,62px);font-weight:1000;color:#0b4c87;margin:8px 0}
+.loss-title{display:inline-block;padding:10px 18px;border-radius:15px;background:linear-gradient(#eafaff,#aee9ff);border:3px solid #2a90c9;transform:rotate(-2deg)}
+.hidden-note{font-size:12px;color:#4e7391}
+.paused .word-card{animation-play-state:paused}.paused .snow .flake{animation-play-state:paused}
+@media (max-height:680px){.game-brand{top:58px}.game-brand .logo{font-size:32px}.game-brand .wood{font-size:13px}.mode{top:105px;font-size:13px}.fall-zone{top:18%}.answer{font-size:35px}.start-art{height:33svh}.start .logo{margin-top:1svh}}
+@media (orientation:landscape) and (max-height:540px){.app{width:100%;max-width:none}.game-brand{left:25%;top:7px}.mode{right:15px;top:65px}.fall-zone{left:25%;right:25%;top:12%;bottom:26%}.answer-dock{left:21%;right:21%}.start-art{height:25svh}.start .logo{font-size:42px}.start .wood{font-size:17px}}
+@media (prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}.word-card.fall{animation:none!important;top:43%}}
+</style>
+</head>
+<body>
+<main id="app" class="app" aria-label="Lumesadu sõnamäng">
+  <div class="scene" aria-hidden="true"><div class="aurora"></div><div class="mountain"></div><div class="mountain front"></div><div class="pine a"></div><div class="pine b"></div><div class="pine c"></div><div class="cottage"></div><div class="lantern l1"></div><div class="lantern l2"></div><div class="snowbank left"></div><div class="snowbank right"></div></div>
+  <div id="snow" class="snow" aria-hidden="true"></div>
+
+  <section id="start" class="screen start on">
+    <div class="mark">❄</div><div class="logo">LUMESADU</div><div class="wood">Leia õige pilt</div>
+    <div class="start-art" aria-hidden="true"><span class="bird">🐦</span><span class="snowman">⛄</span></div>
+    <button id="startBtn" class="ice-btn main" type="button">ALUSTA ▶</button>
+    <div class="tools"><button id="startMute" class="icon-btn" type="button" aria-label="Heli">🔊</button><button id="infoBtn" class="icon-btn" type="button" aria-label="Info">ⓘ</button></div>
+    <div class="tiny">EDUKASS · PEIDETUD PROTOTÜÜP</div>
+  </section>
+
+  <section id="game" class="screen game">
+    <header class="hud"><button id="pauseBtn" class="hud-btn" type="button" aria-label="Paus">Ⅱ</button><div id="progress" class="progress wood">1 / 10</div><button id="muteBtn" class="hud-btn" type="button" aria-label="Heli">🔊</button></header>
+    <div class="game-brand"><div class="logo">LUMESADU</div><div class="wood">Leia õige pilt</div></div>
+    <div class="mode">🌿 Rahulik</div>
+    <div id="fallZone" class="fall-zone"><div id="wordCard" class="word-card" role="status" aria-live="polite"><span id="word">KELK</span></div></div>
+    <div id="answerDock" class="answer-dock"><div id="answers" class="answers" aria-label="Vastusevariandid"></div></div>
+    <div id="wall" class="ice-wall" aria-hidden="true"></div><div id="crackFlash" class="crack-flash" aria-hidden="true"></div>
+  </section>
+
+  <section id="success" class="overlay"><div class="card"><div class="character">⛄</div><h2>Tubli!</h2><p>Sinu tulemus</p><div id="result" class="result">10 / 10</div><button id="againBtn" class="ice-btn" type="button">Proovi uuesti</button><button id="homeSuccess" class="ice-btn" type="button">Avalehele</button></div></section>
+  <section id="loss" class="overlay"><div class="card"><div class="character">⛄</div><h2 class="loss-title">Proovi uuesti!</h2><button id="retryBtn" class="ice-btn" type="button">Proovi uuesti</button><button id="homeLoss" class="ice-btn" type="button">Avalehele</button></div></section>
+
+  <section id="pause" class="modal" aria-hidden="true"><div class="card"><h2>Paus</h2><button id="continueBtn" class="ice-btn" type="button">Jätka</button><button id="restartBtn" class="ice-btn" type="button">Alusta uuesti</button><button id="shareBtn" class="ice-btn" type="button">Jaga</button><button id="homePause" class="ice-btn" type="button">Avalehele</button></div></section>
+  <section id="info" class="modal" aria-hidden="true"><div class="card"><h2>LUMESADU</h2><p>Loe sõna ja vali õige pilt. Vale valik muutub korraks punaseks, õige vastus roheliseks. Iga viga kasvatab ühe neljast jääkuubikust koosneva rea.</p><p>Viies viga kasvatab viimase jäärea. Sein praguneb ja mäng lõpeb.</p><p class="hidden-note">See on varajane testiversioon. Pildid on ajutised kohatäited.</p><button id="closeInfo" class="ice-btn" type="button">Selge</button></div></section>
+</main>
+<script src="lumesadu.config.js"></script>
+<script>
+(function(){
+"use strict";
+var cfg=window.LUMESADU_CONFIG;if(!cfg)throw new Error("LUMESADU_CONFIG missing");
+function q(id){return document.getElementById(id)}
+var el={app:q("app"),start:q("start"),game:q("game"),success:q("success"),loss:q("loss"),pause:q("pause"),info:q("info"),snow:q("snow"),progress:q("progress"),word:q("word"),wordCard:q("wordCard"),answers:q("answers"),wall:q("wall"),flash:q("crackFlash"),result:q("result"),startBtn:q("startBtn"),pauseBtn:q("pauseBtn"),muteBtn:q("muteBtn"),startMute:q("startMute"),infoBtn:q("infoBtn"),closeInfo:q("closeInfo"),continueBtn:q("continueBtn"),restartBtn:q("restartBtn"),shareBtn:q("shareBtn"),homePause:q("homePause"),againBtn:q("againBtn"),homeSuccess:q("homeSuccess"),retryBtn:q("retryBtn"),homeLoss:q("homeLoss")};
+var state={queue:[],index:0,errors:0,correct:0,locked:false,muted:false,paused:false,timer:null,started:false};var audioCtx=null;var storage="edukass:lumesadu:v1";
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
+function sleep(ms){return new Promise(function(r){setTimeout(r,ms)})}
+function screen(x){[el.start,el.game,el.success,el.loss].forEach(function(s){s.classList.remove("on")});x.classList.add("on")}
+function audio(){if(state.muted)return null;try{if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==="suspended")audioCtx.resume();return audioCtx}catch(e){return null}}
+function tone(f,d,type,g,delay){var c=audio();if(!c)return;var o=c.createOscillator(),v=c.createGain(),at=c.currentTime+(delay||0);o.type=type||"sine";o.frequency.value=f;v.gain.setValueAtTime(.0001,at);v.gain.exponentialRampToValueAtTime(g||.03,at+.01);v.gain.exponentialRampToValueAtTime(.0001,at+(d||.1));o.connect(v).connect(c.destination);o.start(at);o.stop(at+(d||.1)+.03)}
+function correctSound(){tone(660,.08,"sine",.03,0);tone(880,.11,"sine",.03,.07)}
+function wrongSound(){tone(180,.12,"triangle",.028,0);tone(135,.15,"triangle",.022,.07)}
+function iceSound(){tone(300,.07,"square",.018,0);tone(245,.1,"triangle",.022,.04)}
+function crackSound(){[95,128,171,215].forEach(function(f,i){tone(f,.25,"sawtooth",.035,i*.045)});tone(58,.5,"triangle",.045,.12)}
+function setMuted(v){state.muted=!!v;var g=state.muted?"🔇":"🔊";el.muteBtn.textContent=g;el.startMute.textContent=g;try{localStorage.setItem(storage,JSON.stringify({muted:state.muted}))}catch(e){}}
+function snow(){for(var i=0;i<30;i++){var s=document.createElement("span");s.className="flake";s.textContent=i%3===0?"❄":"•";s.style.left=(Math.random()*100)+"%";s.style.fontSize=(8+Math.random()*15)+"px";s.style.animationDuration=(7+Math.random()*10)+"s";s.style.animationDelay=(-Math.random()*14)+"s";s.style.setProperty("--drift",(-35+Math.random()*70)+"px");el.snow.appendChild(s)}}
+function load(){try{var p=JSON.parse(localStorage.getItem(storage)||"{}");setMuted(!!p.muted)}catch(e){setMuted(false)}}
+function setOffset(){document.documentElement.style.setProperty("--wall-offset","calc("+state.errors+" * var(--row))")}
+function current(){return state.queue[state.index]}
+function reset(){clearTimeout(state.timer);state.queue=shuffle(cfg.items).slice(0,cfg.questionCount);state.index=0;state.errors=0;state.correct=0;state.locked=false;state.paused=false;state.started=true;el.wall.innerHTML="";el.wall.className="ice-wall";el.game.classList.remove("rumble","paused");setOffset();screen(el.game);render()}
+function choices(item){return shuffle([item].concat(shuffle(cfg.items.filter(function(x){return x.id!==item.id})).slice(0,3)))}
+function disable(){el.answers.querySelectorAll("button").forEach(function(b){b.disabled=true})}
+function goodButton(id){return el.answers.querySelector('[data-id="'+id+'"]')}
+function fall(){clearTimeout(state.timer);el.wordCard.classList.remove("fall");void el.wordCard.offsetWidth;el.wordCard.style.setProperty("--fall-ms",cfg.fallDurationMs+"ms");el.wordCard.classList.add("fall");state.timer=setTimeout(timeout,cfg.fallDurationMs)}
+function stop(){clearTimeout(state.timer);el.wordCard.classList.remove("fall")}
+function render(){clearTimeout(state.timer);state.locked=false;if(state.index>=state.queue.length){win();return}var item=current();el.progress.textContent=(state.index+1)+" / "+state.queue.length;el.word.textContent=item.word.toUpperCase();el.answers.innerHTML="";choices(item).forEach(function(ch){var b=document.createElement("button");b.className="answer";b.type="button";b.dataset.id=ch.id;b.setAttribute("aria-label",ch.alt);b.innerHTML='<span aria-hidden="true">'+ch.icon+"</span>";b.addEventListener("click",function(){answer(b,ch.id)});el.answers.appendChild(b)});fall()}
+async function answer(btn,id){if(state.locked||state.paused)return;state.locked=true;stop();disable();var item=current();if(id===item.id){btn.classList.add("correct");correctSound();state.correct++;await sleep(cfg.feedback.correctMs);next();return}btn.classList.add("wrong");wrongSound();await sleep(cfg.feedback.wrongMs);var g=goodButton(item.id);if(g)g.classList.add("correct");await sleep(cfg.feedback.correctAfterWrongMs);await error()}
+async function timeout(){if(state.locked||state.paused)return;state.locked=true;disable();var g=goodButton(current().id);if(g)g.classList.add("correct");wrongSound();await sleep(cfg.feedback.correctAfterWrongMs);await error()}
+function addIce(){var row=document.createElement("div");row.className="ice-row";for(var i=0;i<cfg.iceCubesPerRow;i++){var c=document.createElement("div");c.className="cube";row.appendChild(c)}el.wall.appendChild(row)}
+async function error(){state.errors++;addIce();setOffset();iceSound();await sleep(cfg.feedback.iceGrowMs);if(state.errors>=cfg.maxErrors){await defeat();return}next()}
+function next(){state.index++;setTimeout(render,cfg.feedback.betweenQuestionsMs)}
+async function defeat(){el.game.classList.add("rumble");await sleep(300);el.wall.classList.add("crack");el.flash.classList.add("on");crackSound();await sleep(850);el.wall.classList.remove("crack");el.wall.classList.add("collapse");Array.prototype.forEach.call(el.wall.querySelectorAll(".cube"),function(c,i){c.style.setProperty("--d",((i%5)*30)+"ms");c.style.setProperty("--x",(-90+Math.random()*180)+"px");c.style.setProperty("--r",(-80+Math.random()*160)+"deg")});await sleep(900);el.game.classList.remove("rumble");screen(el.loss)}
+function win(){stop();el.result.textContent=state.correct+" / "+state.queue.length;screen(el.success)}
+function home(){clearTimeout(state.timer);state.started=false;state.paused=false;el.pause.classList.remove("on");el.pause.setAttribute("aria-hidden","true");screen(el.start)}
+function openPause(){if(!state.started||state.locked)return;state.paused=true;clearTimeout(state.timer);el.game.classList.add("paused");el.pause.classList.add("on");el.pause.setAttribute("aria-hidden","false")}
+function closePause(){state.paused=false;el.game.classList.remove("paused");el.pause.classList.remove("on");el.pause.setAttribute("aria-hidden","true");fall()}
+async function share(){try{var d={title:"LUMESADU",text:"LUMESADU — EDUKASS",url:location.href};if(navigator.share)await navigator.share(d);else if(navigator.clipboard){await navigator.clipboard.writeText(location.href);var old=el.shareBtn.textContent;el.shareBtn.textContent="Link kopeeritud";setTimeout(function(){el.shareBtn.textContent=old},1200)}}catch(e){}}
+el.startBtn.onclick=reset;el.againBtn.onclick=reset;el.retryBtn.onclick=reset;el.restartBtn.onclick=reset;el.pauseBtn.onclick=openPause;el.continueBtn.onclick=closePause;el.shareBtn.onclick=share;[el.homePause,el.homeSuccess,el.homeLoss].forEach(function(b){b.onclick=home});el.muteBtn.onclick=function(){setMuted(!state.muted)};el.startMute.onclick=function(){setMuted(!state.muted)};el.infoBtn.onclick=function(){el.info.classList.add("on");el.info.setAttribute("aria-hidden","false")};el.closeInfo.onclick=function(){el.info.classList.remove("on");el.info.setAttribute("aria-hidden","true")};
+document.addEventListener("keydown",function(e){if(e.key==="Escape"&&el.pause.classList.contains("on"))closePause()});
+snow();load();
+})();
+</script>
+</body>
+</html>
