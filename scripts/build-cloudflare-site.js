@@ -32,6 +32,8 @@ const extraFiles = [
   'games/liitmine/index.html',
   'games/liitmine/manifest.webmanifest',
   'games/liitmine/service-worker.js',
+  'games/lumesadu/index.html',
+  'games/lumesadu/lumesadu.config.js',
   'games/minu-suvi/index.html',
   'games/septembri-sonamang/index.html',
   'games/septembri-sonamang/cards.webp'
