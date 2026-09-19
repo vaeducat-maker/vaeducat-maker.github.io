@@ -17,9 +17,7 @@
     .timetable-hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:34px;align-items:center}
     .timetable-hero h1{font-size:clamp(2.5rem,5.4vw,4.8rem);margin:10px 0 18px}
     .timetable-hero p{max-width:700px;color:#566a77;font-size:1.08rem}
-    .timetable-hero-preview{padding:14px;border-radius:28px;background:#fff;border:1px solid #dce7eb;box-shadow:0 18px 40px rgba(23,54,95,.11)}
-    .timetable-hero-preview img{display:block;width:100%;height:auto;border-radius:18px}
-    .mini-sheet{aspect-ratio:210/297;border-radius:12px;position:relative;overflow:hidden;border:1px solid rgba(23,54,95,.12);background:#fff;box-shadow:0 7px 15px rgba(23,54,95,.08)}
+.mini-sheet{aspect-ratio:210/297;border-radius:12px;position:relative;overflow:hidden;border:1px solid rgba(23,54,95,.12);background:#fff;box-shadow:0 7px 15px rgba(23,54,95,.08)}
     .mini-sheet:before{content:"";position:absolute;inset:0 0 auto;height:30%;background:linear-gradient(135deg,var(--a),var(--b))}
     .mini-sheet:after{content:"";position:absolute;left:10%;right:10%;top:36%;bottom:10%;background:repeating-linear-gradient(to bottom,transparent 0 8px,#c7d8e6 8px 9px);opacity:.9}
     .mini-sheet:nth-child(1){--a:#ff8bc2;--b:#66d6f0}.mini-sheet:nth-child(2){--a:#4ac5f1;--b:#5ed08a}
@@ -44,9 +42,13 @@
     .mock-visual:before{content:"10 KUJUNDUST";position:absolute;inset:0 0 auto;height:27%;display:grid;place-items:center;background:linear-gradient(135deg,#ffc0dd,#7edff2);color:#18395f;font-weight:950;letter-spacing:.06em}
     .mock-visual:after{content:"";position:absolute;left:8%;right:8%;top:34%;bottom:8%;background:repeating-linear-gradient(to bottom,transparent 0 11px,#c7d8e6 11px 12px)}
     .publish-note{margin-top:18px;padding:14px 16px;border-radius:14px;background:#eef8f6;color:#28675e;border:1px solid #cfe9e3}
-    @media(max-width:860px){.timetable-hero-grid,.material-story-grid{grid-template-columns:1fr}.timetable-hero-preview{max-width:760px}}
-    @media(max-width:560px){.timetable-hero-preview{padding:8px}.timetable-hero{padding-top:34px}.material-story,.uus-demo{padding:42px 0}}
+    @media(max-width:860px){.timetable-hero-grid,.material-story-grid{grid-template-columns:1fr}
+}
+    @media(max-width:560px){
+.timetable-hero{padding-top:34px}.material-story,.uus-demo{padding:42px 0}}
   </style>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script defer src="/assets/timetable-preview.js?v=1"></script>
 </head>
 <body>
 <header class="site-header">
@@ -72,7 +74,7 @@
         <h1>Minu tunniplaanid – 10 kujundust</h1>
         <p>Üks väike detail lapse kirjutuslaua kõrval võib muuta koolinädala selgemaks, õppimisnurga rõõmsamaks ja igapäevase planeerimise natuke mõnusamaks.</p>
       </div>
-      <div class="timetable-hero-preview"><img src="../../assets/tunniplaanid-10-preview.jpg" alt="Kümme erineva kujundusega värvilist tunniplaani"></div>
+      <div class="timetable-pdf-preview timetable-preview-large" data-timetable-pdf-preview data-pages="1,2,3,4,5,6,7,8,9,10"></div>
     </div>
   </section>
 
