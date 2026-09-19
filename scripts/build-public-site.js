@@ -28,7 +28,7 @@ const publicFiles = [
   'assets/minu-tunniplaan.png',
   'assets/mis-on-koolikotis-edukass.png',
   'assets/pildidetektiiv-preview.png',
-  'assets/ristsonad-sugis-preview.png',
+  'assets/ristsonad-sugis-preview.png',\n  'assets/tunniplaanid-10-preview.jpg',
   'assets/umbermoot-pindala.png',
 
   'data/catalog.json',
