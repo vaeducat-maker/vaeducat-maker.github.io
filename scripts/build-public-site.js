@@ -42,6 +42,8 @@ const publicFiles = [
   'downloads/minu-tunniplaan.pdf',
   'downloads/pildidetektiiv-kes-siin-tootab.pdf',
   'downloads/ristsonad-sugis.pdf',
+  'downloads/tunniplaanid-10-saastlik-print.pdf',
+  'downloads/tunniplaanid-10-varviline.pdf',
   'downloads/umbermoot-pindala-A4-4-kaarti.pdf',
   'downloads/umbermoot-pindala-A7.pdf',
 
