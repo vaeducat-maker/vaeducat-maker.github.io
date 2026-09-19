@@ -1747,66 +1747,87 @@ button:focus-visible { outline: 3px solid #6549a6; outline-offset: 4px; }
 }
 
 
-/* Tunniplaanid: 10 kujundust preview */
-.timetable-preview-art{
+
+/* Tunniplaanid: real previews rendered from the published PDF. */
+.timetable-pdf-preview{
   display:grid;
   grid-template-columns:repeat(5,minmax(0,1fr));
-  gap:8px;
+  gap:10px;
+  align-items:start;
   width:100%;
-  aspect-ratio:16/10;
-  padding:18px;
-  overflow:hidden;
-  border-bottom:1px solid var(--line);
-  background:linear-gradient(145deg,#f5fbff,#fff7e8);
 }
-.timetable-mini-sheet{
-  position:relative;
+.timetable-pdf-sheet{
+  display:block;
   overflow:hidden;
-  border:1px solid rgba(23,54,95,.13);
-  border-radius:9px;
+  border-radius:12px;
   background:#fff;
-  box-shadow:0 6px 12px rgba(23,54,95,.08);
+  border:1px solid #d7e3e9;
+  box-shadow:0 9px 18px rgba(23,54,95,.10);
 }
-.timetable-mini-sheet::before{
-  content:"";
-  position:absolute;
-  inset:0 0 auto;
-  height:31%;
-  background:linear-gradient(135deg,var(--a),var(--b));
+.timetable-pdf-sheet canvas{
+  display:block;
+  width:100%!important;
+  height:auto!important;
+  background:#fff;
 }
-.timetable-mini-sheet::after{
-  content:"";
-  position:absolute;
-  left:10%;right:10%;top:38%;bottom:9%;
-  background:repeating-linear-gradient(to bottom,transparent 0 6px,#c8d9e7 6px 7px);
+.timetable-preview-large{
+  padding:16px;
+  border-radius:28px;
+  background:#fff;
+  border:1px solid #dce7eb;
+  box-shadow:0 18px 40px rgba(23,54,95,.11);
 }
-.timetable-mini-sheet:nth-child(1){--a:#ff91c8;--b:#69d9f3}
-.timetable-mini-sheet:nth-child(2){--a:#50c6f4;--b:#65d38c}
-.timetable-mini-sheet:nth-child(3){--a:#f192c7;--b:#b99cf5}
-.timetable-mini-sheet:nth-child(4){--a:#3ca8ff;--b:#65e8bc}
-.timetable-mini-sheet:nth-child(5){--a:#ffbadb;--b:#d9b5ff}
-.timetable-mini-sheet:nth-child(6){--a:#ffb65d;--b:#80dca9}
-.timetable-mini-sheet:nth-child(7){--a:#f8a9ba;--b:#9dcea0}
-.timetable-mini-sheet:nth-child(8){--a:#75caff;--b:#a9e86b}
-.timetable-mini-sheet:nth-child(9){--a:#f6b4dc;--b:#c3b5f3}
-.timetable-mini-sheet:nth-child(10){--a:#28d2ef;--b:#aaff45}
-.home-new-card.home-new-timetables{
-  grid-column:1/-1;
-  grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);
-}
-.home-timetable-visual{
-  padding:18px;
+.timetable-preview-compact{
+  padding:16px;
+  border-radius:22px;
   background:linear-gradient(145deg,#eef8ff,#fff6dc);
 }
-.home-timetable-visual .timetable-preview-art{
-  max-width:520px;
-  aspect-ratio:16/10;
-  border:1px solid #dce7eb;
-  border-radius:20px;
-  box-shadow:0 14px 26px rgba(23,54,95,.12);
+.timetable-preview-card{
+  min-height:100%;
+  padding:18px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(145deg,#eef8ff,#fff6dc);
+}
+.timetable-preview-card .timetable-pdf-preview{
+  max-width:620px;
+}
+.timetable-preview-card .timetable-pdf-sheet:nth-child(n+6){
+  display:none;
+}
+.timetable-preview-catalog{
+  padding:12px;
+  background:linear-gradient(145deg,#eef8ff,#fff7df);
+  border-bottom:1px solid var(--line);
+}
+.timetable-preview-catalog .timetable-pdf-preview{
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:6px;
+}
+.timetable-preview-fallback{
+  min-height:240px;
+  display:grid;
+  place-items:center;
+}
+.timetable-preview-fallback::after{
+  content:"10 kujundust · vaata materjali";
+  color:#17365f;
+  font-weight:900;
+  text-align:center;
+}
+.home-new-card.home-new-timetables{
+  grid-column:1/-1;
+  grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);
 }
 @media(max-width:860px){
   .home-new-card.home-new-timetables{grid-template-columns:1fr}
-  .timetable-preview-art{gap:5px;padding:12px}
-  .timetable-mini-sheet{border-radius:6px}
+  .timetable-pdf-preview{grid-template-columns:repeat(5,minmax(0,1fr));gap:7px}
+}
+@media(max-width:560px){
+  .timetable-preview-large{padding:9px}
+  .timetable-pdf-preview{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .timetable-preview-card .timetable-pdf-sheet:nth-child(n+5){display:none}
+  .timetable-preview-catalog .timetable-pdf-preview{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .timetable-preview-catalog .timetable-pdf-sheet:nth-child(n+4){display:none}
 }
