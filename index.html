@@ -23,6 +23,8 @@
     ml('account', '2627142');
   </script>
   <!-- End MailerLite Universal -->
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script defer src="/assets/timetable-preview.js?v=1"></script>
 </head>
 <body class="home-page">
 <header class="site-header">
@@ -81,7 +83,9 @@
 
       <div class="home-new-grid">
         <article class="home-new-card home-new-timetables">
-          <div class="home-new-card-visual home-timetable-visual"><img src="assets/tunniplaanid-10-preview.jpg" alt="Kümne erineva tunniplaani eelvaade"></div>
+          <div class="timetable-preview-card">
+            <div class="timetable-pdf-preview timetable-preview-compact" data-timetable-pdf-preview data-pages="1,2,3,4,5"></div>
+          </div>
           <div class="home-new-card-copy">
             <div class="home-card-meta">KORRALDUS JA PLANEERIMINE · TASUTA</div>
             <h3>Minu tunniplaanid – 10 kujundust</h3>
