@@ -1,5 +1,5 @@
-/materials/riimid-preview/files/EDUKASS_Riimikaardid_18_kaarti_A4.pdf
-  Content-Disposition: attachment; filename="EDUKASS_Riimikaardid_18_kaarti_A4.pdf"
+/materials/riimid-preview/files/*.pdf
+  Content-Disposition: attachment
   Content-Type: application/pdf
 
 /downloads/*.pdf
