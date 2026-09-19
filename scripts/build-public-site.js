@@ -29,7 +29,7 @@ const publicFiles = [
   'assets/mis-on-koolikotis-edukass.png',
   'assets/pildidetektiiv-preview.png',
   'assets/ristsonad-sugis-preview.png',
-  'assets/tunniplaanid-10-preview.jpg',
+  'assets/timetable-preview.js',
   'assets/umbermoot-pindala.png',
 
   'data/catalog.json',
