@@ -106,7 +106,9 @@
       <a class="home-text-link" href="games/minu-suvi/">Mängi kohe <span aria-hidden="true">→</span></a>
     </div>`;
 
-  grid.prepend(card);
+  const oldGame = grid.querySelector('.home-new-game');
+  if (oldGame) oldGame.insertAdjacentElement('beforebegin', card);
+  else grid.append(card);
 })();
 
 (() => {
@@ -127,7 +129,22 @@
       <a class="home-text-link" href="materials/hommikulood/">Vaata materjali <span aria-hidden="true">→</span></a>
     </div>`;
 
-  grid.prepend(card);
+  const newest = grid.querySelector('.home-new-timetables');
+  if (newest) newest.insertAdjacentElement('afterend', card);
+  else grid.prepend(card);
+})();
+
+/*
+ * UUS!!! rule:
+ * - newest item is always inserted at the beginning of .home-new-grid;
+ * - only five cards are shown;
+ * - when a sixth card appears, the oldest card at the bottom drops out automatically.
+ */
+(() => {
+  const grid = document.querySelector('.home-new-grid');
+  if (!grid) return;
+  const cards = [...grid.querySelectorAll(':scope > .home-new-card')];
+  cards.slice(5).forEach(card => card.remove());
 })();
 
 (() => {
