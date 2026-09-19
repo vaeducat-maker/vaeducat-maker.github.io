@@ -128,6 +128,7 @@ const publicFiles = [
   'materials/tanased-ulesanded/index.html',
   'materials/tunniplaan/index.html',
   'materials/tunniplaanid-10/index.html',
+  'materials/tunniplaanid-preview-1909/index.html',
   'materials/umbermoot-pindala/index.html',
 
   'metsloomad/index.html',
