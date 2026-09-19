@@ -127,6 +127,7 @@ const publicFiles = [
   'materials/ristsonad-sugis/online/index.html',
   'materials/tanased-ulesanded/index.html',
   'materials/tunniplaan/index.html',
+  'materials/tunniplaanid-10/index.html',
   'materials/umbermoot-pindala/index.html',
 
   'metsloomad/index.html',
