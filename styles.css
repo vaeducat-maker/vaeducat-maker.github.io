@@ -1745,3 +1745,68 @@ button:focus-visible { outline: 3px solid #6549a6; outline-offset: 4px; }
   .home-metsloomad-visual .metsloomad-preview-art { min-height: 240px; }
   .metsloomad-catalog-art { min-height: 0; }
 }
+
+
+/* Tunniplaanid: 10 kujundust preview */
+.timetable-preview-art{
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:8px;
+  width:100%;
+  aspect-ratio:16/10;
+  padding:18px;
+  overflow:hidden;
+  border-bottom:1px solid var(--line);
+  background:linear-gradient(145deg,#f5fbff,#fff7e8);
+}
+.timetable-mini-sheet{
+  position:relative;
+  overflow:hidden;
+  border:1px solid rgba(23,54,95,.13);
+  border-radius:9px;
+  background:#fff;
+  box-shadow:0 6px 12px rgba(23,54,95,.08);
+}
+.timetable-mini-sheet::before{
+  content:"";
+  position:absolute;
+  inset:0 0 auto;
+  height:31%;
+  background:linear-gradient(135deg,var(--a),var(--b));
+}
+.timetable-mini-sheet::after{
+  content:"";
+  position:absolute;
+  left:10%;right:10%;top:38%;bottom:9%;
+  background:repeating-linear-gradient(to bottom,transparent 0 6px,#c8d9e7 6px 7px);
+}
+.timetable-mini-sheet:nth-child(1){--a:#ff91c8;--b:#69d9f3}
+.timetable-mini-sheet:nth-child(2){--a:#50c6f4;--b:#65d38c}
+.timetable-mini-sheet:nth-child(3){--a:#f192c7;--b:#b99cf5}
+.timetable-mini-sheet:nth-child(4){--a:#3ca8ff;--b:#65e8bc}
+.timetable-mini-sheet:nth-child(5){--a:#ffbadb;--b:#d9b5ff}
+.timetable-mini-sheet:nth-child(6){--a:#ffb65d;--b:#80dca9}
+.timetable-mini-sheet:nth-child(7){--a:#f8a9ba;--b:#9dcea0}
+.timetable-mini-sheet:nth-child(8){--a:#75caff;--b:#a9e86b}
+.timetable-mini-sheet:nth-child(9){--a:#f6b4dc;--b:#c3b5f3}
+.timetable-mini-sheet:nth-child(10){--a:#28d2ef;--b:#aaff45}
+.home-new-card.home-new-timetables{
+  grid-column:1/-1;
+  grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);
+}
+.home-timetable-visual{
+  padding:18px;
+  background:linear-gradient(145deg,#eef8ff,#fff6dc);
+}
+.home-timetable-visual .timetable-preview-art{
+  max-width:520px;
+  aspect-ratio:16/10;
+  border:1px solid #dce7eb;
+  border-radius:20px;
+  box-shadow:0 14px 26px rgba(23,54,95,.12);
+}
+@media(max-width:860px){
+  .home-new-card.home-new-timetables{grid-template-columns:1fr}
+  .timetable-preview-art{gap:5px;padding:12px}
+  .timetable-mini-sheet{border-radius:6px}
+}
