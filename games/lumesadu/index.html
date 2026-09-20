@@ -449,80 +449,308 @@ button{font:inherit;-webkit-tap-highlight-color:transparent}
   .word-card.fall{animation:none!important;top:45%}
 }
 </style>
+<style id="lumesadu-sprint1-polish">
+.scene{background:#8acff7}
+.master-scene{width:100%;height:100%;display:block;filter:saturate(1.08) contrast(1.025)}
+.logo-wrap{
+  min-width:min(76vw,360px);
+  padding:8px 24px 12px;
+  border-radius:26px;
+  background:linear-gradient(180deg,#80dcfb 0%,#54bee9 52%,#2a95d0 100%);
+  border:4px solid #176da8;
+  box-shadow:
+    inset 0 5px 0 rgba(255,255,255,.78),
+    inset 0 -9px 0 rgba(9,86,147,.19),
+    0 6px 0 #145d97,
+    0 11px 19px rgba(10,67,112,.26);
+}
+.logo-wrap:before{
+  left:-4px;right:-4px;top:-12px;height:30px;
+  background:
+    radial-gradient(circle at 6% 75%,#fff 0 13px,transparent 14px),
+    radial-gradient(circle at 22% 52%,#fff 0 19px,transparent 20px),
+    radial-gradient(circle at 43% 69%,#fff 0 20px,transparent 21px),
+    radial-gradient(circle at 64% 49%,#fff 0 20px,transparent 21px),
+    radial-gradient(circle at 84% 68%,#fff 0 18px,transparent 19px),
+    radial-gradient(circle at 98% 77%,#fff 0 12px,transparent 13px);
+  filter:drop-shadow(0 3px 0 rgba(53,151,209,.42));
+}
+.logo{
+  font-family:"Arial Black","Trebuchet MS",system-ui,sans-serif;
+  font-size:clamp(39px,10.4vw,56px);
+  letter-spacing:-.025em;
+  transform:scaleX(1.03);
+  background:linear-gradient(180deg,#ffffff 0%,#ebfbff 45%,#b9ebfb 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  -webkit-text-stroke:2px #277eaf;
+  text-shadow:
+    0 2px 0 #6cc8eb,
+    0 5px 0 #237dad,
+    0 8px 0 #155d90,
+    0 12px 16px rgba(12,70,112,.25);
+}
+.logo-flake{
+  top:-39px;font-size:42px;color:#bff6ff;
+  text-shadow:0 2px 0 #3aa9d6,0 0 12px #fff;
+}
+.game-brand{top:calc(max(14px,env(safe-area-inset-top)) + 50px);width:84%}
+.game-brand .logo-wrap{min-width:min(72vw,340px)}
+.subtitle{
+  margin-top:8px;min-height:40px;padding:5px 24px;
+  font-size:clamp(18px,4.7vw,24px);
+  border-radius:11px;
+  background:
+    repeating-linear-gradient(1deg,transparent 0 8px,rgba(100,54,31,.08) 9px 10px),
+    linear-gradient(#ebb681,#c67f48);
+  box-shadow:inset 0 3px #f8d4aa,0 4px 0 #754027,0 8px 14px rgba(57,33,18,.16);
+}
+.hud{top:max(12px,env(safe-area-inset-top));left:14px;right:14px}
+.pause-master{
+  width:51px;height:51px;border-radius:18px;
+  background:linear-gradient(180deg,#c09bf5 0%,#9a6fe4 52%,#7047ca 100%);
+  box-shadow:inset 0 4px rgba(255,255,255,.7),inset 0 -5px rgba(74,44,146,.13),0 4px 0 #50329c,0 8px 13px rgba(43,27,108,.24);
+  font-size:26px;
+}
+.star-board{
+  width:92px;height:48px;border-radius:12px;font-size:22px;
+  background:
+    repeating-linear-gradient(1deg,transparent 0 8px,rgba(100,54,31,.08) 9px 10px),
+    linear-gradient(#d8995e,#ad683a);
+}
+.star-shape{
+  width:34px;height:34px;display:block;
+  background:linear-gradient(#fff68b 0%,#ffd84e 44%,#f3ac1f 100%);
+  clip-path:polygon(50% 0,61% 35%,98% 35%,68% 56%,79% 93%,50% 71%,21% 93%,32% 56%,2% 35%,39% 35%);
+  filter:drop-shadow(0 2px 0 #b7681c) drop-shadow(0 0 4px #fff6b5);
+}
+.progress-board{
+  top:calc(max(12px,env(safe-area-inset-top)) + 151px);
+  min-width:111px;min-height:47px;padding:5px 16px;
+  font-size:clamp(20px,5.4vw,27px);
+}
+.mode-pill{
+  top:calc(max(12px,env(safe-area-inset-top)) + 151px);
+  min-width:138px;height:50px;border-radius:19px;
+  background:linear-gradient(#ecfffd 0%,#b9f5f0 47%,#8de4e3 100%);
+  box-shadow:inset 0 4px white,inset 0 -5px rgba(36,157,176,.12),0 4px 0 #319eb7,0 8px 14px rgba(32,124,157,.18);
+  font-size:clamp(16px,4.4vw,21px);
+}
+.mode-pill .leaf{width:35px;height:24px;display:block;filter:drop-shadow(0 2px 0 rgba(0,100,60,.15))}
+.mode-pill .leaf svg{width:100%;height:100%;display:block}
+
+.wood{
+  background:
+    radial-gradient(circle at 14% 34%,rgba(92,46,25,.12) 0 2px,transparent 3px),
+    radial-gradient(circle at 78% 62%,rgba(92,46,25,.09) 0 2px,transparent 3px),
+    repeating-linear-gradient(1deg,transparent 0 8px,rgba(111,61,33,.08) 9px 10px),
+    linear-gradient(#e7ae73,#c57c44);
+}
+.light-beam{
+  top:26.5%;width:27%;height:39%;
+  background:linear-gradient(90deg,transparent,rgba(201,246,255,.22),rgba(255,255,255,.36),rgba(201,246,255,.22),transparent);
+  filter:blur(1.2px);
+}
+.fall-zone{top:31%;left:17%;right:17%;bottom:calc(30% + var(--wall-offset))}
+.word-card{
+  width:clamp(146px,39vw,194px);
+  font-size:clamp(25px,7vw,36px);
+  letter-spacing:-.01em;
+  text-shadow:0 2px 0 rgba(255,255,255,.9);
+  filter:drop-shadow(0 10px 14px rgba(25,110,162,.22));
+}
+.word-card:before{
+  clip-path:polygon(50% 0,61% 9%,75% 7%,86% 18%,91% 32%,100% 43%,95% 57%,99% 70%,88% 82%,75% 88%,63% 98%,50% 94%,37% 99%,25% 89%,11% 84%,5% 70%,8% 57%,0 44%,9% 31%,12% 18%,26% 8%,39% 10%);
+  background:
+    radial-gradient(circle at 50% 35%,rgba(255,255,255,1) 0 11%,rgba(239,253,255,.98) 36%,rgba(202,241,253,.98) 70%,rgba(161,222,246,.98) 100%);
+  box-shadow:
+    inset 0 0 0 7px rgba(255,255,255,.52),
+    inset 0 -14px 22px rgba(38,157,210,.08);
+}
+.word-ring{
+  inset:3px;
+  clip-path:polygon(50% 0,61% 9%,75% 7%,86% 18%,91% 32%,100% 43%,95% 57%,99% 70%,88% 82%,75% 88%,63% 98%,50% 94%,37% 99%,25% 89%,11% 84%,5% 70%,8% 57%,0 44%,9% 31%,12% 18%,26% 8%,39% 10%);
+  background:linear-gradient(#66caf0,#278ec6);
+}
+.word-card:after{font-size:24px;top:14%;color:rgba(63,165,213,.16)}
+.word-card.long-word{font-size:clamp(20px,5.4vw,28px);letter-spacing:-.025em}
+.word-card.very-long{font-size:clamp(18px,4.9vw,25px);letter-spacing:-.035em}
+.bird{left:8%;top:36%;width:58px;height:50px}
+.decor-sign{opacity:.92}
+.sign-left{bottom:28.5%}
+.sign-right{bottom:29.2%}
+@media (max-height:710px){
+  .game-brand{top:42px}
+  .game-brand .logo-wrap{min-width:min(68vw,315px)}
+  .logo{font-size:33px}
+  .logo-flake{font-size:31px;top:-30px}
+  .subtitle{font-size:14px;min-height:31px}
+  .progress-board{top:116px}
+  .mode-pill{top:116px;height:46px}
+  .fall-zone{top:28%;bottom:calc(28% + var(--wall-offset))}
+}
+</style>
 </head>
 <body>
 <main id="app" class="app" aria-label="Lumesadu sõnamäng">
   <div class="scene" aria-hidden="true">
-    <svg viewBox="0 0 520 920" preserveAspectRatio="xMidYMid slice" role="img" aria-label="">
+    <svg class="master-scene" viewBox="0 0 520 920" preserveAspectRatio="xMidYMid slice">
       <defs>
-        <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#79c6fa"/><stop offset=".6" stop-color="#dff6ff"/><stop offset="1" stop-color="#8fd9f6"/></linearGradient>
-        <linearGradient id="water" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#eaffff"/><stop offset=".32" stop-color="#b9efff"/><stop offset="1" stop-color="#43b8e8"/></linearGradient>
-        <linearGradient id="trunk" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#5e3a2b"/><stop offset=".5" stop-color="#946143"/><stop offset="1" stop-color="#503326"/></linearGradient>
-        <linearGradient id="cabin" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#87503a"/><stop offset="1" stop-color="#573528"/></linearGradient>
-        <filter id="soft"><feGaussianBlur stdDeviation="2"/></filter>
-        <filter id="glow"><feGaussianBlur stdDeviation="6"/></filter>
+        <linearGradient id="mSky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#6dbdf2"/>
+          <stop offset=".43" stop-color="#bfe8ff"/>
+          <stop offset=".75" stop-color="#dff5ff"/>
+          <stop offset="1" stop-color="#86cdea"/>
+        </linearGradient>
+        <linearGradient id="mWater" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#efffff"/>
+          <stop offset=".28" stop-color="#b9efff"/>
+          <stop offset=".68" stop-color="#69cfee"/>
+          <stop offset="1" stop-color="#2ba9d8"/>
+        </linearGradient>
+        <linearGradient id="mTrunk" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="#4d3026"/>
+          <stop offset=".38" stop-color="#835440"/>
+          <stop offset=".65" stop-color="#9a6a4d"/>
+          <stop offset="1" stop-color="#4c3026"/>
+        </linearGradient>
+        <linearGradient id="mCabin" x1="0" y1="0" x2="1" y2="1">
+          <stop stop-color="#986044"/>
+          <stop offset="1" stop-color="#57352d"/>
+        </linearGradient>
+        <linearGradient id="mFir" x1="0" y1="0" x2="1" y2="1">
+          <stop stop-color="#246c79"/>
+          <stop offset="1" stop-color="#0e5266"/>
+        </linearGradient>
+        <radialGradient id="mGlow">
+          <stop stop-color="#fff9d8" stop-opacity=".95"/>
+          <stop offset=".28" stop-color="#ffd76a" stop-opacity=".64"/>
+          <stop offset="1" stop-color="#ffd76a" stop-opacity="0"/>
+        </radialGradient>
+        <filter id="mBlurFar"><feGaussianBlur stdDeviation="5"/></filter>
+        <filter id="mBlurMist"><feGaussianBlur stdDeviation="11"/></filter>
+        <filter id="mSoftShadow" x="-40%" y="-40%" width="180%" height="180%">
+          <feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#16597f" flood-opacity=".20"/>
+        </filter>
       </defs>
-      <rect width="520" height="920" fill="url(#sky)"/>
-      <circle cx="410" cy="210" r="56" fill="#fff1c7" opacity=".32" filter="url(#soft)"/>
-      <path d="M0 455 L70 330 126 405 193 286 254 391 321 300 389 397 451 315 520 420 520 600 0 600Z" fill="#8bb9d8" opacity=".55"/>
-      <path d="M0 500 L68 420 126 460 202 363 264 455 332 380 396 457 466 382 520 442 520 610 0 610Z" fill="#6d9fc4" opacity=".56"/>
-      <g opacity=".72" fill="#2d7b89">
-        <path d="M35 522 l29-98 29 98h-17l24 61H25l24-61z"/>
-        <path d="M135 510 l27-88 27 88h-16l22 55h-70l22-55z"/>
-        <path d="M354 518 l29-94 29 94h-17l23 60h-70l23-60z"/>
-        <path d="M452 516 l27-88 27 88h-16l22 55h-70l22-55z"/>
+
+      <rect width="520" height="920" fill="url(#mSky)"/>
+      <ellipse cx="397" cy="178" rx="125" ry="94" fill="url(#mGlow)" opacity=".28"/>
+
+      <!-- far atmospheric mountains -->
+      <g filter="url(#mBlurFar)" opacity=".42">
+        <path d="M-40 485L55 347l58 89 78-152 80 145 77-128 77 118 71-101 67 116v170H-40Z" fill="#6597bd"/>
+        <path d="M-35 535L70 419l67 85 73-112 71 96 79-106 75 109 84-83 64 87v125H-35Z" fill="#5c8dac"/>
+      </g>
+      <ellipse cx="260" cy="475" rx="265" ry="98" fill="#f3fbff" opacity=".20" filter="url(#mBlurMist)"/>
+
+      <!-- far pine forest -->
+      <g opacity=".42" fill="#347d8c">
+        <path d="M20 560l30-104 30 104H66l22 52H12l22-52z"/>
+        <path d="M89 548l28-94 28 94h-14l21 50H82l21-50z"/>
+        <path d="M155 555l31-108 31 108h-15l24 56h-79l23-56z"/>
+        <path d="M320 552l30-103 30 103h-15l23 54h-76l23-54z"/>
+        <path d="M385 556l33-112 33 112h-16l24 57h-82l24-57z"/>
+        <path d="M455 550l29-98 29 98h-15l22 52h-73l22-52z"/>
       </g>
 
-      <path d="M238 405 C230 490 225 548 215 616 C211 659 226 699 260 704 C294 699 309 659 305 616 C295 548 290 490 282 405Z" fill="url(#water)" opacity=".78"/>
-      <path d="M245 408 C239 484 235 548 230 613" stroke="#fff" stroke-width="11" opacity=".5" stroke-linecap="round"/>
-      <path d="M271 410 C268 486 273 552 278 610" stroke="#8be1fb" stroke-width="13" opacity=".45" stroke-linecap="round"/>
+      <!-- central waterfall and ice gorge -->
+      <path d="M215 424c8 67 2 120-5 174-4 32-1 70 14 101 10 20 22 31 36 32 14-1 26-12 36-32 15-31 18-69 14-101-7-54-13-107-5-174z"
+            fill="url(#mWater)" opacity=".94" filter="url(#mSoftShadow)"/>
+      <path d="M232 430c-2 81-8 155-4 224" fill="none" stroke="#f7ffff" stroke-width="12" stroke-linecap="round" opacity=".72"/>
+      <path d="M270 430c3 79 10 149 10 220" fill="none" stroke="#a5ebfb" stroke-width="15" stroke-linecap="round" opacity=".64"/>
+      <path d="M244 438c0 76-2 143 4 200" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".48"/>
+      <ellipse cx="260" cy="704" rx="72" ry="24" fill="#9ee5f6" opacity=".55"/>
+      <ellipse cx="260" cy="708" rx="51" ry="15" fill="#f7ffff" opacity=".7"/>
 
-      <g>
-        <path d="M-8 0 C35 128 22 260 75 350 C118 424 103 539 61 653 L0 690 L0 0Z" fill="url(#trunk)"/>
-        <path d="M52 214 C91 181 120 171 153 172" stroke="#684130" stroke-width="30" stroke-linecap="round"/>
-        <path d="M49 254 C91 230 123 231 160 240" stroke="#6d4430" stroke-width="26" stroke-linecap="round"/>
-        <g fill="#185f70">
-          <ellipse cx="54" cy="82" rx="74" ry="47"/><ellipse cx="106" cy="105" rx="70" ry="43"/>
-          <ellipse cx="74" cy="165" rx="83" ry="48"/><ellipse cx="135" cy="181" rx="62" ry="40"/>
-          <ellipse cx="72" cy="254" rx="90" ry="52"/><ellipse cx="137" cy="278" rx="62" ry="43"/>
+      <!-- left hero tree -->
+      <g filter="url(#mSoftShadow)">
+        <path d="M-22-15C25 97 10 195 49 282c29 66 35 141 13 215-13 44-31 91-47 150L-10 690Z" fill="url(#mTrunk)"/>
+        <path d="M45 173c42-41 86-58 135-47" fill="none" stroke="#67402f" stroke-width="29" stroke-linecap="round"/>
+        <path d="M36 255c44-30 90-34 139-16" fill="none" stroke="#704632" stroke-width="26" stroke-linecap="round"/>
+        <path d="M31 345c42-27 76-30 116-18" fill="none" stroke="#6b432f" stroke-width="22" stroke-linecap="round"/>
+
+        <g fill="url(#mFir)">
+          <ellipse cx="45" cy="66" rx="78" ry="47"/><ellipse cx="108" cy="79" rx="75" ry="44"/>
+          <ellipse cx="60" cy="145" rx="93" ry="51"/><ellipse cx="131" cy="161" rx="73" ry="45"/>
+          <ellipse cx="61" cy="236" rx="101" ry="54"/><ellipse cx="132" cy="260" rx="76" ry="47"/>
+          <ellipse cx="58" cy="329" rx="92" ry="51"/><ellipse cx="124" cy="347" rx="66" ry="43"/>
         </g>
-        <g fill="#f9feff">
-          <ellipse cx="49" cy="57" rx="66" ry="18"/><ellipse cx="111" cy="82" rx="55" ry="16"/>
-          <ellipse cx="73" cy="141" rx="74" ry="19"/><ellipse cx="132" cy="159" rx="52" ry="15"/>
-          <ellipse cx="77" cy="228" rx="77" ry="19"/><ellipse cx="138" cy="253" rx="50" ry="15"/>
+        <g fill="#fbfeff">
+          <ellipse cx="39" cy="41" rx="65" ry="17"/><ellipse cx="107" cy="56" rx="59" ry="15"/>
+          <ellipse cx="58" cy="117" rx="78" ry="19"/><ellipse cx="131" cy="139" rx="57" ry="16"/>
+          <ellipse cx="59" cy="208" rx="83" ry="20"/><ellipse cx="134" cy="237" rx="58" ry="16"/>
+          <ellipse cx="57" cy="303" rx="75" ry="19"/><ellipse cx="123" cy="326" rx="50" ry="14"/>
+        </g>
+        <g fill="#cbeeff" opacity=".8">
+          <ellipse cx="20" cy="49" rx="31" ry="6"/><ellipse cx="94" cy="64" rx="28" ry="5"/>
+          <ellipse cx="28" cy="127" rx="35" ry="6"/><ellipse cx="102" cy="148" rx="30" ry="5"/>
         </g>
       </g>
 
-      <g transform="translate(404 393)">
-        <path d="M-18 52 L34 0 88 52Z" fill="#5f3b30"/>
-        <path d="M-9 48 L34 9 76 49" fill="none" stroke="#fff" stroke-width="14" stroke-linecap="round"/>
-        <rect x="-3" y="48" width="75" height="92" rx="8" fill="url(#cabin)" stroke="#593426" stroke-width="4"/>
-        <rect x="42" y="77" width="24" height="38" rx="10" fill="#ffd66e"/>
-        <circle cx="54" cy="96" r="21" fill="#ffd96f" opacity=".3" filter="url(#glow)"/>
-        <path d="M8 94h25" stroke="#603a2d" stroke-width="7"/><path d="M20 82v25" stroke="#603a2d" stroke-width="7"/>
+      <!-- right side layered firs -->
+      <g filter="url(#mSoftShadow)">
+        <g fill="#1f6e7d">
+          <path d="M445 410l38-124 38 124h-20l30 74h-96l30-74z"/>
+          <path d="M388 472l31-103 31 103h-16l24 60h-79l24-60z"/>
+        </g>
+        <g fill="#fff">
+          <path d="M452 334q31-15 62 0l-9 11q-22-8-45 1z"/>
+          <path d="M396 405q23-12 46 0l-8 10q-15-6-31 1z"/>
+        </g>
       </g>
 
-      <g stroke="#5a3e2b" stroke-width="4">
-        <path d="M93 250v48"/><path d="M92 249q0-13 12-13"/>
-        <rect x="82" y="270" width="22" height="31" rx="4" fill="#ffd76c"/>
-        <path d="M420 480v39"/><path d="M420 480q0-11 10-11"/>
-        <rect x="411" y="495" width="19" height="27" rx="4" fill="#ffd76c"/>
+      <!-- cabin -->
+      <g transform="translate(394 410)" filter="url(#mSoftShadow)">
+        <path d="M-23 55L42-7l70 62z" fill="#654035"/>
+        <path d="M-13 50L42 2l58 49" fill="none" stroke="#f8feff" stroke-width="15" stroke-linecap="round"/>
+        <rect x="-5" y="50" width="92" height="112" rx="9" fill="url(#mCabin)" stroke="#4d3028" stroke-width="4"/>
+        <path d="M6 74h70M7 96h69M7 119h69" stroke="#b77b58" stroke-width="3" opacity=".42"/>
+        <rect x="16" y="89" width="29" height="43" rx="12" fill="#ffd86f"/>
+        <rect x="54" y="105" width="20" height="33" rx="7" fill="#ffcf5a"/>
+        <circle cx="30" cy="111" r="34" fill="url(#mGlow)" opacity=".48"/>
+        <circle cx="64" cy="120" r="24" fill="url(#mGlow)" opacity=".34"/>
       </g>
-      <g opacity=".45" fill="#ffd75d" filter="url(#glow)"><circle cx="93" cy="285" r="22"/><circle cx="420" cy="507" r="18"/></g>
 
-      <path d="M-20 631 Q74 582 173 631 L169 710 Q66 674 -20 716Z" fill="#dff8ff"/>
-      <path d="M353 630 Q449 580 546 631 L542 716 Q445 672 350 708Z" fill="#e4f9ff"/>
-      <path d="M-18 627 Q75 584 170 628" fill="none" stroke="#fff" stroke-width="24" stroke-linecap="round"/>
-      <path d="M354 626 Q449 582 544 630" fill="none" stroke="#fff" stroke-width="24" stroke-linecap="round"/>
-      <g fill="#69c8eb"><path d="M45 638 l10 52 11-48z"/><path d="M114 632 l8 47 12-43z"/><path d="M396 633 l9 54 12-49z"/><path d="M472 632 l9 48 11-44z"/></g>
+      <!-- lanterns -->
+      <g filter="url(#mSoftShadow)">
+        <path d="M89 241v51" stroke="#5d3c29" stroke-width="4"/><path d="M89 241q0-14 13-14" fill="none" stroke="#5d3c29" stroke-width="4"/>
+        <rect x="77" y="270" width="24" height="34" rx="5" fill="#ffd966" stroke="#5d3c29" stroke-width="4"/>
+        <circle cx="89" cy="286" r="31" fill="url(#mGlow)" opacity=".46"/>
 
-      <path d="M0 746 Q86 706 163 747 T310 748 T520 744 V920 H0Z" fill="#c5efff"/>
-      <path d="M0 771 Q96 730 176 771 T332 770 T520 768" fill="none" stroke="#fff" stroke-width="26" stroke-linecap="round"/>
-      <g fill="#1d7280" opacity=".88">
-        <ellipse cx="31" cy="756" rx="55" ry="32"/><ellipse cx="492" cy="758" rx="58" ry="35"/>
+        <path d="M425 486v39" stroke="#5d3c29" stroke-width="4"/><path d="M425 486q0-11 10-11" fill="none" stroke="#5d3c29" stroke-width="4"/>
+        <rect x="416" y="502" width="19" height="28" rx="4" fill="#ffd966" stroke="#5d3c29" stroke-width="3"/>
+        <circle cx="425" cy="515" r="25" fill="url(#mGlow)" opacity=".34"/>
       </g>
-      <g fill="#fff"><ellipse cx="32" cy="739" rx="55" ry="15"/><ellipse cx="489" cy="741" rx="59" ry="16"/></g>
-      <g fill="#cb2844"><circle cx="43" cy="790" r="7"/><circle cx="52" cy="778" r="6"/><circle cx="474" cy="789" r="7"/><circle cx="486" cy="777" r="6"/></g>
+
+      <!-- foreground cliffs -->
+      <g filter="url(#mSoftShadow)">
+        <path d="M-25 626q88-47 206 0l-6 98q-112-34-200 10z" fill="#83cbe6"/>
+        <path d="M345 626q88-46 206 0l-3 108q-104-43-203-9z" fill="#7fc9e5"/>
+        <path d="M-20 620q88-46 195 1" fill="none" stroke="#fff" stroke-width="27" stroke-linecap="round"/>
+        <path d="M350 620q88-45 194 2" fill="none" stroke="#fff" stroke-width="27" stroke-linecap="round"/>
+        <g fill="#45add4">
+          <path d="M42 634l11 61 13-57z"/><path d="M112 630l9 52 13-48z"/>
+          <path d="M395 633l10 60 13-56z"/><path d="M475 630l10 53 13-49z"/>
+        </g>
+      </g>
+
+      <!-- bottom snowbanks and evergreen corners -->
+      <path d="M-20 770q90-45 170 4 58-34 113-1 68-34 133 2 75-44 146 0v145H-20z" fill="#d8f4ff"/>
+      <path d="M-20 786q92-43 171 0 56-29 109 0 69-31 135 1 76-40 147 0" fill="none" stroke="#fff" stroke-width="24" stroke-linecap="round"/>
+      <g fill="#176776">
+        <ellipse cx="28" cy="784" rx="67" ry="31"/><ellipse cx="494" cy="786" rx="68" ry="32"/>
+      </g>
+      <g fill="#fff"><ellipse cx="26" cy="769" rx="63" ry="13"/><ellipse cx="495" cy="771" rx="65" ry="14"/></g>
+      <g fill="#c82947">
+        <circle cx="42" cy="817" r="7"/><circle cx="55" cy="803" r="6"/><circle cx="66" cy="815" r="5"/>
+        <circle cx="475" cy="816" r="7"/><circle cx="489" cy="802" r="6"/><circle cx="500" cy="814" r="5"/>
+      </g>
+
+      <!-- soft drifting sparkle points -->
+      <g fill="#fff" opacity=".6">
+        <circle cx="176" cy="321" r="3"/><circle cx="354" cy="279" r="2.7"/><circle cx="312" cy="367" r="2.3"/>
+        <circle cx="199" cy="514" r="2.2"/><circle cx="347" cy="528" r="2.6"/><circle cx="148" cy="430" r="2"/>
+      </g>
     </svg>
   </div>
   <div id="snow" class="snow-layer" aria-hidden="true"></div>
@@ -542,7 +770,7 @@ button{font:inherit;-webkit-tap-highlight-color:transparent}
   <section id="game" class="screen game">
     <header class="hud">
       <button id="pauseBtn" class="pause-master" type="button" aria-label="Paus">Ⅱ</button>
-      <div class="star-board" aria-label="Tähed"><span class="star">★</span><span>0</span></div>
+      <div class="star-board" aria-label="Tähed"><span class="star-shape" aria-hidden="true"></span><span>0</span></div>
     </header>
 
     <div class="game-brand">
@@ -551,7 +779,7 @@ button{font:inherit;-webkit-tap-highlight-color:transparent}
     </div>
 
     <div id="progress" class="wood progress-board">1 / 10</div>
-    <div class="mode-pill"><span class="leaf">🍃</span><span>Rahulik</span></div>
+    <div class="mode-pill"><span class="leaf" aria-hidden="true"><svg viewBox="0 0 44 28"><path d="M4 19C13 7 25 3 39 4c-2 13-10 21-22 21C11 25 7 23 4 19Z" fill="#43bd66" stroke="#178647" stroke-width="2"/><path d="M7 21c9-8 18-12 29-14" fill="none" stroke="#167947" stroke-width="2.2" stroke-linecap="round"/><path d="M17 16c-1-4-1-7 0-10M24 12c0-3 1-6 3-9" fill="none" stroke="#73db82" stroke-width="1.8" stroke-linecap="round"/></svg></span><span>Rahulik</span></div>
 
     <div class="light-beam" aria-hidden="true"></div>
 
@@ -659,7 +887,7 @@ function stop(){clearTimeout(state.timer);el.wordCard.classList.remove("fall")}
 function render(){
   clearTimeout(state.timer);state.locked=false;
   if(state.index>=state.queue.length){win();return}
-  var item=current();el.progress.textContent=(state.index+1)+" / "+state.queue.length;el.word.textContent=item.word.toUpperCase();el.answers.innerHTML="";
+  var item=current();el.progress.textContent=(state.index+1)+" / "+state.queue.length;el.word.textContent=item.word.toUpperCase();el.wordCard.classList.toggle("long-word",item.word.length>=9);el.wordCard.classList.toggle("very-long",item.word.length>=11);el.answers.innerHTML="";
   choices(item).forEach(function(ch){
     var b=document.createElement("button");b.className="answer";b.type="button";b.dataset.id=ch.id;b.setAttribute("aria-label",ch.alt);
     b.innerHTML=iconFor(ch.id);b.addEventListener("click",function(){answer(b,ch.id)});el.answers.appendChild(b);
