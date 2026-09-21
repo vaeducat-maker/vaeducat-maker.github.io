@@ -2,6 +2,27 @@
   const PDF_URL = '/downloads/tunniplaanid-10-varviline.pdf';
   const WORKER_URL = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
+  function publishKosmos() {
+    const newGrid = document.querySelector('.home-new-grid');
+    if (newGrid && !newGrid.querySelector('[data-kosmos-material]')) {
+      const card = document.createElement('article');
+      card.className = 'home-new-card home-new-material';
+      card.setAttribute('data-kosmos-material', '');
+      card.innerHTML = `<div class="home-new-card-visual"><img src="/materials/loikamine-kosmos-preview/leht-12.webp" alt="30 päeva lõikamist: Kosmos — töölehekomplekti eelvaade"></div><div class="home-new-card-copy"><div class="home-card-meta">KÄELISED OSKUSED · 30 TÖÖLEHTE · TASUTA</div><h3>30 päeva lõikamist: Kosmos</h3><p>30 kosmoseteemalist A4-töölehte mööda punktiirjoont lõikamise harjutamiseks.</p><a class="home-text-link" href="/materials/loikamine-kosmos/">Vaata materjali <span aria-hidden="true">→</span></a></div>`;
+      newGrid.prepend(card);
+      while (newGrid.children.length > 5) newGrid.lastElementChild.remove();
+    }
+
+    const skillsGrid = document.querySelector('#kaelised-oskused .category-material-grid');
+    if (skillsGrid && !skillsGrid.querySelector('[data-kosmos-material]')) {
+      const tile = document.createElement('article');
+      tile.className = 'material-tile catalog-tile';
+      tile.setAttribute('data-kosmos-material', '');
+      tile.innerHTML = `<a class="catalog-image-link" href="loikamine-kosmos/"><img src="loikamine-kosmos-preview/leht-12.webp" alt="30 päeva lõikamist: Kosmos — töölehekomplekti eelvaade"></a><div class="material-tile-body"><div class="meta skills-meta">KÄELISED OSKUSED · 30 TÖÖLEHTE · TASUTA</div><h3>30 päeva lõikamist: Kosmos</h3><p>30 kosmoseteemalist A4-töölehte mööda punktiirjoont lõikamise harjutamiseks.</p><a class="text-link" href="loikamine-kosmos/">Vaata materjali →</a></div>`;
+      skillsGrid.prepend(tile);
+    }
+  }
+
   async function renderAll() {
     const roots = [...document.querySelectorAll('[data-timetable-pdf-preview]')];
     if (!roots.length) return;
@@ -67,9 +88,14 @@
     }
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', renderAll, { once: true });
-  } else {
+  function init() {
+    publishKosmos();
     renderAll();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init, { once: true });
+  } else {
+    init();
   }
 })();
