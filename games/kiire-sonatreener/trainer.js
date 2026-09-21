@@ -80,6 +80,37 @@ const DATA={
     ]}
   ]},
   de:{label:"Deutsch",langName:"Deutsch",locale:"de",categories:[
+    {id:"texte",label:"Texte",icon:"📘",topics:[
+      {id:"lektion-1",title:"Lektion 1",subtitle:"Deutsch",active:false,poster:null,textLesson:true,pairs:[
+        {ru:"Её зовут Лина.",de:"Sie heißt Lina."},
+        {ru:"Ей 16 лет.",de:"Sie ist 16 Jahre alt."},
+        {ru:"Она из Германии.",de:"Sie kommt aus Deutschland."},
+        {ru:"Она живёт в Берлине.",de:"Sie wohnt in Berlin."},
+        {ru:"Она говорит по-немецки и немного по-французски.",de:"Sie spricht Deutsch und ein bisschen Französisch."},
+        {ru:"Она живёт со своими родителями и сестрой.",de:"Sie wohnt mit ihren Eltern und ihrer Schwester."},
+        {ru:"Её мама — домохозяйка.",de:"Ihre Mutter ist Hausfrau."},
+        {ru:"Лина охотно слушает музыку и читает книги.",de:"Lina hört gern Musik und liest Bücher."},
+        {ru:"Лина занимается спортом.",de:"Lina macht Sport."},
+        {ru:"Лина интересуется искусством и модой.",de:"Lina interessiert sich für Kunst und Mode."},
+        {ru:"У Лины есть две подруги.",de:"Lina hat zwei Freundinnen."},
+        {ru:"Их зовут Сина и Клара.",de:"Sie heißen Sina und Klara."},
+        {ru:"На выходных они встречаются в кафе.",de:"Am Wochenende treffen sie sich im Café."}
+      ],german:[
+        "Sie heißt Lina.",
+        "Sie ist 16 Jahre alt.",
+        "Sie kommt aus Deutschland.",
+        "Sie wohnt in Berlin.",
+        "Sie spricht Deutsch und ein bisschen Französisch.",
+        "Sie wohnt mit ihren Eltern und ihrer Schwester.",
+        "Ihre Mutter ist Hausfrau.",
+        "Lina hört gern Musik und liest Bücher.",
+        "Lina macht Sport.",
+        "Lina interessiert sich für Kunst und Mode.",
+        "Lina hat zwei Freundinnen.",
+        "Sie heißen Sina und Klara.",
+        "Am Wochenende treffen sie sich im Café."
+      ]}
+    ]},
     {id:"verben",label:"Verben",icon:"🔄",topics:[
       {id:"e-i-ie",title:"E → I / IE",subtitle:"Verben mit Vokalwechsel",active:true,poster:null,typingInstruction:"Напиши формы du / er",words:[
         {word:"geben — du gibst · er gibt",base:"geben",ru:"давать",typingPrompt:"geben — давать",typingAnswer:"du gibst er gibt"},
@@ -130,7 +161,7 @@ function allTopics(l=lang){return (DATA[l].categories||[]).flatMap(c=>c.topics.m
 function activeTopic(){return allTopics().find(t=>t.active)||allTopics()[0]||null}
 function findTopic(id){return allTopics().find(t=>t.id===id)||null}
 function setNavLocked(on){tabEt.disabled=on;tabDe.disabled=on;libraryBtn.hidden=on;reviewBtn.hidden=on}
-function updateSub(){if(currentTopic)sub.textContent=`${currentTopic.subtitle} · ${currentTopic.words.length} карточек`;else sub.textContent=DATA[lang].langName}
+function updateSub(){if(currentTopic)sub.textContent=currentTopic.textLesson?`${currentTopic.subtitle} · 2 текста`:`${currentTopic.subtitle} · ${currentTopic.words.length} карточек`;else sub.textContent=DATA[lang].langName}
 function saveReviewDirection(){try{localStorage.setItem("sonatreenerReviewDirection",reviewDirection)}catch(e){}}
 function targetName(){return lang==="de"?"немецкий":"эстонский"}
 function targetFlag(){return lang==="de"?"🇩🇪":"🇪🇪"}
@@ -148,6 +179,7 @@ function renderHome(){
 function openTopic(id){
   const topic=findTopic(id);if(!topic)return;
   currentTopic=topic;currentCategory=topic.category;mode="topic";posterReturnMode="topic";setNavLocked(false);progress.hidden=true;restart.hidden=true;counter.textContent="";pill.textContent=topic.category.label;updateSub();
+  if(topic.textLesson){renderTextLesson(topic);return}
   const poster=topic.poster
     ?`<button class="poster-preview" id="posterOpen" aria-label="Открыть плакат"><img src="${topic.poster}" alt="${esc(topic.title)} — учебный плакат"></button>`
     :`<div class="topic-no-poster">${topic.category.icon}</div>`;
@@ -157,6 +189,12 @@ function openTopic(id){
   card.querySelector("#cardsRuEt").onclick=()=>startReview(topic,"ru-et");
   card.querySelector("#cardsEtRu").onclick=()=>startReview(topic,"et-ru");
   card.querySelector("#typingBtn").onclick=()=>startTyping(topic);
+}
+
+function renderTextLesson(topic){
+  const pairs=(topic.pairs||[]).map(x=>`<div class="lesson-pair"><div class="lesson-ru">${esc(x.ru)}</div><div class="lesson-de">${esc(x.de)}</div></div>`).join("");
+  const german=(topic.german||[]).map(x=>`<div class="lesson-de-line">${esc(x)}</div>`).join("");
+  card.innerHTML=`<div class="text-lesson"><div class="topic-intro text-lesson-head"><div class="topic-kicker">${topic.category.icon} ${esc(topic.category.label)}</div><h2>${esc(topic.title)}</h2></div><section class="text-lesson-section"><h3>Русский + Deutsch</h3><div class="lesson-pairs">${pairs}</div></section><section class="text-lesson-section"><h3>Nur Deutsch</h3><div class="lesson-german-only">${german}</div></section></div>`;
 }
 
 function showPoster(topic,returnMode="topic"){
@@ -177,7 +215,7 @@ function renderLibrary(){
   mode="library";setNavLocked(false);progress.hidden=true;restart.hidden=true;counter.textContent="";pill.textContent=lang==="de"?"🇩🇪 Deutsch":"📚 Teemad";currentTopic=null;updateSub();
   const categories=DATA[lang].categories||[];
   if(!categories.length){card.innerHTML=`<div class="empty"><div class="big">${targetFlag()}</div><h2>${esc(DATA[lang].label)}</h2><p>Пока нет уроков.</p></div>`;return}
-  const html=categories.map(c=>`<section class="library-section"><div class="library-title"><span>${c.icon}</span><strong>${esc(c.label)}</strong></div>${c.topics.length?`<div class="topic-grid">${c.topics.map(t=>`<button class="topic-tile" data-topic="${t.id}"><span class="topic-title">${esc(t.title)}</span><span class="topic-meta">${t.words.length} карточек${t.poster?' · 🖼':''}</span></button>`).join("")}</div>`:`<div class="library-empty">Пока нет уроков</div>`}</section>`).join("");
+  const html=categories.map(c=>`<section class="library-section"><div class="library-title"><span>${c.icon}</span><strong>${esc(c.label)}</strong></div>${c.topics.length?`<div class="topic-grid">${c.topics.map(t=>`<button class="topic-tile" data-topic="${t.id}"><span class="topic-title">${esc(t.title)}</span><span class="topic-meta">${t.textLesson?'2 текста':`${t.words.length} карточек`}${t.poster?' · 🖼':''}</span></button>`).join("")}</div>`:`<div class="library-empty">Пока нет уроков</div>`}</section>`).join("");
   card.innerHTML=`<div><div class="library-heading">${lang==="de"?"Deutsch":"Все уроки"}</div><p class="chest-note">${lang==="de"?"Немецкие темы и карточки для повторения.":"Здесь постепенно будет собираться его личная библиотека тем, понятий и карточек."}</p>${html}</div>`;
   card.querySelectorAll("[data-topic]").forEach(b=>b.onclick=()=>openTopic(b.dataset.topic));
 }
