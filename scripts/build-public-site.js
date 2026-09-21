@@ -98,19 +98,6 @@ const publicFiles = [
 
   'games/metsarada/index.html',
 
-  'games/kiire-sonatreener/back-nav.js',
-  'games/kiire-sonatreener/icon-192.png',
-  'games/kiire-sonatreener/icon-512.png',
-  'games/kiire-sonatreener/icon.svg',
-  'games/kiire-sonatreener/index.html',
-  'games/kiire-sonatreener/lesson-library.css',
-  'games/kiire-sonatreener/manifest.webmanifest',
-  'games/kiire-sonatreener/poster-fix.js',
-  'games/kiire-sonatreener/poster-vesi-ja-jogi.svg',
-  'games/kiire-sonatreener/poster-vesi-ja-jogi.webp',
-  'games/kiire-sonatreener/trainer.css',
-  'games/kiire-sonatreener/trainer.js',
-
   'materials/hommikulood/app.js',
   'materials/hommikulood/vocabulary.js',
   'materials/hommikulood/assets/sonastik.webp',
