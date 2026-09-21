@@ -20,7 +20,8 @@
 <style>
 .shortcut-button{width:auto;min-width:108px;padding:0 12px;font-size:14px;white-space:nowrap;font-weight:850;color:#2f6f58;background:#eaf4ee;border-color:#cee0d5}
 .shortcut-button:disabled{opacity:.62;cursor:default}
-.deck-button{display:none!important}
+.lang-tabs,.deck-button{display:none!important}
+.deutsch-button{width:auto;min-width:104px;padding:0 12px;font-size:14px;white-space:nowrap;font-weight:900;color:#2f6f58;background:#fff;border-color:#cee0d5}
 .summary-view{display:grid;gap:18px}
 .summary-head{text-align:center}
 .summary-head h2{margin:0 0 4px}
@@ -51,7 +52,7 @@
 <body>
 <main class="app">
 <div class="brand">EDUKASS</div>
-<header class="top"><div><h1>Minu õppetunnid</h1><p class="sub" id="sub"></p></div><div class="top-tools"><button class="icon-button shortcut-button" id="shortcutBtn" aria-label="Добавить на главный экран" title="Добавить на главный экран">📲 На экран</button><button class="icon-button deck-button" id="reviewBtn" aria-label="Карточки" title="Карточки"><span class="deck-stack" aria-hidden="true"></span></button><button class="icon-button" id="libraryBtn" aria-label="Все предметы" title="Все предметы">📚</button><div class="pill" id="pill">Eesti</div></div></header>
+<header class="top"><div><h1>Minu õppetunnid</h1><p class="sub" id="sub"></p></div><div class="top-tools"><button class="icon-button shortcut-button" id="shortcutBtn" aria-label="Добавить на главный экран" title="Добавить на главный экран">📲 На экран</button><button class="icon-button deutsch-button" id="deutschBtn" aria-label="Deutsch" title="Deutsch">🇩🇪 Deutsch</button><button class="icon-button deck-button" id="reviewBtn" aria-label="Карточки" title="Карточки"><span class="deck-stack" aria-hidden="true"></span></button><button class="icon-button" id="libraryBtn" aria-label="Все предметы" title="Все предметы">📚</button><div class="pill" id="pill">Eesti</div></div></header>
 <div class="lang-tabs" role="tablist" aria-label="Язык тренажёра"><button class="lang-tab active" id="tabEt" role="tab">🇪🇪 Eesti</button><button class="lang-tab" id="tabDe" role="tab">🇩🇪 Deutsch</button></div>
 <div class="progress" id="progress" hidden><span id="p1"></span><span id="p2"></span><span id="p3"></span><span id="p4"></span><span id="p5"></span></div>
 <section class="card" id="card" aria-live="polite"></section>
@@ -60,10 +61,10 @@
 <script>
 (()=>{const b=document.getElementById('shortcutBtn');if(!b)return;const standalone=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;if(standalone){b.textContent='✓ Готово';b.disabled=true}else{b.onclick=()=>alert('Открой меню браузера и выбери «Добавить на главный экран».')}})();
 </script>
-<script src="./trainer.js?v=20260921-2"></script>
+<script src="./trainer.js?v=20260921-3"></script>
 <script>
 (()=>{
-  const card=document.getElementById('card'),libraryBtn=document.getElementById('libraryBtn'),reviewBtn=document.getElementById('reviewBtn'),tabEt=document.getElementById('tabEt'),tabDe=document.getElementById('tabDe'),pill=document.getElementById('pill'),sub=document.getElementById('sub');
+  const card=document.getElementById('card'),libraryBtn=document.getElementById('libraryBtn'),reviewBtn=document.getElementById('reviewBtn'),deutschBtn=document.getElementById('deutschBtn'),tabEt=document.getElementById('tabEt'),tabDe=document.getElementById('tabDe'),pill=document.getElementById('pill'),sub=document.getElementById('sub');
   if(!card||!libraryBtn||!tabEt||!tabDe)return;
   const originalLibrary=libraryBtn.onclick;
   if(reviewBtn)reviewBtn.hidden=true;
@@ -114,6 +115,7 @@
   }
 
   libraryBtn.onclick=renderSubjects;
+  if(deutschBtn)deutschBtn.onclick=()=>activateHiddenLanguage(tabDe);
   new MutationObserver(tidy).observe(card,{childList:true,subtree:true});
   tidy();
 })();
