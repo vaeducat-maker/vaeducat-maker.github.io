@@ -101,6 +101,36 @@
     clickTopicWhenReady(topic);
   }
 
+  const HISTORY_CARDS=[['muinasaeg','древнейшая эпоха'],['vanaaeg','древнее время'],['keskaeg','Средневековье'],['uusaeg','Новое время'],['lähiaeg','новейшее время'],['ajastu','эпоха'],['teadlane','учёный']];
+  let historyQueue=[],historyGood=0,historyBad=0,historyDir='et-ru',historyFlipped=false;
+  const historyShuffle=a=>{a=[...a];for(let i=a.length-1;i;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+  const historyEsc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'})[c]);
+  function renderHistoryTopic(){
+    if(pill)pill.textContent='Ajalugu'; if(sub)sub.textContent='Ajastud · 7 карточек';
+    card.innerHTML=`<div class="topic-intro"><div class="topic-kicker">🏺 Ajalugu</div><h2>Ajastud</h2><p>Исторические эпохи и основные термины.</p><div class="topic-actions"><button class="primary" id="historyEtRu">🃏 Eesti → русский</button><button class="secondary" id="historyRuEt">🃏 Русский → Eesti</button></div></div>`;
+    card.querySelector('#historyEtRu').onclick=()=>startHistory('et-ru');
+    card.querySelector('#historyRuEt').onclick=()=>startHistory('ru-et');
+  }
+  function startHistory(dir){
+    historyDir=dir;historyQueue=historyShuffle(HISTORY_CARDS);historyGood=0;historyBad=0;historyFlipped=false;
+    tabEt.disabled=true;tabDe.disabled=true;if(libraryBtn)libraryBtn.hidden=true;if(reviewBtn)reviewBtn.hidden=true;
+    document.getElementById('restart').hidden=false;document.getElementById('restart').textContent='← Выйти';
+    if(pill)pill.textContent='Ajalugu'; if(sub)sub.textContent='Ajastud · 7 карточек'; renderHistoryCard();
+  }
+  function renderHistoryCard(){
+    if(!historyQueue.length){
+      tabEt.disabled=false;tabDe.disabled=false;if(libraryBtn)libraryBtn.hidden=false;document.getElementById('restart').hidden=true;
+      card.innerHTML=`<div class="done"><div class="big">🏺</div><h2>Готово!</h2><div class="finish-actions"><button class="primary" id="historyAgain">Ещё раз</button><button class="secondary" id="historyBack">К уроку</button></div></div>`;
+      card.querySelector('#historyAgain').onclick=()=>startHistory(historyDir);card.querySelector('#historyBack').onclick=renderHistoryTopic;return;
+    }
+    const x=historyQueue[0],front=historyDir==='et-ru'?x[0]:x[1],back=historyDir==='et-ru'?x[1]:x[0];historyFlipped=false;
+    const counterEl=document.getElementById('counter');if(counterEl)counterEl.textContent=`Осталось: ${historyQueue.length}`;
+    card.innerHTML=`<div class="review-wrap"><div class="tiny" style="text-align:center;margin-bottom:10px">${historyDir==='et-ru'?'Eesti → русский':'Русский → Eesti'}</div><div class="flashcard" id="historyFlash"><div class="flashcard-inner"><div class="flash-face">${historyEsc(front)}</div><div class="flash-face flash-back">${historyEsc(back)}</div></div></div><div class="review-stats"><span>✓ ${historyGood}</span><span>✕ ${historyBad}</span></div><div class="review-actions" id="historyActions" hidden><button class="review-no" id="historyNo">✕</button><button class="review-yes" id="historyYes">✓</button></div><div class="tiny" style="text-align:center">Нажми на карточку, чтобы увидеть перевод</div></div>`;
+    const flash=card.querySelector('#historyFlash'),actions=card.querySelector('#historyActions');flash.onclick=()=>{if(historyFlipped)return;historyFlipped=true;flash.classList.add('flipped');actions.hidden=false};
+    card.querySelector('#historyYes').onclick=()=>historyDecide(true);card.querySelector('#historyNo').onclick=()=>historyDecide(false);
+  }
+  function historyDecide(ok){const x=historyQueue.shift();if(ok)historyGood++;else{historyBad++;const pos=Math.min(historyQueue.length,Math.max(1,2));historyQueue.splice(pos,0,x)}renderHistoryCard()}
+
   function renderSubjects(){
     if(pill)pill.textContent='📚 Предметы';
     if(sub)sub.textContent='Выбери предмет и тему';
@@ -109,12 +139,15 @@
       <section class="library-section"><div class="library-title"><span>👤</span><strong>Inimene</strong></div><div class="library-empty">Пока нет уроков</div></section>
       <section class="library-section"><div class="library-title"><span>📝</span><strong>Eesti keel</strong></div><div class="topic-grid"><button class="topic-tile" data-u-lang="et" data-u-topic="eesti-keel-1"><span class="topic-title">Sõnad 1</span><span class="topic-meta">15 карточек</span></button><button class="topic-tile" data-u-lang="et" data-u-topic="eesti-keel-2"><span class="topic-title">Sõnad 2</span><span class="topic-meta">21 карточка</span></button></div></section>
       <section class="library-section"><div class="library-title"><span>📖</span><strong>Eesti kirjandus</strong></div><div class="topic-grid"><button class="topic-tile" data-u-lang="et" data-u-topic="sonad-1"><span class="topic-title">Sõnad 1</span><span class="topic-meta">10 карточек</span></button></div></section>
+      <section class="library-section"><div class="library-title"><span>🏺</span><strong>Ajalugu</strong></div><div class="topic-grid"><button class="topic-tile" data-u-lang="history" data-u-topic="ajastud"><span class="topic-title">Ajastud</span><span class="topic-meta">7 карточек</span></button></div></section>
       <section class="library-section"><div class="library-title"><span>🇩🇪</span><strong>Deutsch</strong></div><div class="topic-grid"><button class="topic-tile" data-u-lang="de" data-u-topic="lektion-1"><span class="topic-title">Lektion 1</span><span class="topic-meta">2 текста</span></button><button class="topic-tile" data-u-lang="de" data-u-topic="e-i-ie"><span class="topic-title">E → I / IE</span><span class="topic-meta">12 карточек</span></button><button class="topic-tile" data-u-lang="de" data-u-topic="a-ae-au-aeu"><span class="topic-title">A → Ä / AU → ÄU</span><span class="topic-meta">12 карточек</span></button></div></section>
     </div>`;
-    card.querySelectorAll('[data-u-topic]').forEach(btn=>btn.onclick=()=>openExisting(btn.dataset.uLang,btn.dataset.uTopic));
+    card.querySelectorAll('[data-u-topic]').forEach(btn=>btn.onclick=()=>{if(btn.dataset.uLang==='history'&&btn.dataset.uTopic==='ajastud')renderHistoryTopic();else openExisting(btn.dataset.uLang,btn.dataset.uTopic)});
   }
 
-  libraryBtn.onclick=renderSubjects;
+  const historyModeRestartHook=true;
+  const restartBtn=document.getElementById('restart');if(restartBtn)restartBtn.addEventListener('click',e=>{if(!card.querySelector('#historyFlash')&&!card.querySelector('#historyAgain'))return;e.preventDefault();e.stopImmediatePropagation();tabEt.disabled=false;tabDe.disabled=false;if(libraryBtn)libraryBtn.hidden=false;restartBtn.hidden=true;const counterEl=document.getElementById('counter');if(counterEl)counterEl.textContent='';renderHistoryTopic()},true);
+    libraryBtn.onclick=renderSubjects;
   if(deutschBtn)deutschBtn.onclick=()=>activateHiddenLanguage(tabDe);
   new MutationObserver(tidy).observe(card,{childList:true,subtree:true});
   tidy();
