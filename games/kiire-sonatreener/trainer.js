@@ -62,6 +62,17 @@ const DATA={
         {word:"kummaline",ru:"странный"},
         {word:"rütm",ru:"ритм"},
         {word:"sipelgapesa",ru:"муравейник"}
+      ]},
+      {id:"eesti-keel-3",title:"koolivorm",subtitle:"Eesti keel",active:false,poster:null,words:[
+        {word:"eelistama",ru:"предпочитать"},
+        {word:"koolivorm",ru:"школьная форма"},
+        {word:"kandma",ru:"носить"},
+        {word:"riideese",ru:"предмет одежды"},
+        {word:"särk",ru:"рубашка"},
+        {word:"seelik",ru:"юбка"},
+        {word:"vest",ru:"жилет"},
+        {word:"lips",ru:"галстук"},
+        {word:"püksid",ru:"брюки"}
       ]}
     ]},
     {id:"eesti-kirjandus",label:"Eesti kirjandus",icon:"📖",topics:[
