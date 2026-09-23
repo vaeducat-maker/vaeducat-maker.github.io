@@ -63,7 +63,7 @@ const DATA={
         {word:"rütm",ru:"ритм"},
         {word:"sipelgapesa",ru:"муравейник"}
       ]},
-      {id:"eesti-keel-3",title:"koolivorm",subtitle:"Eesti keel",active:false,poster:null,words:[
+      {id:"eesti-keel-3",title:"Sõnad 3 — koolivorm",subtitle:"Eesti keel",active:false,poster:null,words:[
         {word:"eelistama",ru:"предпочитать"},
         {word:"koolivorm",ru:"школьная форма"},
         {word:"kandma",ru:"носить"},
