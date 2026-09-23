@@ -755,6 +755,53 @@ button{font:inherit;-webkit-tap-highlight-color:transparent}
   .game .fall-zone{top:27%;bottom:calc(28% + var(--wall-offset))}
 }
 </style>
+<style id="lumesadu-header-cleanup-v4">
+/* Samsung/Chrome cleanup based on live phone screenshot */
+.game .logo{
+  background:none !important;
+  color:#eefcff !important;
+  -webkit-text-fill-color:#eefcff !important;
+  -webkit-background-clip:initial !important;
+  background-clip:initial !important;
+  -webkit-text-stroke:2px #2b7fad !important;
+  text-shadow:
+    0 2px 0 #8edcf4,
+    0 5px 0 #2e8abb,
+    0 8px 0 #176394,
+    0 11px 16px rgba(12,70,112,.22) !important;
+}
+.game .subtitle{
+  margin-top:10px !important;
+}
+.game .progress-board,
+.game .mode-pill{
+  top:calc(max(14px,env(safe-area-inset-top)) + 183px) !important;
+}
+.game .progress-board{
+  left:18px !important;
+}
+.game .mode-pill{
+  right:18px !important;
+}
+.game .light-beam{
+  top:25.5% !important;
+}
+.game .fall-zone{
+  top:30.5% !important;
+}
+@media (max-height:720px){
+  .game .progress-board,
+  .game .mode-pill{
+    top:139px !important;
+  }
+  .game .subtitle{
+    margin-top:7px !important;
+  }
+  .game .fall-zone{
+    top:28.5% !important;
+  }
+}
+</style>
 </head>
 <body>
 <main id="app" class="app" aria-label="Lumesadu sõnamäng">
