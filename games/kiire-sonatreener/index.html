@@ -101,7 +101,7 @@
     clickTopicWhenReady(topic);
   }
 
-  const HISTORY_CARDS=[['muinasaeg','древнейшая эпоха'],['vanaaeg','древнее время'],['keskaeg','Средневековье'],['uusaeg','Новое время'],['lähiaeg','новейшее время'],['ajastu','эпоха'],['teadlane','учёный']];
+  const HISTORY_CARDS=[['muinasaeg','первобытность'],['vanaaeg','Древний мир'],['keskaeg','Средние века'],['uusaeg','Новое время'],['lähiaeg','Новейшее время'],['ajastu','эпоха'],['teadlane','учёный']];
   let historyQueue=[],historyGood=0,historyBad=0,historyDir='et-ru',historyFlipped=false;
   const historyShuffle=a=>{a=[...a];for(let i=a.length-1;i;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
   const historyEsc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'})[c]);
