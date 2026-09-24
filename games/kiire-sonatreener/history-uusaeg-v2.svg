@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="340" viewBox="0 0 600 340">
+<defs>
+<linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#dff4ff"/><stop offset="1" stop-color="#f7fbef"/></linearGradient>
+<linearGradient id="water" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#7fd3ee"/><stop offset="1" stop-color="#2586b7"/></linearGradient>
+</defs>
+<rect x="6" y="6" width="588" height="328" rx="28" fill="#fffdf7" stroke="#d1ddcf" stroke-width="4"/>
+<rect x="24" y="24" width="552" height="292" rx="22" fill="url(#sky)"/>
+<circle cx="500" cy="66" r="31" fill="#ffd768"/>
+<path d="M24 245 Q94 199 160 226 T286 213 V316 H24Z" fill="#668d59"/>
+<path d="M24 253 Q150 230 300 248 T576 234 V316 H24Z" fill="url(#water)"/>
+<path d="M38 280 Q125 257 220 277 T396 270 T560 258" stroke="#d9f9ff" stroke-width="6" fill="none" stroke-linecap="round"/>
+<g transform="translate(165 73)">
+<path d="M64 145 H278 L249 187 H97Z" fill="#c99c5d" stroke="#315f58" stroke-width="5" stroke-linejoin="round"/>
+<path d="M166 16 V145" stroke="#315f58" stroke-width="6" stroke-linecap="round"/>
+<path d="M166 25 L166 126 L83 96Z" fill="#fff8e9" stroke="#315f58" stroke-width="5" stroke-linejoin="round"/>
+<path d="M176 47 L176 130 L264 103Z" fill="#d98773" stroke="#315f58" stroke-width="5" stroke-linejoin="round"/>
+<path d="M92 145 H250" stroke="#315f58" stroke-width="5"/>
+<circle cx="128" cy="162" r="6" fill="#315f58"/><circle cx="157" cy="162" r="6" fill="#315f58"/><circle cx="186" cy="162" r="6" fill="#315f58"/>
+</g>
+<g transform="translate(70 66)">
+<circle cx="34" cy="34" r="27" fill="#fffdf8" stroke="#315f58" stroke-width="4"/>
+<circle cx="34" cy="34" r="4" fill="#315f58"/>
+<path d="M34 8 V18 M34 50 V60 M8 34 H18 M50 34 H60" stroke="#315f58" stroke-width="4" stroke-linecap="round"/>
+<path d="M34 34 L50 20" stroke="#d98773" stroke-width="4" stroke-linecap="round"/>
+</g>
+<g transform="translate(425 146)">
+<path d="M0 45 Q38 12 78 45 Q38 78 0 45Z" fill="#fffdf8" stroke="#315f58" stroke-width="4"/>
+<path d="M20 43 Q28 24 39 8 M59 43 Q52 24 39 8" stroke="#315f58" stroke-width="4" fill="none" stroke-linecap="round"/>
+</g>
+</svg>
