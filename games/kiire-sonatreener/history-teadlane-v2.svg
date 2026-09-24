@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="340" viewBox="0 0 600 340">
+<defs><linearGradient id="room" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#f8fbf7"/><stop offset="1" stop-color="#eef4ee"/></linearGradient></defs>
+<rect x="6" y="6" width="588" height="328" rx="28" fill="#fffdf7" stroke="#d1ddcf" stroke-width="4"/>
+<rect x="24" y="24" width="552" height="292" rx="22" fill="url(#room)"/>
+<rect x="54" y="56" width="164" height="76" rx="12" fill="#fffdf8" stroke="#d1ddcf" stroke-width="4"/>
+<g transform="translate(73 72)"><rect x="0" y="0" width="24" height="42" rx="5" fill="#9fc9dc"/><rect x="32" y="12" width="24" height="30" rx="5" fill="#d98773"/><rect x="64" y="6" width="24" height="36" rx="5" fill="#e7c98f"/><rect x="96" y="18" width="24" height="24" rx="5" fill="#9fc3a8"/></g>
+<g transform="translate(74 138)">
+<circle cx="79" cy="43" r="34" fill="#f4d6b6" stroke="#263b32" stroke-width="4"/>
+<path d="M47 42 Q79 0 111 42" fill="#6a5b4e"/>
+<circle cx="67" cy="43" r="4" fill="#263b32"/><circle cx="91" cy="43" r="4" fill="#263b32"/>
+<path d="M68 58 Q79 67 91 58" fill="none" stroke="#263b32" stroke-width="3" stroke-linecap="round"/>
+<path d="M36 92 Q79 70 122 92 L137 154 H20Z" fill="#fff" stroke="#315f58" stroke-width="5" stroke-linejoin="round"/>
+<path d="M59 91 L79 112 L100 91" fill="none" stroke="#d98773" stroke-width="4"/>
+</g>
+<g transform="translate(273 97)">
+<rect x="0" y="149" width="244" height="18" rx="7" fill="#c99c5d" stroke="#315f58" stroke-width="4"/>
+<path d="M42 143 Q66 110 94 139" fill="#9fc9dc" stroke="#315f58" stroke-width="4"/>
+<path d="M71 41 L107 77" stroke="#315f58" stroke-width="7" stroke-linecap="round"/>
+<path d="M100 70 L138 32" stroke="#315f58" stroke-width="7" stroke-linecap="round"/>
+<path d="M128 22 L149 43" stroke="#d98773" stroke-width="9" stroke-linecap="round"/>
+<path d="M99 77 Q126 94 109 120 Q91 145 61 126 Q37 111 50 86" fill="#e7c98f" stroke="#315f58" stroke-width="5"/>
+<circle cx="91" cy="109" r="10" fill="#fff" opacity=".7"/>
+<rect x="158" y="89" width="27" height="54" rx="7" fill="#fff" stroke="#315f58" stroke-width="4"/>
+<path d="M162 126 H181" stroke="#9fc9dc" stroke-width="14"/>
+<path d="M205 89 q12 -17 24 0 v54 h-24Z" fill="#fff" stroke="#315f58" stroke-width="4"/>
+<path d="M209 127 H225" stroke="#d98773" stroke-width="14"/>
+</g>
+</svg>
