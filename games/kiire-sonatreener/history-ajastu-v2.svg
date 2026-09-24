@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="340" viewBox="0 0 600 340">
+<rect x="6" y="6" width="588" height="328" rx="28" fill="#fffdf7" stroke="#d1ddcf" stroke-width="4"/>
+<path d="M55 244 C155 140 260 140 359 210 C420 254 489 251 548 190" fill="none" stroke="#315f58" stroke-width="7" stroke-linecap="round"/>
+<path d="M532 177 L550 189 L537 208" fill="none" stroke="#315f58" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+<g transform="translate(59 145)"><circle cx="0" cy="0" r="25" fill="#c6a879" stroke="#315f58" stroke-width="4"/><path d="M-10 10 C-18 2 -16 -12 -7 -19 M9 10 C18 2 16 -12 7 -19" fill="none" stroke="#684b37" stroke-width="4"/></g>
+<g transform="translate(168 101)"><circle cx="0" cy="0" r="25" fill="#f4ead7" stroke="#315f58" stroke-width="4"/><path d="M-14 11 V-8 H14 V11 M-17 14 H17 M0-8 V-21" stroke="#315f58" stroke-width="4" fill="none"/></g>
+<g transform="translate(286 122)"><circle cx="0" cy="0" r="25" fill="#b8acd8" stroke="#315f58" stroke-width="4"/><path d="M-13 12 V-5 H13 V12 M-16 -5 L0 -18 L16 -5" stroke="#315f58" stroke-width="4" fill="none"/></g>
+<g transform="translate(404 165)"><circle cx="0" cy="0" r="25" fill="#d98773" stroke="#315f58" stroke-width="4"/><path d="M-13 8 H13 L7 15 H-7Z M0 -15 V8 M0 -13 L-13 -5 M0 -8 L13 0" stroke="#315f58" stroke-width="4" fill="none"/></g>
+<g transform="translate(506 182)"><circle cx="0" cy="0" r="25" fill="#9fc9dc" stroke="#315f58" stroke-width="4"/><path d="M-16 9 H16 M-10 9 V-8 H0 V9 M4 9 V-15 H13 V9" stroke="#315f58" stroke-width="4" fill="none"/></g>
+<g font-family="Arial,Helvetica,sans-serif" font-size="20" font-weight="700" fill="#5c5f58">
+<text x="42" y="293">раньше</text><text x="485" y="293">позже</text>
+</g>
+</svg>
