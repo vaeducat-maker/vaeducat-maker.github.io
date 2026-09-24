@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="340" viewBox="0 0 600 340">
+<defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#dff4ff"/><stop offset="1" stop-color="#f7fbef"/></linearGradient></defs>
+<rect x="6" y="6" width="588" height="328" rx="28" fill="#fffdf7" stroke="#d1ddcf" stroke-width="4"/>
+<rect x="24" y="24" width="552" height="292" rx="22" fill="url(#sky)"/>
+<circle cx="504" cy="67" r="30" fill="#ffd768"/>
+<path d="M24 219 Q112 145 199 186 T390 176 T576 151 V316 H24Z" fill="#9cb38b"/>
+<path d="M24 249 Q107 196 214 225 T405 210 T576 191 V316 H24Z" fill="#668d59"/>
+<g transform="translate(170 85)">
+<path d="M45 77 V220 H270 V77 L251 92 L232 77 L213 92 L194 77 L175 92 L156 77 L137 92 L118 77 L99 92 L80 77 L62 92Z" fill="#f4ead7" stroke="#315f58" stroke-width="5" stroke-linejoin="round"/>
+<path d="M67 77 V26 H108 V77 M207 77 V26 H248 V77" fill="#d98773" stroke="#315f58" stroke-width="5"/>
+<path d="M83 26 V10 L101 20 L83 29Z M223 26 V10 L241 20 L223 29Z" fill="#e7b85d" stroke="#315f58" stroke-width="4"/>
+<path d="M129 220 V158 Q157 123 185 158 V220" fill="#fffdf8" stroke="#315f58" stroke-width="5"/>
+<rect x="75" y="122" width="30" height="42" rx="13" fill="#9fc9dc" stroke="#315f58" stroke-width="4"/>
+<rect x="211" y="122" width="30" height="42" rx="13" fill="#9fc9dc" stroke="#315f58" stroke-width="4"/>
+</g>
+<g transform="translate(70 177)">
+<circle cx="45" cy="24" r="18" fill="#f4d6b6" stroke="#263b32" stroke-width="4"/>
+<path d="M27 27 Q45 4 63 27" fill="#c7c7c7" stroke="#263b32" stroke-width="4"/>
+<path d="M45 42 V93 M45 57 L21 72 M45 57 L67 72 M45 93 L28 119 M45 93 L62 119" stroke="#263b32" stroke-width="5" fill="none" stroke-linecap="round"/>
+<path d="M7 68 Q29 48 48 70 V111 Q28 125 7 111Z" fill="#b8acd8" stroke="#315f58" stroke-width="4"/>
+<path d="M70 48 V110" stroke="#315f58" stroke-width="5"/><path d="M70 48 l14 12 -14 8" fill="#e7b85d" stroke="#315f58" stroke-width="4"/>
+</g>
+<g fill="#2d6d4d"><path d="M514 247 l17-50 17 50z"/><rect x="529" y="243" width="5" height="23"/><path d="M468 265 l14-41 14 41z"/><rect x="480" y="261" width="5" height="18"/></g>
+</svg>
