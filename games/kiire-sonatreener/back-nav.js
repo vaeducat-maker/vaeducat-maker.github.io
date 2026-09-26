@@ -39,17 +39,6 @@
   const brand=document.querySelector('.brand');
   (brand||document.querySelector('.app')).insertAdjacentElement('afterend',back);
 
-  function removeDeutsch(){
-    card.querySelectorAll('.library-section').forEach(section=>{
-      const title=section.querySelector('.library-title strong')?.textContent.trim();
-      if(title==='Deutsch')section.remove();
-    });
-    const lessonTitle=card.querySelector('.topic-intro h2')?.textContent.trim()||'';
-    if(lessonTitle==='E → I / IE'||lessonTitle==='A → Ä / AU → ÄU'){
-      setTimeout(()=>libraryBtn.click(),0);
-    }
-  }
-
   function isLibrary(){
     return !!card.querySelector('.library-heading') ||
       (!!card.querySelector('.empty') && !card.querySelector('.topic-intro'));
@@ -66,7 +55,6 @@
   }
 
   function sync(){
-    removeDeutsch();
     back.hidden=isLibrary()||!canGoBackInside();
   }
 
