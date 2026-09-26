@@ -16,6 +16,7 @@ const extraFiles = [
   'instagram/index.html',
   'assets/minu-suvi-preview.svg',
   'games/kiire-sonatreener/app-20260926.html',
+  'games/kiire-sonatreener/app-20260926-v2.html',
   'games/kiire-sonatreener/back-nav.js',
   'games/kiire-sonatreener/icon-192.png',
   'games/kiire-sonatreener/icon-512.png',
