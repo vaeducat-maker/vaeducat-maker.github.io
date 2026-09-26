@@ -106,3 +106,5 @@
     });
   }catch(e){}
 })();
+
+(()=>{if(document.querySelector('script[data-lit2]'))return;const s=document.createElement('script');s.src='./literature-lesson-2.js?v=20260926-1';s.dataset.lit2='1';document.head.appendChild(s);})();
