@@ -72,7 +72,11 @@ const DATA={
         {word:"seelik",ru:"юбка"},
         {word:"vest",ru:"жилет"},
         {word:"lips",ru:"галстук"},
-        {word:"püksid",ru:"брюки"}
+        {word:"püksid",ru:"брюки"},
+        {word:"disainima",ru:"проектировать"},
+        {word:"nõu küsima",ru:"спрашивать совета"},
+        {word:"solvuma",ru:"обижаться"},
+        {word:"vastutus",ru:"ответственность"}
       ]}
     ]},
     {id:"eesti-kirjandus",label:"Eesti kirjandus",icon:"📖",topics:[
