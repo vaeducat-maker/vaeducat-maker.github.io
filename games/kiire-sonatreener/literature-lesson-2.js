@@ -125,7 +125,7 @@
       grid.className='topic-grid';
       section.appendChild(grid);
     }
-    if(grid.querySelector('#litHistoryBookLesson'))return;
+    const existing=grid.querySelector('#litHistoryBookLesson');if(existing){existing.onclick=renderLesson;return;}
     const btn=document.createElement('button');
     btn.type='button';
     btn.className='topic-tile';
