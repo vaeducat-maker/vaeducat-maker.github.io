@@ -2,7 +2,7 @@
   "name": "EDUKASS · Sõnatreener",
   "short_name": "Sõnatreener",
   "description": "Kiire eesti keele sõnatreener",
-  "start_url": "/games/kiire-sonatreener/app-20260926.html",
+  "start_url": "/games/kiire-sonatreener/app-20260926-v2.html?v=20260926-10",
   "scope": "/games/kiire-sonatreener/",
   "display": "standalone",
   "orientation": "any",
