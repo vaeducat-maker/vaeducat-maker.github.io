@@ -39,6 +39,10 @@
   const brand=document.querySelector('.brand');
   (brand||document.querySelector('.app')).insertAdjacentElement('afterend',back);
 
+  function removeGermanVerbTiles(){
+    card.querySelectorAll('[data-u-lang="de"][data-u-topic="e-i-ie"],[data-u-lang="de"][data-u-topic="a-ae-au-aeu"]').forEach(btn=>btn.remove());
+  }
+
   function isLibrary(){
     return !!card.querySelector('.library-heading') ||
       (!!card.querySelector('.empty') && !card.querySelector('.topic-intro'));
@@ -55,6 +59,7 @@
   }
 
   function sync(){
+    removeGermanVerbTiles();
     back.hidden=isLibrary()||!canGoBackInside();
   }
 
