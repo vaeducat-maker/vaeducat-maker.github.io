@@ -156,6 +156,7 @@
   if(deutschBtn)deutschBtn.onclick=()=>activateHiddenLanguage(tabDe);
   new MutationObserver(tidy).observe(card,{childList:true,subtree:true});
   tidy();
+  renderSubjects();
 })();
 </script>
 <script>
