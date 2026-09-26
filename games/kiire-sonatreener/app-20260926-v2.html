@@ -49,7 +49,7 @@
 @media(max-width:560px){.shortcut-button{min-width:100px;padding:0 10px;font-size:13px}.summary-word{gap:8px;padding:9px 10px}.summary-word strong,.summary-word span{font-size:14px}}
 </style>
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"><meta http-equiv="Pragma" content="no-cache"><meta http-equiv="Expires" content="0"></head>
-<body data-build="20260926-12">
+<body data-build="20260926-13">
 <main class="app">
 <div class="brand">EDUKASS</div>
 <header class="top"><div><h1>Minu õppetunnid</h1><p class="sub" id="sub"></p></div><div class="top-tools"><button class="icon-button shortcut-button" id="shortcutBtn" aria-label="Добавить на главный экран" title="Добавить на главный экран">📲 На экран</button><button class="icon-button deck-button" id="reviewBtn" aria-label="Карточки" title="Карточки"><span class="deck-stack" aria-hidden="true"></span></button><button class="icon-button" id="libraryBtn" aria-label="Все предметы" title="Все предметы">📚</button><div class="pill" id="pill">Eesti</div></div></header>
@@ -61,7 +61,7 @@
 <script>
 (()=>{const b=document.getElementById('shortcutBtn');if(!b)return;const standalone=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;if(standalone){b.textContent='✓ Готово';b.disabled=true}else{b.onclick=()=>alert('Открой меню браузера и выбери «Добавить на главный экран».')}})();
 </script>
-<script src="./trainer.js?v=20260926-10"></script>
+<script src="./trainer.js?v=20260926-13"></script>
 <script>
 (()=>{
   const card=document.getElementById('card'),libraryBtn=document.getElementById('libraryBtn'),reviewBtn=document.getElementById('reviewBtn'),deutschBtn=document.getElementById('deutschBtn'),tabEt=document.getElementById('tabEt'),tabDe=document.getElementById('tabDe'),pill=document.getElementById('pill'),sub=document.getElementById('sub');
@@ -141,7 +141,7 @@
     card.innerHTML=`<div><div class="library-heading">Предметы</div><p class="chest-note">Все уроки в одном месте.</p>
       <section class="library-section"><div class="library-title"><span>🌿</span><strong>Loodus</strong></div><div class="topic-grid"><button class="topic-tile" data-u-lang="et" data-u-topic="vesi-ja-jogi"><span class="topic-title">Vesi ja jõgi</span><span class="topic-meta">16 карточек · 6 вопросов · 🖼</span></button></div></section>
       <section class="library-section"><div class="library-title"><span>👤</span><strong>Inimene</strong></div><div class="library-empty">Пока нет уроков</div></section>
-      <section class="library-section"><div class="library-title"><span>📝</span><strong>Eesti keel</strong></div><div class="topic-grid"><button class="topic-tile" data-u-lang="et" data-u-topic="eesti-keel-1"><span class="topic-title">Sõnad 1</span><span class="topic-meta">15 карточек</span></button><button class="topic-tile" data-u-lang="et" data-u-topic="eesti-keel-2"><span class="topic-title">Sõnad 2</span><span class="topic-meta">21 карточка</span></button><button class="topic-tile" data-u-lang="et" data-u-topic="eesti-keel-3"><span class="topic-title">Sõnad 3 — koolivorm</span><span class="topic-meta">9 карточек</span></button></div></section>
+      <section class="library-section"><div class="library-title"><span>📝</span><strong>Eesti keel</strong></div><div class="topic-grid"><button class="topic-tile" data-u-lang="et" data-u-topic="eesti-keel-1"><span class="topic-title">Sõnad 1</span><span class="topic-meta">15 карточек</span></button><button class="topic-tile" data-u-lang="et" data-u-topic="eesti-keel-2"><span class="topic-title">Sõnad 2</span><span class="topic-meta">21 карточка</span></button><button class="topic-tile" data-u-lang="et" data-u-topic="eesti-keel-3"><span class="topic-title">Sõnad 3 — koolivorm</span><span class="topic-meta">13 карточек</span></button></div></section>
       <section class="library-section"><div class="library-title"><span>🇩🇪</span><strong>Deutsch</strong></div><div class="topic-grid"><button class="topic-tile" data-u-lang="de" data-u-topic="lektion-1"><span class="topic-title">Lektion 1</span><span class="topic-meta">2 текста</span></button></div></section>
       <section class="library-section"><div class="library-title"><span>📖</span><strong>Eesti kirjandus</strong></div><div class="topic-grid"><button class="topic-tile" data-u-lang="et" data-u-topic="sonad-1"><span class="topic-title">Sõnad 1</span><span class="topic-meta">10 карточек</span></button><button class="topic-tile" id="litHistoryBookLesson"><span class="topic-title">Урок 2 — Исторические тексты о книге</span><span class="topic-meta">2 текста · перевод · письменное задание</span></button></div></section>
       <section class="library-section"><div class="library-title"><span>🏺</span><strong>Ajalugu</strong></div><div class="topic-grid"><button class="topic-tile" data-u-lang="history" data-u-topic="ajastud"><span class="topic-title">Ajastud</span><span class="topic-meta">7 карточек</span></button></div></section>
