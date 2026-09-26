@@ -3,13 +3,211 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
+<meta name="robots" content="noindex,nofollow,noarchive">
 <meta name="theme-color" content="#2f6f58">
+<meta name="application-name" content="Sõnatreener">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Sõnatreener">
 <title>Sõnatreener — EDUKASS</title>
-<style>body{margin:0;background:#fbfaf5;color:#2f6f58;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh;display:grid;place-items:center}main{text-align:center;padding:24px}a{color:#2f6f58;font-weight:800}</style>
-<script>location.replace('./app-20260926-v2.html?v=20260926-10');</script>
-</head>
-<body><main><div>Обновляю приложение…</div><p><a href="./app-20260926-v2.html?v=20260926-10">Открыть новую версию</a></p></main></body>
+<link rel="manifest" href="./manifest.webmanifest?v=20260926-10">
+<link rel="icon" href="./icon.svg" type="image/svg+xml">
+<link rel="icon" href="./icon-192.png" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<link rel="alternate icon" href="../../favicon-32.png">
+<link rel="stylesheet" href="./trainer.css?v=20260926-10">
+<link rel="stylesheet" href="./lesson-library.css?v=20260926-10">
+<style>
+.shortcut-button{width:auto;min-width:108px;padding:0 12px;font-size:14px;white-space:nowrap;font-weight:850;color:#2f6f58;background:#eaf4ee;border-color:#cee0d5}
+.shortcut-button:disabled{opacity:.62;cursor:default}
+.lang-tabs,.deck-button{display:none!important}
+.summary-view{display:grid;gap:18px}
+.summary-head{text-align:center}
+.summary-head h2{margin:0 0 4px}
+.summary-poster{width:100%;display:block;border-radius:18px;border:1px solid #d9e5dc;background:#fff}
+.summary-section{display:grid;gap:10px}
+.summary-section h3{margin:0;color:#2f6f58;font-size:18px}
+.summary-words{display:grid;gap:7px}
+.summary-word{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:center;padding:10px 12px;border:1px solid #dfe8e2;border-radius:12px;background:#fff}
+.summary-word strong{font-size:16px}
+.summary-word span{text-align:right;color:#55645d}
+.summary-qa{display:grid;gap:9px}
+.summary-qa-item{padding:12px;border:1px solid #dfe8e2;border-radius:12px;background:#fff}
+.summary-qa-item strong{display:block;margin-bottom:5px;color:#2f6f58}
+.summary-qa-item p{margin:0;line-height:1.4}
+.text-lesson{display:grid;gap:18px}
+.text-lesson-head{margin-bottom:0}
+.text-lesson-section{display:grid;gap:10px}
+.text-lesson-section h3{margin:0;color:#2f6f58;font-size:18px}
+.lesson-pairs{display:grid;gap:10px}
+.lesson-pair{padding:12px 14px;border:1px solid #dfe8e2;border-radius:12px;background:#fff;line-height:1.45}
+.lesson-ru{color:#55645d;margin-bottom:4px}
+.lesson-de{font-weight:800;color:#21352c}
+.lesson-german-only{padding:14px;border:1px solid #dfe8e2;border-radius:12px;background:#fff;display:grid;gap:7px;line-height:1.5}
+.lesson-de-line{font-weight:700}
+.history-front{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;width:100%;height:100%}.history-art{width:min(420px,92%);height:210px;display:flex;align-items:center;justify-content:center}.history-art img,.history-art svg{width:100%;height:100%;display:block;object-fit:contain;border-radius:18px}.history-word{font-size:clamp(30px,8vw,46px);font-weight:900;line-height:1.15;overflow-wrap:anywhere}.history-answer{font-size:clamp(30px,8vw,46px);font-weight:900;line-height:1.15}
+@media(max-width:560px){.shortcut-button{min-width:100px;padding:0 10px;font-size:13px}.summary-word{gap:8px;padding:9px 10px}.summary-word strong,.summary-word span{font-size:14px}}
+</style>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"><meta http-equiv="Pragma" content="no-cache"><meta http-equiv="Expires" content="0"></head>
+<body data-build="20260926-10">
+<main class="app">
+<div class="brand">EDUKASS</div>
+<header class="top"><div><h1>Minu õppetunnid</h1><p class="sub" id="sub"></p></div><div class="top-tools"><button class="icon-button shortcut-button" id="shortcutBtn" aria-label="Добавить на главный экран" title="Добавить на главный экран">📲 На экран</button><button class="icon-button deck-button" id="reviewBtn" aria-label="Карточки" title="Карточки"><span class="deck-stack" aria-hidden="true"></span></button><button class="icon-button" id="libraryBtn" aria-label="Все предметы" title="Все предметы">📚</button><div class="pill" id="pill">Eesti</div></div></header>
+<div class="lang-tabs" role="tablist" aria-label="Язык тренажёра"><button class="lang-tab active" id="tabEt" role="tab">🇪🇪 Eesti</button><button class="lang-tab" id="tabDe" role="tab">🇩🇪 Deutsch</button></div>
+<div class="progress" id="progress" hidden><span id="p1"></span><span id="p2"></span><span id="p3"></span><span id="p4"></span><span id="p5"></span></div>
+<section class="card" id="card" aria-live="polite"></section>
+<div class="actions"><button class="ghost" id="restart" hidden>← Выйти</button><div class="tiny" id="counter"></div></div>
+</main>
+<script>
+(()=>{const b=document.getElementById('shortcutBtn');if(!b)return;const standalone=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;if(standalone){b.textContent='✓ Готово';b.disabled=true}else{b.onclick=()=>alert('Открой меню браузера и выбери «Добавить на главный экран».')}})();
+</script>
+<script src="./trainer.js?v=20260926-10"></script>
+<script>
+(()=>{
+  const card=document.getElementById('card'),libraryBtn=document.getElementById('libraryBtn'),reviewBtn=document.getElementById('reviewBtn'),deutschBtn=document.getElementById('deutschBtn'),tabEt=document.getElementById('tabEt'),tabDe=document.getElementById('tabDe'),pill=document.getElementById('pill'),sub=document.getElementById('sub');
+  if(!card||!libraryBtn||!tabEt||!tabDe)return;
+  const originalLibrary=libraryBtn.onclick;
+  if(reviewBtn)reviewBtn.hidden=true;
+
+  function tidy(){
+    const h=card.querySelector('.topic-intro h2'),kicker=card.querySelector('.topic-kicker');
+    if(h&&(h.textContent.trim()==='E → I / IE'||h.textContent.trim()==='A → Ä / AU → ÄU')){if(kicker)kicker.textContent='🇩🇪 Deutsch';if(pill)pill.textContent='Deutsch'}
+    const a=card.querySelector('#cardsRuEt'),b=card.querySelector('#cardsEtRu');
+    if(a&&!a.dataset.deckIcon){a.textContent='🃏 '+a.textContent;a.dataset.deckIcon='1'}
+    if(b&&!b.dataset.deckIcon){b.textContent='🃏 '+b.textContent;b.dataset.deckIcon='1'}
+  }
+
+  function clickTopicWhenReady(topic,tries=0){
+    const target=card.querySelector(`[data-topic="${topic}"]`);
+    if(target){target.click();return}
+    if(tries<20)setTimeout(()=>clickTopicWhenReady(topic,tries+1),25);
+  }
+
+  function activateHiddenLanguage(tab){
+    tab.disabled=false;
+    if(typeof tab.onclick==='function')tab.onclick();
+    else tab.click();
+  }
+
+  function openExisting(lang,topic){
+    if(lang==='de'){
+      activateHiddenLanguage(tabDe);
+      clickTopicWhenReady(topic);
+      return;
+    }
+    activateHiddenLanguage(tabEt);
+    if(topic==='vesi-ja-jogi')return;
+    if(typeof originalLibrary==='function')originalLibrary();
+    clickTopicWhenReady(topic);
+  }
+
+  const HISTORY_CARDS=[['muinasaeg','первобытность'],['vanaaeg','Древний мир'],['keskaeg','Средние века'],['uusaeg','Новое время'],['lähiaeg','Новейшее время'],['ajastu','эпоха'],['teadlane','учёный']];
+  let historyQueue=[],historyGood=0,historyBad=0,historyDir='et-ru',historyFlipped=false;
+  const historyShuffle=a=>{a=[...a];for(let i=a.length-1;i;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+  const historyEsc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'})[c]);
+  function historyArt(word){
+    const art={"muinasaeg":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"600\" height=\"340\" viewBox=\"0 0 600 340\">\n<defs>\n<linearGradient id=\"sky\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"#dff4ff\"/><stop offset=\"1\" stop-color=\"#f7fbef\"/></linearGradient>\n<linearGradient id=\"ground\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\"><stop stop-color=\"#8ba676\"/><stop offset=\"1\" stop-color=\"#5f7f59\"/></linearGradient>\n<linearGradient id=\"rock\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\"><stop stop-color=\"#c6a879\"/><stop offset=\"1\" stop-color=\"#947757\"/></linearGradient>\n</defs>\n<rect x=\"6\" y=\"6\" width=\"588\" height=\"328\" rx=\"28\" fill=\"#fffdf7\" stroke=\"#d1ddcf\" stroke-width=\"4\"/>\n<rect x=\"24\" y=\"24\" width=\"552\" height=\"292\" rx=\"22\" fill=\"url(#sky)\"/>\n<circle cx=\"505\" cy=\"67\" r=\"31\" fill=\"#ffd768\"/>\n<path d=\"M24 207 Q105 133 182 173 T349 160 T576 145 V316 H24Z\" fill=\"#9db18f\"/>\n<path d=\"M24 239 Q130 182 251 219 T445 206 T576 190 V316 H24Z\" fill=\"url(#ground)\"/>\n<path d=\"M51 247 Q88 94 202 92 Q284 94 318 165 Q333 196 342 247Z\" fill=\"url(#rock)\" stroke=\"#755d45\" stroke-width=\"4\"/>\n<path d=\"M108 247 Q125 153 194 151 Q258 151 282 247Z\" fill=\"#2f342d\"/>\n<path d=\"M168 246 Q176 205 204 187 Q232 207 236 246Z\" fill=\"#684b37\"/>\n<path d=\"M200 244 C183 229 184 211 200 194 C217 213 219 229 200 244Z\" fill=\"#ef9b4c\"/>\n<path d=\"M200 233 C192 225 193 217 200 208 C208 217 208 225 200 233Z\" fill=\"#ffd37a\"/>\n<g transform=\"translate(355 137)\">\n<ellipse cx=\"76\" cy=\"70\" rx=\"52\" ry=\"37\" fill=\"#8b7b6b\" stroke=\"#5d5248\" stroke-width=\"4\"/>\n<circle cx=\"118\" cy=\"59\" r=\"24\" fill=\"#8b7b6b\" stroke=\"#5d5248\" stroke-width=\"4\"/>\n<path d=\"M133 69 Q160 83 148 109\" fill=\"none\" stroke=\"#5d5248\" stroke-width=\"8\" stroke-linecap=\"round\"/>\n<path d=\"M108 48 q7 -26 23 -30 M122 47 q15 -24 31 -22\" fill=\"none\" stroke=\"#5d5248\" stroke-width=\"5\" stroke-linecap=\"round\"/>\n<path d=\"M55 97 L47 130 M87 98 L92 132 M119 79 L126 123\" stroke=\"#5d5248\" stroke-width=\"6\" stroke-linecap=\"round\"/>\n<circle cx=\"126\" cy=\"55\" r=\"3\" fill=\"#222\"/>\n</g>\n<g transform=\"translate(293 155)\" stroke=\"#263b32\" stroke-width=\"5\" stroke-linecap=\"round\" fill=\"none\">\n<circle cx=\"33\" cy=\"16\" r=\"12\" fill=\"#f4d6b6\"/>\n<path d=\"M32 29 L30 70 M30 43 L10 58 M30 43 L53 51 M30 70 L15 101 M30 70 L49 100\"/>\n<path d=\"M8 57 L0 21\"/><path d=\"M0 21 l7 5 -9 4\" fill=\"#263b32\" stroke=\"none\"/>\n</g>\n<g fill=\"#2d6d4d\"><path d=\"M531 246 l18-52 18 52z\"/><rect x=\"547\" y=\"242\" width=\"5\" height=\"24\"/><path d=\"M470 264 l15-43 15 43z\"/><rect x=\"482\" y=\"260\" width=\"5\" height=\"19\"/></g>\n<path d=\"M48 294 Q100 278 155 292 M380 284 Q430 270 492 284\" stroke=\"#d9ead4\" stroke-width=\"5\" fill=\"none\" stroke-linecap=\"round\"/>\n</svg>","vanaaeg":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"600\" height=\"340\" viewBox=\"0 0 600 340\">\n<defs><linearGradient id=\"sky\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"#dff4ff\"/><stop offset=\"1\" stop-color=\"#fffaf0\"/></linearGradient></defs>\n<rect x=\"6\" y=\"6\" width=\"588\" height=\"328\" rx=\"28\" fill=\"#fffdf7\" stroke=\"#d1ddcf\" stroke-width=\"4\"/>\n<rect x=\"24\" y=\"24\" width=\"552\" height=\"292\" rx=\"22\" fill=\"url(#sky)\"/>\n<circle cx=\"505\" cy=\"68\" r=\"31\" fill=\"#ffd768\"/>\n<path d=\"M24 227 Q120 173 218 205 T397 193 T576 178 V316 H24Z\" fill=\"#91aa76\"/>\n<path d=\"M76 252 H515\" stroke=\"#9a825f\" stroke-width=\"7\" stroke-linecap=\"round\"/>\n<g transform=\"translate(120 72)\">\n<path d=\"M20 86 L180 16 L340 86Z\" fill=\"#f4ead7\" stroke=\"#315f58\" stroke-width=\"5\" stroke-linejoin=\"round\"/>\n<rect x=\"31\" y=\"88\" width=\"320\" height=\"24\" rx=\"7\" fill=\"#e7c98f\" stroke=\"#315f58\" stroke-width=\"5\"/>\n<g fill=\"#fffdf8\" stroke=\"#315f58\" stroke-width=\"5\">\n<rect x=\"48\" y=\"111\" width=\"34\" height=\"107\" rx=\"12\"/><rect x=\"101\" y=\"111\" width=\"34\" height=\"107\" rx=\"12\"/>\n<rect x=\"154\" y=\"111\" width=\"34\" height=\"107\" rx=\"12\"/><rect x=\"207\" y=\"111\" width=\"34\" height=\"107\" rx=\"12\"/>\n<rect x=\"260\" y=\"111\" width=\"34\" height=\"107\" rx=\"12\"/><rect x=\"313\" y=\"111\" width=\"24\" height=\"107\" rx=\"12\"/>\n</g>\n<rect x=\"24\" y=\"220\" width=\"336\" height=\"18\" rx=\"6\" fill=\"#d6b57d\" stroke=\"#315f58\" stroke-width=\"5\"/>\n</g>\n<g transform=\"translate(58 204)\">\n<path d=\"M0 46 Q34 14 67 46 Q34 69 0 46Z\" fill=\"#b7d4e0\" stroke=\"#315f58\" stroke-width=\"4\"/>\n<path d=\"M16 43 Q21 26 34 8 M50 43 Q46 26 34 8\" stroke=\"#315f58\" stroke-width=\"4\" fill=\"none\" stroke-linecap=\"round\"/>\n</g>\n<g transform=\"translate(473 218)\">\n<path d=\"M20 0 Q43 13 52 35 Q45 66 24 70 Q3 60 0 34 Q4 15 20 0Z\" fill=\"#d98773\" stroke=\"#315f58\" stroke-width=\"4\"/>\n<path d=\"M14 18 Q25 10 38 18 M26 70 V93\" stroke=\"#315f58\" stroke-width=\"4\" fill=\"none\" stroke-linecap=\"round\"/>\n</g>\n<path d=\"M42 292 Q92 279 144 291 M451 291 Q500 276 551 291\" stroke=\"#d9ead4\" stroke-width=\"5\" fill=\"none\" stroke-linecap=\"round\"/>\n</svg>","keskaeg":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"600\" height=\"340\" viewBox=\"0 0 600 340\">\n<defs><linearGradient id=\"sky\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"#dff4ff\"/><stop offset=\"1\" stop-color=\"#f7fbef\"/></linearGradient></defs>\n<rect x=\"6\" y=\"6\" width=\"588\" height=\"328\" rx=\"28\" fill=\"#fffdf7\" stroke=\"#d1ddcf\" stroke-width=\"4\"/>\n<rect x=\"24\" y=\"24\" width=\"552\" height=\"292\" rx=\"22\" fill=\"url(#sky)\"/>\n<circle cx=\"504\" cy=\"67\" r=\"30\" fill=\"#ffd768\"/>\n<path d=\"M24 219 Q112 145 199 186 T390 176 T576 151 V316 H24Z\" fill=\"#9cb38b\"/>\n<path d=\"M24 249 Q107 196 214 225 T405 210 T576 191 V316 H24Z\" fill=\"#668d59\"/>\n<g transform=\"translate(170 85)\">\n<path d=\"M45 77 V220 H270 V77 L251 92 L232 77 L213 92 L194 77 L175 92 L156 77 L137 92 L118 77 L99 92 L80 77 L62 92Z\" fill=\"#f4ead7\" stroke=\"#315f58\" stroke-width=\"5\" stroke-linejoin=\"round\"/>\n<path d=\"M67 77 V26 H108 V77 M207 77 V26 H248 V77\" fill=\"#d98773\" stroke=\"#315f58\" stroke-width=\"5\"/>\n<path d=\"M83 26 V10 L101 20 L83 29Z M223 26 V10 L241 20 L223 29Z\" fill=\"#e7b85d\" stroke=\"#315f58\" stroke-width=\"4\"/>\n<path d=\"M129 220 V158 Q157 123 185 158 V220\" fill=\"#fffdf8\" stroke=\"#315f58\" stroke-width=\"5\"/>\n<rect x=\"75\" y=\"122\" width=\"30\" height=\"42\" rx=\"13\" fill=\"#9fc9dc\" stroke=\"#315f58\" stroke-width=\"4\"/>\n<rect x=\"211\" y=\"122\" width=\"30\" height=\"42\" rx=\"13\" fill=\"#9fc9dc\" stroke=\"#315f58\" stroke-width=\"4\"/>\n</g>\n<g transform=\"translate(70 177)\">\n<circle cx=\"45\" cy=\"24\" r=\"18\" fill=\"#f4d6b6\" stroke=\"#263b32\" stroke-width=\"4\"/>\n<path d=\"M27 27 Q45 4 63 27\" fill=\"#c7c7c7\" stroke=\"#263b32\" stroke-width=\"4\"/>\n<path d=\"M45 42 V93 M45 57 L21 72 M45 57 L67 72 M45 93 L28 119 M45 93 L62 119\" stroke=\"#263b32\" stroke-width=\"5\" fill=\"none\" stroke-linecap=\"round\"/>\n<path d=\"M7 68 Q29 48 48 70 V111 Q28 125 7 111Z\" fill=\"#b8acd8\" stroke=\"#315f58\" stroke-width=\"4\"/>\n<path d=\"M70 48 V110\" stroke=\"#315f58\" stroke-width=\"5\"/><path d=\"M70 48 l14 12 -14 8\" fill=\"#e7b85d\" stroke=\"#315f58\" stroke-width=\"4\"/>\n</g>\n<g fill=\"#2d6d4d\"><path d=\"M514 247 l17-50 17 50z\"/><rect x=\"529\" y=\"243\" width=\"5\" height=\"23\"/><path d=\"M468 265 l14-41 14 41z\"/><rect x=\"480\" y=\"261\" width=\"5\" height=\"18\"/></g>\n</svg>","uusaeg":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"600\" height=\"340\" viewBox=\"0 0 600 340\">\n<defs>\n<linearGradient id=\"sky\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"#dff4ff\"/><stop offset=\"1\" stop-color=\"#f7fbef\"/></linearGradient>\n<linearGradient id=\"water\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\"><stop stop-color=\"#7fd3ee\"/><stop offset=\"1\" stop-color=\"#2586b7\"/></linearGradient>\n</defs>\n<rect x=\"6\" y=\"6\" width=\"588\" height=\"328\" rx=\"28\" fill=\"#fffdf7\" stroke=\"#d1ddcf\" stroke-width=\"4\"/>\n<rect x=\"24\" y=\"24\" width=\"552\" height=\"292\" rx=\"22\" fill=\"url(#sky)\"/>\n<circle cx=\"500\" cy=\"66\" r=\"31\" fill=\"#ffd768\"/>\n<path d=\"M24 245 Q94 199 160 226 T286 213 V316 H24Z\" fill=\"#668d59\"/>\n<path d=\"M24 253 Q150 230 300 248 T576 234 V316 H24Z\" fill=\"url(#water)\"/>\n<path d=\"M38 280 Q125 257 220 277 T396 270 T560 258\" stroke=\"#d9f9ff\" stroke-width=\"6\" fill=\"none\" stroke-linecap=\"round\"/>\n<g transform=\"translate(165 73)\">\n<path d=\"M64 145 H278 L249 187 H97Z\" fill=\"#c99c5d\" stroke=\"#315f58\" stroke-width=\"5\" stroke-linejoin=\"round\"/>\n<path d=\"M166 16 V145\" stroke=\"#315f58\" stroke-width=\"6\" stroke-linecap=\"round\"/>\n<path d=\"M166 25 L166 126 L83 96Z\" fill=\"#fff8e9\" stroke=\"#315f58\" stroke-width=\"5\" stroke-linejoin=\"round\"/>\n<path d=\"M176 47 L176 130 L264 103Z\" fill=\"#d98773\" stroke=\"#315f58\" stroke-width=\"5\" stroke-linejoin=\"round\"/>\n<path d=\"M92 145 H250\" stroke=\"#315f58\" stroke-width=\"5\"/>\n<circle cx=\"128\" cy=\"162\" r=\"6\" fill=\"#315f58\"/><circle cx=\"157\" cy=\"162\" r=\"6\" fill=\"#315f58\"/><circle cx=\"186\" cy=\"162\" r=\"6\" fill=\"#315f58\"/>\n</g>\n<g transform=\"translate(70 66)\">\n<circle cx=\"34\" cy=\"34\" r=\"27\" fill=\"#fffdf8\" stroke=\"#315f58\" stroke-width=\"4\"/>\n<circle cx=\"34\" cy=\"34\" r=\"4\" fill=\"#315f58\"/>\n<path d=\"M34 8 V18 M34 50 V60 M8 34 H18 M50 34 H60\" stroke=\"#315f58\" stroke-width=\"4\" stroke-linecap=\"round\"/>\n<path d=\"M34 34 L50 20\" stroke=\"#d98773\" stroke-width=\"4\" stroke-linecap=\"round\"/>\n</g>\n<g transform=\"translate(425 146)\">\n<path d=\"M0 45 Q38 12 78 45 Q38 78 0 45Z\" fill=\"#fffdf8\" stroke=\"#315f58\" stroke-width=\"4\"/>\n<path d=\"M20 43 Q28 24 39 8 M59 43 Q52 24 39 8\" stroke=\"#315f58\" stroke-width=\"4\" fill=\"none\" stroke-linecap=\"round\"/>\n</g>\n</svg>","lähiaeg":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"600\" height=\"340\" viewBox=\"0 0 600 340\">\n<defs><linearGradient id=\"sky\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"#dff4ff\"/><stop offset=\"1\" stop-color=\"#f7fbef\"/></linearGradient></defs>\n<rect x=\"6\" y=\"6\" width=\"588\" height=\"328\" rx=\"28\" fill=\"#fffdf7\" stroke=\"#d1ddcf\" stroke-width=\"4\"/>\n<rect x=\"24\" y=\"24\" width=\"552\" height=\"292\" rx=\"22\" fill=\"url(#sky)\"/>\n<circle cx=\"507\" cy=\"65\" r=\"30\" fill=\"#ffd768\"/>\n<path d=\"M24 239 Q107 206 187 227 T371 214 T576 198 V316 H24Z\" fill=\"#87a773\"/>\n<g transform=\"translate(62 122)\">\n<rect x=\"0\" y=\"48\" width=\"64\" height=\"130\" rx=\"6\" fill=\"#9fc9dc\" stroke=\"#315f58\" stroke-width=\"4\"/>\n<rect x=\"76\" y=\"14\" width=\"76\" height=\"164\" rx=\"6\" fill=\"#f4ead7\" stroke=\"#315f58\" stroke-width=\"4\"/>\n<rect x=\"165\" y=\"78\" width=\"58\" height=\"100\" rx=\"6\" fill=\"#9fc3a8\" stroke=\"#315f58\" stroke-width=\"4\"/>\n<rect x=\"236\" y=\"38\" width=\"78\" height=\"140\" rx=\"6\" fill=\"#b8acd8\" stroke=\"#315f58\" stroke-width=\"4\"/>\n<g stroke=\"#315f58\" stroke-width=\"4\" stroke-linecap=\"round\"><path d=\"M14 72 H48 M14 97 H48 M14 122 H48\"/><path d=\"M92 43 H135 M92 73 H135 M92 103 H135 M92 133 H135\"/><path d=\"M179 101 H210 M179 126 H210\"/><path d=\"M250 66 H300 M250 96 H300 M250 126 H300\"/></g>\n</g>\n<g transform=\"translate(342 53)\">\n<path d=\"M0 60 L82 45 L137 18 L151 28 L116 51 L207 44 L216 54 L107 70 L57 99 L42 92 L73 68 L4 74Z\" fill=\"#d98773\" stroke=\"#315f58\" stroke-width=\"5\" stroke-linejoin=\"round\"/>\n</g>\n<g transform=\"translate(340 240)\">\n<path d=\"M0 20 H181\" stroke=\"#315f58\" stroke-width=\"5\" stroke-linecap=\"round\"/>\n<rect x=\"22\" y=\"-8\" width=\"102\" height=\"33\" rx=\"9\" fill=\"#e7c98f\" stroke=\"#315f58\" stroke-width=\"4\"/>\n<rect x=\"124\" y=\"1\" width=\"40\" height=\"24\" rx=\"7\" fill=\"#9fc9dc\" stroke=\"#315f58\" stroke-width=\"4\"/>\n<circle cx=\"50\" cy=\"28\" r=\"9\" fill=\"#263b32\"/><circle cx=\"135\" cy=\"28\" r=\"9\" fill=\"#263b32\"/>\n</g>\n</svg>","ajastu":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"600\" height=\"340\" viewBox=\"0 0 600 340\">\n<rect x=\"6\" y=\"6\" width=\"588\" height=\"328\" rx=\"28\" fill=\"#fffdf7\" stroke=\"#d1ddcf\" stroke-width=\"4\"/>\n<path d=\"M55 244 C155 140 260 140 359 210 C420 254 489 251 548 190\" fill=\"none\" stroke=\"#315f58\" stroke-width=\"7\" stroke-linecap=\"round\"/>\n<path d=\"M532 177 L550 189 L537 208\" fill=\"none\" stroke=\"#315f58\" stroke-width=\"7\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n<g transform=\"translate(59 145)\"><circle cx=\"0\" cy=\"0\" r=\"25\" fill=\"#c6a879\" stroke=\"#315f58\" stroke-width=\"4\"/><path d=\"M-10 10 C-18 2 -16 -12 -7 -19 M9 10 C18 2 16 -12 7 -19\" fill=\"none\" stroke=\"#684b37\" stroke-width=\"4\"/></g>\n<g transform=\"translate(168 101)\"><circle cx=\"0\" cy=\"0\" r=\"25\" fill=\"#f4ead7\" stroke=\"#315f58\" stroke-width=\"4\"/><path d=\"M-14 11 V-8 H14 V11 M-17 14 H17 M0-8 V-21\" stroke=\"#315f58\" stroke-width=\"4\" fill=\"none\"/></g>\n<g transform=\"translate(286 122)\"><circle cx=\"0\" cy=\"0\" r=\"25\" fill=\"#b8acd8\" stroke=\"#315f58\" stroke-width=\"4\"/><path d=\"M-13 12 V-5 H13 V12 M-16 -5 L0 -18 L16 -5\" stroke=\"#315f58\" stroke-width=\"4\" fill=\"none\"/></g>\n<g transform=\"translate(404 165)\"><circle cx=\"0\" cy=\"0\" r=\"25\" fill=\"#d98773\" stroke=\"#315f58\" stroke-width=\"4\"/><path d=\"M-13 8 H13 L7 15 H-7Z M0 -15 V8 M0 -13 L-13 -5 M0 -8 L13 0\" stroke=\"#315f58\" stroke-width=\"4\" fill=\"none\"/></g>\n<g transform=\"translate(506 182)\"><circle cx=\"0\" cy=\"0\" r=\"25\" fill=\"#9fc9dc\" stroke=\"#315f58\" stroke-width=\"4\"/><path d=\"M-16 9 H16 M-10 9 V-8 H0 V9 M4 9 V-15 H13 V9\" stroke=\"#315f58\" stroke-width=\"4\" fill=\"none\"/></g>\n<g font-family=\"Arial,Helvetica,sans-serif\" font-size=\"20\" font-weight=\"700\" fill=\"#5c5f58\">\n<text x=\"42\" y=\"293\">раньше</text><text x=\"485\" y=\"293\">позже</text>\n</g>\n</svg>","teadlane":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"600\" height=\"340\" viewBox=\"0 0 600 340\">\n<defs><linearGradient id=\"room\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"#f8fbf7\"/><stop offset=\"1\" stop-color=\"#eef4ee\"/></linearGradient></defs>\n<rect x=\"6\" y=\"6\" width=\"588\" height=\"328\" rx=\"28\" fill=\"#fffdf7\" stroke=\"#d1ddcf\" stroke-width=\"4\"/>\n<rect x=\"24\" y=\"24\" width=\"552\" height=\"292\" rx=\"22\" fill=\"url(#room)\"/>\n<rect x=\"54\" y=\"56\" width=\"164\" height=\"76\" rx=\"12\" fill=\"#fffdf8\" stroke=\"#d1ddcf\" stroke-width=\"4\"/>\n<g transform=\"translate(73 72)\"><rect x=\"0\" y=\"0\" width=\"24\" height=\"42\" rx=\"5\" fill=\"#9fc9dc\"/><rect x=\"32\" y=\"12\" width=\"24\" height=\"30\" rx=\"5\" fill=\"#d98773\"/><rect x=\"64\" y=\"6\" width=\"24\" height=\"36\" rx=\"5\" fill=\"#e7c98f\"/><rect x=\"96\" y=\"18\" width=\"24\" height=\"24\" rx=\"5\" fill=\"#9fc3a8\"/></g>\n<g transform=\"translate(74 138)\">\n<circle cx=\"79\" cy=\"43\" r=\"34\" fill=\"#f4d6b6\" stroke=\"#263b32\" stroke-width=\"4\"/>\n<path d=\"M47 42 Q79 0 111 42\" fill=\"#6a5b4e\"/>\n<circle cx=\"67\" cy=\"43\" r=\"4\" fill=\"#263b32\"/><circle cx=\"91\" cy=\"43\" r=\"4\" fill=\"#263b32\"/>\n<path d=\"M68 58 Q79 67 91 58\" fill=\"none\" stroke=\"#263b32\" stroke-width=\"3\" stroke-linecap=\"round\"/>\n<path d=\"M36 92 Q79 70 122 92 L137 154 H20Z\" fill=\"#fff\" stroke=\"#315f58\" stroke-width=\"5\" stroke-linejoin=\"round\"/>\n<path d=\"M59 91 L79 112 L100 91\" fill=\"none\" stroke=\"#d98773\" stroke-width=\"4\"/>\n</g>\n<g transform=\"translate(273 97)\">\n<rect x=\"0\" y=\"149\" width=\"244\" height=\"18\" rx=\"7\" fill=\"#c99c5d\" stroke=\"#315f58\" stroke-width=\"4\"/>\n<path d=\"M42 143 Q66 110 94 139\" fill=\"#9fc9dc\" stroke=\"#315f58\" stroke-width=\"4\"/>\n<path d=\"M71 41 L107 77\" stroke=\"#315f58\" stroke-width=\"7\" stroke-linecap=\"round\"/>\n<path d=\"M100 70 L138 32\" stroke=\"#315f58\" stroke-width=\"7\" stroke-linecap=\"round\"/>\n<path d=\"M128 22 L149 43\" stroke=\"#d98773\" stroke-width=\"9\" stroke-linecap=\"round\"/>\n<path d=\"M99 77 Q126 94 109 120 Q91 145 61 126 Q37 111 50 86\" fill=\"#e7c98f\" stroke=\"#315f58\" stroke-width=\"5\"/>\n<circle cx=\"91\" cy=\"109\" r=\"10\" fill=\"#fff\" opacity=\".7\"/>\n<rect x=\"158\" y=\"89\" width=\"27\" height=\"54\" rx=\"7\" fill=\"#fff\" stroke=\"#315f58\" stroke-width=\"4\"/>\n<path d=\"M162 126 H181\" stroke=\"#9fc9dc\" stroke-width=\"14\"/>\n<path d=\"M205 89 q12 -17 24 0 v54 h-24Z\" fill=\"#fff\" stroke=\"#315f58\" stroke-width=\"4\"/>\n<path d=\"M209 127 H225\" stroke=\"#d98773\" stroke-width=\"14\"/>\n</g>\n</svg>"};
+    return '<div class="history-art">'+(art[word]||art.ajastu)+'</div>';
+  }
+  function renderHistoryTopic(){
+    if(pill)pill.textContent='Ajalugu'; if(sub)sub.textContent='Ajastud · 7 карточек';
+    card.innerHTML=`<div class="topic-intro"><div class="topic-kicker">🏺 Ajalugu</div><h2>Ajastud</h2><p>Исторические эпохи и основные термины.</p><div class="topic-actions"><button class="primary" id="historyEtRu">🃏 Eesti → русский</button><button class="secondary" id="historyRuEt">🃏 Русский → Eesti</button></div></div>`;
+    card.querySelector('#historyEtRu').onclick=()=>startHistory('et-ru');
+    card.querySelector('#historyRuEt').onclick=()=>startHistory('ru-et');
+  }
+  function startHistory(dir){
+    historyDir=dir;historyQueue=historyShuffle(HISTORY_CARDS);historyGood=0;historyBad=0;historyFlipped=false;
+    tabEt.disabled=true;tabDe.disabled=true;if(libraryBtn)libraryBtn.hidden=true;if(reviewBtn)reviewBtn.hidden=true;
+    document.getElementById('restart').hidden=false;document.getElementById('restart').textContent='← Выйти';
+    if(pill)pill.textContent='Ajalugu'; if(sub)sub.textContent='Ajastud · 7 карточек'; renderHistoryCard();
+  }
+  function renderHistoryCard(){
+    if(!historyQueue.length){
+      tabEt.disabled=false;tabDe.disabled=false;if(libraryBtn)libraryBtn.hidden=false;document.getElementById('restart').hidden=true;
+      card.innerHTML=`<div class="done"><div class="big">🏺</div><h2>Готово!</h2><div class="finish-actions"><button class="primary" id="historyAgain">Ещё раз</button><button class="secondary" id="historyBack">К уроку</button></div></div>`;
+      card.querySelector('#historyAgain').onclick=()=>startHistory(historyDir);card.querySelector('#historyBack').onclick=renderHistoryTopic;return;
+    }
+    const x=historyQueue[0],front=historyDir==='et-ru'?x[0]:x[1],back=historyDir==='et-ru'?x[1]:x[0];historyFlipped=false;
+    const counterEl=document.getElementById('counter');if(counterEl)counterEl.textContent=`Осталось: ${historyQueue.length}`;
+    card.innerHTML=`<div class="review-wrap"><div class="tiny" style="text-align:center;margin-bottom:10px">${historyDir==='et-ru'?'Eesti → русский':'Русский → Eesti'}</div><div class="flashcard" id="historyFlash"><div class="flashcard-inner"><div class="flash-face"><div class="history-front">${historyArt(x[0])}<div class="history-word">${historyEsc(front)}</div></div></div><div class="flash-face flash-back"><div class="history-answer">${historyEsc(back)}</div></div></div></div><div class="review-stats"><span>✓ ${historyGood}</span><span>✕ ${historyBad}</span></div><div class="review-actions" id="historyActions" hidden><button class="review-no" id="historyNo">✕</button><button class="review-yes" id="historyYes">✓</button></div><div class="tiny" style="text-align:center">Нажми на карточку, чтобы увидеть перевод</div></div>`;
+    const flash=card.querySelector('#historyFlash'),actions=card.querySelector('#historyActions');flash.onclick=()=>{if(historyFlipped)return;historyFlipped=true;flash.classList.add('flipped');actions.hidden=false};
+    card.querySelector('#historyYes').onclick=()=>historyDecide(true);card.querySelector('#historyNo').onclick=()=>historyDecide(false);
+  }
+  function historyDecide(ok){const x=historyQueue.shift();if(ok)historyGood++;else{historyBad++;const pos=Math.min(historyQueue.length,Math.max(1,2));historyQueue.splice(pos,0,x)}renderHistoryCard()}
+
+  function renderSubjects(){
+    if(pill)pill.textContent='📚 Предметы';
+    if(sub)sub.textContent='Выбери предмет и тему';
+    card.innerHTML=`<div><div class="library-heading">Предметы</div><p class="chest-note">Все уроки в одном месте.</p>
+      <section class="library-section"><div class="library-title"><span>🌿</span><strong>Loodus</strong></div><div class="topic-grid"><button class="topic-tile" data-u-lang="et" data-u-topic="vesi-ja-jogi"><span class="topic-title">Vesi ja jõgi</span><span class="topic-meta">16 карточек · 6 вопросов · 🖼</span></button></div></section>
+      <section class="library-section"><div class="library-title"><span>👤</span><strong>Inimene</strong></div><div class="library-empty">Пока нет уроков</div></section>
+      <section class="library-section"><div class="library-title"><span>📝</span><strong>Eesti keel</strong></div><div class="topic-grid"><button class="topic-tile" data-u-lang="et" data-u-topic="eesti-keel-1"><span class="topic-title">Sõnad 1</span><span class="topic-meta">15 карточек</span></button><button class="topic-tile" data-u-lang="et" data-u-topic="eesti-keel-2"><span class="topic-title">Sõnad 2</span><span class="topic-meta">21 карточка</span></button><button class="topic-tile" data-u-lang="et" data-u-topic="eesti-keel-3"><span class="topic-title">Sõnad 3 — koolivorm</span><span class="topic-meta">9 карточек</span></button></div></section>
+      <section class="library-section"><div class="library-title"><span>🇩🇪</span><strong>Deutsch</strong></div><div class="topic-grid"><button class="topic-tile" data-u-lang="de" data-u-topic="lektion-1"><span class="topic-title">Lektion 1</span><span class="topic-meta">2 текста</span></button></div></section>
+      <section class="library-section"><div class="library-title"><span>📖</span><strong>Eesti kirjandus</strong></div><div class="topic-grid"><button class="topic-tile" data-u-lang="et" data-u-topic="sonad-1"><span class="topic-title">Sõnad 1</span><span class="topic-meta">10 карточек</span></button><button class="topic-tile" id="litHistoryBookLesson"><span class="topic-title">Урок 2 — Исторические тексты о книге</span><span class="topic-meta">2 текста · перевод · письменное задание</span></button></div></section>
+      <section class="library-section"><div class="library-title"><span>🏺</span><strong>Ajalugu</strong></div><div class="topic-grid"><button class="topic-tile" data-u-lang="history" data-u-topic="ajastud"><span class="topic-title">Ajastud</span><span class="topic-meta">7 карточек</span></button></div></section>
+    </div>`;
+    card.querySelectorAll('[data-u-topic]').forEach(btn=>btn.onclick=()=>{if(btn.dataset.uLang==='history'&&btn.dataset.uTopic==='ajastud')renderHistoryTopic();else openExisting(btn.dataset.uLang,btn.dataset.uTopic)});
+  }
+
+  const historyModeRestartHook=true;
+  const restartBtn=document.getElementById('restart');if(restartBtn)restartBtn.addEventListener('click',e=>{if(!card.querySelector('#historyFlash')&&!card.querySelector('#historyAgain'))return;e.preventDefault();e.stopImmediatePropagation();tabEt.disabled=false;tabDe.disabled=false;if(libraryBtn)libraryBtn.hidden=false;restartBtn.hidden=true;const counterEl=document.getElementById('counter');if(counterEl)counterEl.textContent='';renderHistoryTopic()},true);
+    libraryBtn.onclick=renderSubjects;
+  if(deutschBtn)deutschBtn.onclick=()=>activateHiddenLanguage(tabDe);
+  new MutationObserver(tidy).observe(card,{childList:true,subtree:true});
+  tidy();
+  renderSubjects();
+})();
+</script>
+<script>
+(()=>{
+  const WORDS=[
+    ['veekogu','водоём'],['uurimisobjekt','объект исследования'],['mõiste','понятие'],['magevesi','пресная вода'],['jõgi','река'],['jõesäng','русло реки'],['jõelähe','исток реки'],['jõesuue','устье реки'],['lisajõgi','приток'],['imavus','впитываемость'],['värvitu','бесцветный'],['lõhnatu','без запаха'],['läbipaistev','прозрачный'],['voolavus','текучесть'],['maitsetu','без вкуса'],['suubuma','впадать']
+  ];
+  const QUESTIONS=[
+    {q:'Mis on veekogu?',a:'Veekogu on jõgi, järv, meri ja ookean.'},
+    {q:'Mis on jõgi?',a:'Jõgi on mageveeline veekogu.'},
+    {q:'Mis on jõelähe?',a:'Jõelähe on koht, kust algab jõgi.'},
+    {q:'Mis on jõesäng?',a:'Jõesäng on sügav koht, milles voolab vesi.'},
+    {q:'Mis on jõesuue?',a:'Jõesuue on koht, kus jõgi lõpeb ja suubub teise veekogusse.'},
+    {q:'Millised on vee omadused?',a:'Imavus, värvitu, lõhnatu, läbipaistev, voolavus, maitsetu.'}
+  ];
+  const card=document.getElementById('card'),restart=document.getElementById('restart'),counter=document.getElementById('counter'),pill=document.getElementById('pill'),reviewBtn=document.getElementById('reviewBtn'),libraryBtn=document.getElementById('libraryBtn'),tabEt=document.getElementById('tabEt'),tabDe=document.getElementById('tabDe'),sub=document.getElementById('sub');
+  if(!card||!restart||!counter||!pill||!tabEt||!tabDe)return;
+  let active=false,summaryOpen=false,queue=[],good=0,bad=0,flipped=false;
+  const shuffle=a=>{a=[...a];for(let i=a.length-1;i;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+  const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'})[c]);
+  function lock(on){tabEt.disabled=on;tabDe.disabled=on;if(reviewBtn)reviewBtn.hidden=true;if(libraryBtn)libraryBtn.hidden=on}
+  function isLesson(){const h=card.querySelector('.topic-intro h2');return !!h&&h.textContent.trim()==='Vesi ja jõgi'}
+  function addButtons(){
+    if(active||summaryOpen||!isLesson())return;
+    const actions=card.querySelector('.topic-actions');
+    if(!actions)return;
+    if(!actions.querySelector('#lessonSummaryBtn')){
+      const s=document.createElement('button');s.type='button';s.id='lessonSummaryBtn';s.className='secondary';s.textContent='📘 Конспект урока';s.onclick=showSummary;actions.appendChild(s);
+    }
+    if(!actions.querySelector('#questionCardsBtn')){
+      const b=document.createElement('button');b.type='button';b.id='questionCardsBtn';b.className='secondary';b.textContent='❓ Вопросы и определения';b.onclick=start;actions.appendChild(b);
+    }
+    if(sub)sub.textContent='Loodusõpetus · 16 карточек · 6 вопросов';
+  }
+  function showSummary(){
+    summaryOpen=true;active=false;lock(true);restart.hidden=false;restart.textContent='← К уроку';counter.textContent='';pill.textContent='📘 Конспект';if(sub)sub.textContent='Loodusõpetus · весь урок';
+    const words=WORDS.map(([et,ru])=>`<div class="summary-word"><strong>${esc(et)}</strong><span>${esc(ru)}</span></div>`).join('');
+    const qa=QUESTIONS.map(x=>`<div class="summary-qa-item"><strong>${esc(x.q)}</strong><p>${esc(x.a)}</p></div>`).join('');
+    card.innerHTML=`<div class="summary-view"><div class="summary-head"><h2>Vesi ja jõgi</h2><div class="tiny">Конспект урока</div></div><img class="summary-poster" src="./poster-vesi-ja-jogi.webp" alt="Vesi ja jõgi — плакат"><section class="summary-section"><h3>Sõnad · 16</h3><div class="summary-words">${words}</div></section><section class="summary-section"><h3>Mõisted ja määratlused</h3><div class="summary-qa">${qa}</div></section><button class="primary" id="summaryBack">← К уроку</button></div>`;
+    card.querySelector('#summaryBack').onclick=back;
+  }
+  function start(){active=true;summaryOpen=false;queue=shuffle(QUESTIONS);good=0;bad=0;flipped=false;lock(true);restart.hidden=false;restart.textContent='← Выйти';pill.textContent='❓ Вопросы';if(sub)sub.textContent='Loodusõpetus · 6 вопросов';render()}
+  function render(){if(!active)return;if(!queue.length){finish();return}const x=queue[0];flipped=false;counter.textContent=`Осталось: ${queue.length}`;card.innerHTML=`<div class="review-wrap"><div class="tiny" style="text-align:center;margin-bottom:10px">Вопрос → ответ</div><div class="flashcard" id="qflash"><div class="flashcard-inner"><div class="flash-face">${esc(x.q)}</div><div class="flash-face flash-back">${esc(x.a)}</div></div></div><div class="review-stats"><span>✓ ${good}</span><span>✕ ${bad}</span></div><div class="review-actions" id="qactions" hidden><button class="review-no" id="qno">✕</button><button class="review-yes" id="qyes">✓</button></div><div class="tiny" style="text-align:center">Нажми на карточку, чтобы увидеть ответ</div></div>`;const f=card.querySelector('#qflash'),a=card.querySelector('#qactions');f.onclick=()=>{if(flipped)return;flipped=true;f.classList.add('flipped');a.hidden=false};card.querySelector('#qyes').onclick=()=>decide(true);card.querySelector('#qno').onclick=()=>decide(false)}
+  function decide(ok){if(!queue.length)return;const x=queue.shift();if(ok){good++;render();return}bad++;if(queue.length===0){const alt=shuffle(QUESTIONS.filter(y=>y.q!==x.q))[0];if(alt)queue.push(alt)}const pos=Math.min(queue.length,Math.max(1,2+Math.floor(Math.random()*2)));queue.splice(pos,0,x);render()}
+  function finish(){active=false;lock(false);counter.textContent='';pill.textContent='Готово';restart.hidden=true;if(sub)sub.textContent='Loodusõpetus · 16 карточек · 6 вопросов';card.innerHTML=`<div class="done"><div class="big">❓</div><h2>Готово!</h2><div class="finish-actions"><button class="primary" id="qagain">Ещё раз вопросы</button><button class="secondary" id="qback">К уроку</button></div></div>`;card.querySelector('#qagain').onclick=start;card.querySelector('#qback').onclick=back}
+  function back(){active=false;summaryOpen=false;lock(false);restart.hidden=true;counter.textContent='';tabEt.click()}
+  restart.addEventListener('click',e=>{if(!active&&!summaryOpen)return;e.preventDefault();e.stopImmediatePropagation();back()},true);
+  new MutationObserver(addButtons).observe(card,{childList:true,subtree:true});addButtons();
+})();
+</script>
+<script src="./poster-fix.js?v=20260926-10"></script>
+<script src="./literature-lesson-2.js?v=20260926-10"></script>
+<script src="./back-nav.js?v=20260926-10"></script>
+</body>
 </html>
