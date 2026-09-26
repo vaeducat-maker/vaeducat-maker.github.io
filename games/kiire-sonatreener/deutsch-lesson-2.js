@@ -13,13 +13,10 @@
       rows:[
         ['ich beschäftige mich','я занимаюсь'],
         ['du beschäftigst dich','ты занимаешься'],
-        ['er beschäftigt sich','он занимается'],
-        ['sie beschäftigt sich','она занимается'],
-        ['es beschäftigt sich','оно занимается'],
+        ['er / sie / es beschäftigt sich','он / она / оно занимается'],
         ['wir beschäftigen uns','мы занимаемся'],
         ['ihr beschäftigt euch','вы занимаетесь'],
-        ['sie beschäftigen sich','они занимаются'],
-        ['Sie beschäftigen sich','Вы занимаетесь']
+        ['sie beschäftigen sich','они занимаются']
       ]
     },
     {
@@ -29,13 +26,10 @@
       rows:[
         ['ich interessiere mich','я интересуюсь'],
         ['du interessierst dich','ты интересуешься'],
-        ['er interessiert sich','он интересуется'],
-        ['sie interessiert sich','она интересуется'],
-        ['es interessiert sich','оно интересуется'],
+        ['er / sie / es interessiert sich','он / она / оно интересуется'],
         ['wir interessieren uns','мы интересуемся'],
         ['ihr interessiert euch','вы интересуетесь'],
-        ['sie interessieren sich','они интересуются'],
-        ['Sie interessieren sich','Вы интересуетесь']
+        ['sie interessieren sich','они интересуются']
       ]
     },
     {
@@ -45,13 +39,10 @@
       rows:[
         ['ich treffe mich','я встречаюсь'],
         ['du triffst dich','ты встречаешься'],
-        ['er trifft sich','он встречается'],
-        ['sie trifft sich','она встречается'],
-        ['es trifft sich','оно встречается'],
+        ['er / sie / es trifft sich','он / она / оно встречается'],
         ['wir treffen uns','мы встречаемся'],
         ['ihr trefft euch','вы встречаетесь'],
-        ['sie treffen sich','они встречаются'],
-        ['Sie treffen sich','Вы встречаетесь']
+        ['sie treffen sich','они встречаются']
       ]
     }
   ];
