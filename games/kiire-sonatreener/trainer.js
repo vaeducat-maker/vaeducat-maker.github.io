@@ -106,7 +106,7 @@ const DATA={
       {id:"muinasjutud",title:"Урок 3 — Сказки",subtitle:"Eesti kirjandus",active:false,poster:null,words:[
         {word:"loomamuinasjutud",ru:"сказки о животных"},
         {word:"imemuinasjutud",ru:"волшебные сказки"},
-        {word:"tõsielulised muinasjutud",ru:"бытовые сказки"},
+        {word:"tõsielulised muinasjutud",ru:"сказки о реальной жизни"},
         {word:"kunstmuinasjutud",ru:"литературные сказки"}
       ]}
     ]}
@@ -268,9 +268,10 @@ function renderReview(){
   const item=reviewQueue[0];reviewFlipped=false;counter.textContent=`Осталось: ${reviewQueue.length}`;updateSub();
   const front=reviewDirection==="ru-et"?item.ru:item.word;
   const back=reviewDirection==="ru-et"?item.word:item.ru;
+  const compact=s=>!String(s).includes(" ")&&String(s).length>=15?" flash-long":"";
   const directionLabel=reviewDirection==="ru-et"?`🇷🇺 → ${targetFlag()} Русский → ${targetName()}`:`${targetFlag()} → 🇷🇺 ${targetName()[0].toUpperCase()+targetName().slice(1)} → русский`;
   const posterButton=currentTopic&&currentTopic.poster?'<button class="secondary" id="reviewPoster" style="width:100%">🖼 Посмотреть плакат</button>':'';
-  card.innerHTML=`<div class="review-wrap"><button class="secondary" id="directionBtn" style="width:100%">↔ ${directionLabel}</button>${posterButton}<div class="flashcard" id="flash"><div class="flashcard-inner"><div class="flash-face">${esc(front)}</div><div class="flash-face flash-back">${esc(back)}</div></div></div><div class="review-stats"><span>✓ ${reviewGood}</span><span>✕ ${reviewBad}</span></div><div class="review-actions" id="reviewActions" hidden><button class="review-no" id="reviewNo">✕</button><button class="review-yes" id="reviewYes">✓</button></div><div class="tiny" style="text-align:center">Нажми на карточку, чтобы перевернуть</div></div>`;
+  card.innerHTML=`<div class="review-wrap"><button class="secondary" id="directionBtn" style="width:100%">↔ ${directionLabel}</button>${posterButton}<div class="flashcard" id="flash"><div class="flashcard-inner"><div class="flash-face${compact(front)}">${esc(front)}</div><div class="flash-face flash-back${compact(back)}">${esc(back)}</div></div></div><div class="review-stats"><span>✓ ${reviewGood}</span><span>✕ ${reviewBad}</span></div><div class="review-actions" id="reviewActions" hidden><button class="review-no" id="reviewNo">✕</button><button class="review-yes" id="reviewYes">✓</button></div><div class="tiny" style="text-align:center">Нажми на карточку, чтобы перевернуть</div></div>`;
   card.querySelector("#directionBtn").onclick=switchReviewDirection;
   if(currentTopic&&currentTopic.poster)card.querySelector("#reviewPoster").onclick=()=>showPoster(currentTopic,"review");
   const flash=card.querySelector("#flash"),actions=card.querySelector("#reviewActions");
