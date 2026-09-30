@@ -76,7 +76,18 @@ const DATA={
         {word:"disainima",ru:"проектировать"},
         {word:"nõu küsima",ru:"спрашивать совета"},
         {word:"solvuma",ru:"обижаться"},
-        {word:"vastutus",ru:"ответственность"}
+        {word:"vastutus",ru:"ответственность"},
+        {word:"tulemus",ru:"результат"},
+        {word:"põnev",ru:"интересный"},
+        {word:"isegi",ru:"даже"},
+        {word:"kindlasti",ru:"обязательно"},
+        {word:"hääletus",ru:"голосование"},
+        {word:"hääl",ru:"голос"},
+        {word:"eriline päev",ru:"особенный день"},
+        {word:"lisaks sellele",ru:"кроме того"},
+        {word:"meie arvamus",ru:"наше мнение"},
+        {word:"vähemalt",ru:"по крайней мере"},
+        {word:"ilmus pilt",ru:"появилась картинка"}
       ]}
     ]},
     {id:"eesti-kirjandus",label:"Eesti kirjandus",icon:"📖",topics:[
