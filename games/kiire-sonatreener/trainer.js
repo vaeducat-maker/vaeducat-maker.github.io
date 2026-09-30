@@ -102,6 +102,12 @@ const DATA={
         {word:"paremini aru saama",ru:"лучше понимать"},
         {word:"enamasti",ru:"в основном"},
         {word:"valima",ru:"выбирать"}
+      ]},
+      {id:"muinasjutud",title:"Урок 3 — Сказки",subtitle:"Eesti kirjandus",active:false,poster:null,words:[
+        {word:"loomamuinasjutud",ru:"сказки о животных"},
+        {word:"imemuinasjutud",ru:"волшебные сказки"},
+        {word:"tõsielulised muinasjutud",ru:"бытовые сказки"},
+        {word:"kunstmuinasjutud",ru:"литературные сказки"}
       ]}
     ]}
   ]},
