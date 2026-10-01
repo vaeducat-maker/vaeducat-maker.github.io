@@ -45,12 +45,20 @@ for(const subject of catalog){
 }
 assert(catalog.some(s=>s.id==='english'),'English subject is missing from catalog');
 assert(lessonKeys.includes('core:en:present-simple-words'),'English Present Simple lesson is missing');
+assert(lessonKeys.includes('custom:englishPresentSimple3'),'English third-person trainer is missing');
 
 const trainer=trainerSource;
 for(const id of ['present-simple-words','eesti-keel-3','lektion-1','muinasjutud']){
   assert(trainer.includes(`id:"${id}"`),'core trainer topic missing: '+id);
 }
 assert(trainer.includes('window.EDUKASS_TRAINER'),'trainer public API is missing');
+for(const pair of [['play','plays'],['eat','eats'],['drink','drinks'],['wash','washes'],['watch','watches'],['go','goes'],['study','studies']]){
+  assert(trainer.includes(`word:"${pair[0]}"`)&&trainer.includes(`thirdPerson:"${pair[1]}"`),'third-person verb missing: '+pair[0]);
+}
+const ps3=read('games/kiire-sonatreener/english-present-simple-3person.js');
+assert(ps3.includes('EDUKASS_LESSONS.englishPresentSimple3'),'English third-person trainer handler is missing');
+assert(ps3.includes('queue.splice(pos,0,item)'),'wrong answers must return later in the queue');
+
 assert(trainer.includes('function wordListHtml(topic)'),'shared vocabulary list renderer is missing');
 for(const category of ['eesti-keel','eesti-kirjandus','english']){
   assert(trainer.includes(`id:"${category}",label:`)&&trainer.includes('showWordList:true'),'word-list defaults are missing for language study categories');
@@ -60,9 +68,10 @@ for(const category of ['eesti-keel','eesti-kirjandus','english']){
 const customSources=[
   index,
   read('games/kiire-sonatreener/deutsch-lesson-2.js'),
-  read('games/kiire-sonatreener/literature-lesson-2.js')
+  read('games/kiire-sonatreener/literature-lesson-2.js'),
+  read('games/kiire-sonatreener/english-present-simple-3person.js')
 ].join('\n');
-for(const handler of ['historyAjastud','deutschLesson2','litHistoryBookLesson']){
+for(const handler of ['historyAjastud','deutschLesson2','litHistoryBookLesson','englishPresentSimple3']){
   assert(customSources.includes(handler),'custom lesson handler missing: '+handler);
 }
 
