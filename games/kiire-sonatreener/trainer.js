@@ -182,7 +182,14 @@ const DATA={
         {word:"usually",ru:"обычно"},
         {word:"often",ru:"часто"},
         {word:"sometimes",ru:"иногда"},
-        {word:"every day",ru:"каждый день"}
+        {word:"every day",ru:"каждый день"},
+        {word:"play",ru:"играть",thirdPerson:"plays",thirdPersonGroup:"s"},
+        {word:"eat",ru:"есть",thirdPerson:"eats",thirdPersonGroup:"s"},
+        {word:"drink",ru:"пить",thirdPerson:"drinks",thirdPersonGroup:"s"},
+        {word:"wash",ru:"мыть",thirdPerson:"washes",thirdPersonGroup:"es"},
+        {word:"watch",ru:"смотреть",thirdPerson:"watches",thirdPersonGroup:"es"},
+        {word:"go",ru:"идти, ходить",thirdPerson:"goes",thirdPersonGroup:"es"},
+        {word:"study",ru:"учиться",thirdPerson:"studies",thirdPersonGroup:"ies"}
       ]}
     ]}
   ]}
