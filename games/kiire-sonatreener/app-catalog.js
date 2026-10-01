@@ -6,7 +6,10 @@ window.EDUKASS_CATALOG=[
     {kind:"core",lang:"et",topic:"eesti-keel-2"},
     {kind:"core",lang:"et",topic:"eesti-keel-3"}
   ]},
-  {id:"english",label:"English",icon:"🇬🇧",lessons:[{kind:"core",lang:"en",topic:"present-simple-words",extraMeta:"🔊 озвучка"}]},
+  {id:"english",label:"English",icon:"🇬🇧",lessons:[
+    {kind:"core",lang:"en",topic:"present-simple-words",extraMeta:"🔊 озвучка"},
+    {kind:"custom",handler:"englishPresentSimple3",title:"Тренировка Present Simple — он, она, оно",meta:"7 глаголов · -s / -es / -ies"}
+  ]},
   {id:"deutsch",label:"Deutsch",icon:"🇩🇪",lessons:[
     {kind:"core",lang:"de",topic:"lektion-1",meta:"2 текста"},
     {kind:"custom",handler:"deutschLesson2",title:"Lektion 2 — Reflexive Verben",meta:"3 таблицы"}
