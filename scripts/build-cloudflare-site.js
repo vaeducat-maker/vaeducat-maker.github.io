@@ -19,7 +19,6 @@ const extraFiles = [
   'games/kiire-sonatreener/app-20260926-v2.html',
   'games/kiire-sonatreener/back-nav.js',
   'games/kiire-sonatreener/deutsch-lesson-2.js',
-  'games/kiire-sonatreener/english-lesson-1.js',
   'games/kiire-sonatreener/icon-192.png',
   'games/kiire-sonatreener/icon-512.png',
   'games/kiire-sonatreener/icon.svg',
@@ -45,11 +44,55 @@ const extraFiles = [
   'games/septembri-sonamang/cards.webp'
 ];
 
+function resolveRuntimeReference(reference, fromFile) {
+  const raw=String(reference||'').trim();
+  if(!raw||/^(?:https?:|data:|mailto:|tel:|javascript:|#)/i.test(raw))return null;
+  const clean=raw.split('#')[0].split('?')[0];
+  if(!clean)return null;
+  const relative=clean.startsWith('/')
+    ? clean.slice(1)
+    : path.posix.normalize(path.posix.join(path.posix.dirname(fromFile),clean));
+  if(relative.startsWith('../'))return null;
+  const absolute=path.resolve(root,relative);
+  if(absolute!==root&&!absolute.startsWith(root+path.sep))return null;
+  if(!fs.existsSync(absolute)||!fs.statSync(absolute).isFile())return null;
+  return relative.split(path.sep).join('/');
+}
+
+function discoverTrainerRuntimeFiles() {
+  const seed='games/kiire-sonatreener/index.html';
+  const queue=[seed],seen=new Set(),found=new Set();
+  while(queue.length){
+    const current=queue.shift();
+    if(seen.has(current))continue;
+    seen.add(current);found.add(current);
+    const absolute=path.resolve(root,current);
+    const ext=path.extname(current).toLowerCase();
+    if(!['.html','.js','.css','.webmanifest','.json','.svg'].includes(ext))continue;
+    let content;
+    try{content=fs.readFileSync(absolute,'utf8')}catch(e){continue}
+    const refs=new Set();
+    for(const match of content.matchAll(/(?:src|href)\s*=\s*["']([^"']+)["']/gi))refs.add(match[1]);
+    for(const match of content.matchAll(/url\(["']?([^"')]+)["']?\)/gi))refs.add(match[1]);
+    for(const match of content.matchAll(/["'`](\.{1,2}\/[^"'\`\s]+|\/games\/kiire-sonatreener\/[^"'\`\s]+)["'`]/g))refs.add(match[1]);
+    for(const reference of refs){
+      const resolved=resolveRuntimeReference(reference,current);
+      if(resolved&&!seen.has(resolved))queue.push(resolved);
+    }
+  }
+  return [...found].sort();
+}
+
+for(const file of discoverTrainerRuntimeFiles()){
+  if(!extraFiles.includes(file))extraFiles.push(file);
+}
+
 if (!source.includes(anchor)) {
   throw new Error('Cloudflare build anchor not found in build-public-site.js');
 }
 
-const injection = extraFiles.map(file => `  '${file}',`).join('\n');
+const injectionFiles = extraFiles.filter(file => !source.includes(`  '${file}',`));
+const injection = injectionFiles.map(file => `  '${file}',`).join('\n');
 source = source.replace(anchor, `${injection}\n\n${anchor}`);
 
 const compiled = new Module(buildPath, module);
