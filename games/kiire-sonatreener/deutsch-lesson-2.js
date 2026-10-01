@@ -92,30 +92,6 @@
     if(back)back.onclick=()=>libraryBtn.click();
   }
 
-  function ensureTile(){
-    const section=[...card.querySelectorAll('.library-section')].find(s=>s.querySelector('.library-title strong')?.textContent.trim()==='Deutsch');
-    if(!section)return;
-    let grid=section.querySelector('.topic-grid');
-    if(!grid){
-      grid=document.createElement('div');
-      grid.className='topic-grid';
-      section.appendChild(grid);
-    }
-    let btn=grid.querySelector('#deutschLesson2');
-    if(!btn){
-      btn=document.createElement('button');
-      btn.type='button';
-      btn.className='topic-tile';
-      btn.id='deutschLesson2';
-      btn.innerHTML='<span class="topic-title">Lektion 2 — Reflexive Verben</span><span class="topic-meta">3 таблицы</span>';
-      grid.appendChild(btn);
-    }
-    btn.onclick=renderLesson;
-  }
-
   window.EDUKASS_LESSONS=window.EDUKASS_LESSONS||{};
   window.EDUKASS_LESSONS.deutschLesson2=renderLesson;
-
-  new MutationObserver(ensureTile).observe(card,{childList:true,subtree:true});
-  ensureTile();
 })();
