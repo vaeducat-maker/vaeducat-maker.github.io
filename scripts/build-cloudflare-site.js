@@ -19,6 +19,7 @@ const extraFiles = [
   'games/kiire-sonatreener/app-20260926-v2.html',
   'games/kiire-sonatreener/back-nav.js',
   'games/kiire-sonatreener/deutsch-lesson-2.js',
+  'games/kiire-sonatreener/english-lesson-1.js',
   'games/kiire-sonatreener/icon-192.png',
   'games/kiire-sonatreener/icon-512.png',
   'games/kiire-sonatreener/icon.svg',
