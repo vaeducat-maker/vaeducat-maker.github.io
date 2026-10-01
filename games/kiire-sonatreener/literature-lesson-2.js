@@ -135,6 +135,9 @@
     grid.appendChild(btn);
   }
 
+  window.EDUKASS_LESSONS=window.EDUKASS_LESSONS||{};
+  window.EDUKASS_LESSONS.litHistoryBookLesson=renderLesson;
+
   new MutationObserver(ensureTile).observe(card,{childList:true,subtree:true});
   ensureTile();
 })();
