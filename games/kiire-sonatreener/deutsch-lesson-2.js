@@ -113,6 +113,9 @@
     btn.onclick=renderLesson;
   }
 
+  window.EDUKASS_LESSONS=window.EDUKASS_LESSONS||{};
+  window.EDUKASS_LESSONS.deutschLesson2=renderLesson;
+
   new MutationObserver(ensureTile).observe(card,{childList:true,subtree:true});
   ensureTile();
 })();
