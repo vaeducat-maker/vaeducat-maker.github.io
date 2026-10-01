@@ -49,7 +49,7 @@
 @media(max-width:560px){.shortcut-button{min-width:100px;padding:0 10px;font-size:13px}.summary-word{gap:8px;padding:9px 10px}.summary-word strong,.summary-word span{font-size:14px}}
 </style>
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"><meta http-equiv="Pragma" content="no-cache"><meta http-equiv="Expires" content="0"></head>
-<body data-build="20261001-1">
+<body data-build="20261001-2">
 <main class="app">
 <div class="brand">EDUKASS</div>
 <header class="top"><div><h1>Minu õppetunnid</h1><p class="sub" id="sub"></p></div><div class="top-tools"><button class="icon-button shortcut-button" id="shortcutBtn" aria-label="Добавить на главный экран" title="Добавить на главный экран">📲 На экран</button><button class="icon-button deck-button" id="reviewBtn" aria-label="Карточки" title="Карточки"><span class="deck-stack" aria-hidden="true"></span></button><button class="icon-button" id="libraryBtn" aria-label="Все предметы" title="Все предметы">📚</button><div class="pill" id="pill">Eesti</div></div></header>
@@ -61,12 +61,14 @@
 <script>
 (()=>{const b=document.getElementById('shortcutBtn');if(!b)return;const standalone=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;if(standalone){b.textContent='✓ Готово';b.disabled=true}else{b.onclick=()=>alert('Открой меню браузера и выбери «Добавить на главный экран».')}})();
 </script>
-<script src="./trainer.js?v=20260930-3"></script>
+<script src="./trainer.js?v=20261001-2"></script>
+<script src="./app-catalog.js?v=20261001-1"></script>
 <script>
 (()=>{
   const card=document.getElementById('card'),libraryBtn=document.getElementById('libraryBtn'),reviewBtn=document.getElementById('reviewBtn'),deutschBtn=document.getElementById('deutschBtn'),tabEt=document.getElementById('tabEt'),tabDe=document.getElementById('tabDe'),pill=document.getElementById('pill'),sub=document.getElementById('sub');
   if(!card||!libraryBtn||!tabEt||!tabDe)return;
   const originalLibrary=libraryBtn.onclick;
+  window.EDUKASS_LESSONS=window.EDUKASS_LESSONS||{};
   if(reviewBtn)reviewBtn.hidden=true;
 
   function tidy(){
@@ -90,11 +92,8 @@
   }
 
   function openExisting(lang,topic){
-    if(lang==='de'){
-      activateHiddenLanguage(tabDe);
-      clickTopicWhenReady(topic);
-      return;
-    }
+    if(window.EDUKASS_TRAINER?.open(lang,topic))return;
+    if(lang==='de'){activateHiddenLanguage(tabDe);clickTopicWhenReady(topic);return;}
     activateHiddenLanguage(tabEt);
     if(topic==='vesi-ja-jogi')return;
     if(typeof originalLibrary==='function')originalLibrary();
@@ -134,20 +133,40 @@
     card.querySelector('#historyYes').onclick=()=>historyDecide(true);card.querySelector('#historyNo').onclick=()=>historyDecide(false);
   }
   function historyDecide(ok){const x=historyQueue.shift();if(ok)historyGood++;else{historyBad++;const pos=Math.min(historyQueue.length,Math.max(1,2));historyQueue.splice(pos,0,x)}renderHistoryCard()}
+  window.EDUKASS_LESSONS.historyAjastud=renderHistoryTopic;
 
+  function lessonMeta(lesson){
+    if(lesson.meta)return lesson.meta;
+    if(lesson.kind!=='core')return '';
+    const topic=window.EDUKASS_TRAINER?.getTopic(lesson.lang,lesson.topic);
+    if(!topic)return lesson.extraMeta||'';
+    const base=topic.textLesson?'2 текста':`${topic.words?.length||0} карточек`;
+    return [base,lesson.extraMeta].filter(Boolean).join(' · ');
+  }
   function renderSubjects(){
     if(pill)pill.textContent='📚 Предметы';
     if(sub)sub.textContent='Выбери предмет и тему';
-    card.innerHTML=`<div><div class="library-heading">Предметы</div><p class="chest-note">Все уроки в одном месте.</p>
-      <section class="library-section"><div class="library-title"><span>🌿</span><strong>Loodus</strong></div><div class="topic-grid"><button class="topic-tile" data-u-lang="et" data-u-topic="vesi-ja-jogi"><span class="topic-title">Vesi ja jõgi</span><span class="topic-meta">16 карточек · 6 вопросов · 🖼</span></button></div></section>
-      <section class="library-section"><div class="library-title"><span>👤</span><strong>Inimene</strong></div><div class="library-empty">Пока нет уроков</div></section>
-      <section class="library-section"><div class="library-title"><span>📝</span><strong>Eesti keel</strong></div><div class="topic-grid"><button class="topic-tile" data-u-lang="et" data-u-topic="eesti-keel-1"><span class="topic-title">Sõnad 1</span><span class="topic-meta">15 карточек</span></button><button class="topic-tile" data-u-lang="et" data-u-topic="eesti-keel-2"><span class="topic-title">Sõnad 2</span><span class="topic-meta">21 карточка</span></button><button class="topic-tile" data-u-lang="et" data-u-topic="eesti-keel-3"><span class="topic-title">Sõnad 3 — koolivorm</span><span class="topic-meta">24 карточки</span></button></div></section>
-      <section class="library-section" id="englishSubjectSection"><div class="library-title"><span>🇬🇧</span><strong>English</strong></div><div class="topic-grid"><button class="topic-tile" id="englishLesson1"><span class="topic-title">Present Simple — слова</span><span class="topic-meta">5 карточек · 🔊 озвучка</span></button></div></section>
-      <section class="library-section"><div class="library-title"><span>🇩🇪</span><strong>Deutsch</strong></div><div class="topic-grid"><button class="topic-tile" data-u-lang="de" data-u-topic="lektion-1"><span class="topic-title">Lektion 1</span><span class="topic-meta">2 текста</span></button></div></section>
-      <section class="library-section"><div class="library-title"><span>📖</span><strong>Eesti kirjandus</strong></div><div class="topic-grid"><button class="topic-tile" data-u-lang="et" data-u-topic="sonad-1"><span class="topic-title">Sõnad 1</span><span class="topic-meta">10 карточек</span></button><button class="topic-tile" id="litHistoryBookLesson"><span class="topic-title">Урок 2 — Исторические тексты о книге</span><span class="topic-meta">2 текста · перевод · письменное задание</span></button><button class="topic-tile" data-u-lang="et" data-u-topic="muinasjutud"><span class="topic-title">Урок 3 — Сказки</span><span class="topic-meta">4 карточки</span></button></div></section>
-      <section class="library-section"><div class="library-title"><span>🏺</span><strong>Ajalugu</strong></div><div class="topic-grid"><button class="topic-tile" data-u-lang="history" data-u-topic="ajastud"><span class="topic-title">Ajastud</span><span class="topic-meta">7 карточек</span></button></div></section>
-    </div>`;
-    card.querySelectorAll('[data-u-topic]').forEach(btn=>btn.onclick=()=>{if(btn.dataset.uLang==='history'&&btn.dataset.uTopic==='ajastud')renderHistoryTopic();else openExisting(btn.dataset.uLang,btn.dataset.uTopic)});
+    const catalog=window.EDUKASS_CATALOG||[];
+    const sections=catalog.map(subject=>{
+      const lessons=subject.lessons||[];
+      const body=lessons.length
+        ?`<div class="topic-grid">${lessons.map(lesson=>{
+          if(lesson.kind==='core'){
+            const topic=window.EDUKASS_TRAINER?.getTopic(lesson.lang,lesson.topic);
+            const title=lesson.title||topic?.title||lesson.topic;
+            return `<button class="topic-tile" data-core-lang="${historyEsc(lesson.lang)}" data-core-topic="${historyEsc(lesson.topic)}"><span class="topic-title">${historyEsc(title)}</span><span class="topic-meta">${historyEsc(lessonMeta(lesson))}</span></button>`;
+          }
+          return `<button class="topic-tile" data-handler="${historyEsc(lesson.handler)}"><span class="topic-title">${historyEsc(lesson.title)}</span><span class="topic-meta">${historyEsc(lessonMeta(lesson))}</span></button>`;
+        }).join('')}</div>`
+        :'<div class="library-empty">Пока нет уроков</div>';
+      return `<section class="library-section"><div class="library-title"><span>${subject.icon}</span><strong>${historyEsc(subject.label)}</strong></div>${body}</section>`;
+    }).join('');
+    card.innerHTML=`<div><div class="library-heading">Предметы</div><p class="chest-note">Все уроки в одном месте.</p>${sections}</div>`;
+    card.querySelectorAll('[data-core-topic]').forEach(btn=>btn.onclick=()=>openExisting(btn.dataset.coreLang,btn.dataset.coreTopic));
+    card.querySelectorAll('[data-handler]').forEach(btn=>btn.onclick=()=>{
+      const handler=window.EDUKASS_LESSONS?.[btn.dataset.handler];
+      if(typeof handler==='function')handler(); else alert('Урок ещё загружается. Нажми ещё раз через секунду.');
+    });
   }
 
   const historyModeRestartHook=true;
@@ -210,7 +229,6 @@
 <script src="./poster-fix.js?v=20260926-10"></script>
 <script src="./literature-lesson-2.js?v=20260926-10"></script>
 <script src="./deutsch-lesson-2.js?v=20260926-12"></script>
-<script src="./english-lesson-1.js?v=20261001-2"></script>
 <script src="./back-nav.js?v=20260926-10"></script>
 </body>
 </html>
