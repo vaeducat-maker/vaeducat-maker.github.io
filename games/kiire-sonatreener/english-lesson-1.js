@@ -184,10 +184,15 @@
     card.querySelector("#englishBack").onclick=renderTopic;
   }
 
+  function bindExisting(){
+    const btn=card.querySelector("#englishLesson1");
+    if(btn)btn.onclick=renderTopic;
+  }
+
   function addSection(){
     const heading=card.querySelector(".library-heading");
     if(!heading||heading.textContent.trim()!=="Предметы")return;
-    if(card.querySelector("#englishSubjectSection"))return;
+    if(card.querySelector("#englishSubjectSection")){bindExisting();return}
 
     const section=document.createElement("section");
     section.className="library-section";
@@ -227,4 +232,5 @@
 
   new MutationObserver(addSection).observe(card,{childList:true,subtree:true});
   addSection();
+  bindExisting();
 })();
