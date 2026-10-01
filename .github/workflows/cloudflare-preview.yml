@@ -58,6 +58,9 @@ jobs:
           }
           NODE
 
+      - name: Check Sõnatreener architecture
+        run: node scripts/check-sonatreener.js
+
       - name: Build public EDUKASS site
         run: node scripts/build-cloudflare-site.js
 
