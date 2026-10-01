@@ -173,6 +173,18 @@ const DATA={
         {word:"wachsen — du wächst · er wächst",base:"wachsen",ru:"расти",typingPrompt:"wachsen — расти",typingAnswer:"du wächst er wächst"}
       ]}
     ]}
+
+  ]},
+  en:{label:"English",langName:"English",locale:"en",categories:[
+    {id:"english",label:"English",icon:"🇬🇧",topics:[
+      {id:"present-simple-words",title:"Present Simple — слова",subtitle:"English",active:false,poster:null,audio:true,audioLang:"en-GB",typingInstruction:"Напиши по-английски",words:[
+        {word:"always",ru:"всегда"},
+        {word:"usually",ru:"обычно"},
+        {word:"often",ru:"часто"},
+        {word:"sometimes",ru:"иногда"},
+        {word:"every day",ru:"каждый день"}
+      ]}
+    ]}
   ]}
 };
 
@@ -189,16 +201,39 @@ document.addEventListener("cut",e=>e.preventDefault());
 document.addEventListener("contextmenu",e=>e.preventDefault());
 try{localStorage.removeItem("sonatreenerPosterLocksV2");localStorage.removeItem("sonatreenerLessonLockV1")}catch(e){}
 
-function allTopics(l=lang){return (DATA[l].categories||[]).flatMap(c=>c.topics.map(t=>({...t,category:c})))}
+function allTopics(l=lang){return ((DATA[l]||{}).categories||[]).flatMap(c=>c.topics.map(t=>({...t,category:c})))}
 function activeTopic(){return allTopics().find(t=>t.active)||allTopics()[0]||null}
 function findTopic(id){return allTopics().find(t=>t.id===id)||null}
 function setNavLocked(on){tabEt.disabled=on;tabDe.disabled=on;libraryBtn.hidden=on;reviewBtn.hidden=on}
 function updateSub(){if(currentTopic)sub.textContent=currentTopic.textLesson?`${currentTopic.subtitle} · 2 текста`:`${currentTopic.subtitle} · ${currentTopic.words.length} карточек`;else sub.textContent=DATA[lang].langName}
 function saveReviewDirection(){try{localStorage.setItem("sonatreenerReviewDirection",reviewDirection)}catch(e){}}
-function targetName(){return lang==="de"?"немецкий":"эстонский"}
-function targetFlag(){return lang==="de"?"🇩🇪":"🇪🇪"}
+function targetName(){return lang==="de"?"немецкий":lang==="en"?"английский":"эстонский"}
+function targetFlag(){return lang==="de"?"🇩🇪":lang==="en"?"🇬🇧":"🇪🇪"}
 function typingExpected(item){return item.typingAnswer||item.word}
 function typingPrompt(item){return item.typingPrompt||item.ru}
+
+function speakTarget(text,topic=currentTopic){
+  if(!text||!("speechSynthesis" in window))return;
+  window.speechSynthesis.cancel();
+  const utterance=new SpeechSynthesisUtterance(text);
+  utterance.lang=topic?.audioLang||"en-GB";
+  utterance.rate=.82;
+  const voices=window.speechSynthesis.getVoices();
+  const exact=voices.find(v=>v.lang?.toLowerCase()===utterance.lang.toLowerCase());
+  const family=voices.find(v=>v.lang?.toLowerCase().startsWith(utterance.lang.slice(0,2).toLowerCase()));
+  if(exact||family)utterance.voice=exact||family;
+  window.speechSynthesis.speak(utterance);
+}
+function speakTopicWords(topic){
+  if(!topic?.audio||!("speechSynthesis" in window))return;
+  window.speechSynthesis.cancel();
+  (topic.words||[]).forEach(item=>{
+    const utterance=new SpeechSynthesisUtterance(item.word);
+    utterance.lang=topic.audioLang||"en-GB";
+    utterance.rate=.78;
+    window.speechSynthesis.speak(utterance);
+  });
+}
 
 function setLanguage(next){lang=next;tabEt.classList.toggle("active",lang==="et");tabDe.classList.toggle("active",lang==="de");currentTopic=null;currentCategory=null;renderHome()}
 
@@ -215,9 +250,11 @@ function openTopic(id){
   const poster=topic.poster
     ?`<button class="poster-preview" id="posterOpen" aria-label="Открыть плакат"><img src="${topic.poster}" alt="${esc(topic.title)} — учебный плакат"></button>`
     :`<div class="topic-no-poster">${topic.category.icon}</div>`;
-  const typingLabel=lang==="de"?"✍️ Написать формы du / er":`✍️ Написать по-${targetName()}`;
-  card.innerHTML=`<div class="topic-intro"><div class="topic-kicker">${topic.category.icon} ${esc(topic.category.label)}</div><h2>${esc(topic.title)}</h2>${poster}<div class="topic-actions">${topic.poster?'<button class="secondary" id="posterBtn">🖼 Смотреть плакат</button>':''}<button class="primary" id="cardsRuEt">🇷🇺 → ${targetFlag()} Русский → ${targetName()}</button><button class="secondary" id="cardsEtRu">${targetFlag()} → 🇷🇺 ${targetName()[0].toUpperCase()+targetName().slice(1)} → русский</button><button class="secondary" id="typingBtn">${typingLabel}</button></div></div>`;
+  const typingLabel=topic.typingInstruction?`✍️ ${topic.typingInstruction}`:lang==="de"?"✍️ Написать формы du / er":`✍️ Написать по-${targetName()}`;
+  const listenAll=topic.audio?'<button class="secondary" id="listenAllBtn">🔊 Послушать все слова</button>':'';
+  card.innerHTML=`<div class="topic-intro"><div class="topic-kicker">${topic.category.icon} ${esc(topic.category.label)}</div><h2>${esc(topic.title)}</h2>${poster}<div class="topic-actions">${topic.poster?'<button class="secondary" id="posterBtn">🖼 Смотреть плакат</button>':''}<button class="primary" id="cardsRuEt">🇷🇺 → ${targetFlag()} Русский → ${targetName()}</button><button class="secondary" id="cardsEtRu">${targetFlag()} → 🇷🇺 ${targetName()[0].toUpperCase()+targetName().slice(1)} → русский</button>${listenAll}<button class="secondary" id="typingBtn">${typingLabel}</button></div></div>`;
   if(topic.poster){card.querySelector("#posterOpen").onclick=()=>showPoster(topic,"topic");card.querySelector("#posterBtn").onclick=()=>showPoster(topic,"topic")}
+  if(topic.audio)card.querySelector("#listenAllBtn").onclick=()=>speakTopicWords(topic);
   card.querySelector("#cardsRuEt").onclick=()=>startReview(topic,"ru-et");
   card.querySelector("#cardsEtRu").onclick=()=>startReview(topic,"et-ru");
   card.querySelector("#typingBtn").onclick=()=>startTyping(topic);
@@ -271,9 +308,11 @@ function renderReview(){
   const compact=s=>!String(s).includes(" ")&&String(s).length>=15?" flash-long":"";
   const directionLabel=reviewDirection==="ru-et"?`🇷🇺 → ${targetFlag()} Русский → ${targetName()}`:`${targetFlag()} → 🇷🇺 ${targetName()[0].toUpperCase()+targetName().slice(1)} → русский`;
   const posterButton=currentTopic&&currentTopic.poster?'<button class="secondary" id="reviewPoster" style="width:100%">🖼 Посмотреть плакат</button>':'';
-  card.innerHTML=`<div class="review-wrap"><button class="secondary" id="directionBtn" style="width:100%">↔ ${directionLabel}</button>${posterButton}<div class="flashcard" id="flash"><div class="flashcard-inner"><div class="flash-face${compact(front)}">${esc(front)}</div><div class="flash-face flash-back${compact(back)}">${esc(back)}</div></div></div><div class="review-stats"><span>✓ ${reviewGood}</span><span>✕ ${reviewBad}</span></div><div class="review-actions" id="reviewActions" hidden><button class="review-no" id="reviewNo">✕</button><button class="review-yes" id="reviewYes">✓</button></div><div class="tiny" style="text-align:center">Нажми на карточку, чтобы перевернуть</div></div>`;
+  const audioButton=currentTopic&&currentTopic.audio?'<button class="secondary" id="reviewSpeak" style="width:100%">🔊 Произношение</button>':'';
+  card.innerHTML=`<div class="review-wrap"><button class="secondary" id="directionBtn" style="width:100%">↔ ${directionLabel}</button>${posterButton}${audioButton}<div class="flashcard" id="flash"><div class="flashcard-inner"><div class="flash-face${compact(front)}">${esc(front)}</div><div class="flash-face flash-back${compact(back)}">${esc(back)}</div></div></div><div class="review-stats"><span>✓ ${reviewGood}</span><span>✕ ${reviewBad}</span></div><div class="review-actions" id="reviewActions" hidden><button class="review-no" id="reviewNo">✕</button><button class="review-yes" id="reviewYes">✓</button></div><div class="tiny" style="text-align:center">Нажми на карточку, чтобы перевернуть</div></div>`;
   card.querySelector("#directionBtn").onclick=switchReviewDirection;
   if(currentTopic&&currentTopic.poster)card.querySelector("#reviewPoster").onclick=()=>showPoster(currentTopic,"review");
+  if(currentTopic&&currentTopic.audio)card.querySelector("#reviewSpeak").onclick=()=>speakTarget(item.word,currentTopic);
   const flash=card.querySelector("#flash"),actions=card.querySelector("#reviewActions");
   flash.onclick=()=>{if(reviewFlipped)return;reviewFlipped=true;flash.classList.add("flipped");actions.hidden=false};
   card.querySelector("#reviewYes").onclick=()=>decideReview(true);
@@ -332,7 +371,7 @@ function highlightMistakes(typed,expected){
 function renderTyping(){
   if(!typingQueue.length){finishTyping();return}
   const item=typingQueue[0];typingChecked=false;typingWasCorrect=false;counter.textContent=`Осталось: ${typingQueue.length}`;updateSub();
-  const expected=typingExpected(item),instruction=currentTopic.typingInstruction||(lang==="de"?"Напиши формы du / er":"Напиши по-эстонски");
+  const expected=typingExpected(item),instruction=currentTopic.typingInstruction||(lang==="de"?"Напиши формы du / er":`Напиши по-${targetName()}`);
   const posterButton=currentTopic&&currentTopic.poster?'<button class="secondary" id="typingPoster" style="width:100%">🖼 Посмотреть плакат</button>':'';
   card.innerHTML=`<div class="typing-wrap">${posterButton}<div class="typing-kicker">${esc(instruction)}</div><div class="typing-prompt">${esc(typingPrompt(item))}</div>${lang==="de"?'<div class="tiny" style="text-align:center">Например: du gibst · er gibt</div>':''}<div class="input-row"><input id="typeInput" class="typing-input" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" aria-label="Ответ"><button class="primary" id="typeCheck">Проверить</button></div><div class="review-stats"><span>✓ ${typingGood}</span><span>✕ ${typingBad}</span></div><div id="typeFeedback"></div></div>`;
   if(currentTopic&&currentTopic.poster)card.querySelector("#typingPoster").onclick=()=>showPoster(currentTopic,"typing");
@@ -388,23 +427,22 @@ restart.onclick=()=>{
   if((mode==="review"||mode==="typing")&&currentTopic)openTopic(currentTopic.id);
 };
 
+window.EDUKASS_TRAINER={
+  open(next,id){
+    if(!DATA[next])return false;
+    lang=next;
+    tabEt.classList.toggle("active",lang==="et");
+    tabDe.classList.toggle("active",lang==="de");
+    currentTopic=null;currentCategory=null;
+    const topic=allTopics(next).find(t=>t.id===id);
+    if(!topic)return false;
+    openTopic(id);
+    return true;
+  },
+  getTopic(next,id){return allTopics(next).find(t=>t.id===id)||null;}
+};
+
 progress.hidden=true;
 setLanguage("et");
-setTimeout(()=>{
-  const externalLibrary=libraryBtn.onclick;
-  if(typeof externalLibrary!=="function"||externalLibrary===renderLibrary)return;
-  libraryBtn.onclick=()=>{
-    externalLibrary();
-    const section=[...card.querySelectorAll(".library-section")].find(s=>s.querySelector(".library-title strong")?.textContent.trim()==="Eesti keel");
-    const grid=section?.querySelector(".topic-grid");
-    if(!grid||grid.querySelector('[data-u-topic="eesti-keel-2"]'))return;
-    const button=document.createElement("button");
-    button.className="topic-tile";
-    button.dataset.uLang="et";
-    button.dataset.uTopic="eesti-keel-2";
-    button.innerHTML='<span class="topic-title">Sõnad 2</span><span class="topic-meta">21 карточка</span>';
-    button.onclick=()=>{if(lang!=="et")setLanguage("et");openTopic("eesti-keel-2")};
-    grid.appendChild(button);
-  };
-},0);
+
 })();
