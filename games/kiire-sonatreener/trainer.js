@@ -189,8 +189,8 @@ const DATA={
 };
 
 const card=document.getElementById("card"),pill=document.getElementById("pill"),counter=document.getElementById("counter"),progress=document.getElementById("progress"),restart=document.getElementById("restart"),reviewBtn=document.getElementById("reviewBtn"),libraryBtn=document.getElementById("libraryBtn"),sub=document.getElementById("sub"),tabEt=document.getElementById("tabEt"),tabDe=document.getElementById("tabDe");
-let lang="et",mode="home",currentTopic=null,currentCategory=null,reviewQueue=[],reviewGood=0,reviewBad=0,reviewFlipped=false,reviewDirection="ru-et",typingQueue=[],typingGood=0,typingBad=0,typingChecked=false,typingWasCorrect=false,posterReturnMode="topic";
-try{const savedDirection=localStorage.getItem("sonatreenerReviewDirection");if(savedDirection==="ru-et"||savedDirection==="et-ru")reviewDirection=savedDirection}catch(e){}
+let lang="et",mode="home",currentTopic=null,currentCategory=null,reviewQueue=[],reviewGood=0,reviewBad=0,reviewFlipped=false,reviewDirection="ru-et",typingQueue=[],typingGood=0,typingBad=0,typingChecked=false,typingWasCorrect=false,posterReturnMode="topic",audioEnabled=true;
+try{const savedDirection=localStorage.getItem("sonatreenerReviewDirection");if(savedDirection==="ru-et"||savedDirection==="et-ru")reviewDirection=savedDirection;const savedAudio=localStorage.getItem("sonatreenerAudioEnabled");if(savedAudio==="0")audioEnabled=false}catch(e){}
 const shuffle=a=>{a=[...a];for(let i=a.length-1;i;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"})[c]);
 const locale=()=>DATA[lang]?.locale||"et";
@@ -212,11 +212,14 @@ function targetFlag(){return lang==="de"?"🇩🇪":lang==="en"?"🇬🇧":"🇪
 function typingExpected(item){return item.typingAnswer||item.word}
 function typingPrompt(item){return item.typingPrompt||item.ru}
 
+function saveAudioEnabled(){
+  try{localStorage.setItem("sonatreenerAudioEnabled",audioEnabled?"1":"0")}catch(e){}
+}
 function speakTarget(text,topic=currentTopic){
-  if(!text||!("speechSynthesis" in window))return;
+  if(!audioEnabled||!topic?.audio||!text||!("speechSynthesis" in window))return;
   window.speechSynthesis.cancel();
   const utterance=new SpeechSynthesisUtterance(text);
-  utterance.lang=topic?.audioLang||"en-GB";
+  utterance.lang=topic.audioLang||"en-GB";
   utterance.rate=.82;
   const voices=window.speechSynthesis.getVoices();
   const exact=voices.find(v=>v.lang?.toLowerCase()===utterance.lang.toLowerCase());
@@ -224,15 +227,17 @@ function speakTarget(text,topic=currentTopic){
   if(exact||family)utterance.voice=exact||family;
   window.speechSynthesis.speak(utterance);
 }
-function speakTopicWords(topic){
-  if(!topic?.audio||!("speechSynthesis" in window))return;
-  window.speechSynthesis.cancel();
-  (topic.words||[]).forEach(item=>{
-    const utterance=new SpeechSynthesisUtterance(item.word);
-    utterance.lang=topic.audioLang||"en-GB";
-    utterance.rate=.78;
-    window.speechSynthesis.speak(utterance);
-  });
+function audioToggleLabel(){return audioEnabled?"🔊 Звук включён":"🔇 Звук выключен"}
+function toggleAudio(item){
+  audioEnabled=!audioEnabled;
+  saveAudioEnabled();
+  if(!audioEnabled&&"speechSynthesis" in window)window.speechSynthesis.cancel();
+  const button=card.querySelector("#audioToggle");
+  if(button)button.textContent=audioToggleLabel();
+  if(audioEnabled&&currentTopic?.audio&&item){
+    const englishVisible=reviewDirection==="et-ru"?!reviewFlipped:reviewFlipped;
+    if(englishVisible)speakTarget(item.word,currentTopic);
+  }
 }
 
 function setLanguage(next){lang=next;tabEt.classList.toggle("active",lang==="et");tabDe.classList.toggle("active",lang==="de");currentTopic=null;currentCategory=null;renderHome()}
@@ -251,10 +256,10 @@ function openTopic(id){
     ?`<button class="poster-preview" id="posterOpen" aria-label="Открыть плакат"><img src="${topic.poster}" alt="${esc(topic.title)} — учебный плакат"></button>`
     :`<div class="topic-no-poster">${topic.category.icon}</div>`;
   const typingLabel=topic.typingInstruction?`✍️ ${topic.typingInstruction}`:lang==="de"?"✍️ Написать формы du / er":`✍️ Написать по-${targetName()}`;
-  const listenAll=topic.audio?'<button class="secondary" id="listenAllBtn">🔊 Послушать все слова</button>':'';
-  card.innerHTML=`<div class="topic-intro"><div class="topic-kicker">${topic.category.icon} ${esc(topic.category.label)}</div><h2>${esc(topic.title)}</h2>${poster}<div class="topic-actions">${topic.poster?'<button class="secondary" id="posterBtn">🖼 Смотреть плакат</button>':''}<button class="primary" id="cardsRuEt">🇷🇺 → ${targetFlag()} Русский → ${targetName()}</button><button class="secondary" id="cardsEtRu">${targetFlag()} → 🇷🇺 ${targetName()[0].toUpperCase()+targetName().slice(1)} → русский</button>${listenAll}<button class="secondary" id="typingBtn">${typingLabel}</button></div></div>`;
+  const soundSetting=topic.audio?`<button class="secondary" id="topicAudioToggle">${audioToggleLabel()}</button>`:'';
+  card.innerHTML=`<div class="topic-intro"><div class="topic-kicker">${topic.category.icon} ${esc(topic.category.label)}</div><h2>${esc(topic.title)}</h2>${poster}<div class="topic-actions">${topic.poster?'<button class="secondary" id="posterBtn">🖼 Смотреть плакат</button>':''}<button class="primary" id="cardsRuEt">🇷🇺 → ${targetFlag()} Русский → ${targetName()}</button><button class="secondary" id="cardsEtRu">${targetFlag()} → 🇷🇺 ${targetName()[0].toUpperCase()+targetName().slice(1)} → русский</button>${soundSetting}<button class="secondary" id="typingBtn">${typingLabel}</button></div></div>`;
   if(topic.poster){card.querySelector("#posterOpen").onclick=()=>showPoster(topic,"topic");card.querySelector("#posterBtn").onclick=()=>showPoster(topic,"topic")}
-  if(topic.audio)card.querySelector("#listenAllBtn").onclick=()=>speakTopicWords(topic);
+  if(topic.audio)card.querySelector("#topicAudioToggle").onclick=()=>{audioEnabled=!audioEnabled;saveAudioEnabled();if(!audioEnabled&&"speechSynthesis" in window)window.speechSynthesis.cancel();card.querySelector("#topicAudioToggle").textContent=audioToggleLabel()};
   card.querySelector("#cardsRuEt").onclick=()=>startReview(topic,"ru-et");
   card.querySelector("#cardsEtRu").onclick=()=>startReview(topic,"et-ru");
   card.querySelector("#typingBtn").onclick=()=>startTyping(topic);
@@ -308,13 +313,14 @@ function renderReview(){
   const compact=s=>!String(s).includes(" ")&&String(s).length>=15?" flash-long":"";
   const directionLabel=reviewDirection==="ru-et"?`🇷🇺 → ${targetFlag()} Русский → ${targetName()}`:`${targetFlag()} → 🇷🇺 ${targetName()[0].toUpperCase()+targetName().slice(1)} → русский`;
   const posterButton=currentTopic&&currentTopic.poster?'<button class="secondary" id="reviewPoster" style="width:100%">🖼 Посмотреть плакат</button>':'';
-  const audioButton=currentTopic&&currentTopic.audio?'<button class="secondary" id="reviewSpeak" style="width:100%">🔊 Произношение</button>':'';
-  card.innerHTML=`<div class="review-wrap"><button class="secondary" id="directionBtn" style="width:100%">↔ ${directionLabel}</button>${posterButton}${audioButton}<div class="flashcard" id="flash"><div class="flashcard-inner"><div class="flash-face${compact(front)}">${esc(front)}</div><div class="flash-face flash-back${compact(back)}">${esc(back)}</div></div></div><div class="review-stats"><span>✓ ${reviewGood}</span><span>✕ ${reviewBad}</span></div><div class="review-actions" id="reviewActions" hidden><button class="review-no" id="reviewNo">✕</button><button class="review-yes" id="reviewYes">✓</button></div><div class="tiny" style="text-align:center">Нажми на карточку, чтобы перевернуть</div></div>`;
+  const audioToggle=currentTopic&&currentTopic.audio?`<button class="secondary" id="audioToggle" style="width:100%">${audioToggleLabel()}</button>`:'';
+  card.innerHTML=`<div class="review-wrap"><button class="secondary" id="directionBtn" style="width:100%">↔ ${directionLabel}</button>${posterButton}${audioToggle}<div class="flashcard" id="flash"><div class="flashcard-inner"><div class="flash-face${compact(front)}">${esc(front)}</div><div class="flash-face flash-back${compact(back)}">${esc(back)}</div></div></div><div class="review-stats"><span>✓ ${reviewGood}</span><span>✕ ${reviewBad}</span></div><div class="review-actions" id="reviewActions" hidden><button class="review-no" id="reviewNo">✕</button><button class="review-yes" id="reviewYes">✓</button></div><div class="tiny" style="text-align:center">Нажми на карточку, чтобы перевернуть</div></div>`;
   card.querySelector("#directionBtn").onclick=switchReviewDirection;
   if(currentTopic&&currentTopic.poster)card.querySelector("#reviewPoster").onclick=()=>showPoster(currentTopic,"review");
-  if(currentTopic&&currentTopic.audio)card.querySelector("#reviewSpeak").onclick=()=>speakTarget(item.word,currentTopic);
+  if(currentTopic&&currentTopic.audio)card.querySelector("#audioToggle").onclick=()=>toggleAudio(item);
   const flash=card.querySelector("#flash"),actions=card.querySelector("#reviewActions");
-  flash.onclick=()=>{if(reviewFlipped)return;reviewFlipped=true;flash.classList.add("flipped");actions.hidden=false};
+  flash.onclick=()=>{if(reviewFlipped)return;reviewFlipped=true;flash.classList.add("flipped");actions.hidden=false;if(currentTopic?.audio&&reviewDirection==="ru-et")speakTarget(item.word,currentTopic)};
+  if(currentTopic?.audio&&reviewDirection==="et-ru")setTimeout(()=>speakTarget(item.word,currentTopic),0);
   card.querySelector("#reviewYes").onclick=()=>decideReview(true);
   card.querySelector("#reviewNo").onclick=()=>decideReview(false);
   let startX=null,startY=null;
@@ -333,6 +339,7 @@ function decideReview(ok){
 }
 
 function finishReview(){
+  if("speechSynthesis" in window)window.speechSynthesis.cancel();
   setNavLocked(false);counter.textContent="";pill.textContent="Готово";restart.hidden=true;
   card.innerHTML=`<div class="done"><div class="big">🃏</div><h2>Готово!</h2><div class="finish-actions">${currentTopic&&currentTopic.poster?'<button class="secondary" id="seePoster">🖼 Посмотреть плакат</button>':''}<button class="primary" id="again">Ещё раз карточки</button><button class="secondary" id="backTopic">К уроку</button></div></div>`;
   if(currentTopic&&currentTopic.poster)card.querySelector("#seePoster").onclick=()=>showPoster(currentTopic,"topic");
@@ -423,6 +430,7 @@ libraryBtn.onclick=renderLibrary;
 tabEt.onclick=()=>setLanguage("et");
 tabDe.onclick=()=>setLanguage("de");
 restart.onclick=()=>{
+  if("speechSynthesis" in window)window.speechSynthesis.cancel();
   if(mode==="poster"&&currentTopic){posterReturnMode==="review"?resumeReview():posterReturnMode==="typing"?resumeTyping():openTopic(currentTopic.id);return}
   if((mode==="review"||mode==="typing")&&currentTopic)openTopic(currentTopic.id);
 };
