@@ -51,6 +51,11 @@ for(const id of ['present-simple-words','eesti-keel-3','lektion-1','muinasjutud'
   assert(trainer.includes(`id:"${id}"`),'core trainer topic missing: '+id);
 }
 assert(trainer.includes('window.EDUKASS_TRAINER'),'trainer public API is missing');
+assert(trainer.includes('function wordListHtml(topic)'),'shared vocabulary list renderer is missing');
+for(const category of ['eesti-keel','eesti-kirjandus','english']){
+  assert(trainer.includes(`id:"${category}",label:`)&&trainer.includes('showWordList:true'),'word-list defaults are missing for language study categories');
+}
+
 
 const customSources=[
   index,
