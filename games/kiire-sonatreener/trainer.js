@@ -22,7 +22,7 @@ const DATA={
       ]}
     ]},
     {id:"inimene",label:"Inimene",icon:"👤",topics:[]},
-    {id:"eesti-keel",label:"Eesti keel",icon:"📝",topics:[
+    {id:"eesti-keel",label:"Eesti keel",icon:"📝",showWordList:true,topics:[
       {id:"eesti-keel-1",title:"Sõnad 1",subtitle:"Eesti keel",active:false,poster:null,words:[
         {word:"uudised",ru:"новости"},
         {word:"põnev",ru:"интересный, увлекательный"},
@@ -90,7 +90,7 @@ const DATA={
         {word:"ilmus pilt",ru:"появилась картинка"}
       ]}
     ]},
-    {id:"eesti-kirjandus",label:"Eesti kirjandus",icon:"📖",topics:[
+    {id:"eesti-kirjandus",label:"Eesti kirjandus",icon:"📖",showWordList:true,topics:[
       {id:"sonad-1",title:"Sõnad 1",subtitle:"Kordamine",active:false,poster:null,words:[
         {word:"tee kokkuvõte",ru:"подведи итог"},
         {word:"lugeja",ru:"читатель"},
@@ -176,7 +176,7 @@ const DATA={
 
   ]},
   en:{label:"English",langName:"English",locale:"en",categories:[
-    {id:"english",label:"English",icon:"🇬🇧",topics:[
+    {id:"english",label:"English",icon:"🇬🇧",showWordList:true,topics:[
       {id:"present-simple-words",title:"Present Simple — слова",subtitle:"English",active:false,poster:null,audio:true,audioLang:"en-GB",typingInstruction:"Напиши по-английски",words:[
         {word:"always",ru:"всегда"},
         {word:"usually",ru:"обычно"},
@@ -211,6 +211,20 @@ function targetName(){return lang==="de"?"немецкий":lang==="en"?"анг�
 function targetFlag(){return lang==="de"?"🇩🇪":lang==="en"?"🇬🇧":"🇪🇪"}
 function typingExpected(item){return item.typingAnswer||item.word}
 function typingPrompt(item){return item.typingPrompt||item.ru}
+
+function wordListHtml(topic){
+  if(!topic?.category?.showWordList||!Array.isArray(topic.words)||!topic.words.length)return "";
+  const rows=topic.words.map((item,index)=>`
+    <div class="word-list-row">
+      <span class="word-list-number">${index+1}</span>
+      <strong class="word-list-target">${esc(item.word)}</strong>
+      <span class="word-list-ru">${esc(item.ru)}</span>
+    </div>`).join("");
+  return `<section class="word-list-section" aria-label="Список слов">
+    <div class="word-list-heading"><h3>Список слов</h3><span>${topic.words.length}</span></div>
+    <div class="word-list-grid">${rows}</div>
+  </section>`;
+}
 
 function saveAudioEnabled(){
   try{localStorage.setItem("sonatreenerAudioEnabled",audioEnabled?"1":"0")}catch(e){}
@@ -257,7 +271,8 @@ function openTopic(id){
     :`<div class="topic-no-poster">${topic.category.icon}</div>`;
   const typingLabel=topic.typingInstruction?`✍️ ${topic.typingInstruction}`:lang==="de"?"✍️ Написать формы du / er":`✍️ Написать по-${targetName()}`;
   const soundSetting=topic.audio?`<button class="secondary" id="topicAudioToggle">${audioToggleLabel()}</button>`:'';
-  card.innerHTML=`<div class="topic-intro"><div class="topic-kicker">${topic.category.icon} ${esc(topic.category.label)}</div><h2>${esc(topic.title)}</h2>${poster}<div class="topic-actions">${topic.poster?'<button class="secondary" id="posterBtn">🖼 Смотреть плакат</button>':''}<button class="primary" id="cardsRuEt">🇷🇺 → ${targetFlag()} Русский → ${targetName()}</button><button class="secondary" id="cardsEtRu">${targetFlag()} → 🇷🇺 ${targetName()[0].toUpperCase()+targetName().slice(1)} → русский</button>${soundSetting}<button class="secondary" id="typingBtn">${typingLabel}</button></div></div>`;
+  const wordList=wordListHtml(topic);
+  card.innerHTML=`<div class="topic-intro"><div class="topic-kicker">${topic.category.icon} ${esc(topic.category.label)}</div><h2>${esc(topic.title)}</h2>${poster}<div class="topic-actions">${topic.poster?'<button class="secondary" id="posterBtn">🖼 Смотреть плакат</button>':''}<button class="primary" id="cardsRuEt">🇷🇺 → ${targetFlag()} Русский → ${targetName()}</button><button class="secondary" id="cardsEtRu">${targetFlag()} → 🇷🇺 ${targetName()[0].toUpperCase()+targetName().slice(1)} → русский</button>${soundSetting}<button class="secondary" id="typingBtn">${typingLabel}</button></div>${wordList}</div>`;
   if(topic.poster){card.querySelector("#posterOpen").onclick=()=>showPoster(topic,"topic");card.querySelector("#posterBtn").onclick=()=>showPoster(topic,"topic")}
   if(topic.audio)card.querySelector("#topicAudioToggle").onclick=()=>{audioEnabled=!audioEnabled;saveAudioEnabled();if(!audioEnabled&&"speechSynthesis" in window)window.speechSynthesis.cancel();card.querySelector("#topicAudioToggle").textContent=audioToggleLabel()};
   card.querySelector("#cardsRuEt").onclick=()=>startReview(topic,"ru-et");
