@@ -27,6 +27,8 @@ jobs:
         run: node scripts/test-material-metadata.js
       - name: Validate catalog and permanent links
         run: node scripts/catalog-guard.js
+      - name: Check Sõnatreener architecture
+        run: node scripts/check-sonatreener.js
       - name: Build Cloudflare site
         run: node scripts/build-cloudflare-site.js
       - name: Show release report
