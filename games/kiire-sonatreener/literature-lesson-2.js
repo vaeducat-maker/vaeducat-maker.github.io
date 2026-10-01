@@ -113,31 +113,6 @@
     if(b)b.onclick=()=>libraryBtn.click();
   }
 
-  function ensureTile(){
-    const sections=[...card.querySelectorAll('.library-section')];
-    const section=sections.find(s=>s.querySelector('.library-title strong')?.textContent.trim()==='Eesti kirjandus');
-    if(!section)return;
-    let grid=section.querySelector('.topic-grid');
-    if(!grid){
-      const empty=section.querySelector('.library-empty');
-      if(empty)empty.remove();
-      grid=document.createElement('div');
-      grid.className='topic-grid';
-      section.appendChild(grid);
-    }
-    const existing=grid.querySelector('#litHistoryBookLesson');if(existing){existing.onclick=renderLesson;return;}
-    const btn=document.createElement('button');
-    btn.type='button';
-    btn.className='topic-tile';
-    btn.id='litHistoryBookLesson';
-    btn.innerHTML='<span class="topic-title">Урок 2 — Исторические тексты о книге</span><span class="topic-meta">2 текста · перевод · письменное задание</span>';
-    btn.onclick=renderLesson;
-    grid.appendChild(btn);
-  }
-
   window.EDUKASS_LESSONS=window.EDUKASS_LESSONS||{};
   window.EDUKASS_LESSONS.litHistoryBookLesson=renderLesson;
-
-  new MutationObserver(ensureTile).observe(card,{childList:true,subtree:true});
-  ensureTile();
 })();
