@@ -52,6 +52,10 @@ for(const id of ['present-simple-words','eesti-keel-3','lektion-1','muinasjutud'
   assert(trainer.includes(`id:"${id}"`),'core trainer topic missing: '+id);
 }
 assert(trainer.includes('window.EDUKASS_TRAINER'),'trainer public API is missing');
+for(const word of ['hospital','school','airport','police station','fire station','shop','station','zoo','supermarket','bank','garage','like']){
+  assert(trainer.includes(`word:"${word}"`),'English vocabulary word missing: '+word);
+}
+
 for(const pair of [['play','plays'],['eat','eats'],['drink','drinks'],['wash','washes'],['watch','watches'],['go','goes'],['study','studies']]){
   assert(trainer.includes(`word:"${pair[0]}"`)&&trainer.includes(`thirdPerson:"${pair[1]}"`),'third-person verb missing: '+pair[0]);
 }
