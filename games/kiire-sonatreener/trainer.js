@@ -189,7 +189,19 @@ const DATA={
         {word:"wash",ru:"мыть",thirdPerson:"washes",thirdPersonGroup:"es"},
         {word:"watch",ru:"смотреть",thirdPerson:"watches",thirdPersonGroup:"es"},
         {word:"go",ru:"идти, ходить",thirdPerson:"goes",thirdPersonGroup:"es"},
-        {word:"study",ru:"учиться",thirdPerson:"studies",thirdPersonGroup:"ies"}
+        {word:"study",ru:"учиться",thirdPerson:"studies",thirdPersonGroup:"ies"},
+        {word:"hospital",ru:"больница"},
+        {word:"school",ru:"школа"},
+        {word:"airport",ru:"аэропорт"},
+        {word:"police station",ru:"полицейский участок"},
+        {word:"fire station",ru:"пожарная часть"},
+        {word:"shop",ru:"магазин"},
+        {word:"station",ru:"станция"},
+        {word:"zoo",ru:"зоопарк"},
+        {word:"supermarket",ru:"супермаркет"},
+        {word:"bank",ru:"банк"},
+        {word:"garage",ru:"гараж"},
+        {word:"like",ru:"нравиться"}
       ]}
     ]}
   ]}
