@@ -23,5 +23,5 @@ window.EDUKASS_CATALOG=[
   {id:"muusika",label:"Muusika",icon:"🎵",lessons:[
     {kind:"custom",handler:"musicLesson1",title:"Урок 1 — Kontrolltöö: tämber, dünaamika · 03.10.26",meta:"19 эстонских слов · 13 музыкальных терминов"}
   ]},
-  {id:"ajalugu",label:"Ajalugu",icon:"🏺",lessons:[{kind:"custom",handler:"historyAjastud",title:"Ajastud",meta:"7 карточек"}]}
+  {id:"ajalugu",label:"Ajalugu",icon:"🏺",lessons:[{kind:"custom",handler:"historyAjastud",title:"Ajastud",meta:"7 карточек · 3 тренировки"}]}
 ];
