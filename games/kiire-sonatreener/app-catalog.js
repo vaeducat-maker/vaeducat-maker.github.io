@@ -1,6 +1,6 @@
 window.EDUKASS_CATALOG=[
   {id:"loodus",label:"Loodus",icon:"🌿",lessons:[{kind:"core",lang:"et",topic:"vesi-ja-jogi",extraMeta:"6 вопросов · 🖼"}]},
-  {id:"inimene",label:"Inimene",icon:"👤",lessons:[]},
+  {id:"inimene",label:"Inimene",icon:"👤",lessons:[{kind:"custom",handler:"inimeneTervisLesson",title:"Урок 1 — Tervis · 03.10.26",meta:"4 карточки"}]},
   {id:"eesti-keel",label:"Eesti keel",icon:"📝",lessons:[
     {kind:"core",lang:"et",topic:"eesti-keel-1"},
     {kind:"core",lang:"et",topic:"eesti-keel-2"},
