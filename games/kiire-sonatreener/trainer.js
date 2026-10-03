@@ -109,7 +109,7 @@ const DATA={
         {word:"tõsielulised muinasjutud",ru:"сказки о реальной жизни"},
         {word:"kunstmuinasjutud",ru:"литературные сказки"}
       ]},
-      {id:"rebane-saba",title:"Kuidas rebane oma saba karistas",subtitle:"Eesti kirjandus",active:false,poster:null,words:[
+      {id:"rebane-saba",title:"Урок 4 — Kuidas rebane oma saba karistas · 03.10.26",subtitle:"Eesti kirjandus",active:false,poster:null,words:[
         {word:"karistama",ru:"наказывать"},
         {word:"kütt",ru:"охотник"},
         {word:"küti koer",ru:"охотничья собака"},
