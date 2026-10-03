@@ -17,7 +17,8 @@ window.EDUKASS_CATALOG=[
   {id:"eesti-kirjandus",label:"Eesti kirjandus",icon:"📖",lessons:[
     {kind:"core",lang:"et",topic:"sonad-1"},
     {kind:"custom",handler:"litHistoryBookLesson",title:"Урок 2 — Исторические тексты о книге",meta:"2 текста · перевод · письменное задание"},
-    {kind:"core",lang:"et",topic:"muinasjutud"}
+    {kind:"core",lang:"et",topic:"muinasjutud"},
+    {kind:"core",lang:"et",topic:"rebane-saba",extraMeta:"7 вопросов"}
   ]},
   {id:"ajalugu",label:"Ajalugu",icon:"🏺",lessons:[{kind:"custom",handler:"historyAjastud",title:"Ajastud",meta:"7 карточек"}]}
 ];
