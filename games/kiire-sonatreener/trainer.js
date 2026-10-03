@@ -108,6 +108,25 @@ const DATA={
         {word:"imemuinasjutud",ru:"волшебные сказки"},
         {word:"tõsielulised muinasjutud",ru:"сказки о реальной жизни"},
         {word:"kunstmuinasjutud",ru:"литературные сказки"}
+      ]},
+      {id:"rebane-saba",title:"Kuidas rebane oma saba karistas",subtitle:"Eesti kirjandus",active:false,poster:null,words:[
+        {word:"karistama",ru:"наказывать"},
+        {word:"kütt",ru:"охотник"},
+        {word:"küti koer",ru:"охотничья собака"},
+        {word:"põgenema",ru:"убегать, спасаться бегством"},
+        {word:"koobas",ru:"нора, пещера"},
+        {word:"sihtima",ru:"целиться; высматривать"},
+        {word:"haisu vedama",ru:"принюхиваться, чуять запах"},
+        {word:"eest tõmbama",ru:"тянуть вперёд"},
+        {word:"tagumised jalad",ru:"задние лапы"},
+        {word:"esimesed jalad",ru:"передние лапы"},
+        {word:"pikale venitama",ru:"вытягивать в длину"},
+        {word:"august välja pistma",ru:"высовывать из норы"},
+        {word:"rebast taga ajama",ru:"гнаться за лисой"},
+        {word:"aru pärima",ru:"расспрашивать, допытываться, требовать объяснений"},
+        {word:"takka hoogu andma",ru:"подталкивать сзади, придавать ускорение"},
+        {word:"vints ja võnts",ru:"туда-сюда, из стороны в сторону"},
+        {word:"mehemoodi sasida saama",ru:"получить хорошую взбучку, быть крепко потрёпанным"}
       ]}
     ]}
   ]},
