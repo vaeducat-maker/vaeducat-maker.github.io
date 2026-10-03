@@ -1,6 +1,6 @@
 (function rebaneLessonQuestions(){
   const TOPIC_ID='rebane-saba';
-  const TOPIC_TITLE='Kuidas rebane oma saba karistas';
+  const TOPIC_TITLE='Урок 4 — Kuidas rebane oma saba karistas · 03.10.26';
   const QUESTIONS=[
     {q:'Kes hakkas rebast taga ajama?',a:'Küti koer.'},
     {q:'Kuhu rebane lõpuks varjule sai?',a:'Oma koopasse.'},
