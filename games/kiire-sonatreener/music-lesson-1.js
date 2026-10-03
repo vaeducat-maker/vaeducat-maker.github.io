@@ -72,7 +72,9 @@
         '<div class="topic-actions">'+
           '<button class="primary" id="musicEtCards">🇪🇪 Eesti → русский</button>'+
           '<button class="secondary" id="musicRuEtCards">🇷🇺 Русский → Eesti</button>'+
-          '<button class="secondary" id="musicTermCards">🎵 Muusikaterminid</button>'+
+          '<button class="secondary" id="musicTermCards">🎵 Термин → значение</button>'+
+          '<button class="secondary" id="musicEtTermCards">🇪🇪 Eesti → термин</button>'+
+          '<button class="secondary" id="musicRuTermCards">🇷🇺 Русский → термин</button>'+
         '</div>'+
         '<section class="summary-section"><h3>Eesti sõnad · '+ESTONIAN.length+'</h3><div class="summary-words">'+etRows+'</div></section>'+
         '<section class="summary-section"><h3>Muusikaterminid · '+TERMS.length+'</h3><div class="summary-qa">'+termRows+'</div></section>'+
@@ -80,13 +82,15 @@
       '</div>';
     card.querySelector('#musicEtCards').onclick=()=>start('estonian-et-ru');
     card.querySelector('#musicRuEtCards').onclick=()=>start('estonian-ru-et');
-    card.querySelector('#musicTermCards').onclick=()=>start('terms');
+    card.querySelector('#musicTermCards').onclick=()=>start('terms-forward');
+    card.querySelector('#musicEtTermCards').onclick=()=>start('terms-et');
+    card.querySelector('#musicRuTermCards').onclick=()=>start('terms-ru');
     card.querySelector('#musicBack').onclick=()=>libraryBtn.click();
   }
 
   function start(which){
     deck=which;mode='cards';good=0;bad=0;flipped=false;
-    queue=shuffle(which==='terms'?TERMS:ESTONIAN);
+    queue=shuffle(which.startsWith('terms-')?TERMS:ESTONIAN);
     lock(true);restart.hidden=false;restart.textContent='← Выйти';
     if(which==='estonian-et-ru'){
       pill.textContent='🇪🇪 Eesti → русский';
@@ -94,8 +98,14 @@
     }else if(which==='estonian-ru-et'){
       pill.textContent='🇷🇺 Русский → Eesti';
       if(sub)sub.textContent='Русский → эстонское слово';
+    }else if(which==='terms-et'){
+      pill.textContent='🇪🇪 Eesti → термин';
+      if(sub)sub.textContent='Эстонское значение → музыкальный термин';
+    }else if(which==='terms-ru'){
+      pill.textContent='🇷🇺 Русский → термин';
+      if(sub)sub.textContent='Русское значение → музыкальный термин';
     }else{
-      pill.textContent='🎵 Muusikaterminid';
+      pill.textContent='🎵 Термин → значение';
       if(sub)sub.textContent='Термин → эстонское объяснение → русский';
     }
     renderCard();
@@ -109,6 +119,10 @@
       front=x[0];back=esc(x[1]);label='Eesti → русский';
     }else if(deck==='estonian-ru-et'){
       front=x[1];back=esc(x[0]);label='Русский → Eesti';
+    }else if(deck==='terms-et'){
+      front=x[1];back=esc(x[0]);label='Eesti → термин';
+    }else if(deck==='terms-ru'){
+      front=x[2];back=esc(x[0]);label='Русский → термин';
     }else{
       front=x[0];
       back=esc(x[1])+'<br><span class="tiny" style="display:block;margin-top:8px">'+esc(x[2])+'</span>';
