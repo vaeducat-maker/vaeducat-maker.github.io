@@ -50,7 +50,7 @@
     ['RUBATO','tempo vaba valik','свободный выбор темпа']
   ];
 
-  let mode='lesson',queue=[],good=0,bad=0,flipped=false,deck='estonian';
+  let mode='lesson',queue=[],good=0,bad=0,flipped=false,deck='estonian-et-ru';
   const shuffle=a=>{a=[...a];for(let i=a.length-1;i;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
   const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'})[c]);
 
@@ -70,38 +70,56 @@
       '<div class="summary-view">'+
         '<div class="summary-head"><div class="topic-kicker">🎵 Muusika</div><h2>'+esc(TITLE)+'</h2><div class="tiny">Сначала эстонские слова, затем музыкальные термины</div></div>'+
         '<div class="topic-actions">'+
-          '<button class="primary" id="musicEtCards">🇪🇪 Eesti sõnad</button>'+
+          '<button class="primary" id="musicEtCards">🇪🇪 Eesti → русский</button>'+
+          '<button class="secondary" id="musicRuEtCards">🇷🇺 Русский → Eesti</button>'+
           '<button class="secondary" id="musicTermCards">🎵 Muusikaterminid</button>'+
         '</div>'+
         '<section class="summary-section"><h3>Eesti sõnad · '+ESTONIAN.length+'</h3><div class="summary-words">'+etRows+'</div></section>'+
         '<section class="summary-section"><h3>Muusikaterminid · '+TERMS.length+'</h3><div class="summary-qa">'+termRows+'</div></section>'+
         '<button class="secondary" id="musicBack">← К предметам</button>'+
       '</div>';
-    card.querySelector('#musicEtCards').onclick=()=>start('estonian');
+    card.querySelector('#musicEtCards').onclick=()=>start('estonian-et-ru');
+    card.querySelector('#musicRuEtCards').onclick=()=>start('estonian-ru-et');
     card.querySelector('#musicTermCards').onclick=()=>start('terms');
     card.querySelector('#musicBack').onclick=()=>libraryBtn.click();
   }
 
   function start(which){
     deck=which;mode='cards';good=0;bad=0;flipped=false;
-    queue=shuffle(which==='estonian'?ESTONIAN:TERMS);
+    queue=shuffle(which==='terms'?TERMS:ESTONIAN);
     lock(true);restart.hidden=false;restart.textContent='← Выйти';
-    pill.textContent=which==='estonian'?'🇪🇪 Eesti sõnad':'🎵 Muusikaterminid';
-    if(sub)sub.textContent=which==='estonian'?'Эстонское слово → русский':'Термин → эстонское объяснение → русский';
+    if(which==='estonian-et-ru'){
+      pill.textContent='🇪🇪 Eesti → русский';
+      if(sub)sub.textContent='Эстонское слово → русский';
+    }else if(which==='estonian-ru-et'){
+      pill.textContent='🇷🇺 Русский → Eesti';
+      if(sub)sub.textContent='Русский → эстонское слово';
+    }else{
+      pill.textContent='🎵 Muusikaterminid';
+      if(sub)sub.textContent='Термин → эстонское объяснение → русский';
+    }
     renderCard();
   }
 
   function renderCard(){
     if(!queue.length){finish();return}
     const x=queue[0];flipped=false;counter.textContent='Осталось: '+queue.length;
-    const front=deck==='estonian'?x[0]:x[0];
-    const back=deck==='estonian'?x[1]:(x[1]+'<br><span class="tiny" style="display:block;margin-top:8px">'+x[2]+'</span>');
+    let front,back,label;
+    if(deck==='estonian-et-ru'){
+      front=x[0];back=esc(x[1]);label='Eesti → русский';
+    }else if(deck==='estonian-ru-et'){
+      front=x[1];back=esc(x[0]);label='Русский → Eesti';
+    }else{
+      front=x[0];
+      back=esc(x[1])+'<br><span class="tiny" style="display:block;margin-top:8px">'+esc(x[2])+'</span>';
+      label='Термин → значение';
+    }
     card.innerHTML=
       '<div class="review-wrap">'+
-        '<div class="tiny" style="text-align:center;margin-bottom:10px">'+(deck==='estonian'?'Eesti → русский':'Термин → значение')+'</div>'+
+        '<div class="tiny" style="text-align:center;margin-bottom:10px">'+label+'</div>'+
         '<div class="flashcard" id="musicFlash"><div class="flashcard-inner">'+
           '<div class="flash-face">'+esc(front)+'</div>'+
-          '<div class="flash-face flash-back">'+(deck==='estonian'?esc(back):esc(x[1])+'<br><span class="tiny" style="display:block;margin-top:8px">'+esc(x[2])+'</span>')+'</div>'+
+          '<div class="flash-face flash-back">'+back+'</div>'+
         '</div></div>'+
         '<div class="review-stats"><span>✓ '+good+'</span><span>✕ '+bad+'</span></div>'+
         '<div class="review-actions" id="musicActions" hidden><button class="review-no" id="musicNo">✕</button><button class="review-yes" id="musicYes">✓</button></div>'+
