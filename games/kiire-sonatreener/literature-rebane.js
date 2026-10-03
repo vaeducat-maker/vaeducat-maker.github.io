@@ -55,6 +55,18 @@
       b.onclick=start;
       actions.appendChild(b);
     }
+    if(!actions.querySelector('#rebaneSourceBtn')){
+      const a=document.createElement('a');
+      a.id='rebaneSourceBtn';
+      a.className='secondary';
+      a.href='./rebane-lesson-source.html';
+      a.target='_blank';
+      a.rel='noopener';
+      a.textContent='📄 Файл урока';
+      a.style.textDecoration='none';
+      a.style.textAlign='center';
+      actions.appendChild(a);
+    }
     setLessonMeta();
   }
 
