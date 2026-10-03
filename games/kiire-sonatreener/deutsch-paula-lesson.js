@@ -98,6 +98,28 @@
     card.innerHTML=
       '<div class="summary-view">'+
         '<div class="summary-head"><div class="topic-kicker">🇩🇪 Deutsch</div><h2>Урок 3 — Paula: проверка понимания текста · 03.10.26</h2><div class="tiny">Слова учим отдельно, предложения — как базовые модели</div></div>'+
+        '<section class="summary-section"><h3>📖 Текст с построчным переводом</h3>'+
+          '<div class="summary-qa">'+
+            '<div class="summary-qa-item"><strong>Sie heißt Paula und sie kommt aus Österreich.</strong><p>Её зовут Паула и она из Австрии.</p></div>'+
+            '<div class="summary-qa-item"><strong>Paula kommt aus Innsbruck, aber jetzt wohnt sie in Graz.</strong><p>Паула родом из Инсбрука, но сейчас живёт в Граце.</p></div>'+
+            '<div class="summary-qa-item"><strong>Sie besucht die Mittelschule Fröbel.</strong><p>Она учится в средней школе Фрёбель.</p></div>'+
+            '<div class="summary-qa-item"><strong>Paula findet ihre Schule okay.</strong><p>Паула находит свою школу ОК.</p></div>'+
+            '<div class="summary-qa-item"><strong>Sie mag Englisch und Deutsch.</strong><p>Она любит английский и немецкий.</p></div>'+
+            '<div class="summary-qa-item"><strong>Sie mag Mathematik und Chemie nicht.</strong><p>Она не любит математику и химию.</p></div>'+
+            '<div class="summary-qa-item"><strong>Paula mag Musik.</strong><p>Паула любит музыку.</p></div>'+
+            '<div class="summary-qa-item"><strong>Sie kann singen und Saxofon spielen.</strong><p>Она умеет петь и играть на саксофоне.</p></div>'+
+            '<div class="summary-qa-item"><strong>Sie kann nicht gut Basketball spielen, aber sie mag Basketball.</strong><p>Она не умеет хорошо играть в баскетбол, но она любит баскетбол.</p></div>'+
+            '<div class="summary-qa-item"><strong>Paulas Freundin heißt Jenny.</strong><p>Подругу Паулы зовут Дженни.</p></div>'+
+            '<div class="summary-qa-item"><strong>Ihre Freundin ist lustig.</strong><p>Её подруга весёлая.</p></div>'+
+            '<div class="summary-qa-item"><strong>Paula und Jenny telefonieren viel und lachen.</strong><p>Паула и Дженни много разговаривают по телефону и смеются.</p></div>'+
+            '<div class="summary-qa-item"><strong>Sie spielen gern zusammen Tischtennis.</strong><p>Они любят играть вместе в настольный теннис.</p></div>'+
+            '<div class="summary-qa-item"><strong>Sie finden Tischtennis cool.</strong><p>Они находят настольный теннис крутым.</p></div>'+
+            '<div class="summary-qa-item"><strong>Jennys Freund heißt Finn.</strong><p>Друга Дженни зовут Финн.</p></div>'+
+            '<div class="summary-qa-item"><strong>Er kann surfen und tauchen.</strong><p>Он умеет серфить и нырять.</p></div>'+
+            '<div class="summary-qa-item"><strong>Er macht Karate.</strong><p>Он занимается карате.</p></div>'+
+            '<div class="summary-qa-item"><strong>Aber er mag Tischtennis nicht.</strong><p>Но он не любит настольный теннис.</p></div>'+
+          '</div>'+
+        '</section>'+
         '<section class="summary-section"><h3>Wörter · '+WORDS.length+'</h3>'+
           '<div class="topic-actions">'+
             '<button class="primary" id="paulaWordsDeRu">🃏 Deutsch → русский</button>'+
