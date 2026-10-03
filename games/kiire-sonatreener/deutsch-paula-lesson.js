@@ -130,7 +130,8 @@
     const sentenceRows=SENTENCES.map(x=>'<div class="summary-qa-item"><strong>'+esc(x[0])+'</strong><p>'+esc(x[1])+'</p></div>').join('');
     card.innerHTML=
       '<div class="summary-view">'+
-        '<div class="summary-head"><div class="topic-kicker">🇩🇪 Deutsch</div><h2>Урок 3 — Paula: проверка понимания текста · 03.10.26</h2><div class="tiny">Слова учим отдельно, предложения — как базовые модели</div></div>'+\n        '<button class="secondary" data-paula-audio id="paulaLessonAudio">'+audioToggleLabel()+'</button>'+
+        '<div class="summary-head"><div class="topic-kicker">🇩🇪 Deutsch</div><h2>Урок 3 — Paula: проверка понимания текста · 03.10.26</h2><div class="tiny">Слова учим отдельно, предложения — как базовые модели</div></div>'+
+        '<button class="secondary" data-paula-audio id="paulaLessonAudio">'+audioToggleLabel()+'</button>'+
         '<section class="summary-section"><h3>📖 Текст с построчным переводом</h3>'+
           '<div class="summary-qa">'+
             '<div class="summary-qa-item"><strong>Sie heißt Paula und sie kommt aus Österreich.</strong><p>Её зовут Паула и она из Австрии.</p></div>'+
@@ -194,7 +195,8 @@
     flipped=false;if(counter)counter.textContent='Осталось: '+queue.length;
     card.innerHTML=
       '<div class="review-wrap">'+
-        '<div class="tiny" style="text-align:center;margin-bottom:10px">'+(deck==='words'?'Wörter · ':'Sätze · ')+(dir==='de-ru'?'Deutsch → русский':'Русский → Deutsch')+'</div>'+\n        '<button class="secondary" data-paula-audio id="paulaAudio" style="width:100%">'+audioToggleLabel()+'</button>'+
+        '<div class="tiny" style="text-align:center;margin-bottom:10px">'+(deck==='words'?'Wörter · ':'Sätze · ')+(dir==='de-ru'?'Deutsch → русский':'Русский → Deutsch')+'</div>'+
+        '<button class="secondary" data-paula-audio id="paulaAudio" style="width:100%">'+audioToggleLabel()+'</button>'+
         '<div class="flashcard" id="paulaFlash"><div class="flashcard-inner">'+
           '<div class="flash-face">'+esc(front)+'</div>'+
           '<div class="flash-face flash-back">'+esc(back)+'</div>'+
