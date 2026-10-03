@@ -12,7 +12,8 @@ window.EDUKASS_CATALOG=[
   ]},
   {id:"deutsch",label:"Deutsch",icon:"🇩🇪",lessons:[
     {kind:"core",lang:"de",topic:"lektion-1",meta:"2 текста"},
-    {kind:"custom",handler:"deutschLesson2",title:"Lektion 2 — Reflexive Verben",meta:"3 таблицы"}
+    {kind:"custom",handler:"deutschLesson2",title:"Lektion 2 — Reflexive Verben",meta:"3 таблицы"},
+    {kind:"custom",handler:"deutschPaulaLesson",title:"Урок 3 — Paula: проверка понимания текста · 03.10.26",meta:"39 слов · 24 предложения"}
   ]},
   {id:"eesti-kirjandus",label:"Eesti kirjandus",icon:"📖",lessons:[
     {kind:"core",lang:"et",topic:"sonad-1"},
