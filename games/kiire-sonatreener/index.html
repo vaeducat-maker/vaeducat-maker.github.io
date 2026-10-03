@@ -49,7 +49,7 @@
 @media(max-width:560px){.shortcut-button{min-width:100px;padding:0 10px;font-size:13px}.summary-word{gap:8px;padding:9px 10px}.summary-word strong,.summary-word span{font-size:14px}}
 </style>
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"><meta http-equiv="Pragma" content="no-cache"><meta http-equiv="Expires" content="0"></head>
-<body data-build="20261003-8">
+<body data-build="20261003-9">
 <main class="app">
 <div class="brand">EDUKASS</div>
 <header class="top"><div><h1>Minu õppetunnid</h1><p class="sub" id="sub"></p></div><div class="top-tools"><button class="icon-button shortcut-button" id="shortcutBtn" aria-label="Добавить на главный экран" title="Добавить на главный экран">📲 На экран</button><button class="icon-button deck-button" id="reviewBtn" aria-label="Карточки" title="Карточки"><span class="deck-stack" aria-hidden="true"></span></button><button class="icon-button" id="libraryBtn" aria-label="Все предметы" title="Все предметы">📚</button><div class="pill" id="pill">Eesti</div></div></header>
@@ -100,7 +100,7 @@
     clickTopicWhenReady(topic);
   }
 
-  const HISTORY_CARDS=[['muinasaeg','первобытность'],['vanaaeg','Древний мир'],['keskaeg','Средние века'],['uusaeg','Новое время'],['lähiaeg','Новейшее время'],['ajastu','эпоха'],['teadlane','учёный']];
+  const HISTORY_CARDS=[['muinasaeg','первобытность'],['vanaaeg','Древний мир'],['keskaeg','Средние века'],['uusaeg','Новое время'],['lähiaeg','Новейшее время'],['eelajalooline aeg','доисторическое время'],['ajalooline aeg','историческое время'],['minevik','прошлое'],['olevik','настоящее'],['tulevik','будущее'],['ajastu','эпоха'],['teadlane','учёный']];
   let historyQueue=[],historyGood=0,historyBad=0,historyDir='et-ru',historyFlipped=false;
   const historyShuffle=a=>{a=[...a];for(let i=a.length-1;i;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
   const historyEsc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'})[c]);
@@ -115,7 +115,7 @@
   }
   function renderHistoryTopic(){
     historySeqMode='';historySeqStep=0;
-    if(pill)pill.textContent='Ajalugu'; if(sub)sub.textContent='Ajastud · 7 карточек · 3 тренировки';
+    if(pill)pill.textContent='Ajalugu'; if(sub)sub.textContent='Ajastud · 12 карточек · 3 тренировки';
     card.innerHTML=`<div class="topic-intro"><div class="topic-kicker">🏺 Ajalugu</div><h2>Ajastud</h2><p>Исторические эпохи и основные термины.</p>${historyTimeline()}<div class="topic-actions"><button class="primary" id="historyEtRu">🃏 Eesti → русский</button><button class="secondary" id="historyRuEt">🃏 Русский → Eesti</button><button class="secondary" id="historyOrderBtn">🕰️ Поставь эпохи по порядку</button><button class="secondary" id="historyBeforeAfterBtn">➡️ Что идёт до / после?</button><button class="secondary" id="historyGapBtn">🔗 Пропущенная эпоха</button></div></div>`;
     card.querySelector('#historyEtRu').onclick=()=>startHistory('et-ru');
     card.querySelector('#historyRuEt').onclick=()=>startHistory('ru-et');
@@ -182,7 +182,7 @@
     historyDir=dir;historyQueue=historyShuffle(HISTORY_CARDS);historyGood=0;historyBad=0;historyFlipped=false;
     tabEt.disabled=true;tabDe.disabled=true;if(libraryBtn)libraryBtn.hidden=true;if(reviewBtn)reviewBtn.hidden=true;
     document.getElementById('restart').hidden=false;document.getElementById('restart').textContent='← Выйти';
-    if(pill)pill.textContent='Ajalugu'; if(sub)sub.textContent='Ajastud · 7 карточек'; renderHistoryCard();
+    if(pill)pill.textContent='Ajalugu'; if(sub)sub.textContent='Ajastud · 12 карточек'; renderHistoryCard();
   }
   function renderHistoryCard(){
     if(!historyQueue.length){
