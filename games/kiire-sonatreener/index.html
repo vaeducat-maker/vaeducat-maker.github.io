@@ -49,7 +49,7 @@
 @media(max-width:560px){.shortcut-button{min-width:100px;padding:0 10px;font-size:13px}.summary-word{gap:8px;padding:9px 10px}.summary-word strong,.summary-word span{font-size:14px}}
 </style>
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"><meta http-equiv="Pragma" content="no-cache"><meta http-equiv="Expires" content="0"></head>
-<body data-build="20261003-10">
+<body data-build="20261003-11">
 <main class="app">
 <div class="brand">EDUKASS</div>
 <header class="top"><div><h1>Minu õppetunnid</h1><p class="sub" id="sub"></p></div><div class="top-tools"><button class="icon-button shortcut-button" id="shortcutBtn" aria-label="Добавить на главный экран" title="Добавить на главный экран">📲 На экран</button><button class="icon-button deck-button" id="reviewBtn" aria-label="Карточки" title="Карточки"><span class="deck-stack" aria-hidden="true"></span></button><button class="icon-button" id="libraryBtn" aria-label="Все предметы" title="Все предметы">📚</button><div class="pill" id="pill">Eesti</div></div></header>
@@ -62,7 +62,7 @@
 (()=>{const b=document.getElementById('shortcutBtn');if(!b)return;const standalone=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;if(standalone){b.textContent='✓ Готово';b.disabled=true}else{b.onclick=()=>alert('Открой меню браузера и выбери «Добавить на главный экран».')}})();
 </script>
 <script src="./trainer.js?v=20261003-2"></script>
-<script src="./app-catalog.js?v=20261003-10"></script>
+<script src="./app-catalog.js?v=20261003-11"></script>
 <script>
 (()=>{
   const card=document.getElementById('card'),libraryBtn=document.getElementById('libraryBtn'),reviewBtn=document.getElementById('reviewBtn'),deutschBtn=document.getElementById('deutschBtn'),tabEt=document.getElementById('tabEt'),tabDe=document.getElementById('tabDe'),pill=document.getElementById('pill'),sub=document.getElementById('sub');
@@ -295,6 +295,7 @@
 <script src="./literature-rebane.js?v=20261003-3"></script>
 <script src="./english-present-simple-3person.js?v=20261001-1"></script>
 <script src="./deutsch-lesson-2.js?v=20260926-12"></script>
+<script src="./deutsch-paula-lesson.js?v=20261003-1"></script>
 <script src="./music-lesson-1.js?v=20261003-3"></script>
 <script src="./inimene-tervis-lesson.js?v=20261003-1"></script>
 <script src="./back-nav.js?v=20260926-10"></script>
