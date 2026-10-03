@@ -81,8 +81,41 @@
   ];
 
   let mode='lesson',deck='words',dir='de-ru',queue=[],good=0,bad=0,flipped=false;
+  let audioEnabled=true;
+  try{audioEnabled=localStorage.getItem('sonatreenerAudioEnabled')!=='0'}catch(e){}
   const shuffle=a=>{a=[...a];for(let i=a.length-1;i;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
   const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'})[c]);
+
+  function saveAudioEnabled(){
+    try{localStorage.setItem('sonatreenerAudioEnabled',audioEnabled?'1':'0')}catch(e){}
+  }
+
+  function audioToggleLabel(){return audioEnabled?'🔊 Звук включён':'🔇 Звук выключен'}
+
+  function speakGerman(text){
+    if(!audioEnabled||!text||!('speechSynthesis' in window))return;
+    window.speechSynthesis.cancel();
+    const utterance=new SpeechSynthesisUtterance(String(text).replace(/\s*\(([^)]+)\)/g,', $1'));
+    utterance.lang='de-DE';
+    utterance.rate=.82;
+    const voices=window.speechSynthesis.getVoices();
+    const exact=voices.find(v=>v.lang?.toLowerCase()==='de-de');
+    const family=voices.find(v=>v.lang?.toLowerCase().startsWith('de'));
+    if(exact||family)utterance.voice=exact||family;
+    window.speechSynthesis.speak(utterance);
+  }
+
+  function toggleAudio(item){
+    audioEnabled=!audioEnabled;
+    saveAudioEnabled();
+    if(!audioEnabled&&'speechSynthesis' in window)window.speechSynthesis.cancel();
+    const buttons=card.querySelectorAll('[data-paula-audio]');
+    buttons.forEach(b=>b.textContent=audioToggleLabel());
+    if(audioEnabled&&item){
+      const germanVisible=dir==='de-ru'?!flipped:flipped;
+      if(germanVisible)speakGerman(item[0]);
+    }
+  }
 
   function lock(on){
     tabEt.disabled=on;tabDe.disabled=on;libraryBtn.hidden=on;
@@ -97,7 +130,7 @@
     const sentenceRows=SENTENCES.map(x=>'<div class="summary-qa-item"><strong>'+esc(x[0])+'</strong><p>'+esc(x[1])+'</p></div>').join('');
     card.innerHTML=
       '<div class="summary-view">'+
-        '<div class="summary-head"><div class="topic-kicker">🇩🇪 Deutsch</div><h2>Урок 3 — Paula: проверка понимания текста · 03.10.26</h2><div class="tiny">Слова учим отдельно, предложения — как базовые модели</div></div>'+
+        '<div class="summary-head"><div class="topic-kicker">🇩🇪 Deutsch</div><h2>Урок 3 — Paula: проверка понимания текста · 03.10.26</h2><div class="tiny">Слова учим отдельно, предложения — как базовые модели</div></div>'+\n        '<button class="secondary" data-paula-audio id="paulaLessonAudio">'+audioToggleLabel()+'</button>'+
         '<section class="summary-section"><h3>📖 Текст с построчным переводом</h3>'+
           '<div class="summary-qa">'+
             '<div class="summary-qa-item"><strong>Sie heißt Paula und sie kommt aus Österreich.</strong><p>Её зовут Паула и она из Австрии.</p></div>'+
@@ -136,6 +169,7 @@
         '</section>'+
         '<button class="secondary" id="paulaBack">← К предметам</button>'+
       '</div>';
+    card.querySelector('#paulaLessonAudio').onclick=()=>toggleAudio();
     card.querySelector('#paulaWordsDeRu').onclick=()=>start('words','de-ru');
     card.querySelector('#paulaWordsRuDe').onclick=()=>start('words','ru-de');
     card.querySelector('#paulaSentDeRu').onclick=()=>start('sentences','de-ru');
@@ -160,7 +194,7 @@
     flipped=false;if(counter)counter.textContent='Осталось: '+queue.length;
     card.innerHTML=
       '<div class="review-wrap">'+
-        '<div class="tiny" style="text-align:center;margin-bottom:10px">'+(deck==='words'?'Wörter · ':'Sätze · ')+(dir==='de-ru'?'Deutsch → русский':'Русский → Deutsch')+'</div>'+
+        '<div class="tiny" style="text-align:center;margin-bottom:10px">'+(deck==='words'?'Wörter · ':'Sätze · ')+(dir==='de-ru'?'Deutsch → русский':'Русский → Deutsch')+'</div>'+\n        '<button class="secondary" data-paula-audio id="paulaAudio" style="width:100%">'+audioToggleLabel()+'</button>'+
         '<div class="flashcard" id="paulaFlash"><div class="flashcard-inner">'+
           '<div class="flash-face">'+esc(front)+'</div>'+
           '<div class="flash-face flash-back">'+esc(back)+'</div>'+
@@ -170,12 +204,15 @@
         '<div class="tiny" style="text-align:center">Нажми на карточку, чтобы увидеть ответ</div>'+
       '</div>';
     const f=card.querySelector('#paulaFlash'),a=card.querySelector('#paulaActions');
-    f.onclick=()=>{if(flipped)return;flipped=true;f.classList.add('flipped');a.hidden=false};
+    card.querySelector('#paulaAudio').onclick=()=>toggleAudio(x);
+    f.onclick=()=>{if(flipped)return;flipped=true;f.classList.add('flipped');a.hidden=false;if(dir==='ru-de')speakGerman(x[0])};
+    if(dir==='de-ru')setTimeout(()=>speakGerman(x[0]),0);
     card.querySelector('#paulaYes').onclick=()=>decide(true);
     card.querySelector('#paulaNo').onclick=()=>decide(false);
   }
 
   function decide(ok){
+    if('speechSynthesis' in window)window.speechSynthesis.cancel();
     const x=queue.shift();
     if(ok){good++;renderCard();return}
     bad++;
@@ -190,6 +227,7 @@
   }
 
   function finish(){
+    if('speechSynthesis' in window)window.speechSynthesis.cancel();
     mode='done';lock(false);restart.hidden=true;if(counter)counter.textContent='';pill.textContent='Готово';
     card.innerHTML='<div class="done"><div class="big">🇩🇪</div><h2>Готово!</h2><div class="finish-actions"><button class="primary" id="paulaAgain">Ещё раз</button><button class="secondary" id="paulaLessonBack">К уроку</button></div></div>';
     card.querySelector('#paulaAgain').onclick=()=>start(deck,dir);
@@ -198,6 +236,7 @@
 
   restart.addEventListener('click',e=>{
     if(mode!=='cards')return;
+    if('speechSynthesis' in window)window.speechSynthesis.cancel();
     e.preventDefault();e.stopImmediatePropagation();renderLesson();
   },true);
 
