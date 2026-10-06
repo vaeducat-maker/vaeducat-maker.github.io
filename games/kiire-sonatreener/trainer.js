@@ -88,6 +88,14 @@ const DATA={
         {word:"meie arvamus",ru:"наше мнение"},
         {word:"vähemalt",ru:"по крайней мере"},
         {word:"ilmus pilt",ru:"появилась картинка"}
+      ]},
+      {id:"eesti-keel-raadio-kolar",title:"Raadio kõlar",subtitle:"Eesti keel",active:false,poster:null,words:[
+        {word:"eeter",ru:"эфир"},
+        {word:"ehmatama",ru:"испугаться"},
+        {word:"kiljatama",ru:"вскрикнуть"},
+        {word:"kosmos",ru:"космос"},
+        {word:"sahisema",ru:"шуршать, шелестеть"},
+        {word:"võpatama",ru:"вздрогнуть"}
       ]}
     ]},
     {id:"eesti-kirjandus",label:"Eesti kirjandus",icon:"📖",showWordList:true,topics:[
