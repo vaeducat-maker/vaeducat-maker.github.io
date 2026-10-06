@@ -4,7 +4,8 @@ window.EDUKASS_CATALOG=[
   {id:"eesti-keel",label:"Eesti keel",icon:"📝",lessons:[
     {kind:"core",lang:"et",topic:"eesti-keel-1"},
     {kind:"core",lang:"et",topic:"eesti-keel-2"},
-    {kind:"core",lang:"et",topic:"eesti-keel-3"}
+    {kind:"core",lang:"et",topic:"eesti-keel-3"},
+    {kind:"core",lang:"et",topic:"eesti-keel-raadio-kolar"}
   ]},
   {id:"english",label:"English",icon:"🇬🇧",lessons:[
     {kind:"core",lang:"en",topic:"present-simple-words",extraMeta:"🔊 озвучка"},
