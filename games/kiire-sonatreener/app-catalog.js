@@ -20,7 +20,8 @@ window.EDUKASS_CATALOG=[
     {kind:"core",lang:"et",topic:"sonad-1"},
     {kind:"custom",handler:"litHistoryBookLesson",title:"Урок 2 — Исторические тексты о книге",meta:"2 текста · перевод · письменное задание"},
     {kind:"core",lang:"et",topic:"muinasjutud"},
-    {kind:"core",lang:"et",topic:"rebane-saba",extraMeta:"7 вопросов · 03.10.26"}
+    {kind:"core",lang:"et",topic:"rebane-saba",extraMeta:"7 вопросов · 03.10.26"},
+    {kind:"custom",handler:"litOmaOnnLesson",title:"Урок 5 — Igaühel oma õnn · 08.10.26",meta:"4 страницы · письменный план (A1)"}
   ]},
   {id:"muusika",label:"Muusika",icon:"🎵",lessons:[
     {kind:"custom",handler:"musicLesson1",title:"Урок 1 — Kontrolltöö: tämber, dünaamika · 03.10.26",meta:"19 эстонских слов · 13 музыкальных терминов"}
