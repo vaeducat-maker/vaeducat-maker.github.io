@@ -12,7 +12,7 @@
     if(sub)sub.textContent='Урок 5 · Igaühel oma õnn · 08.10.26';
     card.innerHTML='<div class="onn-lesson">'+
      '<div class="topic-intro"><div class="topic-kicker">📖 Eesti kirjandus · Урок 5</div><h2>Igaühel oma õnn</h2><div class="tiny">У каждого своё счастье · письменное задание</div></div>'+
-     '<div class="onn-actions"><a href="./igauehel-oma-onn-source.html" target="_blank" rel="noopener">📄 Loe teksti · 4 lehekülge</a></div>'+
+     '<div class="onn-actions"><a href="./igauehel-oma-onn.pdf" target="_blank" rel="noopener">📄 Открыть исходный текст (PDF, 4 стр.)</a><a href="./igauehel-oma-onn-source.html" target="_blank" rel="noopener">📖 Читать на телефоне</a></div>'+
      '<div class="onn-box"><h3>✍️ Teksti plaan</h3>'+
      '<section class="onn-group"><strong>Sissejuhatus</strong><ol class="onn-list" start="1"><li>Rikas ja vaene mees.</li></ol></section>'+
      '<section class="onn-group"><strong>Põhiosa</strong><ol class="onn-list" start="2"><li>Vaene mees näeb naabri õnne.</li><li>Mees otsib metsas oma õnne.</li><li>Mees teeb viiske ja müüb neid.</li></ol></section>'+
