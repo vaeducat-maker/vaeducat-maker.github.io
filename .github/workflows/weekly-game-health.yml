@@ -1,0 +1,91 @@
+name: EDUKASS weekly game health
+
+on:
+  schedule:
+    # Every Monday, 06:17 UTC (08:17/09:17 in Estonia).
+    - cron: '17 6 * * 1'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/weekly-game-health.yml'
+      - 'games/korrutamine-test/**'
+      - 'scripts/audit-project.js'
+      - 'scripts/weekly-game-browser-check.js'
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/weekly-game-health.yml'
+      - 'games/korrutamine-test/**'
+      - 'scripts/audit-project.js'
+      - 'scripts/weekly-game-browser-check.js'
+
+permissions:
+  contents: read
+
+jobs:
+  mission-and-save-tests:
+    name: 252 missions, save and game logic
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout EDUKASS
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test all 252 missions and 756000 generated rounds
+        run: node games/korrutamine-test/tests/mission-config.test.js
+      - name: Test game progress saving and language foundations
+        run: node games/korrutamine-test/tests/system-foundations.test.js
+      - name: Test approved game UI rules
+        run: node games/korrutamine-test/tests/live-ui-regressions.test.js
+      - name: Check game script syntax
+        run: |
+          for file in games/korrutamine-test/*.js games/korrutamine-test/locales/*.js; do
+            node --check "$file"
+          done
+      - name: Add job summary
+        if: always()
+        run: |
+          echo '## EDUKASS — mathematics and source checks' >> "$GITHUB_STEP_SUMMARY"
+          echo '' >> "$GITHUB_STEP_SUMMARY"
+          echo '252 mission checks, 756000 generated rounds, progress and game rules. Any failure makes this job red.' >> "$GITHUB_STEP_SUMMARY"
+
+  live-browser-test:
+    name: Production desktop and mobile browser
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout EDUKASS
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install isolated Playwright Chromium
+        run: |
+          mkdir -p "$RUNNER_TEMP/edukass-browser"
+          npm install --prefix "$RUNNER_TEMP/edukass-browser" --no-save --no-audit --no-fund playwright@1.56.1
+          "$RUNNER_TEMP/edukass-browser/node_modules/.bin/playwright" install --with-deps chromium
+      - name: Check the actual published trainer
+        env:
+          NODE_PATH: ${{ runner.temp }}/edukass-browser/node_modules
+        run: node scripts/weekly-game-browser-check.js
+      - name: Save weekly test report and failure screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: edukass-game-health-${{ github.run_id }}
+          path: artifacts/game-health/
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Add browser result to job summary
+        if: always()
+        run: |
+          if [ -f artifacts/game-health/report.md ]; then
+            cat artifacts/game-health/report.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo 'Browser test did not generate a report. Check the job log.' >> "$GITHUB_STEP_SUMMARY"
+          fi
