@@ -35,14 +35,23 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Audit 252 missions, generated questions, saves, links and JavaScript
-        run: node scripts/audit-project.js
+      - name: Test all 252 missions and 756000 generated rounds
+        run: node games/korrutamine-test/tests/mission-config.test.js
+      - name: Test game progress saving and language foundations
+        run: node games/korrutamine-test/tests/system-foundations.test.js
+      - name: Test approved game UI rules
+        run: node games/korrutamine-test/tests/live-ui-regressions.test.js
+      - name: Check game script syntax
+        run: |
+          for file in games/korrutamine-test/*.js games/korrutamine-test/locales/*.js; do
+            node --check "$file"
+          done
       - name: Add job summary
         if: always()
         run: |
           echo '## EDUKASS — mathematics and source checks' >> "$GITHUB_STEP_SUMMARY"
           echo '' >> "$GITHUB_STEP_SUMMARY"
-          echo 'Full result is in the job log. Any failure makes this job red.' >> "$GITHUB_STEP_SUMMARY"
+          echo '252 mission checks, 756000 generated rounds, progress and game rules. Any failure makes this job red.' >> "$GITHUB_STEP_SUMMARY"
 
   live-browser-test:
     name: Production desktop and mobile browser
