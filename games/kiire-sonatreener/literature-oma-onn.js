@@ -14,10 +14,10 @@
      '<div class="topic-intro"><div class="topic-kicker">📖 Eesti kirjandus · Урок 5</div><h2>Igaühel oma õnn</h2><div class="tiny">У каждого своё счастье · письменное задание</div></div>'+
      '<div class="onn-actions"><a href="./igauehel-oma-onn.pdf" target="_blank" rel="noopener">📄 Открыть исходный текст (PDF, 4 стр.)</a><a href="./igauehel-oma-onn-source.html" target="_blank" rel="noopener">📖 Читать на телефоне</a></div>'+
      '<div class="onn-box"><h3>✍️ Teksti plaan</h3>'+
-     '<section class="onn-group"><strong>Sissejuhatus</strong><ol class="onn-list" start="1"><li>Rikas ja vaene mees.</li></ol></section>'+
-     '<section class="onn-group"><strong>Põhiosa</strong><ol class="onn-list" start="2"><li>Vaene mees näeb naabri õnne.</li><li>Mees otsib metsas oma õnne.</li><li>Mees teeb viiske ja müüb neid.</li></ol></section>'+
-     '<section class="onn-group"><strong>Kokkuvõte</strong><ol class="onn-list" start="5"><li>Vaene mees saab rikkaks.</li></ol></section></div>'+
-     '<div class="onn-box"><h3>Peamine mõte</h3><p class="onn-main">Igaüks võib oma õnne leida.</p></div>'+
+     '<section class="onn-group"><strong>Sissejuhatus</strong><ol class="onn-list" start="1"><li>Kõik inimesed otsivad oma õnne.</li><li>Ühes külas elavad rikas ja vaene mees.</li></ol></section>'+
+     '<section class="onn-group"><strong>Põhiosa</strong><ol class="onn-list" start="3"><li>Vaene mees näeb öösel naabri põllul töölisi.</li><li>Töölised ütlevad, et tema õnn on pajupuhmas.</li><li>Mees otsib metsas oma õnne, aga ei leia seda.</li><li>Mees toob metsast pajukoort ja teeb viiske.</li><li>Sõdurid ostavad turul kõik tema viisud ära.</li></ol></section>'+
+     '<section class="onn-group"><strong>Kokkuvõte</strong><ol class="onn-list" start="8"><li>Kuningas kutsub mehe tööle ja mees saab rikkaks.</li></ol></section></div>'+
+     '<div class="onn-box"><h3>Peamine mõte</h3><p class="onn-main">Igaühel on oma õnn. Vaene mees leidis oma õnne tänu tööle.</p></div>'+
      '<div class="tiny">Lähtefaili leheküljed: 7, 8, 9 ja 12. Lehekülgi 10–11 ei saadetud.</div>'+
      '<button class="secondary" type="button" id="onnBack">← К предметам</button></div>';
     const b=card.querySelector('#onnBack');if(b)b.onclick=()=>libraryBtn.click();
