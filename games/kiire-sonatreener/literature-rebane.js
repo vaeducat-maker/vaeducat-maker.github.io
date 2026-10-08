@@ -11,6 +11,26 @@
     {q:'Mis juhtus siis, kui rebane saba koopast välja pistis?',a:'Koer tõmbas rebase välja ja nad said mehemoodi sasida.'}
   ];
 
+  const RETELLING=[
+    'Rebane jalutas.',
+    'Jahimehe koer hakkas rebast taga ajama.',
+    'Rebane jooksis kiiresti oma koopasse.',
+    'Rebane küsis silmadelt: „Mida te tegite?”',
+    'Silmad vastasid: „Me otsisime koobast.”',
+    'Rebane küsis kõrvadelt: „Mida te tegite?”',
+    'Kõrvad vastasid: „Me kuulasime koera.”',
+    'Rebane küsis ninalt: „Mida sina tegid?”',
+    'Nina vastas: „Ma tundsin koera lõhna.”',
+    'Rebane küsis jalgadelt: „Mida te tegite?”',
+    'Jalad vastasid: „Me aitasime joosta.”',
+    'Rebane küsis sabalt: „Mida sina tegid?”',
+    'Saba vastas: „Ma aitasin koera.”',
+    'Rebane sai vihaseks.',
+    'Ta pani saba koopast välja.',
+    'Koer haaras sabast ja tõmbas rebase välja.',
+    'Rebane ja saba said koera käest mehemoodi sasida.'
+  ];
+
   const card=document.getElementById('card');
   const restart=document.getElementById('restart');
   const counter=document.getElementById('counter');
@@ -22,7 +42,7 @@
   const sub=document.getElementById('sub');
   if(!card||!restart||!counter||!pill||!libraryBtn||!tabEt||!tabDe)return;
 
-  let active=false,queue=[],good=0,bad=0,flipped=false;
+  let active=false,retellingOpen=false,queue=[],good=0,bad=0,flipped=false;
   const shuffle=a=>{a=[...a];for(let i=a.length-1;i;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
   const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'})[c]);
 
@@ -43,7 +63,7 @@
   }
 
   function addButton(){
-    if(active||!isLesson())return;
+    if(active||retellingOpen||!isLesson())return;
     const actions=card.querySelector('.topic-actions');
     if(!actions)return;
     if(!actions.querySelector('#rebaneQuestionsBtn')){
@@ -53,6 +73,15 @@
       b.className='secondary';
       b.textContent='❓ Küsimused';
       b.onclick=start;
+      actions.appendChild(b);
+    }
+    if(!actions.querySelector('#rebaneRetellingBtn')){
+      const b=document.createElement('button');
+      b.type='button';
+      b.id='rebaneRetellingBtn';
+      b.className='secondary';
+      b.textContent='📖 Ümberjutustus';
+      b.onclick=showRetelling;
       actions.appendChild(b);
     }
     if(!actions.querySelector('#rebaneSourceBtn')){
@@ -68,6 +97,23 @@
       actions.appendChild(a);
     }
     setLessonMeta();
+  }
+
+  function showRetelling(){
+    if(active)return;
+    retellingOpen=true;
+    lock(true);
+    restart.hidden=false;
+    restart.textContent='← К уроку';
+    counter.textContent='';
+    pill.textContent='📖 Ümberjutustus';
+    if(sub)sub.textContent='Eesti kirjandus · Ümberjutustus';
+    card.innerHTML='<div style="display:grid;gap:18px;width:100%;max-width:760px;margin:0 auto">'+
+      '<div style="text-align:center"><h2 style="margin:0 0 6px">Kuidas rebane oma saba karistas</h2><div class="tiny">Ümberjutustus</div></div>'+
+      '<div style="display:grid;gap:12px;padding:18px 16px;border:1px solid #dfe8e2;border-radius:16px;background:#fff;font-size:17px;line-height:1.6">'+
+      RETELLING.map(line=>'<p style="margin:0">'+esc(line)+'</p>').join('')+
+      '</div><button class="secondary" type="button" id="rebaneRetellingBack">← К уроку</button></div>';
+    card.querySelector('#rebaneRetellingBack').onclick=back;
   }
 
   function start(){
@@ -126,6 +172,7 @@
 
   function back(){
     active=false;
+    retellingOpen=false;
     lock(false);
     restart.hidden=true;
     counter.textContent='';
@@ -134,7 +181,7 @@
   }
 
   restart.addEventListener('click',e=>{
-    if(!active)return;
+    if(!active&&!retellingOpen)return;
     e.preventDefault();
     e.stopImmediatePropagation();
     back();
