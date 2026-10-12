@@ -18,3 +18,14 @@
   .word-list-target,.word-list-ru{font-size:14px}
   .word-list-number{font-size:12px}
 }
+
+/* Loodusõpetus: Järved, native sentence lesson */
+.sentence-lesson{display:grid;gap:16px;max-width:780px;width:100%;margin-inline:auto}
+.sentence-lesson .topic-intro h2{color:#2f6f58;margin:6px 0}
+.sentence-list{display:grid;gap:12px}
+.sentence-row{padding:15px 16px;border:1px solid #dfe8e2;background:#fff;border-radius:15px;line-height:1.5}
+.sentence-et{font-size:clamp(17px,4.4vw,21px);font-weight:850;color:#21352c;overflow-wrap:anywhere}
+.sentence-num{color:#668c79}
+.sentence-ru{margin-top:7px;font-size:clamp(15px,4vw,18px);color:#52675b;overflow-wrap:anywhere}
+.flash-face.sentence-face{font-size:clamp(18px,5vw,27px);line-height:1.38;white-space:normal;overflow-wrap:anywhere;word-break:normal;hyphens:auto;padding:18px}
+@media(max-width:440px){.sentence-row{padding:12px}.flash-face.sentence-face{padding:12px}}
