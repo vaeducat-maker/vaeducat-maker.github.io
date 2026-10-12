@@ -331,10 +331,16 @@ function wordListHtml(topic){
       <strong class="word-list-target">${esc(item.word)}</strong>
       <span class="word-list-ru">${esc(item.ru)}</span>
     </div>`).join("");
+  const exampleHtml=Array.isArray(topic.examples)&&topic.examples.length
+    ? `<section class="lesson-examples" aria-label="Примеры из учебника">
+       <h3>Näited — примеры</h3>
+       ${topic.examples.map(x=>`<div class="lesson-example"><strong>${esc(x.et)}</strong><span>${esc(x.ru)}</span></div>`).join("")}
+       </section>`
+    : "";
   return `<section class="word-list-section" aria-label="Список слов">
     <div class="word-list-heading"><h3>Список слов</h3><span>${topic.words.length}</span></div>
     <div class="word-list-grid">${rows}</div>
-  </section>`;
+  </section>${exampleHtml}`;
 }
 
 function saveAudioEnabled(){
