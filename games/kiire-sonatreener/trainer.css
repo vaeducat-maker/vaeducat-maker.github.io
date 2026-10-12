@@ -29,3 +29,10 @@
 .sentence-ru{margin-top:7px;font-size:clamp(15px,4vw,18px);color:#52675b;overflow-wrap:anywhere}
 .flash-face.sentence-face{font-size:clamp(18px,5vw,27px);line-height:1.38;white-space:normal;overflow-wrap:anywhere;word-break:normal;hyphens:auto;padding:18px}
 @media(max-width:440px){.sentence-row{padding:12px}.flash-face.sentence-face{padding:12px}}
+
+/* Additional example sentences beneath Estonian vocabulary lessons */
+.lesson-examples{margin-top:18px;display:grid;gap:9px}
+.lesson-examples h3{margin:0 0 3px;color:#2f6f58;font-size:18px}
+.lesson-example{background:#fff;border:1px solid #dfe8e2;border-radius:12px;padding:12px 14px;line-height:1.5}
+.lesson-example strong{display:block;color:#21352c}
+.lesson-example span{display:block;margin-top:3px;color:#55645d}
