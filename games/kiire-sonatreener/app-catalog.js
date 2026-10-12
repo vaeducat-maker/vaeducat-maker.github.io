@@ -8,7 +8,8 @@ window.EDUKASS_CATALOG=[
     {kind:"core",lang:"et",topic:"eesti-keel-1"},
     {kind:"core",lang:"et",topic:"eesti-keel-2"},
     {kind:"core",lang:"et",topic:"eesti-keel-3"},
-    {kind:"core",lang:"et",topic:"eesti-keel-raadio-kolar"}
+    {kind:"core",lang:"et",topic:"eesti-keel-raadio-kolar"},
+    {kind:"core",lang:"et",topic:"eesti-keel-kuulan-loen-vaatan",meta:"55 карточек · перевод · 3 примера"}
   ]},
   {id:"english",label:"English",icon:"🇬🇧",lessons:[
     {kind:"core",lang:"en",topic:"present-simple-words",extraMeta:"🔊 озвучка"},
