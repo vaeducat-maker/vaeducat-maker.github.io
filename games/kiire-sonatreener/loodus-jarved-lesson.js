@@ -1,4 +1,6 @@
 (function loodusJarvedLesson(){
+  if(window.EDUKASS_LOODUS_JARVED_REGISTERED)return;
+  window.EDUKASS_LOODUS_JARVED_REGISTERED=true;
   'use strict';
   window.EDUKASS_LESSONS=window.EDUKASS_LESSONS||{};
   const card=document.getElementById('card');
