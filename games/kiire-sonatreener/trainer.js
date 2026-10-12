@@ -19,6 +19,14 @@ const DATA={
         {word:"voolavus",ru:"текучесть"},
         {word:"maitsetu",ru:"без вкуса"},
         {word:"suubuma",ru:"впадать"}
+      ]},
+      {id:"jarved",title:"Järved",subtitle:"Loodusõpetus",active:false,poster:null,sentenceLesson:true,words:[
+        {word:"Järv on mageda-veeline veekogu.",ru:"Озеро — это пресноводный водоём."},
+        {word:"Eesti suurim järv on Peipsi järv.",ru:"Самое большое озеро Эстонии — Чудское озеро."},
+        {word:"Eesti sügavaim järv on Rõuge Suur-järv.",ru:"Самое глубокое озеро Эстонии — Рыуге-Сууръярв."},
+        {word:"Umbjärv - millest ei voola välja ühtegi jõge.",ru:"Бессточное озеро — озеро, из которого не вытекает ни одна река."},
+        {word:"Läbivoolujärv - kuhu suubub üks või mitu jõge ning kust algab jõgi.",ru:"Проточное озеро — озеро, в которое впадает одна или несколько рек и из которого вытекает река."},
+        {word:"Rannajärv - merelahest tekkinud järv.",ru:"Прибрежное озеро — озеро, образовавшееся из морского залива."}
       ]}
     ]},
     {id:"inimene",label:"Inimene",icon:"👤",topics:[]},
@@ -312,6 +320,7 @@ function openTopic(id){
   const topic=findTopic(id);if(!topic)return;
   currentTopic=topic;currentCategory=topic.category;mode="topic";posterReturnMode="topic";setNavLocked(false);progress.hidden=true;restart.hidden=true;counter.textContent="";pill.textContent=topic.category.label;updateSub();
   if(topic.textLesson){renderTextLesson(topic);return}
+  if(topic.sentenceLesson){renderSentenceLesson(topic);return}
   const poster=topic.poster
     ?`<button class="poster-preview" id="posterOpen" aria-label="Открыть плакат"><img src="${topic.poster}" alt="${esc(topic.title)} — учебный плакат"></button>`
     :`<div class="topic-no-poster">${topic.category.icon}</div>`;
@@ -324,6 +333,38 @@ function openTopic(id){
   card.querySelector("#cardsRuEt").onclick=()=>startReview(topic,"ru-et");
   card.querySelector("#cardsEtRu").onclick=()=>startReview(topic,"et-ru");
   card.querySelector("#typingBtn").onclick=()=>startTyping(topic);
+}
+
+function renderSentenceLesson(topic,showTranslations=true){
+  mode="topic";
+  setNavLocked(false);
+  restart.hidden=true;
+  counter.textContent="";
+  pill.textContent="🌊 Järved";
+  sub.textContent="Loodusõpetus · 6 предложений · перевод";
+  const rows=topic.words.map((item,i)=>`
+    <div class="sentence-row">
+      <div class="sentence-et"><span class="sentence-num">${i+1}.</span> <span lang="et">${esc(item.word)}</span></div>
+      ${showTranslations?`<div class="sentence-ru" lang="ru">${esc(item.ru)}</div>`:""}
+    </div>`).join("");
+  card.innerHTML=`<div class="sentence-lesson">
+    <div class="topic-intro">
+      <div class="topic-kicker">🌿 Loodusõpetus · Урок 2</div>
+      <h2>Järved</h2>
+      <p class="tiny">Озёра · к 13 октября</p>
+    </div>
+    <button class="secondary" id="sentenceToggle">${showTranslations?"🙈 Скрыть русский перевод":"👁 Показать русский перевод"}</button>
+    <div class="sentence-list">${rows}</div>
+    <div class="topic-actions">
+      <button class="primary" id="sentenceEtRu">🃏 Eesti → русский</button>
+      <button class="secondary" id="sentenceRuEt">🃏 Русский → Eesti</button>
+      <button class="secondary" id="sentenceHome">← К предметам</button>
+    </div>
+  </div>`;
+  card.querySelector("#sentenceToggle").onclick=()=>renderSentenceLesson(topic,!showTranslations);
+  card.querySelector("#sentenceEtRu").onclick=()=>startReview(topic,"et-ru");
+  card.querySelector("#sentenceRuEt").onclick=()=>startReview(topic,"ru-et");
+  card.querySelector("#sentenceHome").onclick=()=>libraryBtn.click();
 }
 
 function renderTextLesson(topic){
@@ -375,7 +416,7 @@ function renderReview(){
   const directionLabel=reviewDirection==="ru-et"?`🇷🇺 → ${targetFlag()} Русский → ${targetName()}`:`${targetFlag()} → 🇷🇺 ${targetName()[0].toUpperCase()+targetName().slice(1)} → русский`;
   const posterButton=currentTopic&&currentTopic.poster?'<button class="secondary" id="reviewPoster" style="width:100%">🖼 Посмотреть плакат</button>':'';
   const audioToggle=currentTopic&&currentTopic.audio?`<button class="secondary" id="audioToggle" style="width:100%">${audioToggleLabel()}</button>`:'';
-  card.innerHTML=`<div class="review-wrap"><button class="secondary" id="directionBtn" style="width:100%">↔ ${directionLabel}</button>${posterButton}${audioToggle}<div class="flashcard" id="flash"><div class="flashcard-inner"><div class="flash-face${compact(front)}">${esc(front)}</div><div class="flash-face flash-back${compact(back)}">${esc(back)}</div></div></div><div class="review-stats"><span>✓ ${reviewGood}</span><span>✕ ${reviewBad}</span></div><div class="review-actions" id="reviewActions" hidden><button class="review-no" id="reviewNo">✕</button><button class="review-yes" id="reviewYes">✓</button></div><div class="tiny" style="text-align:center">Нажми на карточку, чтобы перевернуть</div></div>`;
+  card.innerHTML=`<div class="review-wrap"><button class="secondary" id="directionBtn" style="width:100%">↔ ${directionLabel}</button>${posterButton}${audioToggle}<div class="flashcard" id="flash"><div class="flashcard-inner"><div class="flash-face${currentTopic?.sentenceLesson?' sentence-face':''}${compact(front)}">${esc(front)}</div><div class="flash-face flash-back${currentTopic?.sentenceLesson?' sentence-face':''}${compact(back)}">${esc(back)}</div></div></div><div class="review-stats"><span>✓ ${reviewGood}</span><span>✕ ${reviewBad}</span></div><div class="review-actions" id="reviewActions" hidden><button class="review-no" id="reviewNo">✕</button><button class="review-yes" id="reviewYes">✓</button></div><div class="tiny" style="text-align:center">Нажми на карточку, чтобы перевернуть</div></div>`;
   card.querySelector("#directionBtn").onclick=switchReviewDirection;
   if(currentTopic&&currentTopic.poster)card.querySelector("#reviewPoster").onclick=()=>showPoster(currentTopic,"review");
   if(currentTopic&&currentTopic.audio)card.querySelector("#audioToggle").onclick=()=>toggleAudio(item);
