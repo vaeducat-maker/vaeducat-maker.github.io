@@ -26,7 +26,10 @@ const DATA={
         {word:"Eesti sügavaim järv on Rõuge Suur-järv.",ru:"Самое глубокое озеро Эстонии — Рыуге-Сууръярв."},
         {word:"Umbjärv - millest ei voola välja ühtegi jõge.",ru:"Бессточное озеро — озеро, из которого не вытекает ни одна река."},
         {word:"Läbivoolujärv - kuhu suubub üks või mitu jõge ning kust algab jõgi.",ru:"Проточное озеро — озеро, в которое впадает одна или несколько рек и из которого вытекает река."},
-        {word:"Rannajärv - merelahest tekkinud järv.",ru:"Прибрежное озеро — озеро, образовавшееся из морского залива."}
+        {word:"Rannajärv - merelahest tekkinud järv.",ru:"Прибрежное озеро — озеро, образовавшееся из морского залива."},
+        {word:"Lähtejärv - kust jõgi võtab alguse.",ru:"Истоковое озеро — озеро, из которого берёт начало река."},
+        {word:"Enamik Eesti järvi on mandrijäätekkelised.",ru:"Большинство озёр Эстонии образовались в результате деятельности материкового ледника."},
+        {word:"Järvenõgu - järvenõod täituvad pinnaveega.",ru:"Озёрная котловина — озёрные котловины заполняются поверхностной водой."}
       ]}
     ]},
     {id:"inimene",label:"Inimene",icon:"👤",topics:[]},
@@ -354,7 +357,7 @@ function renderSentenceLesson(topic,showTranslations=true){
   restart.hidden=true;
   counter.textContent="";
   pill.textContent="🌊 Järved";
-  sub.textContent="Loodusõpetus · 6 предложений · перевод";
+  sub.textContent=`Loodusõpetus · ${topic.words.length} предложений · перевод`;
   const rows=topic.words.map((item,i)=>`
     <div class="sentence-row">
       <div class="sentence-et"><span class="sentence-num">${i+1}.</span> <span lang="et">${esc(item.word)}</span></div>
