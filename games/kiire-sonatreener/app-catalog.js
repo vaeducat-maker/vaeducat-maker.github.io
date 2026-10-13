@@ -1,7 +1,7 @@
 window.EDUKASS_CATALOG=[
   {id:"loodus",label:"Loodus",icon:"🌿",lessons:[
     {kind:"core",lang:"et",topic:"vesi-ja-jogi",extraMeta:"6 вопросов · 🖼"},
-    {kind:"core",lang:"et",topic:"jarved",title:"Урок 2 — Järved",meta:"6 предложений · перевод · карточки"}
+    {kind:"core",lang:"et",topic:"jarved",title:"Урок 2 — Järved",meta:"9 предложений · перевод · карточки"}
   ]},
   {id:"inimene",label:"Inimene",icon:"👤",lessons:[{kind:"custom",handler:"inimeneTervisLesson",title:"Урок 1 — Tervis · 03.10.26",meta:"4 карточки"}]},
   {id:"eesti-keel",label:"Eesti keel",icon:"📝",lessons:[
