@@ -3,7 +3,10 @@ window.EDUKASS_CATALOG=[
     {kind:"core",lang:"et",topic:"vesi-ja-jogi",extraMeta:"6 вопросов · 🖼"},
     {kind:"core",lang:"et",topic:"jarved",title:"Урок 2 — Järved",meta:"9 предложений · перевод · карточки"}
   ]},
-  {id:"inimene",label:"Inimene",icon:"👤",lessons:[{kind:"custom",handler:"inimeneTervisLesson",title:"Урок 1 — Tervis · 03.10.26",meta:"4 карточки"}]},
+  {id:"inimene",label:"Inimeseõpetus",icon:"👤",lessons:[
+    {kind:"custom",handler:"inimeneTervisLesson",title:"Урок 1 — Tervis · 03.10.26",meta:"4 карточки"},
+    {kind:"custom",handler:"inimeneTervisenaitajadLesson",title:"Урок 2 — Tervisenäitajad",meta:"Задание A · 7 предложений · перевод · ответы"}
+  ]},
   {id:"eesti-keel",label:"Eesti keel",icon:"📝",lessons:[
     {kind:"core",lang:"et",topic:"eesti-keel-1"},
     {kind:"core",lang:"et",topic:"eesti-keel-2"},
