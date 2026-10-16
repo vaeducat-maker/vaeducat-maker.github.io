@@ -103,6 +103,25 @@
       ]
   ];
 
+  const IMAGE_FILES = {
+    "tervisenäitaja": "tervisenaitaja",
+    "tingimus": "tingimus",
+    "pikkus": "pikkus",
+    "kehakaal": "kehakaal",
+    "pulss": "pulss",
+    "süda": "suda",
+    "mõõtma": "mootma",
+    "ranne": "ranne",
+    "puhkeolek": "puhkeolek",
+    "rahuolek": "rahuolek",
+    "treenimata": "treenimata",
+    "näitaja": "naitaja",
+    "suurenemine": "suurenemine",
+    "koormus": "koormus",
+    "päevakava": "paevakava"
+  };
+  const wordImage = et => './tervis2-images/' + IMAGE_FILES[et] + '.svg';
+
   const tabEt = document.getElementById('tabEt');
   const tabDe = document.getElementById('tabDe');
   const reviewBtn = document.getElementById('reviewBtn');
@@ -140,13 +159,20 @@
     .tervis2-ru{font-size:15px;color:#55645d;margin-top:9px!important;padding-top:9px;border-top:1px dashed #e0e8e2}
     .tervis2-answer{font-weight:900;color:#215a41}
     .tervis2-vocab{display:grid;gap:8px}
-    .tervis2-word{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;align-items:center;padding:11px 13px;background:#fff;border:1px solid #dfe8e2;border-radius:12px}
+    .tervis2-word{display:grid;grid-template-columns:76px minmax(0,1fr);gap:12px;align-items:center;padding:10px 12px;background:#fff;border:1px solid #dfe8e2;border-radius:12px}
+    .tervis2-word-photo{display:block;width:76px;height:96px;object-fit:contain;border-radius:10px;background:#f6faf5}
+    .tervis2-word-info{display:flex;flex-direction:column;align-items:flex-start;gap:4px;min-width:0}
+    .tervis2-word-info strong,.tervis2-word-info span{display:block}
+    .tervis2-flash-content{width:100%;display:flex;flex-direction:column;gap:10px;align-items:center;justify-content:center}
+    .tervis2-flash-img{display:block;height:226px;max-width:100%;width:auto;object-fit:contain;border-radius:12px}
+    .tervis2-lesson .flash-face{padding:10px 12px}
+    .tervis2-lesson .tervis2-flash-text{font-size:clamp(20px,5vw,28px);line-height:1.18}
     .tervis2-word strong{color:#215a41;overflow-wrap:anywhere}
     .tervis2-word span{color:#55645d;overflow-wrap:anywhere}
     .tervis2-section-title{margin:0;color:#2f6f58;font-size:19px}
     .tervis2-flash-text{font-size:clamp(22px,6vw,34px);font-weight:850;text-align:center;overflow-wrap:anywhere}
     .tervis2-flash-note{text-align:center;color:#55645d;font-size:14px}
-    @media(max-width:560px){.tervis2-pair{padding:12px}.tervis2-et{font-size:16px}.tervis2-ru{font-size:14px}.tervis2-word{padding:9px 10px;font-size:14px}}
+    @media(max-width:560px){.tervis2-pair{padding:12px}.tervis2-et{font-size:16px}.tervis2-ru{font-size:14px}.tervis2-word{padding:8px 9px;font-size:14px;grid-template-columns:60px minmax(0,1fr)}.tervis2-word-photo{width:60px;height:79px}.tervis2-flash-img{height:217px}}
   `;
   document.head.appendChild(style);
 
@@ -181,7 +207,7 @@
       ).join('') + '</div>' +
       '<section class="tervis2-lesson" aria-label="Словарь"><h3 class="tervis2-section-title">📚 Sõnad · 15 sõna</h3>' +
       '<div class="tervis2-vocab">' + WORDS.map(([et, ru]) =>
-        '<div class="tervis2-word"><strong lang="et">' + esc(et) + '</strong><span lang="ru">' + esc(ru) + '</span></div>'
+        '<div class="tervis2-word"><img class="tervis2-word-photo" src="' + wordImage(et) + '" alt="" loading="lazy" decoding="async"><div class="tervis2-word-info"><strong lang="et">' + esc(et) + '</strong><span lang="ru">' + esc(ru) + '</span></div></div>'
       ).join('') + '</div>' +
       '<div class="topic-actions">' +
         '<button class="primary" id="tervis2EtRu">🃏 Eesti → русский</button>' +
@@ -224,8 +250,8 @@
         '<p class="tervis2-flash-note">' + (direction === 'et-ru' ? 'Eesti → русский' : 'Русский → Eesti') + '</p>' +
         '<div class="flashcard" id="tervis2Flash" role="button" tabindex="0" aria-label="Показать перевод">' +
           '<div class="flashcard-inner">' +
-            '<div class="flash-face"><div class="tervis2-flash-text">' + esc(front) + '</div></div>' +
-            '<div class="flash-face flash-back"><div class="tervis2-flash-text">' + esc(back) + '</div></div>' +
+            '<div class="flash-face"><div class="tervis2-flash-content"><img class="tervis2-flash-img" src="' + wordImage(et) + '" alt=""><div class="tervis2-flash-text">' + esc(front) + '</div></div></div>' +
+            '<div class="flash-face flash-back"><div class="tervis2-flash-content"><img class="tervis2-flash-img" src="' + wordImage(et) + '" alt=""><div class="tervis2-flash-text">' + esc(back) + '</div></div></div>' +
           '</div>' +
         '</div>' +
         '<div class="review-stats"><span>✓ ' + correct + '</span><span>✕ ' + retry + '</span></div>' +
