@@ -120,7 +120,7 @@
     "koormus": "koormus",
     "päevakava": "paevakava"
   };
-  const wordImage = et => './tervis2-images/' + IMAGE_FILES[et] + '.webp';
+  const wordImage = et => './tervis2-images/' + IMAGE_FILES[et] + '.svg';
 
   const tabEt = document.getElementById('tabEt');
   const tabDe = document.getElementById('tabDe');
