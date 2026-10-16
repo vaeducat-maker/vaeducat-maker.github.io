@@ -165,8 +165,8 @@
     .tervis2-word-info strong,.tervis2-word-info span{display:block}
     .tervis2-flash-content{width:100%;display:flex;flex-direction:column;gap:10px;align-items:center;justify-content:center}
     .tervis2-flash-img{display:block;height:226px;max-width:100%;width:auto;object-fit:contain;border-radius:12px}
-    .tervis2-lesson .flash-face{padding:10px 12px}
-    .tervis2-lesson .tervis2-flash-text{font-size:clamp(20px,5vw,28px);line-height:1.18}
+    .tervis2-flash-face{padding:10px 12px}
+    .tervis2-flash-text{font-size:clamp(20px,5vw,28px);line-height:1.18}
     .tervis2-word strong{color:#215a41;overflow-wrap:anywhere}
     .tervis2-word span{color:#55645d;overflow-wrap:anywhere}
     .tervis2-section-title{margin:0;color:#2f6f58;font-size:19px}
@@ -250,8 +250,8 @@
         '<p class="tervis2-flash-note">' + (direction === 'et-ru' ? 'Eesti → русский' : 'Русский → Eesti') + '</p>' +
         '<div class="flashcard" id="tervis2Flash" role="button" tabindex="0" aria-label="Показать перевод">' +
           '<div class="flashcard-inner">' +
-            '<div class="flash-face"><div class="tervis2-flash-content"><img class="tervis2-flash-img" src="' + wordImage(et) + '" alt=""><div class="tervis2-flash-text">' + esc(front) + '</div></div></div>' +
-            '<div class="flash-face flash-back"><div class="tervis2-flash-content"><img class="tervis2-flash-img" src="' + wordImage(et) + '" alt=""><div class="tervis2-flash-text">' + esc(back) + '</div></div></div>' +
+            '<div class="flash-face tervis2-flash-face"><div class="tervis2-flash-content"><img class="tervis2-flash-img" src="' + wordImage(et) + '" alt=""><div class="tervis2-flash-text">' + esc(front) + '</div></div></div>' +
+            '<div class="flash-face flash-back tervis2-flash-face"><div class="tervis2-flash-content"><img class="tervis2-flash-img" src="' + wordImage(et) + '" alt=""><div class="tervis2-flash-text">' + esc(back) + '</div></div></div>' +
           '</div>' +
         '</div>' +
         '<div class="review-stats"><span>✓ ' + correct + '</span><span>✕ ' + retry + '</span></div>' +
