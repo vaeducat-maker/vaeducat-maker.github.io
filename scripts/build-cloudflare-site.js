@@ -41,6 +41,7 @@ const extraFiles = [
   'games/lumesadu/lumesadu.config.js',
   'games/lumesadu/v2.html',
   'games/lumesadu/v3.html',
+  'games/lumesadu/v4.html',
   'games/lumesadu/assets/v2-attention.webp',
   'games/minu-suvi/index.html',
   'games/septembri-sonamang/index.html',
