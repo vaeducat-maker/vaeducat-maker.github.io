@@ -12,8 +12,8 @@
   const fields=[
     ['Autor','Автор','Lewis Carroll','Льюис Кэрролл'],
     ['Pealkiri','Название','Alice imedemaal','Алиса в Стране чудес'],
-    ['Alustasin lugemist','Начал читать','__________','Дата — впиши сам'],
-    ['Lõpetasin lugemise','Закончил читать','__________','Дата — впиши сам'],
+    ['Alustasin lugemist','Начал читать','05.10.2026','5 октября 2026'],
+    ['Lõpetasin lugemise','Закончил читать','19.10.2026','19 октября 2026'],
     ['Peategelane','Главный герой','Alice','Алиса']
   ];
   const characters=[
@@ -51,7 +51,7 @@
     if(sub)sub.textContent='Урок 6 · Alice imedemaal · читательский дневник';
     card.innerHTML='<div class="alice-lesson" id="aliceLesson">'+
       '<div class="topic-intro"><div class="topic-kicker">📖 Eesti kirjandus · Урок 6</div><h2>Alice imedemaal</h2><div class="tiny">Алиса в Стране чудес · Lugemispäevik · A1</div></div>'+
-      '<p class="alice-note">Готовый текст читательского дневника по форме учителя. Эстонский — крупно, русский перевод — под ним. Даты впиши самостоятельно.</p>'+
+      '<p class="alice-note">Готовый текст читательского дневника по форме учителя. Эстонский — крупно, русский перевод — под ним. Даты заполнены: 5–19 октября 2026 года.</p>'+
       '<div class="alice-control"><button class="secondary" type="button" id="aliceToggleRu" aria-pressed="false">🙈 Скрыть перевод</button></div>'+
       '<div class="alice-box"><h3>📝 Lugemispäevik — читательский дневник</h3>'+renderFields()+'</div>'+
       '<div class="alice-box"><h3>👥 3–5 tähtsat tegelast <span class="alice-label-ru">— важные герои</span></h3>'+renderNumbered(characters)+'</div>'+
