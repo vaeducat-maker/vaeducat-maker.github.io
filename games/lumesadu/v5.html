@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="et">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+<title>LUMESADU V5 — falling snowflake prototype</title>
+<style>
+:root{color-scheme:only light}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-width:100%;min-height:100%;background:#bfe8ff}
+body{min-height:100dvh;display:flex;justify-content:center;align-items:flex-start;overflow:hidden}
+.game{
+  position:relative;
+  width:min(100vw,66.6667dvh);
+  aspect-ratio:2/3;
+  overflow:hidden;
+  flex:0 0 auto;
+  background:url("./assets/v2-attention.webp") center/100% 100% no-repeat;
+  touch-action:none;
+}
+
+/* Four invisible landing lanes over the approved master cards. */
+.lane{
+  position:absolute;
+  bottom:9.7%;
+  width:22.5%;
+  height:18.2%;
+  border:0;
+  padding:0;
+  background:transparent;
+  border-radius:13%;
+  z-index:5;
+  cursor:pointer;
+}
+.lane[data-i="0"]{left:1.15%}
+.lane[data-i="1"]{left:25.65%}
+.lane[data-i="2"]{left:50.15%}
+.lane[data-i="3"]{left:74.65%}
+
+.lane::after{
+  content:"";
+  position:absolute;
+  inset:3.8%;
+  border:6px solid transparent;
+  border-radius:12%;
+  opacity:0;
+  pointer-events:none;
+}
+.lane.wrong::after{
+  opacity:1;
+  border-color:#ef4351;
+  box-shadow:0 0 0 5px rgba(255,255,255,.9) inset,0 0 22px rgba(239,67,81,.78);
+}
+.lane.correct::after{
+  opacity:1;
+  border-color:#20d96f;
+  box-shadow:0 0 0 5px rgba(255,255,255,.92) inset,0 0 26px rgba(32,217,111,.9);
+}
+.lane.correct::before{
+  content:"✓";
+  position:absolute;
+  right:8%;top:7%;
+  width:28%;aspect-ratio:1;
+  display:grid;place-items:center;
+  border-radius:50%;
+  background:#23c968;color:#fff;
+  font:1000 clamp(20px,5.5vw,38px)/1 system-ui,sans-serif;
+  box-shadow:0 3px 0 #13874a,0 0 0 4px white;
+  z-index:2;
+}
+
+/* Falling "snowflake piece": this is the actual game object. */
+.flake{
+  position:absolute;
+  left:50%;
+  top:46.5%;
+  width:12.5%;
+  aspect-ratio:1;
+  transform:translate(-50%,-50%);
+  z-index:8;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  border:4px solid rgba(255,255,255,.94);
+  background:
+    radial-gradient(circle at 35% 28%,rgba(255,255,255,.98),rgba(214,247,255,.95) 40%,rgba(98,203,244,.96) 74%,rgba(36,145,215,.98));
+  box-shadow:
+    inset 0 4px 0 rgba(255,255,255,.75),
+    0 6px 16px rgba(3,79,134,.28),
+    0 0 18px rgba(255,255,255,.7);
+  transition:left .16s ease-out;
+  pointer-events:none;
+}
+.flake::before{
+  content:"❄";
+  color:white;
+  text-shadow:0 2px 0 rgba(34,123,188,.25);
+  font-size:clamp(27px,8vw,58px);
+  line-height:1;
+}
+.flake::after{
+  content:"";
+  position:absolute;
+  inset:-13%;
+  border:2px solid rgba(255,255,255,.32);
+  border-radius:50%;
+}
+
+.hint{
+  position:absolute;
+  left:50%;
+  top:63.2%;
+  transform:translateX(-50%);
+  z-index:7;
+  padding:.45em .9em;
+  border-radius:999px;
+  background:rgba(8,85,139,.62);
+  color:white;
+  font:800 clamp(11px,3.2vw,18px)/1 system-ui,sans-serif;
+  letter-spacing:.01em;
+  box-shadow:0 3px 10px rgba(0,53,94,.18);
+  opacity:.92;
+  pointer-events:none;
+  transition:opacity .2s ease;
+}
+.game.started .hint{opacity:0}
+
+@media(prefers-reduced-motion:reduce){
+  .flake{transition:none}
+}
+</style>
+</head>
+<body>
+<main class="game" id="game" aria-label="LUMESADU falling snowflake prototype">
+  <div class="flake" id="flake" aria-hidden="true"></div>
+  <div class="hint">Vali pilt</div>
+
+  <button class="lane" data-i="0" aria-label="Uisud"></button>
+  <button class="lane" data-i="1" aria-label="Kelk"></button>
+  <button class="lane" data-i="2" aria-label="Sall"></button>
+  <button class="lane" data-i="3" aria-label="Lumememm"></button>
+</main>
+
+<script>
+(() => {
+  const game = document.getElementById('game');
+  const flake = document.getElementById('flake');
+  const lanes = [...document.querySelectorAll('.lane')];
+
+  const correctIndex = 1;
+  const laneCenters = [12.4, 36.9, 61.4, 85.9];
+  const startTop = 46.5;
+  const landingTop = 77.5;
+  const duration = 5600;
+
+  let startTime = 0;
+  let active = false;
+  let locked = false;
+  let targetLane = 1;
+  let raf = 0;
+
+  function clearFeedback(){
+    lanes.forEach(l => l.classList.remove('wrong','correct'));
+  }
+
+  function resetDrop(delay=550){
+    cancelAnimationFrame(raf);
+    active = false;
+    locked = false;
+    clearFeedback();
+    flake.style.top = startTop + '%';
+    flake.style.left = '50%';
+    targetLane = 1;
+
+    setTimeout(() => {
+      game.classList.add('started');
+      startTime = performance.now();
+      active = true;
+      raf = requestAnimationFrame(tick);
+    }, delay);
+  }
+
+  function tick(now){
+    if(!active) return;
+    const p = Math.min(1,(now-startTime)/duration);
+    const eased = p < .75 ? p/.75*.78 : .78 + ((p-.75)/.25)*.22;
+    const y = startTop + (landingTop-startTop)*eased;
+    flake.style.top = y + '%';
+
+    if(p >= 1){
+      active = false;
+      resolveLanding();
+      return;
+    }
+    raf = requestAnimationFrame(tick);
+  }
+
+  function resolveLanding(){
+    locked = true;
+    if(targetLane === correctIndex){
+      lanes[correctIndex].classList.add('correct');
+      setTimeout(() => resetDrop(500), 900);
+    } else {
+      lanes[targetLane].classList.add('wrong');
+      setTimeout(() => {
+        lanes[targetLane].classList.remove('wrong');
+        lanes[correctIndex].classList.add('correct');
+        setTimeout(() => resetDrop(520), 850);
+      }, 480);
+    }
+  }
+
+  lanes.forEach((lane,index) => {
+    lane.addEventListener('pointerdown', e => {
+      e.preventDefault();
+      if(!active || locked) return;
+      targetLane = index;
+      flake.style.left = laneCenters[index] + '%';
+    });
+  });
+
+  // Drag/swipe anywhere in the lower half: the snowflake follows the nearest lane.
+  game.addEventListener('pointermove', e => {
+    if(!active || locked || !e.isPrimary) return;
+    if(!(e.buttons || e.pressure > 0)) return;
+    const r = game.getBoundingClientRect();
+    const x = ((e.clientX-r.left)/r.width)*100;
+    let nearest = 0;
+    let best = Infinity;
+    laneCenters.forEach((c,i) => {
+      const d = Math.abs(c-x);
+      if(d < best){best=d;nearest=i}
+    });
+    targetLane = nearest;
+    flake.style.left = laneCenters[nearest] + '%';
+  });
+
+  resetDrop(350);
+})();
+</script>
+</body>
+</html>
