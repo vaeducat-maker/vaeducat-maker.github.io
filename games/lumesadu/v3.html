@@ -28,11 +28,119 @@
     flex:0 0 auto;
     background:url("./assets/v2-attention.webp") center/100% 100% no-repeat;
   }
-  /* V3 is intentionally visual-only first.
-     No legacy layers, no SVG recreation, no patch stack. */
+  /* V3 master stays visually fixed. Interaction is a transparent overlay only. */
+  .answer-hit{
+    position:absolute;
+    bottom:7.1%;
+    width:22.2%;
+    height:19.2%;
+    padding:0;
+    margin:0;
+    border:0;
+    border-radius:12%;
+    background:transparent;
+    cursor:pointer;
+  }
+  .answer-hit[data-i="0"]{left:1.2%}
+  .answer-hit[data-i="1"]{left:25.7%}
+  .answer-hit[data-i="2"]{left:50.2%}
+  .answer-hit[data-i="3"]{left:74.6%}
+
+  .answer-hit::after{
+    content:"";
+    position:absolute;
+    inset:1.5%;
+    border-radius:12%;
+    border:7px solid transparent;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .12s ease;
+  }
+  .answer-hit.wrong::after{
+    opacity:1;
+    border-color:#ef4351;
+    box-shadow:
+      0 0 0 5px rgba(255,255,255,.92) inset,
+      0 0 24px rgba(239,67,81,.82);
+  }
+  .answer-hit.correct::after{
+    opacity:1;
+    border-color:#22d86f;
+    box-shadow:
+      0 0 0 5px rgba(255,255,255,.92) inset,
+      0 0 26px rgba(34,216,111,.9);
+  }
+  .answer-hit.correct::before{
+    content:"✓";
+    position:absolute;
+    right:7%;
+    top:6%;
+    width:30%;
+    aspect-ratio:1;
+    display:grid;
+    place-items:center;
+    border-radius:50%;
+    background:#23c968;
+    color:#fff;
+    font:1000 clamp(22px,6vw,40px)/1 system-ui,sans-serif;
+    box-shadow:0 3px 0 #13874a,0 0 0 4px rgba(255,255,255,.96);
+    z-index:2;
+    pointer-events:none;
+  }
+  .answer-hit:focus-visible{
+    outline:4px solid rgba(255,255,255,.98);
+    outline-offset:-7px;
+  }
+  @media (prefers-reduced-motion:reduce){
+    .answer-hit::after{transition:none}
+  }
 </style>
 </head>
 <body>
-  <main class="game" aria-label="LUMESADU visuaalne master"></main>
+  <main class="game" aria-label="LUMESADU mäng">
+    <button class="answer-hit" data-i="0" aria-label="Uisud"></button>
+    <button class="answer-hit" data-i="1" aria-label="Kelk"></button>
+    <button class="answer-hit" data-i="2" aria-label="Sall"></button>
+    <button class="answer-hit" data-i="3" aria-label="Lumememm"></button>
+  </main>
+
+<script>
+(() => {
+  const correctIndex = 1;
+  const buttons = [...document.querySelectorAll('.answer-hit')];
+  let locked = false;
+
+  const clearFeedback = () => {
+    buttons.forEach(button => button.classList.remove('wrong','correct'));
+  };
+
+  buttons.forEach((button, index) => {
+    button.addEventListener('click', () => {
+      if (locked) return;
+      locked = true;
+      clearFeedback();
+
+      if (index === correctIndex) {
+        button.classList.add('correct');
+        setTimeout(() => {
+          clearFeedback();
+          locked = false;
+        }, 900);
+        return;
+      }
+
+      button.classList.add('wrong');
+      setTimeout(() => {
+        button.classList.remove('wrong');
+        buttons[correctIndex].classList.add('correct');
+        setTimeout(() => {
+          clearFeedback();
+          locked = false;
+        }, 850);
+      }, 430);
+    });
+  });
+})();
+</script>
 </body>
 </html>
