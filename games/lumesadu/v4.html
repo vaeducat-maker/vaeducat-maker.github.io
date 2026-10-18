@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="et">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+<title>LUMESADU V4 — layered prototype</title>
+<style>
+:root{
+  color-scheme:only light;
+  --card-w:22.5%;
+  --card-h:18.2%;
+  --row-bottom:9.7%;
+  --ice-row-h:8.3%;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-width:100%;min-height:100%;background:#bfe8ff}
+body{min-height:100dvh;display:flex;justify-content:center;align-items:flex-start;overflow-x:hidden}
+.game{
+  position:relative;
+  width:min(100vw,66.6667dvh);
+  aspect-ratio:2/3;
+  flex:0 0 auto;
+  overflow:hidden;
+  background:url("./assets/v2-attention.webp") center/100% 100% no-repeat;
+}
+
+/* Hide the baked answer row from the master with a stretched piece of the
+   untouched frozen-river area. Everything above it remains the approved master. */
+.river-cover{
+  position:absolute;
+  left:0;right:0;bottom:0;
+  height:31.5%;
+  background-image:url("./assets/v2-attention.webp");
+  background-repeat:no-repeat;
+  background-size:100% 500%;
+  background-position:center 100%;
+  z-index:1;
+}
+.river-cover::after{
+  content:"";
+  position:absolute;inset:0;
+  background:
+    linear-gradient(to bottom,rgba(223,249,255,.06),rgba(86,193,239,.08) 45%,rgba(36,139,211,.08)),
+    radial-gradient(ellipse at 50% 16%,rgba(255,255,255,.35),transparent 45%);
+  pointer-events:none;
+}
+
+/* Live answer dock. Each card is a crop of the approved master, not a redraw. */
+.answers{
+  position:absolute;
+  left:0;right:0;
+  bottom:var(--row-bottom);
+  height:var(--card-h);
+  z-index:10;
+  transition:bottom .42s cubic-bezier(.2,.85,.25,1);
+}
+.answer{
+  position:absolute;
+  top:0;
+  width:var(--card-w);
+  height:100%;
+  border:0;
+  padding:0;
+  background-image:url("./assets/v2-attention.webp");
+  background-repeat:no-repeat;
+  background-size:444.45% 549.45%;
+  background-position-y:84.8%;
+  border-radius:13%;
+  cursor:pointer;
+  filter:drop-shadow(0 4px 2px rgba(9,86,140,.18));
+}
+.answer[data-i="0"]{left:1.15%;background-position-x:1.5%}
+.answer[data-i="1"]{left:25.65%;background-position-x:33.3%}
+.answer[data-i="2"]{left:50.15%;background-position-x:65.1%}
+.answer[data-i="3"]{left:74.65%;background-position-x:97.3%}
+.answer::after{
+  content:"";
+  position:absolute;
+  inset:3.8%;
+  border:6px solid transparent;
+  border-radius:12%;
+  opacity:0;
+  pointer-events:none;
+}
+.answer.wrong::after{
+  opacity:1;
+  border-color:#ef4351;
+  box-shadow:0 0 0 5px rgba(255,255,255,.9) inset,0 0 22px rgba(239,67,81,.8);
+}
+.answer.correct::after{
+  opacity:1;
+  border-color:#22d86f;
+  box-shadow:0 0 0 5px rgba(255,255,255,.9) inset,0 0 24px rgba(34,216,111,.9);
+}
+.answer.correct::before{
+  content:"✓";
+  position:absolute;right:8%;top:7%;
+  width:28%;aspect-ratio:1;
+  display:grid;place-items:center;
+  border-radius:50%;
+  background:#23c968;color:white;
+  font:1000 clamp(20px,5.5vw,38px)/1 system-ui,sans-serif;
+  box-shadow:0 3px 0 #13874a,0 0 0 4px white;
+  z-index:2;
+}
+
+/* Ice wall grows from bottom in rows of four cubes. */
+.ice-wall{
+  position:absolute;
+  left:2.2%;right:2.2%;bottom:0;
+  height:41.5%;
+  z-index:6;
+  pointer-events:none;
+}
+.ice-row{
+  position:absolute;
+  left:0;right:0;
+  height:var(--ice-row-h);
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:1.5%;
+  transform:translateY(110%) scaleY(.65);
+  opacity:0;
+  transform-origin:bottom;
+  transition:transform .42s cubic-bezier(.18,.9,.25,1.15),opacity .25s ease;
+}
+.ice-row.show{transform:translateY(0) scaleY(1);opacity:1}
+.cube{
+  position:relative;
+  border-radius:16% 16% 10% 10%;
+  border:2px solid rgba(255,255,255,.88);
+  background:
+    linear-gradient(145deg,rgba(255,255,255,.92),rgba(151,229,255,.88) 42%,rgba(55,170,225,.9));
+  box-shadow:
+    inset 0 4px 0 rgba(255,255,255,.8),
+    inset -4px -6px 0 rgba(0,121,188,.16),
+    0 4px 0 rgba(4,109,173,.24),
+    0 6px 13px rgba(10,84,136,.2);
+  overflow:hidden;
+}
+.cube::before{
+  content:"";
+  position:absolute;
+  left:14%;top:14%;
+  width:34%;height:18%;
+  border-radius:50%;
+  transform:rotate(-22deg);
+  background:rgba(255,255,255,.52);
+}
+.cube::after{
+  content:"❄";
+  position:absolute;
+  right:11%;bottom:3%;
+  color:rgba(255,255,255,.58);
+  font-size:clamp(13px,4vw,27px);
+}
+.ice-row[data-row="1"]{bottom:0}
+.ice-row[data-row="2"]{bottom:8.2%}
+.ice-row[data-row="3"]{bottom:16.4%}
+.ice-row[data-row="4"]{bottom:24.6%}
+.ice-row[data-row="5"]{bottom:32.8%}
+
+.game.danger{animation:rumble .36s linear 2}
+@keyframes rumble{
+  0%,100%{transform:translateX(0)}
+  25%{transform:translateX(-2px)}
+  50%{transform:translateX(2px)}
+  75%{transform:translateX(-1px)}
+}
+.cracks{
+  position:absolute;
+  inset:58% 3% 0;
+  z-index:20;
+  opacity:0;
+  pointer-events:none;
+  background:
+    linear-gradient(63deg,transparent 48%,rgba(7,91,143,.7) 49%,rgba(7,91,143,.7) 50%,transparent 51%) 15% 15%/30% 45% no-repeat,
+    linear-gradient(115deg,transparent 48%,rgba(7,91,143,.65) 49%,rgba(7,91,143,.65) 50%,transparent 51%) 58% 4%/34% 50% no-repeat,
+    linear-gradient(70deg,transparent 48%,rgba(255,255,255,.9) 49%,rgba(255,255,255,.9) 50%,transparent 51%) 78% 40%/26% 42% no-repeat;
+}
+.game.cracked .cracks{opacity:1}
+.game.collapse .ice-wall{
+  animation:collapse .72s ease-in forwards;
+}
+@keyframes collapse{
+  0%{transform:translateY(0) rotate(0);opacity:1}
+  55%{transform:translateY(4%) rotate(-1deg);opacity:1}
+  100%{transform:translateY(45%) rotate(3deg);opacity:0}
+}
+.defeat{
+  position:absolute;
+  inset:0;
+  z-index:30;
+  display:grid;
+  place-items:center;
+  background:rgba(11,86,133,.18);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .25s ease;
+}
+.defeat.show{opacity:1;pointer-events:auto}
+.defeat-card{
+  min-width:64%;
+  padding:5.5% 7%;
+  border-radius:28px;
+  text-align:center;
+  color:#074e84;
+  font:900 clamp(28px,7vw,50px)/1.05 system-ui,sans-serif;
+  background:linear-gradient(#fff,#d9f7ff);
+  border:6px solid rgba(255,255,255,.98);
+  box-shadow:0 10px 0 #6eccec,0 18px 34px rgba(0,55,97,.26);
+}
+.defeat button{
+  margin-top:18px;
+  border:0;border-radius:999px;
+  padding:12px 22px;
+  background:#21b969;color:white;
+  font:800 18px/1 system-ui,sans-serif;
+  box-shadow:0 4px 0 #12864a;
+}
+@media(prefers-reduced-motion:reduce){
+  .answers,.ice-row,.defeat{transition:none}
+  .game.danger{animation:none}
+}
+</style>
+</head>
+<body>
+<main class="game" id="game" aria-label="LUMESADU mäng">
+  <div class="river-cover" aria-hidden="true"></div>
+
+  <div class="ice-wall" aria-hidden="true">
+    <div class="ice-row" data-row="1"><i class="cube"></i><i class="cube"></i><i class="cube"></i><i class="cube"></i></div>
+    <div class="ice-row" data-row="2"><i class="cube"></i><i class="cube"></i><i class="cube"></i><i class="cube"></i></div>
+    <div class="ice-row" data-row="3"><i class="cube"></i><i class="cube"></i><i class="cube"></i><i class="cube"></i></div>
+    <div class="ice-row" data-row="4"><i class="cube"></i><i class="cube"></i><i class="cube"></i><i class="cube"></i></div>
+    <div class="ice-row" data-row="5"><i class="cube"></i><i class="cube"></i><i class="cube"></i><i class="cube"></i></div>
+  </div>
+
+  <div class="answers" id="answers">
+    <button class="answer" data-i="0" aria-label="Uisud"></button>
+    <button class="answer" data-i="1" aria-label="Kelk"></button>
+    <button class="answer" data-i="2" aria-label="Sall"></button>
+    <button class="answer" data-i="3" aria-label="Lumememm"></button>
+  </div>
+
+  <div class="cracks" aria-hidden="true"></div>
+
+  <div class="defeat" id="defeat">
+    <div class="defeat-card">
+      Proovi uuesti!
+      <div><button id="restart" type="button">Alusta uuesti</button></div>
+    </div>
+  </div>
+</main>
+
+<script>
+(() => {
+  const game = document.getElementById('game');
+  const answers = document.getElementById('answers');
+  const buttons = [...document.querySelectorAll('.answer')];
+  const rows = [...document.querySelectorAll('.ice-row')];
+  const defeat = document.getElementById('defeat');
+  const restart = document.getElementById('restart');
+  const correctIndex = 1;
+  let errors = 0;
+  let locked = false;
+
+  const clearFeedback = () => buttons.forEach(b => b.classList.remove('wrong','correct'));
+
+  const setDockHeight = () => {
+    const step = 7.3;
+    answers.style.bottom = `calc(var(--row-bottom) + ${errors * step}%)`;
+  };
+
+  const addIce = () => {
+    errors += 1;
+    rows[errors - 1]?.classList.add('show');
+    setDockHeight();
+
+    if (errors === 5) {
+      setTimeout(() => game.classList.add('danger'), 250);
+      setTimeout(() => game.classList.add('cracked'), 620);
+      setTimeout(() => game.classList.add('collapse'), 1050);
+      setTimeout(() => defeat.classList.add('show'), 1700);
+    }
+  };
+
+  buttons.forEach((button, index) => {
+    button.addEventListener('click', () => {
+      if (locked || errors >= 5) return;
+      locked = true;
+      clearFeedback();
+
+      if (index === correctIndex) {
+        button.classList.add('correct');
+        setTimeout(() => {
+          clearFeedback();
+          locked = false;
+        }, 800);
+        return;
+      }
+
+      button.classList.add('wrong');
+      setTimeout(() => {
+        button.classList.remove('wrong');
+        buttons[correctIndex].classList.add('correct');
+        setTimeout(() => {
+          clearFeedback();
+          addIce();
+          if (errors < 5) locked = false;
+        }, 720);
+      }, 430);
+    });
+  });
+
+  restart.addEventListener('click', () => {
+    errors = 0;
+    locked = false;
+    clearFeedback();
+    rows.forEach(r => r.classList.remove('show'));
+    game.classList.remove('danger','cracked','collapse');
+    defeat.classList.remove('show');
+    answers.style.bottom = 'var(--row-bottom)';
+  });
+})();
+</script>
+</body>
+</html>
