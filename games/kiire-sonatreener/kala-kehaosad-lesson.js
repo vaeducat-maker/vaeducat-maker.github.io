@@ -19,6 +19,9 @@
   const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   let view='diagram', languageMode='et', chosen=-1, revealed=new Set();
   let direction='et-ru', deck=[], place=0, flipped=false, learned=new Set(), retryCount=0;
+  // Number order exactly matches the seven arrows on the quiz worksheet.
+  const QUIZ_PARTS=[1,2,0,3,4,5,6];
+  let quizAnswers=['','','','','','',''],quizSelected=-1,quizChecked=false,quizScore=0;
 
   const css=document.createElement('style');
   css.textContent=[
@@ -44,6 +47,24 @@
     '.fish-word-number{flex:0 0 24px;height:24px;border-radius:99px;background:#e5f1e9;color:#2f6f58;font-size:12px;display:inline-flex;align-items:center;justify-content:center}',
     '.fish-word-ru{font-size:clamp(12px,3.3vw,15px);font-weight:600;color:#52675b;padding-left:32px;line-height:1.35}',
     '.fish-card-shell{display:grid;gap:10px}',
+    '.fish-quiz-board{position:relative;isolation:isolate;background:#fff;border:1px solid #e0e8ec;border-radius:18px;overflow:hidden}',
+    '.fish-quiz-board svg{display:block;width:100%;height:auto;touch-action:manipulation}',
+    '.fish-quiz-click{cursor:pointer;outline:none}',
+    '.fish-quiz-click:focus-visible rect,.fish-quiz-click:focus-visible circle{stroke:#e5aa32;stroke-width:5}',
+    '.fish-quiz-pop{position:absolute;z-index:5;left:50%;top:51%;transform:translate(-50%,-50%);width:min(85%,380px);padding:16px;border-radius:18px;background:#fff;box-shadow:0 10px 44px #1b3c3455;border:2px solid #82bde5;display:grid;gap:10px}',
+    '.fish-quiz-pop label{font-size:17px;font-weight:900;color:#194974}',
+    '.fish-quiz-pop input{font-size:19px;min-height:49px;width:100%;border:2px solid #9fcde9;border-radius:11px;padding:10px 12px;background:#fff;color:#193e52}',
+    '.fish-quiz-pop input:focus{border-color:#347bac;outline:2px solid #9dd3f5;outline-offset:2px}',
+    '.fish-quiz-pop-actions{display:flex;gap:8px}',
+    '.fish-quiz-pop-actions button{flex:1;min-height:44px}',
+    '.fish-quiz-intro{font-weight:750;color:#2d617b;text-align:center;line-height:1.35;margin:0}',
+    '.fish-quiz-result{font-weight:850;font-size:18px;text-align:center;padding:12px;border-radius:13px;background:#eaf5f9;color:#1b5577}',
+    '.fish-quiz-result.is-perfect{background:#e8f6eb;color:#276849}',
+    '.fish-quiz-key{display:flex;gap:8px;flex-wrap:wrap;font-size:12px;color:#657c8a;align-items:center}',
+    '.fish-quiz-key span{display:inline-flex;align-items:center;gap:5px}',
+    '.fish-quiz-key i{display:inline-block;width:12px;height:12px;border-radius:50%;background:#b5d9f1}',
+    '.fish-quiz-key .right i{background:#93d4a7}',
+    '.fish-quiz-key .wrong i{background:#f0a7a7}',
     '.fish-actions button{flex:1 1 125px;min-height:50px}',
     '.fish-done{padding:30px 12px;text-align:center;border-radius:17px;background:#eef7f0}',
     '.fish-done h3{color:#2f6f58;font-size:25px}',
@@ -147,7 +168,8 @@
       '<button type="button" data-fish-mode="both" class="'+(languageMode==='both'?'is-active':'')+'">🇪🇪 + 🇷🇺 С переводом</button></div>'+
       '<div class="fish-picture fish-poster">'+fishSvg(chosen,true,true)+'</div>'+
       '<p class="fish-hint">Нажми на подпись около рыбы — русский перевод появится прямо под ней. Нажми ещё раз, чтобы скрыть его.</p>'+
-      '<div class="fish-actions"><button class="primary" id="fishEtCards">🃏 Карточки: Eesti → русский</button><button class="secondary" id="fishRuCards">🃏 Карточки: русский → Eesti</button></div>'+
+      '<div class="fish-actions"><button class="primary" id="fishStartQuiz">✍️ Kontroll — контрольная</button></div>'+
+      '<div class="fish-actions"><button class="secondary" id="fishEtCards">🃏 Карточки: Eesti → русский</button><button class="secondary" id="fishRuCards">🃏 Карточки: русский → Eesti</button></div>'+
       backButton()+'</div>';
     card.querySelectorAll('[data-fish-word], [data-fish-part]').forEach(el=>{
       const idx=Number(el.dataset.fishWord!==undefined?el.dataset.fishWord:el.dataset.fishPart);
@@ -166,9 +188,136 @@
       if(languageMode==='et')revealed.clear();
       diagram();
     });
+    card.querySelector('#fishStartQuiz').onclick=startQuiz;
     card.querySelector('#fishEtCards').onclick=()=>startCards('et-ru');
     card.querySelector('#fishRuCards').onclick=()=>startCards('ru-et');
     card.querySelector('#fishBack').onclick=()=>libraryBtn.click();
+  }
+
+  const quizTargets=[
+    // Same reference positions as the approved annotated fish poster.
+    {number:1, word:1, x:39,y:169,w:289, from:[251,245],to:[385,504]},
+    {number:2, word:2, x:667,y:37,w:332, from:[689,112],to:[486,347]},
+    {number:3, word:0, x:898,y:169,w:274,from:[945,245],to:[749,507]},
+    {number:4, word:3, x:29,y:627,w:323, from:[262,643],to:[475,591]},
+    {number:5, word:4, x:261,y:728,w:302,from:[385,742],to:[506,646]},
+    {number:6, word:5, x:647,y:730,w:319,from:[761,743],to:[720,647]},
+    {number:7, word:6, x:945,y:651,w:245,from:[1041,671],to:[1012,548]}
+  ];
+  const normalizeQuiz=s=>String(s).trim().normalize('NFC').toLocaleLowerCase('et-EE').replace(/\s+/g,' ');
+  const isQuizRight=i=>normalizeQuiz(quizAnswers[i])===normalizeQuiz(WORDS[QUIZ_PARTS[i]].et);
+  const quizSvg=()=>{
+    const whole=fishSvg(-1,false,false);
+    const artwork=whole.slice(whole.indexOf('>')+1,whole.lastIndexOf('</svg>'));
+    const rules=quizTargets.map((t,i)=>{
+      const state=quizChecked?(isQuizRight(i)?'ok':'bad'):'idle';
+      const stroke=state==='ok'?'#247c50':state==='bad'?'#bc4756':'#284e7d';
+      return '<g class="fish-quiz-click" data-quiz-select="'+i+'" role="button" tabindex="0" aria-label="Vastus '+t.number+'">'+
+        '<path d="M'+t.from.join(' ')+' L'+t.to.join(' ')+'" fill="none" stroke="'+stroke+'" stroke-width="3.5" stroke-linecap="round"/>'+
+        '<path d="M'+t.from.join(' ')+' L'+t.to.join(' ')+'" fill="none" stroke="transparent" stroke-width="24"/>'+
+        '<circle cx="'+t.to[0]+'" cy="'+t.to[1]+'" r="7.5" fill="'+stroke+'" stroke="#fff" stroke-width="3"/>'+
+        '<circle cx="'+t.to[0]+'" cy="'+t.to[1]+'" r="24" fill="transparent"/>'+
+      '</g>';
+    }).join('');
+    const boxes=quizTargets.map((t,i)=>{
+      const state=quizChecked?(isQuizRight(i)?'ok':'bad'):'idle';
+      const bg=state==='ok'?'#e6f6ea':state==='bad'?'#fff0f1':'#fff';
+      const edge=state==='ok'?'#389d62':state==='bad'?'#dc6978':'#88c8ee';
+      const answer=quizAnswers[i];
+      const text=answer.length>16?answer.slice(0,15)+'…':answer;
+      return '<g class="fish-quiz-click" data-quiz-select="'+i+'" role="button" tabindex="0" aria-label="Vastus '+t.number+(answer?' — täidetud':' — tühi')+'">'+
+        '<rect x="'+t.x+'" y="'+t.y+'" width="'+t.w+'" height="89" rx="18" fill="'+bg+'" stroke="'+edge+'" stroke-width="4"/>'+
+        '<circle cx="'+(t.x+5)+'" cy="'+(t.y+44)+'" r="34" fill="'+edge+'" stroke="#fff" stroke-width="4"/>'+
+        '<text x="'+(t.x+5)+'" y="'+(t.y+55)+'" text-anchor="middle" font-family="Arial,sans-serif" font-size="33" font-weight="900" fill="'+(state==='idle'?'#113459':'#ffffff')+'">'+t.number+'</text>'+
+        '<text x="'+(t.x+55)+'" y="'+(t.y+55)+'" font-family="Arial,sans-serif" font-size="27" font-weight="750" fill="#173e55">'+esc(text)+'</text>'+
+        '</g>';
+    }).join('');
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 840" aria-label="Kala kehaosad. Seitse noolt ja tühjad vastusekohad." role="img">'+
+      '<rect width="1200" height="840" fill="#fff"/>'+
+      '<g transform="translate(90 205) scale(1.1)">'+artwork+'</g>'+
+      rules+boxes+'</svg>';
+  };
+  function startQuiz(){
+    view='quiz';
+    quizAnswers=['','','','','','',''];
+    quizSelected=-1;
+    quizChecked=false;
+    quizScore=0;
+    renderQuiz();
+  }
+  function renderQuiz(){
+    const editor=quizSelected<0?'':(
+      '<div class="fish-quiz-pop" role="group" aria-label="Kirjuta vastus">'+
+      '<label for="fishQuizInput">Vastus '+(quizSelected+1)+' · Kirjuta eesti keeles</label>'+
+      '<input id="fishQuizInput" type="text" lang="et" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" maxlength="40" value="'+esc(quizAnswers[quizSelected])+'">'+
+      '<div class="fish-quiz-pop-actions"><button type="button" class="secondary" id="fishQuizCancel">Sulge</button><button type="button" class="primary" id="fishQuizSave">Salvesta ✓</button></div>'+
+      '</div>');
+    const result=quizChecked?
+      '<div class="fish-quiz-result'+(quizScore===7?' is-perfect':'')+'">'+
+      (quizScore===7?'Väga tubli! 🎉 ':'Kontrollitud. ')+'Tulemus: '+quizScore+' / 7'+
+      '</div>':'';
+    card.innerHTML='<div class="fish-lesson" id="fishLesson">'+
+      '<header class="topic-intro"><div class="fish-kicker">🌿 Loodusõpetus · Урок 3</div><h2>Kala kehaosad · Kontroll</h2></header>'+
+      '<p class="fish-quiz-intro">Kirjuta kala kehaosade nimetused.<br>Puuduta numbrit või noolt.</p>'+
+      '<div class="fish-quiz-board">'+quizSvg()+editor+'</div>'+
+      result+
+      (quizChecked?'<div class="fish-quiz-key"><span class="right"><i></i>Õige</span><span class="wrong"><i></i>Vale / tühi</span></div>':'')+
+      '<div class="fish-actions"><button type="button" class="primary" id="fishQuizCheck">'+(quizChecked?'Kontrolli uuesti':'Kontrolli vastuseid')+'</button>'+
+      '<button type="button" class="secondary" id="fishQuizReset">Alusta uuesti</button></div>'+
+      '<div class="fish-actions"><button type="button" class="secondary" id="fishQuizBack">← Tagasi õppima</button></div>'+
+      '</div>';
+    card.querySelectorAll('[data-quiz-select]').forEach(el=>{
+      const i=Number(el.dataset.quizSelect);
+      const open=()=>{
+        if(quizSelected>=0){
+          const current=card.querySelector('#fishQuizInput');
+          if(current)quizAnswers[quizSelected]=current.value;
+        }
+        quizSelected=i;
+        renderQuiz();
+      };
+      el.addEventListener('click',open);
+      el.addEventListener('keydown',e=>{
+        if(e.key==='Enter'||e.key===' '){e.preventDefault();open();}
+      });
+    });
+    if(quizSelected>=0){
+      const input=card.querySelector('#fishQuizInput');
+      input.focus();
+      const save=()=>{
+        quizAnswers[quizSelected]=input.value.trim();
+        quizSelected=-1;
+        quizChecked=false; // Editing answers removes outdated marks.
+        renderQuiz();
+      };
+      input.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();save();}};
+      card.querySelector('#fishQuizSave').onclick=save;
+      card.querySelector('#fishQuizCancel').onclick=()=>{
+        quizSelected=-1;
+        renderQuiz();
+      };
+    }
+    card.querySelector('#fishQuizCheck').onclick=()=>{
+      if(quizSelected>=0){
+        quizAnswers[quizSelected]=card.querySelector('#fishQuizInput').value.trim();
+        quizSelected=-1;
+      }
+      quizChecked=true;
+      quizScore=quizAnswers.reduce((n,_,i)=>n+(isQuizRight(i)?1:0),0);
+      try{
+        localStorage.setItem('edukass.kalaKehaosad.kontroll.last',JSON.stringify({
+          date:new Date().toISOString(),score:quizScore,total:7,answers:quizAnswers.slice()
+        }));
+      }catch(e){}
+      renderQuiz();
+    };
+    card.querySelector('#fishQuizReset').onclick=startQuiz;
+    card.querySelector('#fishQuizBack').onclick=()=>{
+      view='diagram';
+      chosen=-1;
+      revealed.clear();
+      diagram();
+    };
   }
   function startCards(dir){
     view='cards';direction=dir;deck=shuffle([0,1,2,3,4,5,6]);place=0;flipped=false;learned=new Set();retryCount=0;cards();
