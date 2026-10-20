@@ -8,8 +8,8 @@
 
   // Exact study wording agreed from the notebook; no extra closing sentence.
   const intro=[
-    ['Ta sündis 1832. aastal ehk ühe tuhande kaheksasaja kolmekümne teisel aastal.','Он родился в 1832 году, то есть в тысяча восемьсот тридцать втором году.'],
-    ['Ta suri 1898. aastal ehk ühe tuhande kaheksasaja üheksakümne kaheksandal aastal.','Он умер в 1898 году, то есть в тысяча восемьсот девяносто восьмом году.'],
+    ['Ta sündis 1832. aastal.','Он родился в 1832 году.'],
+    ['Ta suri 1898. aastal.','Он умер в 1898 году.'],
     ['Ta oli inglise kirjanik, kelle kõige kuulsam teos on „Alice\'i seiklused Imedemaal“.','Он был английским писателем, самое известное произведение которого — «Приключения Алисы в Стране чудес».'],
     ['Tema pärisnimi oli Charles Lutwidge Dodgson.','Его настоящее имя было Чарльз Лютвидж Доджсон.'],
     ['Lisaks kirjanikule oli ta ka matemaatik, loogik ja fotograaf.','Помимо того что он был писателем, он также был математиком, логиком и фотографом.'],
@@ -58,7 +58,7 @@
     card.innerHTML='<div class="carroll-lesson" id="carrollLesson">'+
       '<div class="topic-intro"><div class="topic-kicker">📖 Eesti kirjandus · Урок 7</div>'+
       '<h2>Lewis Carroll – elulugu</h2><div class="tiny">Биография · учим текст по предложениям</div></div>'+
-      '<p class="carroll-note">После каждой даты указано, как произнести её по-эстонски (зелёным). Это подсказка, не дополнительные слова учительницы. Русский перевод можно скрыть или показать.</p>'+
+      '<p class="carroll-note">Читай число один раз — словами в зелёных скобках. Сами цифры вслух не повторяй. Русский перевод можно скрыть или показать.</p>'+
       '<div class="carroll-controls"><button type="button" class="secondary" id="carrollHideAll">🙈 Скрыть все переводы</button>'+
       '<button type="button" class="secondary" id="carrollShowAll">🌐 Показать все переводы</button></div>'+
       '<section class="carroll-panel"><h3>Lewis Carroll (1832–1898)</h3><div class="carroll-lines">'+rows(intro,0)+'</div></section>'+
