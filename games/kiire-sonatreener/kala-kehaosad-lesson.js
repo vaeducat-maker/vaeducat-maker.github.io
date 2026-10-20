@@ -44,9 +44,9 @@
     '.fish-word-number{flex:0 0 24px;height:24px;border-radius:99px;background:#e5f1e9;color:#2f6f58;font-size:12px;display:inline-flex;align-items:center;justify-content:center}',
     '.fish-word-ru{font-size:clamp(12px,3.3vw,15px);font-weight:600;color:#52675b;padding-left:32px;line-height:1.35}',
     '.fish-card-shell{display:grid;gap:10px}',
-    '.fish-flashcard{border-radius:19px;border:2px solid #d7e7da;background:#fff;min-height:360px;padding:13px 13px 20px;text-align:center;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;width:100%}',
+    '.fish-flashcard{border-radius:19px;border:2px solid #d7e7da;background:#fff;min-height:260px;padding:26px 18px;text-align:center;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;width:100%}',
     '.fish-flashcard:focus-visible,.fish-word:focus-visible{outline:3px solid #f0b84d;outline-offset:2px}',
-    '.fish-flashcard .fish-picture{width:100%;max-width:560px}',
+    '.fish-flashcard .fish-card-word{font-size:clamp(31px,9vw,48px)}',
     '.fish-card-question{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#668071}',
     '.fish-card-word{font-size:clamp(26px,7vw,39px);font-weight:900;color:#23553a;overflow-wrap:anywhere}',
     '.fish-card-answer{font-size:clamp(21px,6vw,30px);font-weight:850;color:#a66027}',
@@ -55,12 +55,12 @@
     '.fish-actions button{flex:1 1 125px;min-height:50px}',
     '.fish-done{padding:30px 12px;text-align:center;border-radius:17px;background:#eef7f0}',
     '.fish-done h3{color:#2f6f58;font-size:25px}',
-    '@media(max-width:390px){.fish-words{gap:6px}.fish-word{padding:9px 7px}.fish-word.is-selected{padding:8px 6px}.fish-word-number{flex-basis:21px;height:21px}.fish-word-line{gap:5px}.fish-word-ru{padding-left:26px}.fish-flashcard{min-height:310px}}'
+    '@media(max-width:390px){.fish-words{gap:6px}.fish-word{padding:9px 7px}.fish-word.is-selected{padding:8px 6px}.fish-word-number{flex-basis:21px;height:21px}.fish-word-line{gap:5px}.fish-word-ru{padding-left:26px}.fish-flashcard{min-height:240px}}'
   ].join('');
   document.head.appendChild(css);
 
   // Hand-drawn European perch (ahven), all image parts are native inline SVG.
-  // Every flashcard shares the same fish; the relevant anatomy is highlighted.
+  // Interactive poster highlights each fish part; vocabulary cards remain text-only.
   const regions=[
     'M346 226 Q485 207 620 257 Q690 275 721 286 Q680 342 563 359 Q422 377 335 345 Z',
     'M247 236 Q300 244 314 294 Q311 329 268 348 Q244 318 247 236 Z',
@@ -192,7 +192,7 @@
       '<div class="fish-card-counter"><span>Карточка '+(place+1)+' из '+deck.length+'</span><span>✓ Выучено: '+learned.size+' / 7</span></div>'+
       '<div class="fish-card-shell"><button type="button" class="fish-flashcard" id="fishFlip" aria-label="Перевернуть карточку">'+
       '<div class="fish-card-question">'+(direction==='et-ru'?'Переведи на русский':'Назови по-эстонски')+'</div>'+
-      '<div class="fish-picture">'+fishSvg(i,false)+'</div>'+
+
       '<div class="fish-card-word">'+esc(front)+'</div>'+
       (flipped?'<div class="fish-card-answer">'+esc(answer)+'</div>':'<div class="fish-card-prompt">Нажми, чтобы увидеть перевод ↻</div>')+
       '</button></div>'+
