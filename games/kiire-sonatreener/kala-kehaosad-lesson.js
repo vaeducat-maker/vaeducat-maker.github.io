@@ -18,7 +18,7 @@
   ];
   const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   let view='diagram', languageMode='et', chosen=-1, revealed=new Set();
-  let direction='et-ru', deck=[], place=0, flipped=false, learned=new Set();
+  let direction='et-ru', deck=[], place=0, flipped=false, learned=new Set(), retryCount=0;
 
   const css=document.createElement('style');
   css.textContent=[
@@ -44,18 +44,10 @@
     '.fish-word-number{flex:0 0 24px;height:24px;border-radius:99px;background:#e5f1e9;color:#2f6f58;font-size:12px;display:inline-flex;align-items:center;justify-content:center}',
     '.fish-word-ru{font-size:clamp(12px,3.3vw,15px);font-weight:600;color:#52675b;padding-left:32px;line-height:1.35}',
     '.fish-card-shell{display:grid;gap:10px}',
-    '.fish-flashcard{border-radius:19px;border:2px solid #d7e7da;background:#fff;min-height:260px;padding:26px 18px;text-align:center;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;width:100%}',
-    '.fish-flashcard:focus-visible,.fish-word:focus-visible{outline:3px solid #f0b84d;outline-offset:2px}',
-    '.fish-flashcard .fish-card-word{font-size:clamp(31px,9vw,48px)}',
-    '.fish-card-question{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#668071}',
-    '.fish-card-word{font-size:clamp(26px,7vw,39px);font-weight:900;color:#23553a;overflow-wrap:anywhere}',
-    '.fish-card-answer{font-size:clamp(21px,6vw,30px);font-weight:850;color:#a66027}',
-    '.fish-card-prompt{font-size:13px;color:#718178}',
-    '.fish-card-counter{font-size:13px;font-weight:700;color:#61786a;display:flex;justify-content:space-between}',
     '.fish-actions button{flex:1 1 125px;min-height:50px}',
     '.fish-done{padding:30px 12px;text-align:center;border-radius:17px;background:#eef7f0}',
     '.fish-done h3{color:#2f6f58;font-size:25px}',
-    '@media(max-width:390px){.fish-words{gap:6px}.fish-word{padding:9px 7px}.fish-word.is-selected{padding:8px 6px}.fish-word-number{flex-basis:21px;height:21px}.fish-word-line{gap:5px}.fish-word-ru{padding-left:26px}.fish-flashcard{min-height:240px}}'
+    '@media(max-width:390px){.fish-words{gap:6px}.fish-word{padding:9px 7px}.fish-word.is-selected{padding:8px 6px}.fish-word-number{flex-basis:21px;height:21px}.fish-word-line{gap:5px}.fish-word-ru{padding-left:26px}}'
   ].join('');
   document.head.appendChild(css);
 
@@ -179,36 +171,63 @@
     card.querySelector('#fishBack').onclick=()=>libraryBtn.click();
   }
   function startCards(dir){
-    view='cards';direction=dir;deck=shuffle([0,1,2,3,4,5,6]);place=0;flipped=false;learned=new Set();cards();
+    view='cards';direction=dir;deck=shuffle([0,1,2,3,4,5,6]);place=0;flipped=false;learned=new Set();retryCount=0;cards();
   }
   function cards(){
     if(place>=deck.length){finish();return;}
     const i=deck[place],w=WORDS[i];
     const front=direction==='et-ru'?w.et:w.ru;
-    const answer=direction==='et-ru'?w.ru:w.et;
+    const back=direction==='et-ru'?w.ru:w.et;
+    flipped=false;
     card.innerHTML='<div class="fish-lesson" id="fishLesson">'+intro()+
-      '<div class="fish-deck-tools"><button type="button" id="fishChangeDir" class="secondary">'+(direction==='et-ru'?'🇪🇪 → 🇷🇺':'🇷🇺 → 🇪🇪')+' · Сменить направление</button>'+
-      '<button type="button" id="fishToDiagram">🐟 К рисунку</button></div>'+
-      '<div class="fish-card-counter"><span>Карточка '+(place+1)+' из '+deck.length+'</span><span>✓ Выучено: '+learned.size+' / 7</span></div>'+
-      '<div class="fish-card-shell"><button type="button" class="fish-flashcard" id="fishFlip" aria-label="Перевернуть карточку">'+
-      '<div class="fish-card-question">'+(direction==='et-ru'?'Переведи на русский':'Назови по-эстонски')+'</div>'+
-
-      '<div class="fish-card-word">'+esc(front)+'</div>'+
-      (flipped?'<div class="fish-card-answer">'+esc(answer)+'</div>':'<div class="fish-card-prompt">Нажми, чтобы увидеть перевод ↻</div>')+
-      '</button></div>'+
-      (flipped?'<div class="fish-actions"><button type="button" class="secondary" id="fishRepeat">↻ Повторить позже</button><button type="button" class="primary" id="fishKnow">✓ Знаю</button></div>':
-        '<div class="fish-actions"><button type="button" class="primary" id="fishShow">Показать перевод</button></div>')+
-      backButton()+'</div>';
-    card.querySelector('#fishFlip').onclick=()=>{flipped=!flipped;cards();};
-    if(flipped){
-      card.querySelector('#fishRepeat').onclick=()=>{learned.delete(i);deck.push(i);place++;flipped=false;cards();};
-      card.querySelector('#fishKnow').onclick=()=>{learned.add(i);place++;flipped=false;cards();};
-    }else{
-      card.querySelector('#fishShow').onclick=()=>{flipped=true;cards();};
-    }
-    card.querySelector('#fishChangeDir').onclick=()=>startCards(direction==='et-ru'?'ru-et':'et-ru');
-    card.querySelector('#fishToDiagram').onclick=()=>{view='diagram';diagram();};
-    card.querySelector('#fishBack').onclick=()=>libraryBtn.click();
+      '<div class="review-wrap">'+
+        '<button type="button" class="secondary" id="fishChangeDir" style="width:100%">↔ '+(direction==='et-ru'?'🇪🇪 Eesti → 🇷🇺 Русский':'🇷🇺 Русский → 🇪🇪 Eesti')+'</button>'+
+        '<div class="flashcard" id="fishFlip" role="button" tabindex="0" aria-label="Перевернуть карточку">'+
+          '<div class="flashcard-inner">'+
+            '<div class="flash-face">'+esc(front)+'</div>'+
+            '<div class="flash-face flash-back">'+esc(back)+'</div>'+
+          '</div>'+
+        '</div>'+
+        '<div class="review-stats"><span>✓ '+learned.size+'</span><span>✕ '+retryCount+'</span></div>'+
+        '<div class="review-actions" id="fishActions" hidden>'+
+          '<button class="review-no" type="button" id="fishRepeat" aria-label="Повторить">✕</button>'+
+          '<button class="review-yes" type="button" id="fishKnow" aria-label="Знаю">✓</button>'+
+        '</div>'+
+        '<button type="button" class="secondary" id="fishToDiagram" style="width:100%">← К плакату</button>'+
+      '</div></div>';
+    const flash=card.querySelector('#fishFlip');
+    const actions=card.querySelector('#fishActions');
+    const flip=()=>{
+      if(flipped)return;
+      flipped=true;
+      flash.classList.add('flipped');
+      actions.hidden=false;
+    };
+    flash.onclick=flip;
+    flash.onkeydown=e=>{
+      if(e.key==='Enter'||e.key===' '){e.preventDefault();flip();}
+    };
+    card.querySelector('#fishRepeat').onclick=()=>{
+      if(!flipped)return;
+      retryCount++;
+      deck.push(i);
+      place++;
+      cards();
+    };
+    card.querySelector('#fishKnow').onclick=()=>{
+      if(!flipped)return;
+      learned.add(i);
+      place++;
+      cards();
+    };
+    card.querySelector('#fishChangeDir').onclick=()=>{
+      direction=direction==='et-ru'?'ru-et':'et-ru';
+      cards();
+    };
+    card.querySelector('#fishToDiagram').onclick=()=>{
+      view='diagram';
+      diagram();
+    };
   }
   function finish(){
     card.innerHTML='<div class="fish-lesson" id="fishLesson">'+intro()+
