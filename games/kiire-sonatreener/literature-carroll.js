@@ -27,12 +27,27 @@
   ];
 
   const style=document.createElement('style');
-  style.textContent='.carroll-lesson{display:grid;gap:15px;max-width:780px;margin:0 auto}.carroll-lesson h2{font-size:clamp(25px,6vw,34px);color:#2f6f58;margin:3px 0}.carroll-lesson h3{font-size:19px;color:#2f6f58;margin:0 0 12px}.carroll-panel{padding:15px;background:#fff;border:1px solid #dfe8e2;border-radius:15px}.carroll-lines{display:grid;gap:10px}.carroll-row{padding:13px;background:#f4f8f5;border-radius:11px}.carroll-et{font-weight:760;font-size:18px;line-height:1.55;color:#214b36}.carroll-ru{font-size:15px;color:#55695e;line-height:1.55;padding:7px 0 0 0}.carroll-row-no{font-size:12px;color:#7c9083;font-weight:700;margin-bottom:5px}.carroll-controls{display:flex;flex-wrap:wrap;gap:8px}.carroll-small{font-size:13px;margin-top:8px;padding:6px 10px;border-radius:8px;border:1px solid #d3e4d9;color:#2f6f58;background:#fff;font-weight:700;cursor:pointer}.carroll-row[data-hidden="true"] .carroll-ru{display:none}.carroll-note{color:#61786a;font-size:14px;line-height:1.5;margin:0}.carroll-lesson .carroll-back{justify-self:start}@media(max-width:560px){.carroll-panel{padding:12px}.carroll-et{font-size:17px}}';
+  style.textContent='.carroll-lesson{display:grid;gap:15px;max-width:780px;margin:0 auto}.carroll-lesson h2{font-size:clamp(25px,6vw,34px);color:#2f6f58;margin:3px 0}.carroll-lesson h3{font-size:19px;color:#2f6f58;margin:0 0 12px}.carroll-panel{padding:15px;background:#fff;border:1px solid #dfe8e2;border-radius:15px}.carroll-lines{display:grid;gap:10px}.carroll-row{padding:13px;background:#f4f8f5;border-radius:11px}.carroll-et{font-weight:760;font-size:18px;line-height:1.55;color:#214b36}.carroll-ru{font-size:15px;color:#55695e;line-height:1.55;padding:7px 0 0 0}.carroll-date{font-weight:850;color:#1e5035}.carroll-date-reading{font-weight:650;color:#54796a;font-size:.85em}.carroll-row-no{font-size:12px;color:#7c9083;font-weight:700;margin-bottom:5px}.carroll-controls{display:flex;flex-wrap:wrap;gap:8px}.carroll-small{font-size:13px;margin-top:8px;padding:6px 10px;border-radius:8px;border:1px solid #d3e4d9;color:#2f6f58;background:#fff;font-weight:700;cursor:pointer}.carroll-row[data-hidden="true"] .carroll-ru{display:none}.carroll-note{color:#61786a;font-size:14px;line-height:1.5;margin:0}.carroll-lesson .carroll-back{justify-self:start}@media(max-width:560px){.carroll-panel{padding:12px}.carroll-et{font-size:17px}}';
   document.head.appendChild(style);
   const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  // Reading aids stay in the Estonian line, directly after the number.
+  // They do not replace or change a word of the teacher's text.
+  const spokenDates={
+    '27.':'kahekümne seitsmendal',
+    '14.':'neljateistkümnendal',
+    '1832.':'ühe tuhande kaheksasaja kolmekümne teisel',
+    '1832':'ühe tuhande kaheksasaja kolmekümne teisel aastal',
+    '1898.':'ühe tuhande kaheksasaja üheksakümne kaheksandal',
+    '1898':'ühe tuhande kaheksasaja üheksakümne kaheksandal aastal',
+    '1862.':'ühe tuhande kaheksasaja kuuekümne teisel',
+    '1865':'ühe tuhande kaheksasaja kuuekümne viiendal aastal'
+  };
+  const etWithDates=et=>esc(et).replace(/27\.|14\.|1832\.|1898\.|1862\.|1865|1832|1898/g,number=>
+    '<span class="carroll-date">'+number+'</span><span class="carroll-date-reading" aria-label="Чтение даты по-эстонски"> ('+esc(spokenDates[number])+')</span>'
+  );
   const rows=(items,offset)=>items.map(([et,ru],i)=>
     '<div class="carroll-row" data-hidden="false"><div class="carroll-row-no">'+(offset+i+1)+'</div>'+
-    '<div class="carroll-et" lang="et">'+esc(et)+'</div>'+
+    '<div class="carroll-et" lang="et">'+etWithDates(et)+'</div>'+
     '<div class="carroll-ru" lang="ru">'+esc(ru)+'</div>'+
     '<button type="button" class="carroll-small" data-toggle-row aria-expanded="true">🙈 Скрыть перевод</button></div>'
   ).join('');
@@ -43,7 +58,7 @@
     card.innerHTML='<div class="carroll-lesson" id="carrollLesson">'+
       '<div class="topic-intro"><div class="topic-kicker">📖 Eesti kirjandus · Урок 7</div>'+
       '<h2>Lewis Carroll – elulugu</h2><div class="tiny">Биография · учим текст по предложениям</div></div>'+
-      '<p class="carroll-note">Читай по-эстонски. Перевод под каждым фрагментом можно скрыть или показать для самопроверки.</p>'+
+      '<p class="carroll-note">После каждой даты указано, как произнести её по-эстонски (зелёным). Это подсказка, не дополнительные слова учительницы. Русский перевод можно скрыть или показать.</p>'+
       '<div class="carroll-controls"><button type="button" class="secondary" id="carrollHideAll">🙈 Скрыть все переводы</button>'+
       '<button type="button" class="secondary" id="carrollShowAll">🌐 Показать все переводы</button></div>'+
       '<section class="carroll-panel"><h3>Lewis Carroll (1832–1898)</h3><div class="carroll-lines">'+rows(intro,0)+'</div></section>'+
