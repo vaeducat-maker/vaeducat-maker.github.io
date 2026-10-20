@@ -76,7 +76,6 @@
     '<defs>',
     '<linearGradient id="fishBodyG" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#243f31"/><stop offset=".42" stop-color="#708c42"/><stop offset=".75" stop-color="#d8c589"/><stop offset="1" stop-color="#e5d9b0"/></linearGradient>',
     '<linearGradient id="fishTailG" x1="0" x2=".8" y1="0" y2=".7"><stop stop-color="#697452"/><stop offset="1" stop-color="#ad5e45"/></linearGradient>',
-    '<linearPattern id="fishScalePat" />',
     '<pattern id="fishScale" width="19" height="12" patternUnits="userSpaceOnUse"><path d="M0 4 Q9 15 19 4" stroke="#776d4d" stroke-width="1.35" fill="none" opacity=".27"/></pattern>',
     '<clipPath id="fishBodyClip"><path d="M132 275 Q155 230 241 217 Q390 185 526 220 Q665 243 747 283 L747 306 Q653 371 505 373 Q334 393 237 350 Q159 333 132 296 Z"/></clipPath>',
     '</defs>',
@@ -117,7 +116,7 @@
     ].join('');
   }
   const shuffle=arr=>{const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));const t=a[i];a[i]=a[j];a[j]=t;}return a;};
-  function intro(){return '<header><div class="fish-kicker">🌿 Loodusõpetus · Урок 3</div><h2>Kala kehaosad</h2><div class="fish-sub">Ahven — окунь · 7 частей тела рыбы</div></header>';}
+  function intro(){return '<header class="topic-intro"><div class="fish-kicker">🌿 Loodusõpetus · Урок 3</div><h2>Kala kehaosad</h2><div class="fish-sub">Ahven — окунь · 7 частей тела рыбы</div></header>';}
   function backButton(){return '<button type="button" class="secondary" id="fishBack">← К предметам</button>';}
   function diagram(){
     const words=WORDS.map((w,i)=>{
