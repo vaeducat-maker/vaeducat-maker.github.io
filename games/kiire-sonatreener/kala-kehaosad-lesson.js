@@ -31,6 +31,10 @@
     '.fish-toolbar button.is-active,.fish-deck-tools button.is-active{background:#2f6f58;color:#fff;border-color:#2f6f58}',
     '.fish-picture{padding:6px;border-radius:17px;border:1px solid #dce8e1;background:linear-gradient(135deg,#f1f9fa,#fffdf5);overflow:hidden}',
     '.fish-picture svg{width:100%;height:auto;display:block;max-height:350px}',
+    '.fish-picture.fish-poster{background:#fff;padding:0;border-color:#e0e6dd}',
+    '.fish-picture.fish-poster svg{max-height:none}',
+    '.fish-callout{cursor:pointer}',
+    '.fish-callout:focus-visible .fish-callout-bg{stroke:#d99a22;stroke-width:4}',
     '.fish-picture .fish-zone{pointer-events:all;cursor:pointer}',
     '.fish-hint{font-size:13px;line-height:1.5;color:#5b7065;margin:0}',
     '.fish-words{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}',
@@ -66,19 +70,45 @@
     'M530 354 Q562 400 620 421 Q628 385 598 350 Z',
     'M723 280 Q796 239 852 197 Q835 273 844 292 Q844 321 865 373 Q787 343 723 311 Z'
   ];
-  function fishSvg(selected, interactive){
+  const labelLocations=[
+    {x:898,y:169,w:274,start:[945,245],target:[749,507]},
+    {x:39,y:169,w:289,start:[251,245],target:[385,504]},
+    {x:667,y:37,w:332,start:[689,112],target:[486,347]},
+    {x:29,y:627,w:323,start:[262,643],target:[475,591]},
+    {x:261,y:728,w:302,start:[385,742],target:[506,646]},
+    {x:647,y:730,w:319,start:[761,743],target:[720,647]},
+    {x:945,y:651,w:245,start:[1041,671],target:[1012,548]}
+  ];
+  function posterCallouts(selected){
+    const guide=labelLocations.map((l,i)=>{
+      const sel=selected===i;
+      return '<path d="M'+l.start.join(' ')+' L'+l.target.join(' ')+'" fill="none" stroke="'+(sel?'#2f8060':'#343c37')+'" stroke-width="'+(sel?'4':'2.7')+'" stroke-linecap="round"/>'+
+        '<circle cx="'+l.target[0]+'" cy="'+l.target[1]+'" r="'+(sel?8:6)+'" fill="'+(sel?'#e5aa32':'#273a2d')+'" stroke="#fff" stroke-width="3"/>';
+    }).join('');
+    const captions=labelLocations.map((l,i)=>{
+      const w=WORDS[i],sel=selected===i,show=languageMode==='both'||revealed.has(i);
+      return '<g class="fish-callout" data-fish-word="'+i+'" role="button" tabindex="0" aria-label="'+esc(w.et+' — нажми для перевода')+'" aria-pressed="'+String(show)+'">'+
+        '<rect class="fish-callout-bg" x="'+l.x+'" y="'+l.y+'" width="'+l.w+'" height="96" rx="16" fill="'+(sel?'#edf7ee':'#ffffff')+'" fill-opacity="'+(sel?'.97':'.02')+'" stroke="'+(sel?'#b7dac2':'transparent')+'"/>'+
+        '<text x="'+(l.x+14)+'" y="'+(l.y+45)+'" font-family="Arial, sans-serif" font-size="35" font-weight="800" fill="#1a241d">'+esc(w.et)+'</text>'+
+        (show?'<text x="'+(l.x+14)+'" y="'+(l.y+79)+'" font-family="Arial, sans-serif" font-size="25" font-weight="650" fill="#597366">'+esc(w.ru)+'</text>':'')+
+        '</g>';
+    }).join('');
+    return guide+captions;
+  }
+  function fishSvg(selected, interactive, poster=false){
     const zonePaths=regions.map((d,i)=>{
       const isOn=i===selected;
       return '<path class="fish-zone" data-fish-part="'+i+'" d="'+d+'" fill="'+(isOn?'rgba(255,202,65,.56)':'transparent')+'" stroke="'+(isOn?'#f8b342':'transparent')+'" stroke-width="'+(isOn?'5':'1')+'" stroke-linejoin="round" '+(interactive?'role="button" tabindex="0" aria-label="'+esc(WORDS[i].et)+'"':'aria-hidden="true"')+'/>';
     }).join('');
     return [
-    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 490" role="img" aria-label="Ahven: kala kehaosad. Окунь: части тела рыбы">',
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="'+(poster?'0 0 1200 840':'0 0 920 490')+'" role="img" aria-label="Ahven: kala kehaosad. Окунь: части тела рыбы">',
     '<defs>',
     '<linearGradient id="fishBodyG" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#243f31"/><stop offset=".42" stop-color="#708c42"/><stop offset=".75" stop-color="#d8c589"/><stop offset="1" stop-color="#e5d9b0"/></linearGradient>',
     '<linearGradient id="fishTailG" x1="0" x2=".8" y1="0" y2=".7"><stop stop-color="#697452"/><stop offset="1" stop-color="#ad5e45"/></linearGradient>',
     '<pattern id="fishScale" width="19" height="12" patternUnits="userSpaceOnUse"><path d="M0 4 Q9 15 19 4" stroke="#776d4d" stroke-width="1.35" fill="none" opacity=".27"/></pattern>',
     '<clipPath id="fishBodyClip"><path d="M132 275 Q155 230 241 217 Q390 185 526 220 Q665 243 747 283 L747 306 Q653 371 505 373 Q334 393 237 350 Q159 333 132 296 Z"/></clipPath>',
     '</defs>',
+    (poster?'<g transform="translate(90 205) scale(1.1)">':''),
     '<g opacity=".24" fill="none" stroke="#9abec1" stroke-width="3"><path d="M30 98 Q85 79 142 98 M749 93 Q813 80 875 97 M41 408 Q118 388 176 404 M697 432 Q807 413 875 427"/></g>',
     // Tail and fin membranes are behind the body.
     '<path d="M709 278 Q787 234 852 197 Q838 266 845 291 Q844 328 866 374 Q783 341 709 314 Z" fill="url(#fishTailG)" stroke="#334b3b" stroke-width="6" stroke-linejoin="round"/>',
@@ -112,6 +142,7 @@
     '<g stroke="#edb070" stroke-width="2.5"><path d="M312 326 L386 370 M317 334 L378 381 M315 345 L349 385 M319 328 L361 377"/></g>',
     // Highlight and hit regions are the topmost layer.
     '<g>'+zonePaths+'</g>',
+    (poster?'</g>'+posterCallouts(selected):''),
     '</svg>'
     ].join('');
   }
@@ -119,26 +150,24 @@
   function intro(){return '<header class="topic-intro"><div class="fish-kicker">🌿 Loodusõpetus · Урок 3</div><h2>Kala kehaosad</h2><div class="fish-sub">Ahven — окунь · 7 частей тела рыбы</div></header>';}
   function backButton(){return '<button type="button" class="secondary" id="fishBack">← К предметам</button>';}
   function diagram(){
-    const words=WORDS.map((w,i)=>{
-      const show=languageMode==='both'||revealed.has(i);
-      return '<button type="button" data-fish-word="'+i+'" aria-pressed="'+String(chosen===i)+'" class="fish-word'+(chosen===i?' is-selected':'')+'">'+
-        '<span class="fish-word-line"><span class="fish-word-number">'+(i+1)+'</span>'+esc(w.et)+'</span>'+
-        (show?'<span class="fish-word-ru">'+esc(w.ru)+'</span>':'')+
-        '</button>';
-    }).join('');
     card.innerHTML='<div class="fish-lesson" id="fishLesson">'+intro()+
       '<div class="fish-toolbar"><button type="button" data-fish-mode="et" class="'+(languageMode==='et'?'is-active':'')+'">🇪🇪 Только эстонский</button>'+
       '<button type="button" data-fish-mode="both" class="'+(languageMode==='both'?'is-active':'')+'">🇪🇪 + 🇷🇺 С переводом</button></div>'+
-      '<div class="fish-picture">'+fishSvg(chosen,true)+'</div>'+
-      '<p class="fish-hint">Нажми на слово или на часть рыбы: она подсветится, а перевод появится под словом. Во втором режиме все переводы видны сразу.</p>'+
-      '<div class="fish-words">'+words+'</div>'+
+      '<div class="fish-picture fish-poster">'+fishSvg(chosen,true,true)+'</div>'+
+      '<p class="fish-hint">Нажми на подпись около рыбы — русский перевод появится прямо под ней. Нажми ещё раз, чтобы скрыть его.</p>'+
       '<div class="fish-actions"><button class="primary" id="fishEtCards">🃏 Карточки: Eesti → русский</button><button class="secondary" id="fishRuCards">🃏 Карточки: русский → Eesti</button></div>'+
       backButton()+'</div>';
     card.querySelectorAll('[data-fish-word], [data-fish-part]').forEach(el=>{
       const idx=Number(el.dataset.fishWord!==undefined?el.dataset.fishWord:el.dataset.fishPart);
-      const choose=()=>{chosen=idx;revealed.add(idx);diagram();};
+      const choose=()=>{
+        if(languageMode==='et'){
+          if(el.hasAttribute('data-fish-word')&&revealed.has(idx))revealed.delete(idx);
+          else revealed.add(idx);
+        }
+        chosen=idx;diagram();
+      };
       el.addEventListener('click',choose);
-      if(el.hasAttribute('data-fish-part'))el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();choose();}});
+      el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();choose();}});
     });
     card.querySelectorAll('[data-fish-mode]').forEach(btn=>btn.onclick=()=>{
       languageMode=btn.dataset.fishMode;
