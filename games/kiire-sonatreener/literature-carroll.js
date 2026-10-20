@@ -42,9 +42,12 @@
     '1862.':'ühe tuhande kaheksasaja kuuekümne teisel',
     '1865':'ühe tuhande kaheksasaja kuuekümne viiendal aastal'
   };
-  const etWithDates=et=>esc(et).replace(/27\.|14\.|1832\.|1898\.|1862\.|1865|1832|1898/g,number=>
-    '<span class="carroll-date">'+number+'</span><span class="carroll-date-reading" aria-label="Чтение даты по-эстонски"> ('+esc(spokenDates[number])+')</span>'
-  );
+  const etWithDates=et=>esc(et)
+    .replace(/\(1865\)/g,'@@PUBYEAR@@')
+    .replace(/27\.|14\.|1832\.|1898\.|1862\.|1865|1832|1898/g,number=>
+      '<span class="carroll-date">'+number+'</span><span class="carroll-date-reading" aria-label="Чтение даты по-эстонски"> ('+esc(spokenDates[number])+')</span>'
+    )
+    .replace('@@PUBYEAR@@','(<span class="carroll-date">1865</span><span class="carroll-date-reading"> — '+esc(spokenDates['1865'])+'</span>)');
   const rows=(items,offset)=>items.map(([et,ru],i)=>
     '<div class="carroll-row" data-hidden="false"><div class="carroll-row-no">'+(offset+i+1)+'</div>'+
     '<div class="carroll-et" lang="et">'+etWithDates(et)+'</div>'+
@@ -61,7 +64,7 @@
       '<p class="carroll-note">Читай число один раз — словами в зелёных скобках. Сами цифры вслух не повторяй. Русский перевод можно скрыть или показать.</p>'+
       '<div class="carroll-controls"><button type="button" class="secondary" id="carrollHideAll">🙈 Скрыть все переводы</button>'+
       '<button type="button" class="secondary" id="carrollShowAll">🌐 Показать все переводы</button></div>'+
-      '<section class="carroll-panel"><h3>Lewis Carroll (1832–1898)</h3><div class="carroll-lines">'+rows(intro,0)+'</div></section>'+
+      '<section class="carroll-panel"><h3>Lewis Carroll</h3><div class="carroll-lines">'+rows(intro,0)+'</div></section>'+
       '<section class="carroll-panel"><h3>Elulugu</h3><div class="carroll-lines">'+rows(biography,intro.length)+'</div></section>'+
       '<button type="button" class="secondary carroll-back" id="carrollBack">← К предметам</button></div>';
     const root=card.querySelector('#carrollLesson');
