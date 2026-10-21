@@ -1404,7 +1404,20 @@ body{background:
     const prev=JSON.parse(localStorage.getItem(WORLD_HISTORY_KEY)||'null');
     if(Array.isArray(prev)&&prev.length===protoWorldCount&&prev.every(k=>Number.isInteger(k)&&k>=0&&k<550)&&new Set(prev).size===prev.length)worldOpenedOrder=prev;
   }catch{}
+  // The ?preview=250 demo is read-only. It never changes stored progress or unlocks.
+  const requestedWorldPreview=Number(new URLSearchParams(location.search).get('preview'));
+  const WORLD_PREVIEW=Number.isInteger(requestedWorldPreview)&&requestedWorldPreview>=1&&requestedWorldPreview<=550?requestedWorldPreview:null;
   function worldUnlocks(){return worldOpenedOrder||protoOrder.slice(0,protoWorldCount)}
+  function previewWorldUnlocks(){
+    const actual=worldUnlocks();
+    if(WORLD_PREVIEW===null)return actual;
+    if(actual.length>=WORLD_PREVIEW)return actual.slice(0,WORLD_PREVIEW);
+    const known=new Set(actual);
+    return actual.concat(protoOrder.filter(tile=>!known.has(tile)).slice(0,WORLD_PREVIEW-actual.length));
+  }
+  function viewWorldCounter(count){
+    $('#protoWorldCount').textContent=count+' / 550'+(WORLD_PREVIEW!==null?' · DEMO':'');
+  }
   function saveProto(){
     localStorage.setItem('edukass-columns-full-level',String(protoLevel));
     localStorage.setItem('edukass-columns-full-world',String(protoWorldCount));
@@ -1622,13 +1635,16 @@ body{background:
     worldTimelapseId++;cancelAnimationFrame(worldTimelapseFrame);worldTimelapseFrame=0;
   }
   function endWorldTimelapse(){
-    stopWorldTimelapse();rebuildProtoActive();drawProtoWorld();syncProtoTop();
+    stopWorldTimelapse();
+    // A read-only preview is visible only on the world-view screen.
+    protoActive=new Set(previewWorldUnlocks());drawProtoWorld();
+    if(WORLD_PREVIEW!==null)viewWorldCounter(previewWorldUnlocks().length);else syncProtoTop();
     $('#worldSkip').classList.add('hidden');$('#worldReplay').classList.remove('hidden');
     $('#worldTimelapseCaption').classList.add('hidden');
   }
   function playWorldTimelapse(){
     stopWorldTimelapse();fitProtoWorld();hideProtoChoices();
-    const run=worldTimelapseId,order=worldUnlocks().slice(),total=order.length,duration=3400;
+    const run=worldTimelapseId,order=previewWorldUnlocks().slice(),total=order.length,duration=3400;
     let started=null,lastCount=-1;
     $('#worldReplay').classList.add('hidden');$('#worldSkip').classList.remove('hidden');
     $('#worldTimelapseCaption').classList.remove('hidden');
@@ -1641,7 +1657,7 @@ body{background:
       if(count!==lastCount){
         protoActive=new Set(order.slice(0,count));
         drawProtoWorld();
-        $('#protoWorldCount').textContent=count+' / 550';
+        viewWorldCounter(count);
         lastCount=count;
       }
       if(fraction<1)worldTimelapseFrame=requestAnimationFrame(frame);
@@ -1741,7 +1757,11 @@ body{background:
   }catch{}
   currentView=restored.view||'intro';
 
-  if(currentView.startsWith('lesson')){
+  if(WORLD_PREVIEW!==null){
+    // Deep-link straight into the 250-tile timelapse; keep the real world unchanged.
+    $('#introScreen').classList.add('hidden');
+    showWorldView({historyMode:'none'});
+  }else if(currentView.startsWith('lesson')){
     // No lifetime archive: an interrupted/reloaded lesson starts fresh.
     currentView='home';$('#introScreen').classList.add('hidden');showHome({historyMode:'none'});
   }else if(currentView==='home'){
@@ -1775,7 +1795,8 @@ body{background:
     getLesson:()=>({active:lesson.active,finished:lesson.finished,elapsed:lesson.elapsed,solved:lesson.entries.length}),
     setLessonElapsed:(ms)=>{lesson.elapsed=Math.min(LESSON_MS,Math.max(0,ms));updateLessonClock()},
     showLessonDone:()=>showLessonDone(),
-    getWorldTileOrder:()=>worldUnlocks()
+    getWorldTileOrder:()=>worldUnlocks(),
+    getWorldPreview:()=>({enabled:WORLD_PREVIEW!==null,count:previewWorldUnlocks().length,actualCount:protoWorldCount})
   };
 })();
 
