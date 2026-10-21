@@ -384,9 +384,7 @@ body{background:
 .division-answer.division-below .division-result{flex-direction:column;align-items:center;gap:3px}
 .world-replay,.world-skip{position:absolute;z-index:7;bottom:15px;right:13px;border-radius:14px;border:1px solid rgba(255,255,255,.65);background:rgba(255,255,255,.95);color:#254363;font-size:13px;font-weight:900;padding:10px 13px;display:none;box-shadow:0 7px 16px rgba(7,18,40,.28)}
 .proto-world.viewing .world-replay:not(.hidden),.proto-world.viewing .world-skip:not(.hidden){display:block}
-.world-demo{position:absolute;z-index:7;bottom:15px;left:13px;display:none;border-radius:14px;border:1px solid rgba(255,215,146,.7);background:linear-gradient(145deg,#ffefba,#ffcc65);color:#283c5b;font-size:13px;font-weight:950;padding:10px 12px;box-shadow:0 7px 16px rgba(7,18,40,.28)}
-.proto-world.viewing .world-demo{display:block}
-@media(max-width:370px){.world-demo,.world-replay,.world-skip{font-size:11px;padding:9px}}
+@media(max-width:370px){.world-replay,.world-skip{font-size:11px;padding:9px}}
 .world-timelapse-caption{position:absolute;z-index:7;left:50%;top:60px;transform:translateX(-50%);color:#fff;font-size:14px;font-weight:900;text-shadow:0 2px 8px #0c2442;text-align:center;white-space:nowrap;display:none}
 .proto-world.viewing .world-timelapse-caption:not(.hidden){display:block}
 </style>
@@ -493,7 +491,6 @@ body{background:
       <button class="world-view-back" id="worldViewBack" type="button">← Tagasi</button>
        <button class="world-replay hidden" id="worldReplay" type="button">↻ Vaata uuesti</button>
        <button class="world-skip hidden" id="worldSkip" type="button">Näita maailma →</button>
-       <button class="world-demo" id="worldDemo250" type="button">🧪 Proovi 250 / 550</button>
        <div class="world-timelapse-caption hidden" id="worldTimelapseCaption">Sinu maailm kasvab...</div>
       <canvas id="protoWorldCanvas"></canvas>
       <div class="proto-world-count" id="protoWorldCount">50 / 550</div>
@@ -1445,11 +1442,6 @@ body{background:
   // The one-time ?setworld=250 link changes the REAL local game save, not the demo.
   const boostValue=Number(qs.get('setworld'));
   const REAL_WORLD_BOOST=Number.isInteger(boostValue)&&boostValue>=50&&boostValue<=550?boostValue:null;
-  function syncWorldDemoButton(){
-    const b=$('#worldDemo250');if(!b)return;
-    b.textContent=worldPreviewCount===250?'↩ Päris maailm':'🧪 Proovi 250 / 550';
-    b.setAttribute('aria-label',worldPreviewCount===250?'Vaata päris maailma':'Proovi maailma 250 osaga');
-  }
   function worldUnlocks(){return worldOpenedOrder||protoOrder.slice(0,protoWorldCount)}
   function previewWorldUnlocks(){
     const actual=worldUnlocks();
@@ -1682,21 +1674,32 @@ body{background:
   function drawHomeWorld(){
     if(!homeCv||!homeCv.isConnected||!protoImg.complete||!protoImg.naturalWidth)return;
     const r=homeCv.getBoundingClientRect();if(!r.width||!r.height)return;
-    const d=Math.min(devicePixelRatio||1,2);homeCv.width=Math.round(r.width*d);homeCv.height=Math.round(r.height*d);homeCtx.setTransform(d,0,0,d,0,0);
-    const w=r.width,h=r.height,g=homeCtx.createLinearGradient(0,0,0,h);g.addColorStop(0,'#17345f');g.addColorStop(.58,'#285c79');g.addColorStop(1,'#61477d');homeCtx.fillStyle=g;homeCtx.fillRect(0,0,w,h);
+    const d=Math.min(devicePixelRatio||1,2),w=r.width,h=r.height;
+    homeCv.width=Math.round(w*d);homeCv.height=Math.round(h*d);
+    homeCtx.setTransform(d,0,0,d,0,0);
+    // Wide thumbnail, tall source art: keep ONE scale for both axes.
+    // The previous renderer stretched hills, bridges and waterfalls sideways.
+    const bg=homeCtx.createLinearGradient(0,0,0,h);
+    bg.addColorStop(0,'#15345d');bg.addColorStop(.58,'#285576');bg.addColorStop(1,'#60447b');
+    homeCtx.fillStyle=bg;homeCtx.fillRect(0,0,w,h);
     if(!protoActive.size)return;
-    const pts=[...protoActive].map(pxy);let minX=PCOLS,maxX=0,minY=PROWS,maxY=0;
+    const pts=[...protoActive].map(pxy);
+    let minX=PCOLS,maxX=0,minY=PROWS,maxY=0;
     pts.forEach(([x,y])=>{minX=Math.min(minX,x);maxX=Math.max(maxX,x);minY=Math.min(minY,y);maxY=Math.max(maxY,y)});
-    const padX=2.4,padY=2.2;minX=Math.max(0,minX-padX);maxX=Math.min(PCOLS,maxX+padX);minY=Math.max(0,minY-padY);maxY=Math.min(PROWS,maxY+padY);
-    let spanX=maxX-minX+1,spanY=maxY-minY+1,targetRatio=w/h;
-    if(spanX/spanY>targetRatio){const need=spanX/targetRatio-spanY;minY=Math.max(0,minY-need/2);maxY=Math.min(PROWS,maxY+need/2)}
-    else{const need=spanY*targetRatio-spanX;minX=Math.max(0,minX-need/2);maxX=Math.min(PCOLS,maxX+need/2)}
-    spanX=maxX-minX+1;spanY=maxY-minY+1;
-    const srcCellW=protoImg.width/PCOLS,srcCellH=protoImg.height/PROWS;
-    const dxCell=w/spanX,dyCell=h/spanY;
+    const sw=protoImg.naturalWidth/PCOLS,sh=protoImg.naturalHeight/PROWS;
+    // Fit the revealed territory, then gently zoom for a scenic wide crop.
+    const padX=1.4,padY=1.5;
+    const spanW=(maxX-minX+1+2*padX)*sw,spanH=(maxY-minY+1+2*padY)*sh;
+    const contain=Math.min((w-14)/spanW,(h-12)/spanH);
+    const cover=Math.max((w-14)/spanW,(h-12)/spanH);
+    const scale=Math.min(cover,contain*1.65);
+    const centerX=(minX+maxX+1)/2,centerY=(minY+maxY+1)/2;
+    const dw=sw*scale,dh=sh*scale;
+    const ox=w/2-centerX*dw,oy=h/2-centerY*dh;
+    homeCtx.imageSmoothingEnabled=true;homeCtx.imageSmoothingQuality='high';
     for(const k of protoActive){
       const[x,y]=pxy(k);
-      homeCtx.drawImage(protoImg,x*srcCellW,y*srcCellH,srcCellW+.8,srcCellH+.8,(x-minX)*dxCell,(y-minY)*dyCell,dxCell+.6,dyCell+.6);
+      homeCtx.drawImage(protoImg,x*sw,y*sh,sw+.4,sh+.4,ox+x*dw,oy+y*dh,dw+.35,dh+.35);
     }
   }
   function rebuildProtoActive(){protoActive=new Set(worldUnlocks().slice(0,Math.min(protoWorldCount,protoOrder.length)))}
@@ -1741,15 +1744,9 @@ body{background:
   }
   $('#worldReplay').addEventListener('click',()=>{playGameSound('ui');playWorldTimelapse()});
   $('#worldSkip').addEventListener('click',()=>{playGameSound('ui');endWorldTimelapse()});
-  $('#worldDemo250').addEventListener('click',()=>{
-    playGameSound('ui');
-    worldPreviewCount=worldPreviewCount===250?null:250;
-    syncWorldDemoButton();
-    playWorldTimelapse();
-  });
 
   function showProtoWorld({historyMode='replace'}={}){stopWorldTimelapse();clearAssistTimers();taskToken++;$('#home').classList.add('hidden');$('#train').classList.add('hidden');$('#protoWorld').classList.remove('viewing');$('#protoWorld').classList.add('on');writeNav('world-reward',{mode:lastMode},historyMode);syncProtoTop();fitProtoWorld();rebuildProtoActive();drawProtoWorld();setTimeout(showProtoChoices,320)}
-  function showWorldView({historyMode='push'}={}){syncWorldDemoButton();clearAssistTimers();taskToken++;$('#home').classList.add('hidden');$('#train').classList.add('hidden');$('#protoWorld').classList.add('on','viewing');hideProtoChoices();writeNav('world-view',{},historyMode);fitProtoWorld();rebuildProtoActive();drawProtoWorld();if(protoImg.complete&&protoImg.naturalWidth)playWorldTimelapse()}
+  function showWorldView({historyMode='push'}={}){clearAssistTimers();taskToken++;$('#home').classList.add('hidden');$('#train').classList.add('hidden');$('#protoWorld').classList.add('on','viewing');hideProtoChoices();writeNav('world-view',{},historyMode);fitProtoWorld();rebuildProtoActive();drawProtoWorld();if(protoImg.complete&&protoImg.naturalWidth)playWorldTimelapse()}
   function chooseProtoWorld(k){
     if(!Number.isInteger(k)||protoActive.has(k))return;
     playGameSound('world');hideProtoChoices();let st=null;
