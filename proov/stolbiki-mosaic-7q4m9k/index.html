@@ -1096,40 +1096,38 @@ background-size:44px 44px;transform:perspective(700px) rotateX(58deg) translateY
   $$('#pad [data-key]').forEach(b=>b.addEventListener('click',()=>press(b.dataset.key)));
   $('#back').onclick=showHome;$('#other').onclick=showHome;$('#again').onclick=()=>start(lastMode);
 
-  let introMusicPlayed=false;
-  function playIntroMusic(){
-    if(introMusicPlayed)return;
+  let introAudioContext=null;
+  function playIntroLaunchSound(){
     const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
-    let ac;try{ac=new AC()}catch(e){return}
-    const start=()=>{
-      if(introMusicPlayed)return;introMusicPlayed=true;
-      const master=ac.createGain();master.gain.setValueAtTime(.0001,ac.currentTime);
-      master.gain.exponentialRampToValueAtTime(.035,ac.currentTime+.18);
-      master.gain.exponentialRampToValueAtTime(.0001,ac.currentTime+3.4);
-      master.connect(ac.destination);
-      const notes=[
-        [261.63,0,.72],[329.63,.34,.72],[392,.68,.82],
-        [523.25,1.18,.68],[392,1.55,.68],[440,1.90,.82],
-        [329.63,2.38,.72],[392,2.70,.78]
-      ];
-      notes.forEach(([f,t,d])=>{
-        const o=ac.createOscillator(),g=ac.createGain();
-        o.type='sine';o.frequency.value=f;
-        g.gain.setValueAtTime(.0001,ac.currentTime+t);
-        g.gain.exponentialRampToValueAtTime(.12,ac.currentTime+t+.05);
-        g.gain.exponentialRampToValueAtTime(.0001,ac.currentTime+t+d);
-        o.connect(g);g.connect(master);o.start(ac.currentTime+t);o.stop(ac.currentTime+t+d+.05);
-      });
+    if(!introAudioContext)introAudioContext=new AC();
+    const ac=introAudioContext;
+    if(ac.state==='suspended')ac.resume();
+    const tone=(frequency,offset,duration,volume,type='sine')=>{
+      const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime+offset;
+      o.type=type;o.frequency.setValueAtTime(frequency,t);
+      g.gain.setValueAtTime(.0001,t);
+      g.gain.exponentialRampToValueAtTime(volume,t+.012);
+      g.gain.exponentialRampToValueAtTime(.0001,t+duration);
+      o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+duration+.03);
     };
-    if(ac.state==='running')start();
-    else ac.resume().then(start).catch(()=>{});
+    const sweep=(from,to,offset,duration,volume)=>{
+      const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime+offset;
+      o.type='sine';o.frequency.setValueAtTime(from,t);o.frequency.exponentialRampToValueAtTime(to,t+duration);
+      g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(volume,t+.025);g.gain.exponentialRampToValueAtTime(.0001,t+duration);
+      o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+duration+.03);
+    };
+    // Same short "launch" character as the multiplication trainer: airy rise + bright chime.
+    sweep(560,1480,.02,.42,.034);
+    tone(880,.31,.12,.026,'triangle');
+    tone(1175,.43,.17,.028,'sine');
+    [659,784,988].forEach((f,i)=>tone(f,.56+i*.018,.38,.018,'sine'));
+    tone(1568,.84,.24,.022,'sine');
   }
-  setTimeout(playIntroMusic,180);
-  const unlockIntroMusic=()=>{playIntroMusic();window.removeEventListener('pointerdown',unlockIntroMusic,true);window.removeEventListener('keydown',unlockIntroMusic,true)};
-  window.addEventListener('pointerdown',unlockIntroMusic,true);
-  window.addEventListener('keydown',unlockIntroMusic,true);
-
-  $('#introPlay').addEventListener('click',()=>{$('#introScreen').classList.add('hidden');showHome()});
+  $('#introPlay').addEventListener('click',()=>{
+    playIntroLaunchSound();
+    $('#introScreen').classList.add('hidden');
+    showHome();
+  });
   $('#openWorldView').addEventListener('click',()=>{
     clearAssistTimers();$('#home').classList.add('hidden');$('#train').classList.add('hidden');$('#protoWorld').classList.add('on','viewing');
     hideProtoChoices();fitProtoWorld();rebuildProtoActive();drawProtoWorld();
