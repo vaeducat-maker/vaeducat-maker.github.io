@@ -1,3 +1,4 @@
+# manual redeploy trigger: stolbiki training theme 2026-10-21
 name: Deploy EDUKASS preview to Cloudflare
 
 on:
