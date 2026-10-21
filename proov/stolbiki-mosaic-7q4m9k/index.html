@@ -4,7 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>Столбики v4.2 portrait</title>
-<style>
+<style>:root{--world-bg:
+radial-gradient(circle at 72% 28%,rgba(112,217,207,.32),transparent 24%),
+radial-gradient(circle at 20% 78%,rgba(230,78,137,.23),transparent 27%),
+linear-gradient(155deg,#132a57 0%,#204c72 52%,#5a427a 100%)}
+
 :root{
   --bg:#f6f7f5;--panel:#ffffff;--ink:#171918;--muted:#737876;--line:#d9ddda;
   --accent:#4fc7b1;--accent-soft:#e7f8f4;--ok:#24a36a;--bad:#d84a4a;--grid:#e4e9e6;
@@ -146,16 +150,9 @@ background-size:44px 44px;transform:perspective(700px) rotateX(58deg) translateY
 .mode{font-size:15px}.route{font-size:13px;font-weight:800;color:var(--muted)}
 .proto-world{display:none;height:100%;min-height:0}
 .proto-world.on{display:block}
-.proto-world-frame{position:relative;height:100%;border:1px solid rgba(255,255,255,.28);border-radius:27px;overflow:hidden;background:
-radial-gradient(circle at 72% 28%,rgba(112,217,207,.32),transparent 24%),
-radial-gradient(circle at 20% 78%,rgba(230,78,137,.23),transparent 27%),
-linear-gradient(155deg,#132a57 0%,#204c72 52%,#5a427a 100%);
+.proto-world-frame{position:relative;height:100%;border:1px solid rgba(255,255,255,.28);border-radius:27px;overflow:hidden;background:var(--world-bg);
 box-shadow:0 17px 34px rgba(18,43,78,.22),inset 0 1px 0 rgba(255,255,255,.25)}
 #protoWorldCanvas{position:absolute;inset:0;width:100%;height:100%;display:block;filter:saturate(1.08) contrast(1.03)}
-.proto-world-frame:before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:
-radial-gradient(circle at 30% 25%,rgba(255,255,255,.7) 0 1px,transparent 2px),
-radial-gradient(circle at 70% 61%,rgba(255,255,255,.5) 0 1px,transparent 2px);
-background-size:83px 79px,127px 111px;opacity:.27}
 #protoWorldCanvas{z-index:0}.proto-world-count,.world-view-back,.proto-choice{z-index:6}
 .proto-world-count{position:absolute;top:12px;right:12px;z-index:6;background:rgba(255,255,255,.96);border-radius:999px;padding:8px 12px;font-size:13px;font-weight:900;color:#294765;box-shadow:0 7px 18px rgba(23,54,95,.12)}
 .proto-choice{position:absolute;width:46px;height:46px;border-radius:50%;border:3px solid #fff;background:rgba(54,196,87,.30);box-shadow:0 0 18px rgba(53,190,86,.72);transform:translate(-50%,-50%);display:none;z-index:5;animation:protoPulse 1.15s ease-in-out infinite}
@@ -180,13 +177,10 @@ body{background:
 
 .home-world-card{
   height:31%;min-height:185px;border:1px solid rgba(255,255,255,.28);border-radius:27px;
-  background:
-    radial-gradient(circle at 72% 28%,rgba(112,217,207,.32),transparent 24%),
-    radial-gradient(circle at 20% 78%,rgba(230,78,137,.23),transparent 27%),
-    linear-gradient(155deg,#132a57 0%,#204c72 52%,#5a427a 100%);
+  background:var(--world-bg);
   box-shadow:0 17px 34px rgba(18,43,78,.22),inset 0 1px 0 rgba(255,255,255,.25)
 }
-.home-world-card:before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:
+.home-world-card:before,.proto-world-frame:before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:
   radial-gradient(circle at 30% 25%,rgba(255,255,255,.7) 0 1px,transparent 2px),
   radial-gradient(circle at 70% 61%,rgba(255,255,255,.5) 0 1px,transparent 2px);
   background-size:83px 79px,127px 111px;opacity:.27}
