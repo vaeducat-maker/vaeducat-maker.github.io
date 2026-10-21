@@ -266,6 +266,83 @@ body{background:
   .proto-world{width:min(100%,900px);margin:0 auto}
   .intro-stage{width:min(520px,54vw);height:390px}
 }
+
+/* Training screen visual refresh — preserve v4.2 math geometry and keypad sizing */
+.train{
+  position:relative;
+  padding:8px;
+  border-radius:28px;
+  background:
+    radial-gradient(circle at 72% 22%,rgba(112,217,207,.18),transparent 24%),
+    radial-gradient(circle at 18% 78%,rgba(230,78,137,.16),transparent 28%),
+    linear-gradient(155deg,#081b42 0%,#123d66 54%,#4a3478 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12);
+}
+.train:before{
+  content:"";position:absolute;inset:0;pointer-events:none;border-radius:28px;
+  background:
+    radial-gradient(circle at 18% 18%,rgba(255,255,255,.72) 0 1px,transparent 2px),
+    radial-gradient(circle at 78% 64%,rgba(255,255,255,.48) 0 1px,transparent 2px);
+  background-size:97px 91px,137px 123px;opacity:.20
+}
+.topbar{position:relative;z-index:2;color:#fff}
+.back{
+  display:grid;place-items:center;
+  width:40px;height:40px;
+  border:2px solid rgba(255,255,255,.72);
+  border-radius:50%;
+  background:rgba(255,255,255,.96);
+  color:#17365f;
+  font-size:25px;
+  font-weight:1000;
+  box-shadow:0 6px 16px rgba(3,10,31,.28)
+}
+.mode{color:#fff;text-shadow:0 2px 5px rgba(3,10,31,.36)}
+.route{
+  color:#dceaf6;
+  background:rgba(255,255,255,.10);
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:999px;
+  padding:6px 8px;
+  text-align:center
+}
+.paper{
+  position:relative;z-index:2;
+  border:2px solid rgba(255,220,145,.72);
+  background:
+    radial-gradient(circle at 50% 12%,rgba(255,255,255,.98),transparent 28%),
+    linear-gradient(180deg,#fffef9,#fff9ea);
+  box-shadow:0 14px 30px rgba(4,14,42,.28),inset 0 0 0 1px rgba(255,255,255,.9)
+}
+.pad{
+  position:relative;z-index:2;
+  padding:8px;
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:20px;
+  background:rgba(175,198,255,.18);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12)
+}
+.pad button{
+  border:1px solid rgba(23,54,95,.14);
+  background:linear-gradient(180deg,#fff,#f5f8fc);
+  color:#10274a;
+  box-shadow:0 5px 10px rgba(3,10,31,.18),inset 0 1px 0 #fff
+}
+.pad button:active{
+  transform:scale(.98);
+  background:#eef8f5;
+  box-shadow:0 2px 5px rgba(3,10,31,.18),inset 0 0 0 2px var(--accent)
+}
+.train .sound-toggle{
+  background:rgba(255,255,255,.96);
+  color:#17365f;
+  border:2px solid rgba(255,255,255,.72);
+  box-shadow:0 6px 16px rgba(3,10,31,.28)
+}
+@media(max-height:700px){
+  .train{padding:6px;border-radius:22px}
+  .pad{padding:6px;border-radius:16px}
+}
 </style>
   <link rel="preload" href="/games/korrutamine-test/assets/edukass-cat-transparent.png" as="image" fetchpriority="high">
 </head>
