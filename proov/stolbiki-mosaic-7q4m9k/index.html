@@ -947,11 +947,11 @@ body{background:
 })(typeof globalThis!=='undefined'?globalThis:this,function(MathEngine){
   'use strict';
   if(!MathEngine) throw new Error('Math engine required');
-  const META={add:{prefix:'A',max:10,start:3},sub:{prefix:'S',max:12,start:3},mul:{prefix:'M',max:14,start:3},div:{prefix:'D',max:16,start:2}};
+  const META={add:{prefix:'A',max:10,start:1},sub:{prefix:'S',max:12,start:1},mul:{prefix:'M',max:14,start:1},div:{prefix:'D',max:16,start:1}};
   const DAY=86400000;
   function blankSkill(){return{attempts:0,firstTry:0,errors:0,assisted:0,totalMs:0,cleanStreak:0,mastered:false,reviewStage:0,nextReviewAt:0,lastSeenAt:0}}
-  function createProfile(){const p={version:42,sessionNo:0,ops:{}};for(const [op,m] of Object.entries(META)){const skills={};for(let i=1;i<=m.max;i++)skills[m.prefix+i]=blankSkill();p.ops[op]={frontier:m.start,diagnostic:true,baselineMs:0,baselineSamples:0,skills}}return p}
-  function normalizeProfile(raw){if(!raw||raw.version!==42)return createProfile();for(const [op,m] of Object.entries(META)){raw.ops??={};raw.ops[op]??={frontier:m.start,diagnostic:true,baselineMs:0,baselineSamples:0,skills:{}};for(let i=1;i<=m.max;i++){const k=m.prefix+i;raw.ops[op].skills[k]=Object.assign(blankSkill(),raw.ops[op].skills[k]||{})}}return raw}
+  function createProfile(){const p={version:42,sessionNo:0,ops:{}};for(const [op,m] of Object.entries(META)){const skills={};for(let i=1;i<=m.max;i++)skills[m.prefix+i]=blankSkill();p.ops[op]={frontier:m.start,diagnostic:false,baselineMs:0,baselineSamples:0,skills}}return p}
+  function normalizeProfile(raw){if(!raw||raw.version!==42)return createProfile();for(const [op,m] of Object.entries(META)){raw.ops??={};raw.ops[op]??={frontier:m.start,diagnostic:false,baselineMs:0,baselineSamples:0,skills:{}};for(let i=1;i<=m.max;i++){const k=m.prefix+i;raw.ops[op].skills[k]=Object.assign(blankSkill(),raw.ops[op].skills[k]||{})}}return raw}
   function opFromSkill(skill){return skill[0]==='A'?'add':skill[0]==='S'?'sub':skill[0]==='M'?'mul':'div'}
   function levelFromSkill(skill){return Number(skill.slice(1))}
   function skillFor(op,level){return META[op].prefix+Math.max(1,Math.min(META[op].max,level))}
@@ -969,6 +969,8 @@ body{background:
     if(dueRetry){session.retryQueue.splice(session.retryQueue.indexOf(dueRetry),1);return{skill:dueRetry.skill,reason:'retry'}}
     const due=dueReview(state,session.now);if(due.length&&session.rng()<0.35)return{skill:due[0],reason:'spaced-review'};
     const f=state.frontier,r=session.rng();
+    // Never place a new pupil in a higher task as a diagnostic shortcut.
+    if(f===1&&!state.skills[skillFor(op,1)].mastered)return{skill:skillFor(op,1),reason:'current'};
     if(r<0.70)return{skill:skillFor(op,f),reason:'current'};
     if(r<0.90)return{skill:skillFor(op,f-1),reason:'review'};
     return{skill:skillFor(op,f+1),reason:'probe'};
@@ -1013,6 +1015,22 @@ body{background:
 
   let profile;try{profile=A.normalizeProfile(JSON.parse(localStorage.getItem(KEY)||'null'))}catch{profile=A.createProfile()}
   const save=()=>localStorage.setItem(KEY,JSON.stringify(profile));
+  // Correct already-opened, but genuinely unplayed, invitee profiles.
+  // Never reset a child's actual solved problems or their earned world.
+  function correctUnplayedStartingLevel(){
+    const noSolvedProblems=Object.values(profile.ops).every(st=>
+      Object.values(st.skills).every(skill=>(Number(skill.attempts)||0)===0));
+    const initialWorld=Number(localStorage.getItem('edukass-columns-player-world')||50)===50;
+    if(!noSolvedProblems||!initialWorld)return;
+    let changed=false;
+    for(const st of Object.values(profile.ops)){
+      if(st.frontier!==1||st.diagnostic!==false){
+        st.frontier=1;st.diagnostic=false;changed=true;
+      }
+    }
+    if(changed)save();
+  }
+  correctUnplayedStartingLevel();
   // DEVELOPMENT TEST: a 250-piece world should not look like the student
   // has never practised mathematics. Seed a plausible adaptive profile ONCE.
   // Real attempts after this point are saved and never overwritten on reload.
@@ -1544,7 +1562,7 @@ body{background:
       const lvl=Number.isFinite(frontier)?Math.max(1,Math.min(max[op],frontier)):1;
       const el=$('#lvl-'+op),bar=$('#prog-'+op);
       if(el)el.textContent=`tase ${lvl} / ${max[op]}`;
-      if(bar)bar.style.width=(lvl/max[op]*100)+'%';
+      if(bar)bar.style.width=((lvl-1)/(max[op]-1)*100)+'%';
       const btn=document.querySelector('.op[data-op="'+op+'"]');if(btn)btn.classList.toggle('current-mode',lastMode===op);
     }
     syncProtoTop();
