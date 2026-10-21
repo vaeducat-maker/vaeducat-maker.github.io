@@ -786,7 +786,7 @@ body{background:
       ()=>({a:956,b:4})
     );
     else if(level===11)x=search(rng,
-      ()=>{const d=choice(rng,[12,15,21,24,25]),q=randInt(rng,11,49),a=d*q;return{a,b:d,m:analyzeDivision(a,d)}},
+      ()=>{const d=choice(rng,[11,12,13,14,15,16,18,21,22,24,25,27,28,30,32,35,36,40,42,45,48]),q=randInt(rng,11,49),a=d*q;return{a,b:d,m:analyzeDivision(a,d)}},
       z=>useful(z)&&z.m.divisorDigits===2&&z.m.quotient.length===2&&!z.m.quotientHasZero&&z.m.finalRemainder===0,
       ()=>({a:288,b:12})
     );
@@ -1601,8 +1601,68 @@ body{background:
       else nextTask();
     },hold);
   }
+  // Vary numeric operands without changing adaptive skill selection.
+  // Remember enough recent examples to avoid repetitive drills.
+  const recentTaskPairs=[],recentDivisors=[],smallDivisionPools=new Map();
+  function smallDivisionPool(level){
+    if(smallDivisionPools.has(level))return smallDivisionPools.get(level);
+    const pool=[];
+    if(level===8){
+      // Zeroes in the quotient: a small, finite list of valid quotients.
+      const quotients=[101,102,104,105,201,203,304,405];
+      for(let b=2;b<=9;b++)for(const q of quotients){
+        const a=b*q,t={op:'div',skill:'D8',a,b,meta:E.analyzeDivision(a,b)};
+        if(E.validateSkill(t))pool.push(t);
+      }
+    }else{
+      const low=level<=2?10:100,high=level<=2?99:999;
+      for(let b=2;b<=9;b++)for(let a=low;a<=high;a++){
+        if(a%b!==0)continue;
+        const t={op:'div',skill:'D'+level,a,b,meta:E.analyzeDivision(a,b)};
+        if(E.validateSkill(t))pool.push(t);
+      }
+    }
+    smallDivisionPools.set(level,pool);return pool;
+  }
+  function generateFreshTask(skill,seed){
+    const isDiv=skill[0]==='D',level=Number(skill.slice(1));
+    let result=null;
+    if(isDiv&&(level<=4||level===8)){
+      const pool=smallDivisionPool(level),rng=E.mulberry32((seed^Math.imul(level,0x9e3779b9))>>>0);
+      const gap=level<=4?2:5,recent=recentDivisors.slice(-gap);
+      const lastPairs=recentTaskPairs.slice(-25);
+      const choose=(items)=>{
+        const groups=new Map();
+        for(const task of items){
+          if(!groups.has(task.b))groups.set(task.b,[]);
+          groups.get(task.b).push(task);
+        }
+        const ds=[...groups.keys()],b=ds[Math.floor(rng()*ds.length)],arr=groups.get(b);
+        return arr[Math.floor(rng()*arr.length)];
+      };
+      let options=pool.filter(t=>!recent.includes(t.b)&&!lastPairs.includes('div:'+t.a+':'+t.b));
+      if(!options.length)options=pool.filter(t=>!recent.includes(t.b));
+      if(!options.length)options=pool.filter(t=>t.b!==recentDivisors.at(-1));
+      result=choose(options.length?options:pool);
+    }else{
+      let fallback=null,lastDifferent=null;
+      for(let i=0;i<80;i++){
+        const candidate=E.generateSkill(skill,(seed+Math.imul(i,0x9e3779b9))>>>0);
+        if(recentTaskPairs.includes(candidate.op+':'+candidate.a+':'+candidate.b))continue;
+        if(!fallback)fallback=candidate;
+        if((!isDiv||candidate.b!==recentDivisors.at(-1))&&!lastDifferent)lastDifferent=candidate;
+        if(isDiv&&recentDivisors.includes(candidate.b))continue;
+        result=candidate;break;
+      }
+      result=result||lastDifferent||fallback||E.generateSkill(skill,seed);
+    }
+    recentTaskPairs.push(result.op+':'+result.a+':'+result.b);
+    if(recentTaskPairs.length>50)recentTaskPairs.shift();
+    if(isDiv){recentDivisors.push(result.b);if(recentDivisors.length>5)recentDivisors.shift()}
+    return result;
+  }
   function nextTask(){
-    assignment=A.nextAssignment(session);const seed=++seedCounter;current=E.generateSkill(assignment.skill,seed);
+    assignment=A.nextAssignment(session);const seed=++seedCounter;current=generateFreshTask(assignment.skill,seed);
     $('#route').textContent=`${protoTask+1} / 5`;$('#mode').textContent=`${protoLevel}. tase · ${PROTO_LABEL[current.op]||''}`;syncProtoTop();renderTask(current)
   }
   function start(m='mix',{historyMode='push',continueLesson=false}={}){
