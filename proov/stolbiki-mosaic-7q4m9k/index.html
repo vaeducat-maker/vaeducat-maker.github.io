@@ -1438,11 +1438,12 @@ body{background:
     localStorage.setItem('edukass-columns-full-world',String(protoWorldCount));
     if(worldOpenedOrder)localStorage.setItem(WORLD_HISTORY_KEY,JSON.stringify(worldOpenedOrder));
   }
+  const TEST_WORLD_BASELINE=250;
   function applyRealWorldBoost(){
-    if(REAL_WORLD_BOOST===null)return;
-    // Preserve every already-unlocked tile. Fill only the remaining progress
-    // using the same connected, deterministic world tile order as the game.
-    if(protoWorldCount<REAL_WORLD_BOOST){
+    // On this development game, 250 opened pieces are the DEFAULT starting state.
+    // It applies to the ordinary URL too, regardless of cached 53-piece saves.
+    const target=Math.max(TEST_WORLD_BASELINE,REAL_WORLD_BOOST||0);
+    if(protoWorldCount<target){
       // Single safety snapshot of the pre-test save, in case the author wants to restore it.
       const backupKey='edukass-columns-before-250-boost-v1';
       if(!localStorage.getItem(backupKey)){
@@ -1450,18 +1451,19 @@ body{background:
       }
       const actual=worldUnlocks().slice();
       const had=new Set(actual);
-      const extra=protoOrder.filter(tile=>!had.has(tile)).slice(0,REAL_WORLD_BOOST-actual.length);
+      const extra=protoOrder.filter(tile=>!had.has(tile)).slice(0,target-actual.length);
       worldOpenedOrder=actual.concat(extra);
       protoWorldCount=worldOpenedOrder.length;
       // Level 1 starts with 50 unlocked tiles; every next level adds one tile.
       protoLevel=Math.max(protoLevel,protoWorldCount-PSTART+1);
       saveProto();
     }
-    // The setting is applied ONCE. Ordinary visits do not mutate the save.
-    // Removing the activation parameter also prevents reapplying it after a reload.
-    const clean=new URL(location.href);
-    clean.searchParams.delete('setworld');
-    history.replaceState(history.state,'',clean.pathname+clean.search+clean.hash);
+    // Query parameters are optional. Ordinary entry always starts at >=250.
+    if(REAL_WORLD_BOOST!==null){
+      const clean=new URL(location.href);
+      clean.searchParams.delete('setworld');
+      history.replaceState(history.state,'',clean.pathname+clean.search+clean.hash);
+    }
   }
   let lastMode=localStorage.getItem('edukass-columns-full-last-mode')||'mix';
   function syncProtoTop(){
@@ -1847,7 +1849,7 @@ body{background:
     showLessonDone:()=>showLessonDone(),
     getWorldTileOrder:()=>worldUnlocks(),
     getWorldPreview:()=>({enabled:worldPreviewCount!==null,count:previewWorldUnlocks().length,actualCount:protoWorldCount}),
-    getRealWorldProgress:()=>({tiles:protoWorldCount,level:protoLevel,persisted:localStorage.getItem('edukass-columns-full-world')})
+    getRealWorldProgress:()=>({tiles:protoWorldCount,level:protoLevel,persisted:localStorage.getItem('edukass-columns-full-world'),baseline:TEST_WORLD_BASELINE})
   };
 })();
 
