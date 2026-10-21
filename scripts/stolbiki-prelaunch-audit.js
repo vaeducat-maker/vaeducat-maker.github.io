@@ -169,6 +169,43 @@ async function checkCompetitor() {
             }));
             note('competitor','Guest starts clean at 50 despite shared browser storage',fresh.world===50,
               'fresh world '+fresh.world+'/550','critical');
+            const levels=await guest.evaluate(()=>{
+              const ops=['add','sub','mul','div'];
+              return {
+                stages:ops.map(op=>document.querySelector('#lvl-'+op)?.textContent),
+                bars:ops.map(op=>document.querySelector('#prog-'+op)?.style.width),
+                frontiers:Object.values(window.__EDUKASS_TEST__.getState().profile).map(x=>x.frontier)
+              };
+            });
+            note('competitor','Every fresh mathematical operation begins at stage one',
+              levels.frontiers.every(x=>/^[ASMD]1$/.test(x))&&levels.stages.every(x=>x?.startsWith('tase 1 /')),
+              JSON.stringify(levels),'critical');
+            note('competitor','Fresh player has four completely empty progress bars',
+              levels.bars.every(x=>x==='0%'),JSON.stringify(levels.bars),'critical');
+            // Simulate husband's previously loaded, but unsolved, default profile (3/3/3/2).
+            await guest.evaluate(()=>{
+              const p=window.EDUKASS_ADAPTIVE.createProfile();
+              for(const op of ['add','sub','mul']){p.ops[op].frontier=3;p.ops[op].diagnostic=true}
+              p.ops.div.frontier=2;p.ops.div.diagnostic=true;
+              localStorage.setItem('edukass_stolbiki_player_profile_v42',JSON.stringify(p));
+            });
+            await guest.reload({waitUntil:'domcontentloaded'});
+            await guest.waitForFunction(()=>!!window.__EDUKASS_TEST__);
+            const repaired=await guest.evaluate(()=>Object.values(window.__EDUKASS_TEST__.getState().profile).map(x=>x.frontier));
+            note('competitor','Old unplayed 3/3/3/2 profile is corrected at next visit',
+              repaired.every(x=>/^[ASMD]1$/.test(x)),JSON.stringify(repaired),'critical');
+            // Genuine work is never erased by the first-visit migration.
+            await guest.evaluate(()=>{
+              const key='edukass_stolbiki_player_profile_v42',p=JSON.parse(localStorage.getItem(key));
+              p.ops.add.frontier=3;
+              p.ops.add.skills.A1.attempts=1;
+              localStorage.setItem(key,JSON.stringify(p));
+            });
+            await guest.reload({waitUntil:'domcontentloaded'});
+            await guest.waitForFunction(()=>!!window.__EDUKASS_TEST__);
+            const retained=await guest.evaluate(()=>window.__EDUKASS_TEST__.getState().profile.add.frontier);
+            note('competitor','Already earned arithmetic progress is never reset',
+              retained==='A3',retained,'critical');
           }finally{await guest.close()}
           await page.locator('#openWorldView').click();
           await page.waitForTimeout(3900);
