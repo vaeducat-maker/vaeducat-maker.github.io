@@ -1443,6 +1443,11 @@ body{background:
     // Preserve every already-unlocked tile. Fill only the remaining progress
     // using the same connected, deterministic world tile order as the game.
     if(protoWorldCount<REAL_WORLD_BOOST){
+      // Single safety snapshot of the pre-test save, in case the author wants to restore it.
+      const backupKey='edukass-columns-before-250-boost-v1';
+      if(!localStorage.getItem(backupKey)){
+        localStorage.setItem(backupKey,JSON.stringify({world:protoWorldCount,level:protoLevel,order:worldOpenedOrder}));
+      }
       const actual=worldUnlocks().slice();
       const had=new Set(actual);
       const extra=protoOrder.filter(tile=>!had.has(tile)).slice(0,REAL_WORLD_BOOST-actual.length);
@@ -1800,7 +1805,7 @@ body{background:
 
   if(REAL_WORLD_BOOST!==null){
     // Start in the real home screen with the persisted 250-tile world.
-    $('#introScreen').classList.add('hidden');
+    currentView='home';$('#introScreen').classList.add('hidden');
     showHome({historyMode:'none'});
   }else if(INITIAL_WORLD_PREVIEW!==null){
     // Deep-link into a read-only timelapse without touching the real world.
