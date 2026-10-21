@@ -147,9 +147,16 @@ async function checkCompetitor() {
           const correctInvite=copiedLink==='https://edukass-preview.va-educat.workers.dev/proov/stolbiki-mosaic-7q4m9k/';
           note('competitor','Invitation uses clean player version, not world 250 demo',correctInvite,copiedLink,'critical');
           await screenshot(page,'share-invitation');
+          // Browser clipboard permission is intentionally stubbed in CI. The button
+          // still gets physically clicked, and we verify the EXACT URL sent to clipboard.
+          await page.evaluate(()=>Object.defineProperty(navigator,'clipboard',{
+            configurable:true,value:{writeText:async text=>{window.__shareCopiedUrl=text}}
+          }));
           await page.locator('#copyShareLinkButton').click();
-          note('competitor','Copy link button provides user feedback',
-            (await page.locator('#shareStatus').innerText()).length>0);
+          await page.waitForFunction(()=>document.querySelector('#shareStatus').textContent.includes('Link kopeeritud'),null,{timeout:3000});
+          const sharedCopy=await page.evaluate(()=>window.__shareCopiedUrl);
+          note('competitor','Copy link button copies exact invite URL and confirms it',
+            sharedCopy===copiedLink,'copied '+sharedCopy,'critical');
           await page.locator('#shareClose').click();
           const guest=await context.newPage();
           try{
