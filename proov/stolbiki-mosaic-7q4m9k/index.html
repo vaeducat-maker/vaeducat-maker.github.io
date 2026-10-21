@@ -154,6 +154,87 @@ background-size:44px 44px;transform:perspective(700px) rotateX(58deg) translateY
 @keyframes protoPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,.65),0 0 18px rgba(53,190,86,.60)}60%{box-shadow:0 0 0 13px rgba(255,255,255,0),0 0 25px rgba(53,190,86,.82)}}
 @media(prefers-reduced-motion:reduce){.proto-choice{animation:none}}
 
+
+/* Home v2: richer, cohesive EDUKASS route screen */
+body{background:
+  radial-gradient(circle at 12% 6%,rgba(112,217,207,.14),transparent 24%),
+  radial-gradient(circle at 88% 12%,rgba(115,85,183,.13),transparent 27%),
+  linear-gradient(180deg,#f8fbff,#eef5f8)}
+.home{position:relative;padding:8px 4px 4px;gap:11px}
+.home:before{content:"";position:absolute;inset:-14px -14px auto;height:235px;z-index:-1;background:
+  radial-gradient(circle at 75% 18%,rgba(112,217,207,.18),transparent 23%),
+  radial-gradient(circle at 15% 68%,rgba(230,78,137,.11),transparent 30%)}
+.home-head{padding:2px 4px 0}
+.home h1{font-size:28px;letter-spacing:-.025em;color:#172f4c}
+.home p{color:#687a91;font-weight:750}
+.world-pill{border:1px solid rgba(23,54,95,.12);background:rgba(255,255,255,.86);color:#31516e;box-shadow:0 7px 18px rgba(23,54,95,.08);backdrop-filter:blur(8px)}
+
+.home-world-card{
+  height:31%;min-height:185px;border:1px solid rgba(255,255,255,.28);border-radius:27px;
+  background:
+    radial-gradient(circle at 72% 28%,rgba(112,217,207,.32),transparent 24%),
+    radial-gradient(circle at 20% 78%,rgba(230,78,137,.23),transparent 27%),
+    linear-gradient(155deg,#132a57 0%,#204c72 52%,#5a427a 100%);
+  box-shadow:0 17px 34px rgba(18,43,78,.22),inset 0 1px 0 rgba(255,255,255,.25)
+}
+.home-world-card:before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:
+  radial-gradient(circle at 30% 25%,rgba(255,255,255,.7) 0 1px,transparent 2px),
+  radial-gradient(circle at 70% 61%,rgba(255,255,255,.5) 0 1px,transparent 2px);
+  background-size:83px 79px,127px 111px;opacity:.27}
+#homeWorldCanvas{z-index:0;filter:saturate(1.14) contrast(1.05)}
+.home-world-overlay{z-index:2;padding:13px;background:linear-gradient(180deg,rgba(8,25,54,.1),transparent 42%,rgba(6,18,40,.42))}
+.home-world-name{color:#17344e;background:rgba(255,255,255,.94);box-shadow:0 6px 14px rgba(5,19,43,.14);letter-spacing:.08em}
+.home-world-open{font-size:13px;letter-spacing:.01em;text-shadow:0 2px 6px rgba(0,0,0,.4)}
+
+.continue-card{
+  border:1px solid rgba(255,255,255,.18);
+  background:
+    radial-gradient(circle at 84% 20%,rgba(112,217,207,.18),transparent 28%),
+    linear-gradient(135deg,#182e5b,#263c72 64%,#5b427b);
+  box-shadow:0 12px 25px rgba(23,54,95,.17),inset 0 1px 0 rgba(255,255,255,.12);
+  border-radius:22px;padding:12px 13px;color:#fff
+}
+.continue-copy small{color:#8de8df;letter-spacing:.09em}.continue-copy strong{font-size:20px;text-shadow:0 2px 5px rgba(4,10,30,.25)}
+.continue-play{
+  min-width:100px;min-height:48px;border:2px solid rgba(255,255,255,.72);border-radius:999px;
+  background:linear-gradient(145deg,#fff7a8,#ffd34d 52%,#ff9a3c);color:#17344e;
+  box-shadow:0 0 0 5px rgba(255,255,255,.04),0 7px 16px rgba(4,10,30,.24);
+  letter-spacing:.04em
+}
+
+.route-card{
+  border:1px solid rgba(23,54,95,.11);border-radius:25px;padding:11px;
+  background:linear-gradient(180deg,rgba(255,255,255,.96),rgba(247,250,253,.94));
+  box-shadow:0 13px 30px rgba(23,54,95,.09),inset 0 1px 0 #fff
+}
+.route-head{padding:1px 3px 9px}.route-head strong{font-size:15px;color:#17344e}.route-head span{font-size:11px;color:#7b8796;font-weight:750}
+.ops{gap:9px}
+.op{
+  --op-accent:#70d9cf;--op-soft:#effbf8;
+  min-height:91px;border:1px solid color-mix(in srgb,var(--op-accent) 32%,#d7e1e7);
+  background:linear-gradient(155deg,#fff 0 55%,var(--op-soft) 100%);
+  border-radius:20px;padding:10px 11px;box-shadow:0 7px 16px rgba(23,54,95,.07),inset 0 1px 0 #fff;
+  transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease
+}
+.op[data-op="add"]{--op-accent:#70d9cf;--op-soft:#eafaf7}
+.op[data-op="sub"]{--op-accent:#f08aaa;--op-soft:#fff0f5}
+.op[data-op="mul"]{--op-accent:#ffd34d;--op-soft:#fff9e6}
+.op[data-op="div"]{--op-accent:#8f7de2;--op-soft:#f2efff}
+.op-symbol{
+  width:44px;height:44px;border-radius:15px;color:#fff;
+  background:radial-gradient(circle at 32% 25%,#fff 0 5%,var(--op-accent) 10% 58%,color-mix(in srgb,var(--op-accent) 58%,#17365f) 82%);
+  box-shadow:0 7px 12px color-mix(in srgb,var(--op-accent) 26%,transparent);
+  text-shadow:0 2px 2px rgba(14,24,65,.24)
+}
+.op small{font-size:14px;color:#182f49}.op .lvl{color:#7a8795;font-weight:800}
+.op-progress{height:6px;background:#e7ecef}.op-progress i{background:var(--op-accent);box-shadow:0 0 8px color-mix(in srgb,var(--op-accent) 45%,transparent)}
+.op.current-mode{
+  border-color:var(--op-accent);
+  background:linear-gradient(155deg,#fff 0 45%,var(--op-soft) 100%);
+  box-shadow:0 0 0 2px color-mix(in srgb,var(--op-accent) 20%,transparent),0 10px 20px rgba(23,54,95,.1)
+}
+.op:active{transform:scale(.985)}
+@media(max-height:760px){.home-world-card{min-height:154px}.op{min-height:78px}.continue-card{min-height:60px}}
 </style>
   <link rel="preload" href="/games/korrutamine-test/assets/edukass-cat-transparent.png" as="image" fetchpriority="high">
 </head>
@@ -1065,10 +1146,21 @@ background-size:44px 44px;transform:perspective(700px) rotateX(58deg) translateY
     if(!homeCv||!homeCv.isConnected||!protoImg.complete||!protoImg.naturalWidth)return;
     const r=homeCv.getBoundingClientRect();if(!r.width||!r.height)return;
     const d=Math.min(devicePixelRatio||1,2);homeCv.width=Math.round(r.width*d);homeCv.height=Math.round(r.height*d);homeCtx.setTransform(d,0,0,d,0,0);
-    const w=r.width,h=r.height,g=homeCtx.createLinearGradient(0,0,0,h);g.addColorStop(0,'#65b9f6');g.addColorStop(.58,'#c2e9ff');g.addColorStop(1,'#edfaff');homeCtx.fillStyle=g;homeCtx.fillRect(0,0,w,h);
-    const ir=protoImg.width/protoImg.height,br=w/h;let sx=0,sy=0,sw=protoImg.width,sh=protoImg.height;if(ir>br){sw=protoImg.height*br;sx=(protoImg.width-sw)/2}else{sh=protoImg.width/br;sy=(protoImg.height-sh)/2}
-    const tw=w/PCOLS,th=h/PROWS,stw=sw/PCOLS,sth=sh/PROWS;
-    for(const k of protoActive){const[x,y]=pxy(k);homeCtx.drawImage(protoImg,sx+x*stw,sy+y*sth,stw+.8,sth+.8,x*tw,y*th,tw+.45,th+.45)}
+    const w=r.width,h=r.height,g=homeCtx.createLinearGradient(0,0,0,h);g.addColorStop(0,'#17345f');g.addColorStop(.58,'#285c79');g.addColorStop(1,'#61477d');homeCtx.fillStyle=g;homeCtx.fillRect(0,0,w,h);
+    if(!protoActive.size)return;
+    const pts=[...protoActive].map(pxy);let minX=PCOLS,maxX=0,minY=PROWS,maxY=0;
+    pts.forEach(([x,y])=>{minX=Math.min(minX,x);maxX=Math.max(maxX,x);minY=Math.min(minY,y);maxY=Math.max(maxY,y)});
+    const padX=2.4,padY=2.2;minX=Math.max(0,minX-padX);maxX=Math.min(PCOLS,maxX+padX);minY=Math.max(0,minY-padY);maxY=Math.min(PROWS,maxY+padY);
+    let spanX=maxX-minX+1,spanY=maxY-minY+1,targetRatio=w/h;
+    if(spanX/spanY>targetRatio){const need=spanX/targetRatio-spanY;minY=Math.max(0,minY-need/2);maxY=Math.min(PROWS,maxY+need/2)}
+    else{const need=spanY*targetRatio-spanX;minX=Math.max(0,minX-need/2);maxX=Math.min(PCOLS,maxX+need/2)}
+    spanX=maxX-minX+1;spanY=maxY-minY+1;
+    const srcCellW=protoImg.width/PCOLS,srcCellH=protoImg.height/PROWS;
+    const dxCell=w/spanX,dyCell=h/spanY;
+    for(const k of protoActive){
+      const[x,y]=pxy(k);
+      homeCtx.drawImage(protoImg,x*srcCellW,y*srcCellH,srcCellW+.8,srcCellH+.8,(x-minX)*dxCell,(y-minY)*dyCell,dxCell+.6,dyCell+.6);
+    }
   }
   function rebuildProtoActive(){protoActive=new Set(protoOrder.slice(0,Math.min(protoWorldCount,protoOrder.length)))}
   function protoFrontier(){const s=new Set();for(const k of protoActive){const[x,y]=pxy(k);for(const[nx,ny]of pneigh(x,y)){const nk=pkey(nx,ny);if(!protoActive.has(nk))s.add(nk)}}return[...s]}
