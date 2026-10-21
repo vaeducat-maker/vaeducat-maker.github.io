@@ -116,7 +116,7 @@ function showChoices(){hideChoices();choices=seven();choices.forEach((k,i)=>{con
 function openWorld(){round=0;trainer.classList.add('off');world.classList.add('on');syncCount();fit();rebuild();draw();setTimeout(showChoices,350)}
 function choose(k){hideChoices();let st=null;function anim(ts){if(!st)st=ts;const p=Math.min(1,(ts-st)/620);draw(k,p);if(p<1)requestAnimationFrame(anim);else{active.add(k);worldCount=Math.min(550,worldCount+1);mission++;save();syncCount();setTimeout(()=>{world.classList.remove('on');trainer.classList.remove('off');render()},650)}}requestAnimationFrame(anim)}
 for(let i=0;i<7;i++)$('#c'+i).addEventListener('click',e=>choose(Number(e.currentTarget.dataset.k)));
-img.onload=()=>{buildOrder();rebuild();syncCount();render()};window.addEventListener('resize',()=>{if(world.classList.contains('on')){fit();draw()}});
+buildOrder();rebuild();syncCount();render();img.onload=()=>{if(world.classList.contains('on')){fit();draw()}};img.onerror=()=>{console.warn('World image failed to load; trainer remains usable.')};window.addEventListener('resize',()=>{if(world.classList.contains('on')){fit();draw()}});
 })();
 </script>
 </body>
