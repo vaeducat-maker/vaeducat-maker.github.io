@@ -239,6 +239,33 @@ body{background:
 }
 .op:active{transform:scale(.985)}
 @media(max-height:760px){.home-world-card{min-height:154px}.op{min-height:78px}.continue-card{min-height:60px}}
+
+.app{position:relative}
+.sound-toggle{
+  position:absolute;top:10px;right:10px;z-index:60;width:40px;height:40px;border:1px solid rgba(23,54,95,.14);
+  border-radius:50%;background:rgba(255,255,255,.94);box-shadow:0 7px 18px rgba(23,54,95,.12);
+  display:grid;place-items:center;font-size:19px;font-weight:900;cursor:pointer
+}
+.intro-screen:not(.hidden)+.sound-toggle{display:none}
+.home-head{padding-right:48px}
+.topbar{padding-right:48px}
+.proto-world-count{right:60px}
+@media(min-width:900px){
+  .app{width:min(100%,980px);padding:24px;height:100dvh}
+  .home{
+    display:grid;grid-template-columns:minmax(0,1.08fr) minmax(360px,.92fr);
+    grid-template-rows:auto auto minmax(0,1fr);gap:18px 20px;padding-top:8px
+  }
+  .home-head{grid-column:1/-1}
+  .home-world-card{grid-column:1;grid-row:2 / span 2;height:auto;min-height:0}
+  .continue-card{grid-column:2;grid-row:2;min-height:84px}
+  .route-card{grid-column:2;grid-row:3}
+  .ops{grid-template-columns:1fr 1fr}
+  .op{min-height:112px}
+  .train{width:min(100%,640px);margin:0 auto}
+  .proto-world{width:min(100%,900px);margin:0 auto}
+  .intro-stage{width:min(520px,54vw);height:390px}
+}
 </style>
   <link rel="preload" href="/games/korrutamine-test/assets/edukass-cat-transparent.png" as="image" fetchpriority="high">
 </head>
@@ -285,6 +312,8 @@ body{background:
 
     <button id="introPlay" class="intro-play" type="button">MÄNGI!</button>
   </section>
+
+  <button id="soundToggleButton" class="sound-toggle" type="button" aria-label="Lülita heli välja" aria-pressed="true">🔊</button>
 
   <section id="home" class="home hidden">
     <div class="home-head">
@@ -793,6 +822,58 @@ body{background:
   let mode='add',session=null,assignment=null,current=null,steps=[],stepIndex=0,taskErrors=0,taskStarted=0,seedCounter=(Date.now()>>>0),phase=null,transitioning=false,forced=false;
   let completedSteps=new Set(),selectedStepIndex=null,selectedTarget=null,guideCursor=0;
   let taskAssisted=false,assistNudgeTimer=null,assistFillTimer=null,assistRepeatTimer=null,assisting=false,taskToken=0;
+  const NAV_MARKER='edukass-columns-nav-v1';
+  const SOUND_KEY='edukass-columns-sound';
+  let soundEnabled=localStorage.getItem(SOUND_KEY)!=='false';
+  let gameAudioContext=null;
+  function navState(view,data={}){return{marker:NAV_MARKER,view,...data}}
+  function writeNav(view,data={},mode='push'){
+    const state=navState(view,data),hash=view==='home'?'#home':view==='train'?'#train':view.startsWith('world')?'#world':'';
+    const url=location.pathname+location.search+hash;
+    if(mode==='replace')history.replaceState(state,'',url);else if(mode==='push')history.pushState(state,'',url);
+  }
+  function updateSoundButton(){
+    const b=$('#soundToggleButton');if(!b)return;
+    b.textContent=soundEnabled?'🔊':'🔇';
+    b.setAttribute('aria-pressed',String(soundEnabled));
+    b.setAttribute('aria-label',soundEnabled?'Lülita heli välja':'Lülita heli sisse');
+  }
+  function getAudioContext(){
+    if(!soundEnabled)return null;
+    const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return null;
+    if(!gameAudioContext)gameAudioContext=new AC();
+    if(gameAudioContext.state==='suspended')gameAudioContext.resume();
+    return gameAudioContext;
+  }
+  function tone(frequency,offset,duration,volume,type='sine'){
+    const ac=getAudioContext();if(!ac)return;
+    const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime+offset;
+    o.type=type;o.frequency.setValueAtTime(frequency,t);
+    g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(volume,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+duration);
+    o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+duration+.03);
+  }
+  function sweep(from,to,offset,duration,volume){
+    const ac=getAudioContext();if(!ac)return;
+    const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime+offset;
+    o.type='sine';o.frequency.setValueAtTime(from,t);o.frequency.exponentialRampToValueAtTime(to,t+duration);
+    g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(volume,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+duration);
+    o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+duration+.03);
+  }
+  function playGameSound(kind){
+    if(!soundEnabled)return;
+    if(kind==='tap')tone(420,0,.035,.012);
+    if(kind==='key')tone(520,0,.04,.014);
+    if(kind==='wrong'){tone(235,0,.08,.018,'triangle');tone(185,.07,.09,.014,'triangle')}
+    if(kind==='correct'){tone(640,0,.07,.016);tone(820,.07,.10,.018)}
+    if(kind==='world'){sweep(420,900,0,.32,.018);tone(1040,.25,.14,.016)}
+    if(kind==='ui')tone(470,0,.045,.012);
+  }
+  function toggleSound(){
+    soundEnabled=!soundEnabled;localStorage.setItem(SOUND_KEY,String(soundEnabled));
+    if(!soundEnabled&&gameAudioContext){gameAudioContext.close();gameAudioContext=null}
+    updateSoundButton();if(soundEnabled)playGameSound('tap');
+  }
+
 
   function el(cls,text=''){const d=document.createElement('div');d.className=cls;if(text!==undefined)d.textContent=text;return d}
   function place(node,col,row,span=1){node.style.gridColumn=`${col+1} / span ${span}`;node.style.gridRow=String(row+1);return node}
@@ -1086,7 +1167,7 @@ body{background:
     const node=targetEl(target);if(!node)return;
     const idx=pendingIndexForTarget(target);
     if(idx<0&&!optionalCell(node))return;
-    selectedTarget=target;selectedStepIndex=idx;
+    playGameSound('tap');selectedTarget=target;selectedStepIndex=idx;
     $$('.entry').forEach(x=>x.classList.remove('active'));
     node.classList.add('active');node.dataset.buffer=node.textContent||'';
   }
@@ -1098,7 +1179,7 @@ body{background:
   }
   function wrong(node,scored=true){
     if(transitioning||!node)return;
-    if(scored)taskErrors++;transitioning=true;
+    if(scored)taskErrors++;playGameSound('wrong');transitioning=true;
     const validPrefix=node.textContent||'';
     node.classList.add('bad');
     setTimeout(()=>{
@@ -1107,7 +1188,7 @@ body{background:
   }
   function press(key){
     if(!current||transitioning||assisting||$('#train').classList.contains('hidden'))return;
-    noteUserActivity();
+    noteUserActivity();playGameSound('key');
     if(!selectedTarget){
       const rec=recommendedIndex();
       if(rec<0)return refreshInteraction();
@@ -1163,22 +1244,24 @@ body{background:
   function completeTask(){
     clearAssistTimers();const ms=Math.round(performance.now()-taskStarted);
     if(!forced){A.recordResult(session,assignment,{firstTry:taskErrors===0&&!taskAssisted,errors:taskErrors,ms,assisted:taskAssisted});profile=session.profile;save();renderProfile()}
-    $('#status').textContent='✓';const hold=taskAssisted?ASSIST.finalHoldMs:700;
+    $('#status').textContent='✓';playGameSound('correct');const hold=taskAssisted?ASSIST.finalHoldMs:700;
     setTimeout(()=>{if(forced)return;protoTask++;if(protoTask>=5)showProtoWorld();else nextTask()},hold);
   }
   function nextTask(){
     assignment=A.nextAssignment(session);const seed=++seedCounter;current=E.generateSkill(assignment.skill,seed);
     $('#route').textContent=`${protoTask+1} / 5`;$('#mode').textContent=`${protoLevel}. tase · ${PROTO_LABEL[current.op]||''}`;syncProtoTop();renderTask(current)
   }
-  function start(m='mix'){
+  function start(m='mix',{historyMode='push'}={}){
     clearAssistTimers();forced=false;mode=m;lastMode=m;localStorage.setItem('edukass-columns-full-last-mode',m);protoTask=0;
     session=A.createSession(profile,m,Math.random,Date.now());
-    $('#home').classList.add('hidden');$('#finish').classList.add('hidden');$('#protoWorld').classList.remove('on');$('#train').classList.remove('hidden');nextTask()
+    $('#home').classList.add('hidden');$('#finish').classList.add('hidden');$('#protoWorld').classList.remove('on','viewing');$('#train').classList.remove('hidden');
+    writeNav('train',{mode:m},historyMode);nextTask()
   }
-  function showHome(){
+  function showHome({historyMode='none'}={}){
     clearAssistTimers();taskToken++;
-    $('#train').classList.add('hidden');$('#protoWorld').classList.remove('on');$('#finish').classList.add('hidden');
+    $('#train').classList.add('hidden');$('#protoWorld').classList.remove('on','viewing');$('#finish').classList.add('hidden');
     renderHomeLevels();$('#home').classList.remove('hidden');
+    if(historyMode!=='none')writeNav('home',{},historyMode);
   }
   function showFinish(){showProtoWorld()}
   function renderProfile(){const snap=A.publicSnapshot(profile);$('#profile').innerHTML=Object.entries(snap).map(([op,s])=>`<p><b>${LABEL[op][0]} ${LABEL[op][1]}</b>: ${s.frontier}${s.diagnostic?' · диагностика':''}</p>`).join('');renderHomeLevels()}
@@ -1238,8 +1321,9 @@ body{background:
   function protoSeven(){const f=protoFrontier();if(f.length<=7)return f;const sec=Array.from({length:7},()=>[]);for(const k of f){const[x,y]=pxy(k);let a=Math.atan2(y-PCY,x-PCX);if(a<0)a+=Math.PI*2;sec[Math.min(6,Math.floor(a/(Math.PI*2)*7))].push(k)}const out=[];for(const arr of sec){if(!arr.length)continue;arr.sort((ka,kb)=>{const[a,b]=pxy(ka),[c,d]=pxy(kb);return Math.hypot(c-PCX,d-PCY)-Math.hypot(a-PCX,b-PCY)});out.push(arr[0])}const rem=f.filter(k=>!out.includes(k));while(out.length<7&&rem.length){let bi=0,bd=-1;for(let i=0;i<rem.length;i++){const[x,y]=pxy(rem[i]),md=out.length?Math.min(...out.map(q=>{const[a,b]=pxy(q);return Math.hypot(x-a,y-b)})):999;if(md>bd){bd=md;bi=i}}out.push(rem.splice(bi,1)[0])}return out.slice(0,7)}
   function hideProtoChoices(){for(let i=0;i<7;i++)$('#pc'+i).style.display='none';protoChoices=[]}
   function showProtoChoices(){hideProtoChoices();protoChoices=protoSeven();protoChoices.forEach((k,i)=>{const[x,y]=pxy(k),b=$('#pc'+i);b.dataset.k=k;b.style.left=((x+.5)/PCOLS*100)+'%';b.style.top=((y+.5)/PROWS*100)+'%';b.style.display='block'})}
-  function showProtoWorld(){clearAssistTimers();taskToken++;$('#train').classList.add('hidden');$('#protoWorld').classList.remove('viewing');$('#protoWorld').classList.add('on');syncProtoTop();fitProtoWorld();rebuildProtoActive();drawProtoWorld();setTimeout(showProtoChoices,320)}
-  function chooseProtoWorld(k){hideProtoChoices();let st=null;function anim(ts){if(!st)st=ts;const p=Math.min(1,(ts-st)/620);drawProtoWorld(k,p);if(p<1)requestAnimationFrame(anim);else{protoActive.add(k);protoWorldCount=Math.min(550,protoWorldCount+1);protoLevel++;protoTask=0;saveProto();syncProtoTop();drawProtoWorld();setTimeout(()=>start(lastMode),650)}}requestAnimationFrame(anim)}
+  function showProtoWorld({historyMode='replace'}={}){clearAssistTimers();taskToken++;$('#home').classList.add('hidden');$('#train').classList.add('hidden');$('#protoWorld').classList.remove('viewing');$('#protoWorld').classList.add('on');writeNav('world-reward',{mode:lastMode},historyMode);syncProtoTop();fitProtoWorld();rebuildProtoActive();drawProtoWorld();setTimeout(showProtoChoices,320)}
+  function showWorldView({historyMode='push'}={}){clearAssistTimers();taskToken++;$('#home').classList.add('hidden');$('#train').classList.add('hidden');$('#protoWorld').classList.add('on','viewing');hideProtoChoices();writeNav('world-view',{},historyMode);fitProtoWorld();rebuildProtoActive();drawProtoWorld()}
+  function chooseProtoWorld(k){playGameSound('world');hideProtoChoices();let st=null;function anim(ts){if(!st)st=ts;const p=Math.min(1,(ts-st)/620);drawProtoWorld(k,p);if(p<1)requestAnimationFrame(anim);else{protoActive.add(k);protoWorldCount=Math.min(550,protoWorldCount+1);protoLevel++;protoTask=0;saveProto();syncProtoTop();drawProtoWorld();setTimeout(()=>start(lastMode,{historyMode:'replace'}),650)}}requestAnimationFrame(anim)}
   for(let i=0;i<7;i++)$('#pc'+i).addEventListener('click',e=>chooseProtoWorld(Number(e.currentTarget.dataset.k)));
   protoImg.onload=()=>{buildProtoOrder();rebuildProtoActive();drawHomeWorld();runIntroTimelapse()};
 
@@ -1257,47 +1341,40 @@ body{background:
 
   $$('[data-op]').forEach(b=>b.addEventListener('click',()=>start(b.dataset.op)));
   $$('#pad [data-key]').forEach(b=>b.addEventListener('click',()=>press(b.dataset.key)));
-  $('#back').onclick=showHome;$('#other').onclick=showHome;$('#again').onclick=()=>start(lastMode);
+  $('#back').onclick=()=>{playGameSound('ui');if(history.state?.marker===NAV_MARKER)history.back();else showHome({historyMode:'replace'})};
+  $('#other').onclick=()=>showHome({historyMode:'replace'});$('#again').onclick=()=>start(lastMode,{historyMode:'replace'});
 
-  let introAudioContext=null;
   function playIntroLaunchSound(){
-    const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
-    if(!introAudioContext)introAudioContext=new AC();
-    const ac=introAudioContext;
-    if(ac.state==='suspended')ac.resume();
-    const tone=(frequency,offset,duration,volume,type='sine')=>{
-      const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime+offset;
-      o.type=type;o.frequency.setValueAtTime(frequency,t);
-      g.gain.setValueAtTime(.0001,t);
-      g.gain.exponentialRampToValueAtTime(volume,t+.012);
-      g.gain.exponentialRampToValueAtTime(.0001,t+duration);
-      o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+duration+.03);
-    };
-    const sweep=(from,to,offset,duration,volume)=>{
-      const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime+offset;
-      o.type='sine';o.frequency.setValueAtTime(from,t);o.frequency.exponentialRampToValueAtTime(to,t+duration);
-      g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(volume,t+.025);g.gain.exponentialRampToValueAtTime(.0001,t+duration);
-      o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+duration+.03);
-    };
-    // Same short "launch" character as the multiplication trainer: airy rise + bright chime.
     sweep(560,1480,.02,.42,.034);
     tone(880,.31,.12,.026,'triangle');
     tone(1175,.43,.17,.028,'sine');
     [659,784,988].forEach((f,i)=>tone(f,.56+i*.018,.38,.018,'sine'));
     tone(1568,.84,.24,.022,'sine');
   }
+  $('#soundToggleButton').addEventListener('click',toggleSound);updateSoundButton();
   $('#introPlay').addEventListener('click',()=>{
-    playIntroLaunchSound();
+    playIntroLaunchSound();$('#introScreen').classList.add('hidden');showHome({historyMode:'replace'});
+  });
+  $('#openWorldView').addEventListener('click',()=>{playGameSound('ui');showWorldView({historyMode:'push'})});
+  $('#worldViewBack').addEventListener('click',()=>{playGameSound('ui');if(history.state?.marker===NAV_MARKER)history.back();else showHome({historyMode:'replace'})});
+  window.addEventListener('popstate',event=>{
+    const st=event.state;
+    if(!st||st.marker!==NAV_MARKER)return;
     $('#introScreen').classList.add('hidden');
-    showHome();
+    if(st.view==='home')showHome({historyMode:'none'});
+    else if(st.view==='world-view')showWorldView({historyMode:'none'});
+    else if(st.view==='world-reward'){lastMode=st.mode||lastMode;showProtoWorld({historyMode:'none'})}
+    else if(st.view==='train')showHome({historyMode:'none'});
   });
-  $('#openWorldView').addEventListener('click',()=>{
-    clearAssistTimers();$('#home').classList.add('hidden');$('#train').classList.add('hidden');$('#protoWorld').classList.add('on','viewing');
-    hideProtoChoices();fitProtoWorld();rebuildProtoActive();drawProtoWorld();
-  });
-  $('#worldViewBack').addEventListener('click',()=>{$('#protoWorld').classList.remove('on','viewing');showHome()});
   window.addEventListener('resize',()=>{fitGrid();drawHomeWorld();if(!$('#introScreen').classList.contains('hidden'))drawIntroTimelapse(550);if($('#protoWorld').classList.contains('on')){fitProtoWorld();drawProtoWorld()}});
-  buildProtoOrder();rebuildProtoActive();syncProtoTop();renderProfile();runIntroTimelapse();drawIntroWorld();
+  buildProtoOrder();rebuildProtoActive();syncProtoTop();renderProfile();runIntroTimelapse();
+  if(history.state?.marker===NAV_MARKER){
+    $('#introScreen').classList.add('hidden');
+    const st=history.state;
+    if(st.view==='world-view')showWorldView({historyMode:'none'});
+    else if(st.view==='world-reward'){lastMode=st.mode||lastMode;showProtoWorld({historyMode:'none'})}
+    else showHome({historyMode:'none'});
+  }
 
   window.__EDUKASS_TEST__={
     version:'4.2',
