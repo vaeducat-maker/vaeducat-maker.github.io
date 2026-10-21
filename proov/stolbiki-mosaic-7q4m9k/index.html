@@ -1414,6 +1414,9 @@ body{background:
   const requestedWorldPreview=Number(qs.get('preview')||qs.get('demoWorld')||hashPreview||0);
   const INITIAL_WORLD_PREVIEW=Number.isInteger(requestedWorldPreview)&&requestedWorldPreview>=1&&requestedWorldPreview<=550?requestedWorldPreview:null;
   let worldPreviewCount=INITIAL_WORLD_PREVIEW;
+  // The one-time ?setworld=250 link changes the REAL local game save, not the demo.
+  const boostValue=Number(qs.get('setworld'));
+  const REAL_WORLD_BOOST=Number.isInteger(boostValue)&&boostValue>=50&&boostValue<=550?boostValue:null;
   function syncWorldDemoButton(){
     const b=$('#worldDemo250');if(!b)return;
     b.textContent=worldPreviewCount===250?'↩ Päris maailm':'🧪 Proovi 250 / 550';
@@ -1434,6 +1437,26 @@ body{background:
     localStorage.setItem('edukass-columns-full-level',String(protoLevel));
     localStorage.setItem('edukass-columns-full-world',String(protoWorldCount));
     if(worldOpenedOrder)localStorage.setItem(WORLD_HISTORY_KEY,JSON.stringify(worldOpenedOrder));
+  }
+  function applyRealWorldBoost(){
+    if(REAL_WORLD_BOOST===null)return;
+    // Preserve every already-unlocked tile. Fill only the remaining progress
+    // using the same connected, deterministic world tile order as the game.
+    if(protoWorldCount<REAL_WORLD_BOOST){
+      const actual=worldUnlocks().slice();
+      const had=new Set(actual);
+      const extra=protoOrder.filter(tile=>!had.has(tile)).slice(0,REAL_WORLD_BOOST-actual.length);
+      worldOpenedOrder=actual.concat(extra);
+      protoWorldCount=worldOpenedOrder.length;
+      // Level 1 starts with 50 unlocked tiles; every next level adds one tile.
+      protoLevel=Math.max(protoLevel,protoWorldCount-PSTART+1);
+      saveProto();
+    }
+    // The setting is applied ONCE. Ordinary visits do not mutate the save.
+    // Removing the activation parameter also prevents reapplying it after a reload.
+    const clean=new URL(location.href);
+    clean.searchParams.delete('setworld');
+    history.replaceState(history.state,'',clean.pathname+clean.search+clean.hash);
   }
   let lastMode=localStorage.getItem('edukass-columns-full-last-mode')||'mix';
   function syncProtoTop(){
@@ -1761,7 +1784,7 @@ body{background:
     history.pushState(navState(parent,{guard:true}),'',navAddress(parent));
   });
   window.addEventListener('resize',()=>{updateDivisionPlacement();fitGrid();updateDivisionPlacement();if(currentView==='lesson-detail')fitLessonDetail();drawHomeWorld();if(!$('#introScreen').classList.contains('hidden'))drawIntroTimelapse(550);if($('#protoWorld').classList.contains('on')){fitProtoWorld();drawProtoWorld()}});
-  buildProtoOrder();rebuildProtoActive();syncProtoTop();renderProfile();runIntroTimelapse();
+  buildProtoOrder();applyRealWorldBoost();rebuildProtoActive();syncProtoTop();renderProfile();runIntroTimelapse();
 
   // Restore the current in-game screen after reload, then ensure Android Back
   // has an internal sentinel to hit before it can leave the page.
@@ -1775,8 +1798,12 @@ body{background:
   }catch{}
   currentView=restored.view||'intro';
 
-  if(INITIAL_WORLD_PREVIEW!==null){
-    // Deep-link straight into the 250-tile timelapse; keep the real world unchanged.
+  if(REAL_WORLD_BOOST!==null){
+    // Start in the real home screen with the persisted 250-tile world.
+    $('#introScreen').classList.add('hidden');
+    showHome({historyMode:'none'});
+  }else if(INITIAL_WORLD_PREVIEW!==null){
+    // Deep-link into a read-only timelapse without touching the real world.
     $('#introScreen').classList.add('hidden');
     showWorldView({historyMode:'none'});
   }else if(currentView.startsWith('lesson')){
@@ -1814,7 +1841,8 @@ body{background:
     setLessonElapsed:(ms)=>{lesson.elapsed=Math.min(LESSON_MS,Math.max(0,ms));updateLessonClock()},
     showLessonDone:()=>showLessonDone(),
     getWorldTileOrder:()=>worldUnlocks(),
-    getWorldPreview:()=>({enabled:worldPreviewCount!==null,count:previewWorldUnlocks().length,actualCount:protoWorldCount})
+    getWorldPreview:()=>({enabled:worldPreviewCount!==null,count:previewWorldUnlocks().length,actualCount:protoWorldCount}),
+    getRealWorldProgress:()=>({tiles:protoWorldCount,level:protoLevel,persisted:localStorage.getItem('edukass-columns-full-world')})
   };
 })();
 
