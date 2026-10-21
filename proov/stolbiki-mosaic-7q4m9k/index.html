@@ -351,7 +351,7 @@ body{background:
 @keyframes glassTurn{0%,80%,100%{transform:rotate(0)}90%{transform:rotate(180deg)}}
 .lesson-clock-track{display:block;width:100%;height:3px;border-radius:9px;background:rgba(255,255,255,.18);overflow:hidden}
 .lesson-clock-fill{display:block;height:100%;width:0;background:linear-gradient(90deg,#ffe58b,#f2b864);transition:width .5s linear}
-.train .topbar{grid-template-columns:42px minmax(0,1fr) 35px 87px;gap:5px;padding-right:43px;height:50px}
+.train .topbar{grid-template-columns:42px minmax(0,1fr) 35px 87px;gap:5px;padding-right:43px;height:44px}
 .train .topbar .mode{font-size:clamp(11px,3.4vw,15px)}.train .topbar .route{font-size:12px;padding:5px 2px;white-space:nowrap}
 @media(max-width:365px){.train .topbar{grid-template-columns:39px minmax(0,1fr) 32px 80px;gap:3px;padding-right:39px}.lesson-clock{min-width:80px;padding:4px 5px}.train .topbar .mode{font-size:11px}}
 @media(prefers-reduced-motion:reduce){.lesson-hourglass{animation:none}}
@@ -450,7 +450,7 @@ body{background:
     </button>
 
     <div class="continue-card">
-      <div class="continue-copy"><small>JÄTKA</small><strong>Kõik koos</strong></div>
+      <div class="continue-copy"><small>⏳ 15 MINUTIT PÄEVAS</small><strong>Kõik koos</strong></div>
       <button class="continue-play" type="button" data-op="mix">MÄNGI!</button>
     </div>
 
@@ -1535,7 +1535,7 @@ body{background:
     writeNav('train',{mode:m},historyMode);nextTask()
   }
   function showHome({historyMode='none'}={}){
-    stopWorldTimelapse();abandonLesson();$('#lessonScreen').classList.add('hidden');
+    stopWorldTimelapse();rebuildProtoActive();abandonLesson();$('#lessonScreen').classList.add('hidden');
     clearAssistTimers();taskToken++;
     $('#train').classList.add('hidden');$('#protoWorld').classList.remove('on','viewing');$('#finish').classList.add('hidden');
     renderHomeLevels();$('#home').classList.remove('hidden');
@@ -1726,7 +1726,7 @@ body{background:
     history.replaceState(navState(parent,{guard:false}),'',navAddress(parent));
     history.pushState(navState(parent,{guard:true}),'',navAddress(parent));
   });
-  window.addEventListener('resize',()=>{updateDivisionPlacement();fitGrid();if(currentView==='lesson-detail')fitLessonDetail();drawHomeWorld();if(!$('#introScreen').classList.contains('hidden'))drawIntroTimelapse(550);if($('#protoWorld').classList.contains('on')){fitProtoWorld();drawProtoWorld()}});
+  window.addEventListener('resize',()=>{updateDivisionPlacement();fitGrid();updateDivisionPlacement();if(currentView==='lesson-detail')fitLessonDetail();drawHomeWorld();if(!$('#introScreen').classList.contains('hidden'))drawIntroTimelapse(550);if($('#protoWorld').classList.contains('on')){fitProtoWorld();drawProtoWorld()}});
   buildProtoOrder();rebuildProtoActive();syncProtoTop();renderProfile();runIntroTimelapse();
 
   // Restore the current in-game screen after reload, then ensure Android Back
