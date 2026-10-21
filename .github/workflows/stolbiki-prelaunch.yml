@@ -1,0 +1,48 @@
+name: EDUKASS Stolbiki prelaunch audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/stolbiki-prelaunch-audit.js'
+      - '.github/workflows/stolbiki-prelaunch.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  prelaunch-methodist-and-competitor:
+    name: Arithmetic methodist and adversarial mobile check
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout EDUKASS source
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install isolated Chromium test environment
+        run: |
+          mkdir -p "$RUNNER_TEMP/stolbiki-browser"
+          npm install --prefix "$RUNNER_TEMP/stolbiki-browser" --no-save --no-audit --no-fund playwright@1.56.1
+          "$RUNNER_TEMP/stolbiki-browser/node_modules/.bin/playwright" install --with-deps chromium
+      - name: Execute prelaunch methodist and competitor audit
+        run: NODE_PATH="$RUNNER_TEMP/stolbiki-browser/node_modules" node scripts/stolbiki-prelaunch-audit.js
+      - name: Keep report, screenshots and raw results even on failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stolbiki-prelaunch-evidence
+          path: artifacts/stolbiki-prelaunch/
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Add human-readable release gate to GitHub summary
+        if: always()
+        run: |
+          if [ -f artifacts/stolbiki-prelaunch/report.md ]; then
+            cat artifacts/stolbiki-prelaunch/report.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo 'Prelaunch audit did not produce its report. Inspect job logs.' >> "$GITHUB_STEP_SUMMARY"
+          fi
