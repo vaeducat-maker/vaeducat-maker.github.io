@@ -1460,9 +1460,10 @@ body{background:
     }
     // Query parameters are optional. Ordinary entry always starts at >=250.
     if(REAL_WORLD_BOOST!==null){
-      const clean=new URL(location.href);
-      clean.searchParams.delete('setworld');
-      history.replaceState(history.state,'',clean.pathname+clean.search+clean.hash);
+      const params=new URLSearchParams(location.search);
+      params.delete('setworld');
+      const query=params.toString();
+      history.replaceState(history.state,'',location.pathname+(query?'?'+query:'')+location.hash);
     }
   }
   let lastMode=localStorage.getItem('edukass-columns-full-last-mode')||'mix';
