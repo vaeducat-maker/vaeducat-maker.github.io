@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>Столбики — тестовый мир 250</title>
+<meta name="robots" content="noindex">
 <style>:root{--world-bg:
 radial-gradient(circle at 72% 28%,rgba(112,217,207,.32),transparent 24%),
 radial-gradient(circle at 20% 78%,rgba(230,78,137,.23),transparent 27%),
@@ -566,7 +567,7 @@ body{background:
       <h2 id="shareDialogTitle">Jaga mängu</h2>
       <p>Saada link sõbrale, lapsele või õpilasele.</p>
       <div class="share-link-row">
-        <input id="shareUrlInput" class="share-link-input" type="text" readonly aria-label="Mängu link" value="https://edukass-preview.va-educat.workers.dev/proov/stolbiki-mosaic-7q4m9k/">
+        <input id="shareUrlInput" class="share-link-input" type="text" readonly aria-label="Mängu link" value="https://edukass-preview.va-educat.workers.dev/proov/stolbiki-mosaic-7q4m9k/?invite=2">
         <button id="copyShareLinkButton" class="share-copy-button" type="button">⧉ Kopeeri link</button>
       </div>
       <p class="share-status" id="shareStatus" role="status" aria-live="polite"></p>
@@ -1889,7 +1890,7 @@ body{background:
     tone(1568,.84,.24,.022,'sine');
   }
 
-  const SHARE_URL='https://edukass-preview.va-educat.workers.dev/proov/stolbiki-mosaic-7q4m9k/';
+  const SHARE_URL='https://edukass-preview.va-educat.workers.dev/proov/stolbiki-mosaic-7q4m9k/?invite=2';
   const shareDialog=$('#shareDialog'),shareInput=$('#shareUrlInput'),shareStatus=$('#shareStatus');
   function openShareFallback(){
     shareInput.value=SHARE_URL;shareStatus.textContent='';
