@@ -144,7 +144,19 @@ async function checkCompetitor() {
           await shareButton.click();
           await page.locator('#shareDialog').waitFor({state:'visible',timeout:4500});
           const copiedLink=await page.locator('#shareUrlInput').inputValue();
-          const correctInvite=copiedLink==='https://edukass-preview.va-educat.workers.dev/proov/stolbiki-mosaic-7q4m9k/';
+          const correctInvite=copiedLink==='https://edukass-preview.va-educat.workers.dev/proov/stolbiki-mosaic-7q4m9k/?invite=2';
+          const social=await page.evaluate(async()=>{
+            const html=await (await fetch('/proov/stolbiki-mosaic-7q4m9k/index.html')).text();
+            const doc=new DOMParser().parseFromString(html,'text/html');
+            return {
+              image:doc.querySelector('meta[property="og:image"]')?.getAttribute('content'),
+              width:doc.querySelector('meta[property="og:image:width"]')?.getAttribute('content'),
+              height:doc.querySelector('meta[property="og:image:height"]')?.getAttribute('content')
+            };
+          });
+          note('competitor','Invitation metadata names a dedicated full-size image',
+            social.image?.includes('/assets/stolbiki-share-preview.jpg')&&social.width==='1200'&&social.height==='630',
+            JSON.stringify(social),'critical');
           note('competitor','Invitation uses clean player version, not world 250 demo',correctInvite,copiedLink,'critical');
           await screenshot(page,'share-invitation');
           // Browser clipboard permission is intentionally stubbed in CI. The button
