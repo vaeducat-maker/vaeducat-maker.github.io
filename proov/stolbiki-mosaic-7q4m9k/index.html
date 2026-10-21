@@ -550,12 +550,12 @@ body{background:
     return{a,b:d,m:analyzeDivision(a,d)};
   }
   function genDiv(level,rng){let x;const easy=[12,15,20,21,24,25];
-    if(level===1)x=search(rng,()=>divCandidate(rng,2,1,false),z=>z.m.firstPartLen===1&&z.m.finalRemainder===0&&z.m.stages.every(s=>s.rem===0),()=>({a:84,b:4}));
-    else if(level===2)x=search(rng,()=>divCandidate(rng,2,1,false),z=>z.m.firstPartLen===2&&z.m.finalRemainder===0,()=>({a:72,b:8}));
-    else if(level===3)x=search(rng,()=>divCandidate(rng,3,1,false),z=>z.m.firstPartLen===1&&z.m.stages.every(s=>s.rem===0),()=>({a:864,b:2}));
-    else if(level===4)x=search(rng,()=>divCandidate(rng,3,1,false),z=>z.m.intermediateNonZeroRemainders===1&&z.m.finalRemainder===0,()=>({a:672,b:4}));
-    else if(level===5)x=search(rng,()=>divCandidate(rng,3,1,false),z=>z.m.firstPartLen===2&&z.m.finalRemainder===0,()=>({a:168,b:8}));
-    else if(level===6)x=search(rng,()=>divCandidate(rng,3,1,false),z=>z.m.intermediateNonZeroRemainders>=2&&z.m.finalRemainder===0,()=>({a:688,b:8}));
+    if(level===1)x=search(rng,()=>divCandidate(rng,2,1,false),z=>z.m.firstPartLen===1&&z.m.finalRemainder===0&&z.m.stages.every(s=>s.rem===0)&&z.a%10!==0&&Number(z.m.quotient)!==10,()=>({a:84,b:4}));
+    else if(level===2)x=search(rng,()=>divCandidate(rng,2,1,false),z=>z.m.firstPartLen===2&&z.m.finalRemainder===0&&z.a%10!==0&&Number(z.m.quotient)!==10,()=>({a:72,b:8}));
+    else if(level===3)x=search(rng,()=>divCandidate(rng,3,1,false),z=>z.m.firstPartLen===1&&z.m.stages.every(s=>s.rem===0)&&z.a%10!==0&&Number(z.m.quotient)!==10,()=>({a:864,b:2}));
+    else if(level===4)x=search(rng,()=>divCandidate(rng,3,1,false),z=>z.m.intermediateNonZeroRemainders===1&&z.m.finalRemainder===0&&z.a%10!==0&&Number(z.m.quotient)!==10,()=>({a:672,b:4}));
+    else if(level===5)x=search(rng,()=>divCandidate(rng,3,1,false),z=>z.m.firstPartLen===2&&z.m.finalRemainder===0&&z.a%10!==0&&Number(z.m.quotient)!==10,()=>({a:168,b:8}));
+    else if(level===6)x=search(rng,()=>divCandidate(rng,3,1,false),z=>z.m.intermediateNonZeroRemainders>=2&&z.m.finalRemainder===0&&z.a%10!==0&&Number(z.m.quotient)!==10,()=>({a:688,b:8}));
     else if(level===7)x=search(rng,()=>divCandidate(rng,3,1,false),z=>z.m.zeroInDividend&&!z.m.quotientHasZero&&z.m.finalRemainder===0,()=>({a:609,b:7}));
     else if(level===8)x=search(rng,()=>{const d=randInt(rng,2,9),q=choice(rng,[101,102,104,105,201,203,304,405]),a=d*q;return{a,b:d,m:analyzeDivision(a,d)}},z=>z.m.quotientHasZero&&z.m.finalRemainder===0,()=>({a:808,b:8}));
     else if(level===9)x=search(rng,()=>divCandidate(rng,randInt(rng,4,5),1,false),z=>z.m.stageCount>=3&&z.m.finalRemainder===0,()=>({a:8648,b:4}));
