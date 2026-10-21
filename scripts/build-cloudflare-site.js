@@ -15,6 +15,7 @@ const extraFiles = [
   'favicon-512.png',
   'instagram/index.html',
   'assets/minu-suvi-preview.svg',
+  'assets/stolbiki-share-preview.jpg',
   'games/kiire-sonatreener/app-20260926.html',
   'games/kiire-sonatreener/app-20260926-v2.html',
   'games/kiire-sonatreener/back-nav.js',
