@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ru">
+<html lang="et">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
@@ -387,6 +387,24 @@ body{background:
 @media(max-width:370px){.world-replay,.world-skip{font-size:11px;padding:9px}}
 .world-timelapse-caption{position:absolute;z-index:7;left:50%;top:60px;transform:translateX(-50%);color:#fff;font-size:14px;font-weight:900;text-shadow:0 2px 8px #0c2442;text-align:center;white-space:nowrap;display:none}
 .proto-world.viewing .world-timelapse-caption:not(.hidden){display:block}
+
+.home-share-tools{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0}
+.home-share-button{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:32px;padding:5px 12px;border:1px solid rgba(74,115,158,.24);border-radius:999px;background:linear-gradient(145deg,#fff,#e7f6fa);box-shadow:0 4px 12px rgba(19,52,87,.1);font-size:12px;font-weight:900;letter-spacing:.035em;color:#245277;cursor:pointer}
+.home-share-button svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.home-share-button:focus-visible,.share-close:focus-visible,.share-copy-button:focus-visible{outline:3px solid #62cfbd;outline-offset:2px}
+.share-dialog{position:fixed;inset:0;max-width:min(92vw,420px);width:calc(100% - 32px);padding:0;border:1px solid rgba(255,255,255,.33);border-radius:24px;color:#fff;background:radial-gradient(circle at 85% 13%,rgba(127,226,211,.18),transparent 32%),linear-gradient(145deg,#122b56,#223e6a 65%,#563f7c);box-shadow:0 24px 55px rgba(2,16,39,.45)}
+.share-dialog::backdrop{background:rgba(4,15,35,.65);backdrop-filter:blur(5px)}
+.share-content{position:relative;padding:28px 22px 23px;text-align:center;display:flex;flex-direction:column;align-items:stretch;gap:14px}
+.share-close{position:absolute;top:11px;right:12px;width:35px;height:35px;border:1px solid rgba(255,255,255,.35);border-radius:50%;background:rgba(255,255,255,.12);color:#fff;font-size:23px;font-weight:750;line-height:1}
+.share-symbol{display:grid;place-items:center;width:54px;height:54px;margin:1px auto 0;border-radius:17px;background:linear-gradient(145deg,#f9e99b,#ffc259);font-size:26px;color:#19385b}
+.share-content h2{margin:0;font-size:27px;font-weight:950}
+.share-content p{margin:0;font-size:14px;line-height:1.5;color:#d7e5f5}
+.share-link-row{display:flex;align-items:stretch;gap:8px}
+.share-link-input{flex:1;min-width:0;border:1px solid rgba(255,255,255,.35);border-radius:13px;padding:10px 11px;background:rgba(255,255,255,.96);color:#22476a;font-size:12px}
+.share-copy-button{flex:0 0 auto;border:1px solid #fff3c0;border-radius:13px;padding:9px 11px;background:linear-gradient(145deg,#fff7a8,#ffcf50);color:#183b5f;font-weight:900;font-size:13px}
+.share-content .share-status{min-height:18px;font-weight:800;color:#fff0a6}
+.share-content .share-note{font-size:12px;color:#a3c2dd}
+@media(max-width:360px){.home-share-button{padding:5px 9px;font-size:11px}.home-share-tools{gap:3px}.share-link-row{flex-direction:column}.share-copy-button{min-height:42px}}
 </style>
   <link rel="preload" href="/games/korrutamine-test/assets/edukass-cat-transparent.png" as="image" fetchpriority="high">
 </head>
@@ -439,7 +457,12 @@ body{background:
   <section id="home" class="home hidden">
     <div class="home-head">
       <div class="home-title"><h1>Kirjalik arvutamine</h1><p>Sinu teekond</p></div>
-      <div class="world-pill" id="homeWorld">Maailm 50 / 550</div>
+      <div class="home-share-tools">
+        <div class="world-pill" id="homeWorld">Maailm 50 / 550</div>
+        <button id="shareGameButton" class="home-share-button" type="button" aria-label="Jaga mängu">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="18" cy="5" r="2.3"></circle><circle cx="6" cy="12" r="2.3"></circle><circle cx="18" cy="19" r="2.3"></circle><path d="m8.2 10.8 7.6-4.5M8.2 13.2l7.6 4.5"></path></svg>JAGA
+        </button>
+      </div>
     </div>
 
     <button class="home-world-card" id="openWorldView" type="button" aria-label="Ava minu maailm">
@@ -535,6 +558,21 @@ body{background:
     <p>Тренажёр уже учёл эту тренировку.</p>
     <div class="finishBtns"><button id="again" class="primary">Продолжить</button><button id="other">Другой вид</button></div>
   </section>
+  <dialog id="shareDialog" class="share-dialog" aria-labelledby="shareDialogTitle">
+    <div class="share-content">
+      <button id="shareClose" type="button" class="share-close" aria-label="Sulge jagamise aken">×</button>
+      <div class="share-symbol" aria-hidden="true">✦</div>
+      <div style="font-size:11px;font-weight:900;letter-spacing:.17em;color:#9be4de">EDUKASS</div>
+      <h2 id="shareDialogTitle">Jaga mängu</h2>
+      <p>Saada link sõbrale, lapsele või õpilasele.</p>
+      <div class="share-link-row">
+        <input id="shareUrlInput" class="share-link-input" type="text" readonly aria-label="Mängu link" value="https://edukass-preview.va-educat.workers.dev/proov/stolbiki-mosaic-7q4m9k/">
+        <button id="copyShareLinkButton" class="share-copy-button" type="button">⧉ Kopeeri link</button>
+      </div>
+      <p class="share-status" id="shareStatus" role="status" aria-live="polite"></p>
+      <p class="share-note">Iga mängija alustab oma seadmes algusest.</p>
+    </div>
+  </dialog>
 </main>
 <script>
 (function(root,factory){
@@ -1850,6 +1888,35 @@ body{background:
     [659,784,988].forEach((f,i)=>tone(f,.56+i*.018,.38,.018,'sine'));
     tone(1568,.84,.24,.022,'sine');
   }
+
+  const SHARE_URL='https://edukass-preview.va-educat.workers.dev/proov/stolbiki-mosaic-7q4m9k/';
+  const shareDialog=$('#shareDialog'),shareInput=$('#shareUrlInput'),shareStatus=$('#shareStatus');
+  function openShareFallback(){
+    shareInput.value=SHARE_URL;shareStatus.textContent='';
+    if(typeof shareDialog.showModal==='function')shareDialog.showModal();
+    else window.prompt('Kopeeri mängu link:',SHARE_URL);
+  }
+  async function shareGame(){
+    if(typeof navigator.share!=='function'){openShareFallback();return}
+    try{await navigator.share({
+      title:'EDUKASS – Kirjalik arvutamine',
+      text:'Harjuta kirjalikku arvutamist 15 minutit päevas! Proovi ka sina.',
+      url:SHARE_URL
+    })}catch(e){if(e?.name!=='AbortError')openShareFallback()}
+  }
+  async function copyShareLink(){
+    let copied=false;
+    try{if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(SHARE_URL);copied=true}}catch(e){}
+    if(!copied){
+      shareInput.focus();shareInput.select();
+      try{copied=document.execCommand('copy')}catch(e){}
+    }
+    shareStatus.textContent=copied?'Link kopeeritud!':'Vali ja kopeeri link käsitsi.';
+  }
+  $('#shareGameButton').addEventListener('click',shareGame);
+  $('#copyShareLinkButton').addEventListener('click',copyShareLink);
+  $('#shareClose').addEventListener('click',()=>shareDialog.close());
+  shareDialog.addEventListener('click',e=>{if(e.target===shareDialog)shareDialog.close()});
   $('#soundToggleButton').addEventListener('click',toggleSound);updateSoundButton();
   $('#introPlay').addEventListener('click',()=>{
     playIntroLaunchSound();$('#introScreen').classList.add('hidden');showHome({historyMode:'replace'});
