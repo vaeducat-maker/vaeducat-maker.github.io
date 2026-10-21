@@ -343,6 +343,39 @@ body{background:
   .train{padding:6px;border-radius:22px}
   .pad{padding:6px;border-radius:16px}
 }
+
+/* EDUKASS: friendly 15-minute lesson and temporary review notebook */
+.lesson-clock{min-width:85px;display:flex;flex-direction:column;align-items:center;gap:3px;padding:5px 7px;border:1px solid rgba(255,210,118,.5);background:linear-gradient(145deg,rgba(255,212,115,.2),rgba(255,255,255,.06));border-radius:13px;color:#fff5d4;box-shadow:0 0 15px rgba(247,202,102,.1)}
+.lesson-clock-main{display:flex;align-items:center;gap:4px;font-size:13px;font-weight:950;font-variant-numeric:tabular-nums}
+.lesson-hourglass{font-size:17px;display:inline-block;animation:glassTurn 6s infinite}
+@keyframes glassTurn{0%,80%,100%{transform:rotate(0)}90%{transform:rotate(180deg)}}
+.lesson-clock-track{display:block;width:100%;height:3px;border-radius:9px;background:rgba(255,255,255,.18);overflow:hidden}
+.lesson-clock-fill{display:block;height:100%;width:0;background:linear-gradient(90deg,#ffe58b,#f2b864);transition:width .5s linear}
+.train .topbar{grid-template-columns:42px minmax(0,1fr) 35px 87px;gap:5px;padding-right:43px;height:50px}
+.train .topbar .mode{font-size:clamp(11px,3.4vw,15px)}.train .topbar .route{font-size:12px;padding:5px 2px;white-space:nowrap}
+@media(max-width:365px){.train .topbar{grid-template-columns:39px minmax(0,1fr) 32px 80px;gap:3px;padding-right:39px}.lesson-clock{min-width:80px;padding:4px 5px}.train .topbar .mode{font-size:11px}}
+@media(prefers-reduced-motion:reduce){.lesson-hourglass{animation:none}}
+.lesson-screen{height:100%;overflow:hidden;display:flex;flex-direction:column;gap:12px;padding:12px;color:#fff;background:radial-gradient(circle at 75% 18%,rgba(110,217,204,.2),transparent 28%),radial-gradient(circle at 15% 85%,rgba(234,101,175,.18),transparent 32%),linear-gradient(150deg,#081b42,#173d65 53%,#493475);border-radius:25px}
+.lesson-panel{flex:1;min-height:0;display:flex;flex-direction:column;gap:12px}
+.lesson-screen-header{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.lesson-back{border:1px solid rgba(255,255,255,.42);border-radius:14px;padding:10px 13px;background:rgba(255,255,255,.12);font-size:14px;font-weight:800;color:#fff}
+.lesson-kicker{color:#9fe4d8;font-size:11px;font-weight:950;letter-spacing:.12em}
+.lesson-title{font-size:clamp(25px,6.5vw,35px);font-weight:1000;line-height:1.1;margin:0;text-align:center}
+.lesson-sub{font-size:14px;font-weight:650;color:#d9e5f7;text-align:center}
+.lesson-center{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:13px;text-align:center}
+.lesson-trophy{font-size:64px;filter:drop-shadow(0 8px 15px rgba(255,202,84,.25))}
+.lesson-count{font-size:58px;line-height:1;font-weight:1000;color:#ffe08b;text-shadow:0 6px 18px rgba(0,0,0,.24)}
+.lesson-actions{display:grid;gap:9px}
+.lesson-button{min-height:51px;border-radius:17px;border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.13);color:#fff;font-size:15px;font-weight:900}
+.lesson-button.primary{border:2px solid #fff3c0;background:linear-gradient(145deg,#fff7a8,#ffd34d 52%,#ff9a3c);color:#17344e;box-shadow:0 8px 20px rgba(0,0,0,.2)}
+.lesson-cards{flex:1;min-height:0;overflow-y:auto;display:grid;grid-template-columns:1fr 1fr;align-content:start;gap:10px;padding:3px 2px 12px}
+.lesson-card{text-align:left;border:1px solid rgba(255,255,255,.25);border-radius:17px;padding:13px 10px;background:rgba(255,255,255,.12);color:#fff;min-height:89px;display:flex;flex-direction:column;justify-content:space-between;gap:7px}
+.lesson-card small{color:#b5caf1;font-weight:800;font-size:11px}.lesson-card strong{font-size:clamp(14px,4vw,19px);font-weight:900}.lesson-card span{align-self:flex-end;font-size:12px;color:#ffe08b;font-weight:850}
+.lesson-detail-paper{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:12px 6px;border:2px solid rgba(255,215,146,.7);border-radius:22px;background:linear-gradient(#fffefb,#fff9eb);color:#172d4d}
+.lesson-detail-paper .entry{pointer-events:none}
+.lesson-detail-paper .entry.recommended,.lesson-detail-paper .entry.active,.lesson-detail-paper .entry.good{background:rgba(255,255,255,.9);box-shadow:inset 0 0 0 1px rgba(100,110,105,.18)}
+.lesson-detail-paper .division-layout{max-width:100%}.lesson-detail-paper .division-answer{width:auto;max-width:100%}.lesson-detail-paper .math-grid{color:#172d4d}
+.lesson-hidden{display:none!important}
 </style>
   <link rel="preload" href="/games/korrutamine-test/assets/edukass-cat-transparent.png" as="image" fetchpriority="high">
 </head>
@@ -427,7 +460,8 @@ body{background:
     <div class="topbar">
       <button id="back" class="back" aria-label="Назад">←</button>
       <div id="mode" class="mode"></div>
-      <div id="route" class="route">Задание 1</div>
+      <div id="route" class="route">1 / 5</div>
+       <div id="lessonClock" class="lesson-clock" aria-label="15-minutiline matemaatikatund"><div class="lesson-clock-main"><span class="lesson-hourglass">⏳</span><span id="lessonTime">15:00</span></div><span class="lesson-clock-track"><span class="lesson-clock-fill" id="lessonProgress"></span></span></div>
     </div>
     <div id="paper" class="paper">
       <div id="mathWrap" class="math-wrap"></div>
@@ -456,6 +490,31 @@ body{background:
     </div>
   </section>
 
+  <section id="lessonScreen" class="lesson-screen hidden">
+    <div id="lessonOverview" class="lesson-panel lesson-hidden">
+      <div class="lesson-center">
+        <div class="lesson-kicker">EDUKASS · 15 MINUTIT</div><div class="lesson-trophy">🏆</div>
+        <h2 class="lesson-title">Tubli töö!</h2><div class="lesson-sub">Sinu matemaatikatund on tehtud!</div>
+        <div class="lesson-count" id="lessonSolvedCount">0</div><div class="lesson-sub">lahendatud ülesannet</div>
+      </div>
+      <div class="lesson-actions">
+        <button id="lessonOpenList" type="button" class="lesson-button primary">📖 Minu tehted</button>
+        <button id="lessonRestart" type="button" class="lesson-button">↻ Uus 15-minutiline tund</button>
+        <button id="lessonExit" type="button" class="lesson-button">Lõpeta</button>
+      </div>
+    </div>
+    <div id="lessonListView" class="lesson-panel lesson-hidden">
+      <div class="lesson-screen-header"><button type="button" class="lesson-back" id="lessonListBack">← Tagasi</button><span class="lesson-kicker">MINU TEHTED</span></div>
+      <h2 class="lesson-title">Minu tehted</h2><div class="lesson-sub" id="lessonListSummary"></div>
+      <div class="lesson-cards" id="lessonCards"></div>
+    </div>
+    <div id="lessonDetailView" class="lesson-panel lesson-hidden">
+      <div class="lesson-screen-header"><button type="button" class="lesson-back" id="lessonDetailBack">← Tagasi</button><span class="lesson-kicker" id="lessonDetailNumber">Ülesanne</span></div>
+      <h2 class="lesson-title" id="lessonDetailTitle"></h2>
+      <div class="lesson-detail-paper" id="lessonDetailPaper"></div>
+      <div class="lesson-actions"><button id="lessonRedo" class="lesson-button primary" type="button">↻ Lahenda uuesti</button></div>
+    </div>
+  </section>
   <section id="finish" class="finish hidden">
     <div class="finishMark">✓</div>
     <h2>Готово</h2>
@@ -910,6 +969,7 @@ body{background:
     if(view==='home')return '#home';
     if(view==='train')return '#train';
     if(view.startsWith('world'))return '#world';
+    if(view.startsWith('lesson'))return '#lesson';
     return '';
   }
   function navAddress(view){return location.pathname+location.search+navHash(view)}
@@ -1336,35 +1396,131 @@ body{background:
     requestAnimationFrame(drawHomeWorld);
   }
 
+
+  const LESSON_MS=900000;
+  let lesson={active:false,finished:false,elapsed:0,lastTick:0,entries:[]};
+  let lessonDetailIndex=0,lessonRedoIndex=-1;
+  function updateLessonClock(){
+    const left=Math.max(0,Math.ceil((LESSON_MS-lesson.elapsed)/1000));
+    $('#lessonTime').textContent=String(Math.floor(left/60)).padStart(2,'0')+':'+String(left%60).padStart(2,'0');
+    $('#lessonProgress').style.width=Math.min(100,lesson.elapsed/LESSON_MS*100)+'%';
+  }
+  function abandonLesson(){lesson={active:false,finished:false,elapsed:0,lastTick:0,entries:[]};lessonRedoIndex=-1;updateLessonClock()}
+  function beginLesson(){abandonLesson();lesson.active=true;lesson.lastTick=Date.now();updateLessonClock()}
+  function tickLesson(){
+    const now=Date.now();
+    if(!lesson.active)return;
+    if(document.visibilityState!=='hidden')lesson.elapsed=Math.min(LESSON_MS,lesson.elapsed+Math.min(1000,Math.max(0,now-lesson.lastTick)));
+    lesson.lastTick=now;updateLessonClock();
+  }
+  setInterval(tickLesson,500);
+  document.addEventListener('visibilitychange',()=>{lesson.lastTick=Date.now()});
+  const lessonReady=()=>lesson.active&&lesson.elapsed>=LESSON_MS;
+  function solvedExpression(t){return t.a+({add:' + ',sub:' − ',mul:' × ',div:' : '}[t.op]||' ? ')+t.b}
+  function rememberSolved(){
+    if(!lesson.active||forced||!current)return;
+    // Preserve the child's own written cells; never replace them with a generated answer.
+    lesson.entries.push({task:current,markup:$('#mathWrap').innerHTML,expression:solvedExpression(current)});
+  }
+  function lessonPanels(which){
+    $('#lessonScreen').classList.remove('hidden');
+    $('#train').classList.add('hidden');$('#home').classList.add('hidden');
+    $('#protoWorld').classList.remove('on','viewing');$('#introScreen').classList.add('hidden');
+    $('#lessonOverview').classList.toggle('lesson-hidden',which!=='done');
+    $('#lessonListView').classList.toggle('lesson-hidden',which!=='list');
+    $('#lessonDetailView').classList.toggle('lesson-hidden',which!=='detail');
+  }
+  function showLessonDone({historyMode='replace'}={}){
+    clearAssistTimers();taskToken++;lesson.active=false;lesson.finished=true;lessonRedoIndex=-1;
+    lessonPanels('done');$('#lessonSolvedCount').textContent=lesson.entries.length;
+    if(historyMode!=='none')writeNav('lesson-done',{},historyMode);
+    playGameSound('world');
+  }
+  function showLessonList({historyMode='replace'}={}){
+    lessonPanels('list');lessonRedoIndex=-1;
+    $('#lessonListSummary').textContent=lesson.entries.length+' ülesannet · tänane tund';
+    $('#lessonCards').replaceChildren(...lesson.entries.map((entry,i)=>{
+      const b=document.createElement('button');b.type='button';b.className='lesson-card';
+      const small=document.createElement('small');small.textContent='Ülesanne '+(i+1);
+      const strong=document.createElement('strong');strong.textContent=entry.expression;
+      const go=document.createElement('span');go.textContent='Vaata →';b.append(small,strong,go);
+      b.addEventListener('click',()=>showLessonDetail(i));return b;
+    }));
+    if(historyMode!=='none')writeNav('lesson-list',{},historyMode);
+  }
+  function fitLessonDetail(){
+    const wrap=$('#lessonDetailPaper'),grid=wrap.querySelector('.math-grid');
+    if(!grid)return;
+    const cols=Number(grid.dataset.cols),rows=Number(grid.dataset.rows),w=wrap.clientWidth-26;
+    const answer=wrap.querySelector('.division-answer');
+    const h=wrap.clientHeight-30-(answer?answer.getBoundingClientRect().height+12:0);
+    wrap.style.setProperty('--cell',Math.max(25,Math.min(42,Math.floor(w/cols),Math.floor(h/rows)))+'px');
+  }
+  function showLessonDetail(i,{historyMode='replace'}={}){
+    if(!lesson.entries[i])return showLessonList();
+    lessonDetailIndex=i;lessonPanels('detail');
+    $('#lessonDetailNumber').textContent='Ülesanne '+(i+1)+' / '+lesson.entries.length;
+    $('#lessonDetailTitle').textContent=lesson.entries[i].expression;
+    $('#lessonDetailPaper').innerHTML=lesson.entries[i].markup; // trusted app-generated markup
+    requestAnimationFrame(fitLessonDetail);
+    if(historyMode!=='none')writeNav('lesson-detail',{},historyMode);
+  }
+  function redoLessonExample(){
+    const e=lesson.entries[lessonDetailIndex];if(!e)return;
+    lessonRedoIndex=lessonDetailIndex;startForcedTask(e.task,'Korda');
+    $('#lessonClock').classList.add('hidden');writeNav('lesson-redo');
+  }
+  $('#lessonOpenList').onclick=()=>showLessonList();
+  $('#lessonRestart').onclick=()=>start(lastMode,{historyMode:'replace'});
+  $('#lessonExit').onclick=()=>showHome({historyMode:'replace'});
+  $('#lessonListBack').onclick=()=>showLessonDone();
+  $('#lessonDetailBack').onclick=()=>showLessonList();
+  $('#lessonRedo').onclick=redoLessonExample;
+
   function completeTask(){
     clearAssistTimers();const ms=Math.round(performance.now()-taskStarted);
-    if(!forced){A.recordResult(session,assignment,{firstTry:taskErrors===0&&!taskAssisted,errors:taskErrors,ms,assisted:taskAssisted});profile=session.profile;save();renderProfile()}
-    $('#status').textContent='✓';playGameSound('correct');const hold=taskAssisted?ASSIST.finalHoldMs:700;
-    setTimeout(()=>{if(forced)return;protoTask++;if(protoTask>=5)showProtoWorld();else nextTask()},hold);
+    if(!forced){A.recordResult(session,assignment,{firstTry:taskErrors===0&&!taskAssisted,errors:taskErrors,ms,assisted:taskAssisted});profile=session.profile;save();rememberSolved();renderProfile()}
+    $('#status').textContent='✓';playGameSound('correct');const hold=taskAssisted?ASSIST.finalHoldMs:700,finishedToken=taskToken;
+    setTimeout(()=>{
+      if(finishedToken!==taskToken)return;
+      if(forced){if(lessonRedoIndex>=0)showLessonList();return}
+      protoTask++;
+      if(protoTask>=5)showProtoWorld();
+      else if(lessonReady())showLessonDone();
+      else nextTask();
+    },hold);
   }
   function nextTask(){
     assignment=A.nextAssignment(session);const seed=++seedCounter;current=E.generateSkill(assignment.skill,seed);
     $('#route').textContent=`${protoTask+1} / 5`;$('#mode').textContent=`${protoLevel}. tase · ${PROTO_LABEL[current.op]||''}`;syncProtoTop();renderTask(current)
   }
-  function start(m='mix',{historyMode='push'}={}){
+  function start(m='mix',{historyMode='push',continueLesson=false}={}){
+    if(!continueLesson||!lesson.active)beginLesson();
+    $('#lessonClock').classList.remove('hidden');$('#lessonScreen').classList.add('hidden');
     clearAssistTimers();forced=false;mode=m;lastMode=m;localStorage.setItem('edukass-columns-full-last-mode',m);protoTask=0;
     session=A.createSession(profile,m,Math.random,Date.now());
     $('#home').classList.add('hidden');$('#finish').classList.add('hidden');$('#protoWorld').classList.remove('on','viewing');$('#train').classList.remove('hidden');
     writeNav('train',{mode:m},historyMode);nextTask()
   }
   function showHome({historyMode='none'}={}){
+    abandonLesson();$('#lessonScreen').classList.add('hidden');
     clearAssistTimers();taskToken++;
     $('#train').classList.add('hidden');$('#protoWorld').classList.remove('on','viewing');$('#finish').classList.add('hidden');
     renderHomeLevels();$('#home').classList.remove('hidden');
     if(historyMode!=='none')writeNav('home',{},historyMode);
   }
   function showIntro({historyMode='none'}={}){
+    abandonLesson();$('#lessonScreen').classList.add('hidden');
     clearAssistTimers();taskToken++;
     $('#home').classList.add('hidden');$('#train').classList.add('hidden');$('#protoWorld').classList.remove('on','viewing');$('#finish').classList.add('hidden');
     $('#introScreen').classList.remove('hidden');
     if(historyMode!=='none')writeNav('intro',{},historyMode);
   }
   function parentView(view){
+    if(view==='lesson-detail'||view==='lesson-redo')return'lesson-list';
+    if(view==='lesson-list')return'lesson-done';
+    if(view==='lesson-done')return'home';
+    if(view==='train'&&lessonRedoIndex>=0)return'lesson-list';
     if(view==='train'||view==='world-view'||view==='world-reward')return'home';
     if(view==='home')return'intro';
     return null;
@@ -1448,7 +1604,7 @@ body{background:
 
   $$('[data-op]').forEach(b=>b.addEventListener('click',()=>start(b.dataset.op)));
   $$('#pad [data-key]').forEach(b=>b.addEventListener('click',()=>press(b.dataset.key)));
-  $('#back').onclick=()=>{playGameSound('ui');if(history.state?.marker===NAV_MARKER)history.back();else showHome({historyMode:'replace'})};
+  $('#back').onclick=()=>{playGameSound('ui');if(lessonRedoIndex>=0)showLessonList();else if(history.state?.marker===NAV_MARKER)history.back();else showHome({historyMode:'replace'})};
   $('#other').onclick=()=>showHome({historyMode:'replace'});$('#again').onclick=()=>start(lastMode,{historyMode:'replace'});
 
   function playIntroLaunchSound(){
@@ -1479,13 +1635,15 @@ body{background:
     // We are now on the lower sentinel entry. Turn it into the desired
     // parent screen, render that screen, then put a fresh guard above it.
     if(parent==='intro')showIntro({historyMode:'none'});
+    else if(parent==='lesson-list')showLessonList({historyMode:'none'});
+    else if(parent==='lesson-done')showLessonDone({historyMode:'none'});
     else showHome({historyMode:'none'});
     currentView=parent;
     sessionStorage.setItem('edukass-columns-current-view',JSON.stringify({view:parent}));
     history.replaceState(navState(parent,{guard:false}),'',navAddress(parent));
     history.pushState(navState(parent,{guard:true}),'',navAddress(parent));
   });
-  window.addEventListener('resize',()=>{fitGrid();drawHomeWorld();if(!$('#introScreen').classList.contains('hidden'))drawIntroTimelapse(550);if($('#protoWorld').classList.contains('on')){fitProtoWorld();drawProtoWorld()}});
+  window.addEventListener('resize',()=>{fitGrid();if(currentView==='lesson-detail')fitLessonDetail();drawHomeWorld();if(!$('#introScreen').classList.contains('hidden'))drawIntroTimelapse(550);if($('#protoWorld').classList.contains('on')){fitProtoWorld();drawProtoWorld()}});
   buildProtoOrder();rebuildProtoActive();syncProtoTop();renderProfile();runIntroTimelapse();
 
   // Restore the current in-game screen after reload, then ensure Android Back
@@ -1500,7 +1658,10 @@ body{background:
   }catch{}
   currentView=restored.view||'intro';
 
-  if(currentView==='home'){
+  if(currentView.startsWith('lesson')){
+    // No lifetime archive: an interrupted/reloaded lesson starts fresh.
+    currentView='home';$('#introScreen').classList.add('hidden');showHome({historyMode:'none'});
+  }else if(currentView==='home'){
     $('#introScreen').classList.add('hidden');showHome({historyMode:'none'});
   }else if(currentView==='world-view'){
     $('#introScreen').classList.add('hidden');showWorldView({historyMode:'none'});
@@ -1527,7 +1688,10 @@ body{background:
     assistNow:teachOneStep,
     setAssistTimings:(v={})=>{if(Number.isFinite(v.nudgeMs))ASSIST.nudgeMs=Math.max(1,v.nudgeMs);if(Number.isFinite(v.fillMs))ASSIST.fillMs=Math.max(1,v.fillMs);if(Number.isFinite(v.stepPauseMs))ASSIST.stepPauseMs=Math.max(1,v.stepPauseMs);if(Number.isFinite(v.finalHoldMs))ASSIST.finalHoldMs=Math.max(1,v.finalHoldMs);scheduleAssistClock();return{...ASSIST}},
     solveCurrent:()=>{for(let i=0;i<steps.length;i++){const s=steps[i],p=stepPhase(s);if(p!==phase)switchPhase(p);const node=targetEl(s.target);if(node)node.textContent=s.value;completedSteps.add(i)}selectedTarget=null;selectedStepIndex=null;refreshInteraction()},
-    resetProfile:()=>{profile=A.createProfile();save();renderProfile()}
+    resetProfile:()=>{profile=A.createProfile();save();renderProfile()},
+    getLesson:()=>({active:lesson.active,finished:lesson.finished,elapsed:lesson.elapsed,solved:lesson.entries.length}),
+    setLessonElapsed:(ms)=>{lesson.elapsed=Math.min(LESSON_MS,Math.max(0,ms));updateLessonClock()},
+    showLessonDone:()=>showLessonDone()
   };
 })();
 
