@@ -134,7 +134,35 @@ async function checkCompetitor() {
         note('competitor','No horizontal scrolling on '+width+'px',noOverflow,'viewport '+width+'px');
         const btns=await page.locator('.op[data-op]').count();
         note('competitor','All operation choices accessible on '+width+'px',btns===4,'buttons: '+btns);
+        // Share is a real browser interaction, with the same native/fallback model as Korrutustabel.
+        const shareButton=page.locator('#shareGameButton');
+        note('competitor','Share invitation button visible at '+width+'px',await shareButton.isVisible(),
+          'EDUKASS JAGA launch control');
         if(width===390) {
+          // Browser share cannot be completed headlessly; force the copy-link fallback.
+          await page.evaluate(()=>{try{Object.defineProperty(navigator,'share',{value:undefined,configurable:true})}catch{}});
+          await shareButton.click();
+          await page.locator('#shareDialog').waitFor({state:'visible',timeout:4500});
+          const copiedLink=await page.locator('#shareUrlInput').inputValue();
+          const correctInvite=copiedLink==='https://edukass-preview.va-educat.workers.dev/proov/stolbiki-mosaic-7q4m9k/';
+          note('competitor','Invitation uses clean player version, not world 250 demo',correctInvite,copiedLink,'critical');
+          await screenshot(page,'share-invitation');
+          await page.locator('#copyShareLinkButton').click();
+          note('competitor','Copy link button provides user feedback',
+            (await page.locator('#shareStatus').innerText()).length>0);
+          await page.locator('#shareClose').click();
+          const guest=await context.newPage();
+          try{
+            await guest.goto('http://127.0.0.1:'+port+'/proov/stolbiki-mosaic-7q4m9k/index.html',
+              {waitUntil:'domcontentloaded',timeout:30000});
+            await guest.waitForFunction(()=>!!window.__EDUKASS_TEST__);
+            const fresh=await guest.evaluate(()=>({
+              world:window.__EDUKASS_TEST__.getRealWorldProgress().tiles,
+              frontier:window.__EDUKASS_TEST__.getState().profile
+            }));
+            note('competitor','Guest starts clean at 50 despite shared browser storage',fresh.world===50,
+              'fresh world '+fresh.world+'/550','critical');
+          }finally{await guest.close()}
           await page.locator('#openWorldView').click();
           await page.waitForTimeout(3900);
           const movie=await page.evaluate(()=>({
