@@ -384,6 +384,9 @@ body{background:
 .division-answer.division-below .division-result{flex-direction:column;align-items:center;gap:3px}
 .world-replay,.world-skip{position:absolute;z-index:7;bottom:15px;right:13px;border-radius:14px;border:1px solid rgba(255,255,255,.65);background:rgba(255,255,255,.95);color:#254363;font-size:13px;font-weight:900;padding:10px 13px;display:none;box-shadow:0 7px 16px rgba(7,18,40,.28)}
 .proto-world.viewing .world-replay:not(.hidden),.proto-world.viewing .world-skip:not(.hidden){display:block}
+.world-demo{position:absolute;z-index:7;bottom:15px;left:13px;display:none;border-radius:14px;border:1px solid rgba(255,215,146,.7);background:linear-gradient(145deg,#ffefba,#ffcc65);color:#283c5b;font-size:13px;font-weight:950;padding:10px 12px;box-shadow:0 7px 16px rgba(7,18,40,.28)}
+.proto-world.viewing .world-demo{display:block}
+@media(max-width:370px){.world-demo,.world-replay,.world-skip{font-size:11px;padding:9px}}
 .world-timelapse-caption{position:absolute;z-index:7;left:50%;top:60px;transform:translateX(-50%);color:#fff;font-size:14px;font-weight:900;text-shadow:0 2px 8px #0c2442;text-align:center;white-space:nowrap;display:none}
 .proto-world.viewing .world-timelapse-caption:not(.hidden){display:block}
 </style>
@@ -490,6 +493,7 @@ body{background:
       <button class="world-view-back" id="worldViewBack" type="button">← Tagasi</button>
        <button class="world-replay hidden" id="worldReplay" type="button">↻ Vaata uuesti</button>
        <button class="world-skip hidden" id="worldSkip" type="button">Näita maailma →</button>
+       <button class="world-demo" id="worldDemo250" type="button">🧪 Proovi 250 / 550</button>
        <div class="world-timelapse-caption hidden" id="worldTimelapseCaption">Sinu maailm kasvab...</div>
       <canvas id="protoWorldCanvas"></canvas>
       <div class="proto-world-count" id="protoWorldCount">50 / 550</div>
@@ -1405,18 +1409,26 @@ body{background:
     if(Array.isArray(prev)&&prev.length===protoWorldCount&&prev.every(k=>Number.isInteger(k)&&k>=0&&k<550)&&new Set(prev).size===prev.length)worldOpenedOrder=prev;
   }catch{}
   // The ?preview=250 demo is read-only. It never changes stored progress or unlocks.
-  const requestedWorldPreview=Number(new URLSearchParams(location.search).get('preview'));
-  const WORLD_PREVIEW=Number.isInteger(requestedWorldPreview)&&requestedWorldPreview>=1&&requestedWorldPreview<=550?requestedWorldPreview:null;
+  const qs=new URLSearchParams(location.search);
+  const hashPreview=/^(?:#)?(?:demo250|preview=250)$/i.test(location.hash)?250:null;
+  const requestedWorldPreview=Number(qs.get('preview')||qs.get('demoWorld')||hashPreview||0);
+  const INITIAL_WORLD_PREVIEW=Number.isInteger(requestedWorldPreview)&&requestedWorldPreview>=1&&requestedWorldPreview<=550?requestedWorldPreview:null;
+  let worldPreviewCount=INITIAL_WORLD_PREVIEW;
+  function syncWorldDemoButton(){
+    const b=$('#worldDemo250');if(!b)return;
+    b.textContent=worldPreviewCount===250?'↩ Päris maailm':'🧪 Proovi 250 / 550';
+    b.setAttribute('aria-label',worldPreviewCount===250?'Vaata päris maailma':'Proovi maailma 250 osaga');
+  }
   function worldUnlocks(){return worldOpenedOrder||protoOrder.slice(0,protoWorldCount)}
   function previewWorldUnlocks(){
     const actual=worldUnlocks();
-    if(WORLD_PREVIEW===null)return actual;
-    if(actual.length>=WORLD_PREVIEW)return actual.slice(0,WORLD_PREVIEW);
+    if(worldPreviewCount===null)return actual;
+    if(actual.length>=worldPreviewCount)return actual.slice(0,worldPreviewCount);
     const known=new Set(actual);
-    return actual.concat(protoOrder.filter(tile=>!known.has(tile)).slice(0,WORLD_PREVIEW-actual.length));
+    return actual.concat(protoOrder.filter(tile=>!known.has(tile)).slice(0,worldPreviewCount-actual.length));
   }
   function viewWorldCounter(count){
-    $('#protoWorldCount').textContent=count+' / 550'+(WORLD_PREVIEW!==null?' · DEMO':'');
+    $('#protoWorldCount').textContent=count+' / 550'+(worldPreviewCount!==null?' · DEMO':'');
   }
   function saveProto(){
     localStorage.setItem('edukass-columns-full-level',String(protoLevel));
@@ -1548,7 +1560,7 @@ body{background:
     writeNav('train',{mode:m},historyMode);nextTask()
   }
   function showHome({historyMode='none'}={}){
-    stopWorldTimelapse();rebuildProtoActive();abandonLesson();$('#lessonScreen').classList.add('hidden');
+    stopWorldTimelapse();worldPreviewCount=INITIAL_WORLD_PREVIEW;rebuildProtoActive();abandonLesson();$('#lessonScreen').classList.add('hidden');
     clearAssistTimers();taskToken++;
     $('#train').classList.add('hidden');$('#protoWorld').classList.remove('on','viewing');$('#finish').classList.add('hidden');
     renderHomeLevels();$('#home').classList.remove('hidden');
@@ -1638,7 +1650,7 @@ body{background:
     stopWorldTimelapse();
     // A read-only preview is visible only on the world-view screen.
     protoActive=new Set(previewWorldUnlocks());drawProtoWorld();
-    if(WORLD_PREVIEW!==null)viewWorldCounter(previewWorldUnlocks().length);else syncProtoTop();
+    if(worldPreviewCount!==null)viewWorldCounter(previewWorldUnlocks().length);else syncProtoTop();
     $('#worldSkip').classList.add('hidden');$('#worldReplay').classList.remove('hidden');
     $('#worldTimelapseCaption').classList.add('hidden');
   }
@@ -1667,9 +1679,15 @@ body{background:
   }
   $('#worldReplay').addEventListener('click',()=>{playGameSound('ui');playWorldTimelapse()});
   $('#worldSkip').addEventListener('click',()=>{playGameSound('ui');endWorldTimelapse()});
+  $('#worldDemo250').addEventListener('click',()=>{
+    playGameSound('ui');
+    worldPreviewCount=worldPreviewCount===250?null:250;
+    syncWorldDemoButton();
+    playWorldTimelapse();
+  });
 
   function showProtoWorld({historyMode='replace'}={}){stopWorldTimelapse();clearAssistTimers();taskToken++;$('#home').classList.add('hidden');$('#train').classList.add('hidden');$('#protoWorld').classList.remove('viewing');$('#protoWorld').classList.add('on');writeNav('world-reward',{mode:lastMode},historyMode);syncProtoTop();fitProtoWorld();rebuildProtoActive();drawProtoWorld();setTimeout(showProtoChoices,320)}
-  function showWorldView({historyMode='push'}={}){clearAssistTimers();taskToken++;$('#home').classList.add('hidden');$('#train').classList.add('hidden');$('#protoWorld').classList.add('on','viewing');hideProtoChoices();writeNav('world-view',{},historyMode);fitProtoWorld();rebuildProtoActive();drawProtoWorld();if(protoImg.complete&&protoImg.naturalWidth)playWorldTimelapse()}
+  function showWorldView({historyMode='push'}={}){syncWorldDemoButton();clearAssistTimers();taskToken++;$('#home').classList.add('hidden');$('#train').classList.add('hidden');$('#protoWorld').classList.add('on','viewing');hideProtoChoices();writeNav('world-view',{},historyMode);fitProtoWorld();rebuildProtoActive();drawProtoWorld();if(protoImg.complete&&protoImg.naturalWidth)playWorldTimelapse()}
   function chooseProtoWorld(k){
     if(!Number.isInteger(k)||protoActive.has(k))return;
     playGameSound('world');hideProtoChoices();let st=null;
@@ -1757,7 +1775,7 @@ body{background:
   }catch{}
   currentView=restored.view||'intro';
 
-  if(WORLD_PREVIEW!==null){
+  if(INITIAL_WORLD_PREVIEW!==null){
     // Deep-link straight into the 250-tile timelapse; keep the real world unchanged.
     $('#introScreen').classList.add('hidden');
     showWorldView({historyMode:'none'});
@@ -1796,7 +1814,7 @@ body{background:
     setLessonElapsed:(ms)=>{lesson.elapsed=Math.min(LESSON_MS,Math.max(0,ms));updateLessonClock()},
     showLessonDone:()=>showLessonDone(),
     getWorldTileOrder:()=>worldUnlocks(),
-    getWorldPreview:()=>({enabled:WORLD_PREVIEW!==null,count:previewWorldUnlocks().length,actualCount:protoWorldCount})
+    getWorldPreview:()=>({enabled:worldPreviewCount!==null,count:previewWorldUnlocks().length,actualCount:protoWorldCount})
   };
 })();
 
