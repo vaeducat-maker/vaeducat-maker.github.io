@@ -174,7 +174,7 @@ async function checkCompetitor() {
             const entry=[...document.querySelectorAll('#mathWrap .entry')].find(x=>x.dataset.target===step.target);
             return {value:entry?.textContent,done:state.completed.includes(state.steps.findIndex(x=>x.target===step.target))};
           },firstStep);
-          note('competitor','Physical cell tap and numeric keypad accept child's answer',
+          note('competitor','Physical cell tap and numeric keypad accept the answer',
             accepted.value===String(firstStep.value)&&accepted.done,
             'entered '+accepted.value+' in '+firstStep.target);
           // Simulate time ending during an exercise. The exercise must not be interrupted.
