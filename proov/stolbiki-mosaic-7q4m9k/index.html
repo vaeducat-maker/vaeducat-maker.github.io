@@ -912,20 +912,20 @@ body{background:
     if(view.startsWith('world'))return '#world';
     return '';
   }
-  function navUrl(view){return location.pathname+location.search+navHash(view)}
+  function navAddress(view){return location.pathname+location.search+navHash(view)}
   function writeNav(view,data={},mode='replace'){
     currentView=view;
     sessionStorage.setItem('edukass-columns-current-view',JSON.stringify({view,...data}));
     // Screen changes stay on the top "guard" history entry.
     // Hardware Back then reaches the lower sentinel and is handled by popstate.
-    history.replaceState(navState(view,{...data,guard:true}),'',navUrl(view));
+    history.replaceState(navState(view,{...data,guard:true}),'',navAddress(view));
   }
   function armBackGuard(view,data={}){
     currentView=view;
     const st=history.state;
     if(st?.marker===NAV_MARKER&&st.guard===true)return;
-    history.replaceState(navState(view,{...data,guard:false}),'',navUrl(view));
-    history.pushState(navState(view,{...data,guard:true}),'',navUrl(view));
+    history.replaceState(navState(view,{...data,guard:false}),'',navAddress(view));
+    history.pushState(navState(view,{...data,guard:true}),'',navAddress(view));
   }
   function updateSoundButton(){
     const b=$('#soundToggleButton');if(!b)return;
@@ -1482,8 +1482,8 @@ body{background:
     else showHome({historyMode:'none'});
     currentView=parent;
     sessionStorage.setItem('edukass-columns-current-view',JSON.stringify({view:parent}));
-    history.replaceState(navState(parent,{guard:false}),'',navUrl(parent));
-    history.pushState(navState(parent,{guard:true}),'',navUrl(parent));
+    history.replaceState(navState(parent,{guard:false}),'',navAddress(parent));
+    history.pushState(navState(parent,{guard:true}),'',navAddress(parent));
   });
   window.addEventListener('resize',()=>{fitGrid();drawHomeWorld();if(!$('#introScreen').classList.contains('hidden'))drawIntroTimelapse(550);if($('#protoWorld').classList.contains('on')){fitProtoWorld();drawProtoWorld()}});
   buildProtoOrder();rebuildProtoActive();syncProtoTop();renderProfile();runIntroTimelapse();
