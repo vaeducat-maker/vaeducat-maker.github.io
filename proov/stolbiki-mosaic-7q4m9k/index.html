@@ -1980,7 +1980,7 @@ body{background:
   function base64Url(bytes){
     let binary='';
     for(let i=0;i<bytes.length;i+=8192)binary+=String.fromCharCode(...bytes.subarray(i,i+8192));
-    return btoa(binary).replace(/\\+/g,'-').replace(/\\//g,'_').replace(/=+$/,'');
+    return btoa(binary).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
   }
   function fromBase64Url(text){
     if(!/^[A-Za-z0-9_-]{1,32000}$/.test(text))throw Error('vigane link');
