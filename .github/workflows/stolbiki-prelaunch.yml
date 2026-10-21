@@ -23,6 +23,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Validate audit script syntax before downloading Chromium
+        run: node --check scripts/stolbiki-prelaunch-audit.js
       - name: Install isolated Chromium test environment
         run: |
           mkdir -p "$RUNNER_TEMP/stolbiki-browser"
