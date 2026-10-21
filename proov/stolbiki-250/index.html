@@ -1905,6 +1905,7 @@ body{background:
     })}catch(e){if(e?.name!=='AbortError')openShareFallback()}
   }
   async function copyShareLink(){
+    shareStatus.textContent='Kopeerin linki…';
     let copied=false;
     try{if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(SHARE_URL);copied=true}}catch(e){}
     if(!copied){
