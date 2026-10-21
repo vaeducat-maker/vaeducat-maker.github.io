@@ -158,14 +158,36 @@ async function checkCompetitor() {
           const clock=await page.locator('#lessonTime').innerText();
           note('competitor','15-minute clock appears in exercise',clock==='15:00','clock '+clock);
           await screenshot(page,'division-'+width);
-          // Exercise is genuinely completed using its underlying cell steps.
+          // Real child-like interaction: tap the highlighted cell and use on-screen digit keys.
+          const firstStep=await page.evaluate(()=>{
+            const s=window.__EDUKASS_TEST__.getState();return s.steps[s.stepIndex]||null;
+          });
+          assert(firstStep && firstStep.target && firstStep.value, 'No recommended answer cell');
+          const cell=page.locator('#mathWrap .entry[data-target="'+firstStep.target+'"]');
+          await cell.click();
+          for(const char of String(firstStep.value)) {
+            const key=char==='•'?'dot':char;
+            await page.locator('#pad button[data-key="'+key+'"]').click();
+          }
+          const accepted=await page.evaluate(step=>{
+            const state=window.__EDUKASS_TEST__.getState();
+            const entry=[...document.querySelectorAll('#mathWrap .entry')].find(x=>x.dataset.target===step.target);
+            return {value:entry?.textContent,done:state.completed.includes(state.steps.findIndex(x=>x.target===step.target))};
+          },firstStep);
+          note('competitor','Physical cell tap and numeric keypad accept child's answer',
+            accepted.value===String(firstStep.value)&&accepted.done,
+            'entered '+accepted.value+' in '+firstStep.target);
+          // Simulate time ending during an exercise. The exercise must not be interrupted.
+          await page.evaluate(()=>window.__EDUKASS_TEST__.setLessonElapsed(900000));
+          const remains=await page.locator('#train').isVisible();
+          note('competitor','Timer never interrupts an active written exercise',remains);
+          // Complete remaining digits. Only the next transition may end the lesson.
           await page.evaluate(()=>window.__EDUKASS_TEST__.solveCurrent());
-          await page.waitForTimeout(1050);
+          await page.locator('#lessonScreen').waitFor({state:'visible',timeout:6000});
           const after=await page.evaluate(()=>window.__EDUKASS_TEST__.getLesson());
           note('competitor','Completed solution is recorded during lesson',after.solved>=1,
             'solved count: '+after.solved);
-          await page.evaluate(()=>window.__EDUKASS_TEST__.showLessonDone());
-          await page.locator('#lessonScreen').waitFor({state:'visible'});
+          note('competitor','15-minute lesson finishes naturally after solved problem',after.finished===true);
           const lessons=await page.locator('#lessonSolvedCount').innerText();
           note('competitor','15-minute completion report shows solved count',Number(lessons)>=1,lessons);
           await page.locator('#lessonOpenList').click();
