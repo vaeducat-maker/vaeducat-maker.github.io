@@ -549,23 +549,89 @@ body{background:
     if(!allowRemainder){a-=a%d;if(a<lo)a+=d}
     return{a,b:d,m:analyzeDivision(a,d)};
   }
-  function genDiv(level,rng){let x;const easy=[12,15,20,21,24,25];
-    if(level===1)x=search(rng,()=>divCandidate(rng,2,1,false),z=>z.m.firstPartLen===1&&z.m.finalRemainder===0&&z.m.stages.every(s=>s.rem===0)&&z.a%10!==0&&Number(z.m.quotient)!==10,()=>({a:84,b:4}));
-    else if(level===2)x=search(rng,()=>divCandidate(rng,2,1,false),z=>z.m.firstPartLen===2&&z.m.finalRemainder===0&&z.a%10!==0&&Number(z.m.quotient)!==10,()=>({a:72,b:8}));
-    else if(level===3)x=search(rng,()=>divCandidate(rng,3,1,false),z=>z.m.firstPartLen===1&&z.m.stages.every(s=>s.rem===0)&&z.a%10!==0&&Number(z.m.quotient)!==10,()=>({a:864,b:2}));
-    else if(level===4)x=search(rng,()=>divCandidate(rng,3,1,false),z=>z.m.intermediateNonZeroRemainders===1&&z.m.finalRemainder===0&&z.a%10!==0&&Number(z.m.quotient)!==10,()=>({a:672,b:4}));
-    else if(level===5)x=search(rng,()=>divCandidate(rng,3,1,false),z=>z.m.firstPartLen===2&&z.m.finalRemainder===0&&z.a%10!==0&&Number(z.m.quotient)!==10,()=>({a:168,b:8}));
-    else if(level===6)x=search(rng,()=>divCandidate(rng,3,1,false),z=>z.m.intermediateNonZeroRemainders>=2&&z.m.finalRemainder===0&&z.a%10!==0&&Number(z.m.quotient)!==10,()=>({a:688,b:8}));
-    else if(level===7)x=search(rng,()=>divCandidate(rng,3,1,false),z=>z.m.zeroInDividend&&!z.m.quotientHasZero&&z.m.finalRemainder===0,()=>({a:609,b:7}));
-    else if(level===8)x=search(rng,()=>{const d=randInt(rng,2,9),q=choice(rng,[101,102,104,105,201,203,304,405]),a=d*q;return{a,b:d,m:analyzeDivision(a,d)}},z=>z.m.quotientHasZero&&z.m.finalRemainder===0,()=>({a:808,b:8}));
-    else if(level===9)x=search(rng,()=>divCandidate(rng,randInt(rng,4,5),1,false),z=>z.m.stageCount>=3&&z.m.finalRemainder===0,()=>({a:8648,b:4}));
-    else if(level===10)x=search(rng,()=>divCandidate(rng,randInt(rng,2,4),1,true),z=>z.m.finalRemainder>0,()=>({a:95,b:4}));
-    else if(level===11)x=search(rng,()=>{const d=randInt(rng,12,89),q=randInt(rng,2,9),a=d*q;return{a,b:d,m:analyzeDivision(a,d)}},z=>z.m.divisorDigits===2&&z.m.quotient.length===1&&z.m.finalRemainder===0,()=>({a:168,b:24}));
-    else if(level===12)x=search(rng,()=>{const d=choice(rng,easy),q=randInt(rng,10,99),a=d*q;return{a,b:d,m:analyzeDivision(a,d)}},z=>z.m.quotient.length===2&&z.m.finalRemainder===0,()=>({a:288,b:12}));
-    else if(level===13)x=search(rng,()=>{const d=randInt(rng,11,89),q=randInt(rng,10,99),a=d*q;return{a,b:d,m:analyzeDivision(a,d)}},z=>z.m.quotient.length===2&&z.m.finalRemainder===0,()=>({a:1728,b:48}));
-    else if(level===14)x=search(rng,()=>{const d=randInt(rng,11,89),q=randInt(rng,20,99999),a=d*q;return{a,b:d,m:analyzeDivision(a,d)}},z=>z.m.dividendDigits<=6&&z.m.stageCount<=5&&z.m.quotient.length>=2&&z.m.quotient.length<=5&&z.m.intermediateNonZeroRemainders>=2&&z.m.finalRemainder===0,()=>({a:987648,b:48}));
-    else if(level===15)x=search(rng,()=>{const d=randInt(rng,11,89),q=choice(rng,[101,102,105,201,205,301,405,1005,2005,20501]),a=d*q;return{a,b:d,m:analyzeDivision(a,d)}},z=>z.m.dividendDigits<=6&&z.m.stageCount<=5&&(z.m.zeroInDividend||z.m.quotientHasZero)&&z.m.finalRemainder===0,()=>({a:987648,b:48}));
-    else x=search(rng,()=>{const d=randInt(rng,11,89),q=randInt(rng,10,99999),rem=randInt(rng,1,d-1),a=d*q+rem;return{a,b:d,m:analyzeDivision(a,d)}},z=>z.m.dividendDigits<=6&&z.m.stageCount<=5&&z.m.quotient.length>=2&&z.m.quotient.length<=5&&z.m.finalRemainder>0,()=>({a:987695,b:48}));
+  function genDiv(level,rng){
+    let x;
+    const useful=(z)=>z.m.stageCount>=2&&z.m.quotient.length>=2&&Number(z.m.quotient)!==10;
+    if(level===1)x=search(rng,
+      ()=>divCandidate(rng,2,1,false),
+      z=>useful(z)&&z.m.firstPartLen===1&&!z.m.zeroInDividend&&!z.m.quotientHasZero&&z.m.stages.every(s=>s.rem===0),
+      ()=>({a:84,b:4})
+    );
+    else if(level===2)x=search(rng,
+      ()=>divCandidate(rng,2,1,false),
+      z=>useful(z)&&z.m.firstPartLen===1&&!z.m.zeroInDividend&&!z.m.quotientHasZero&&z.m.intermediateNonZeroRemainders===1&&z.m.finalRemainder===0,
+      ()=>({a:96,b:4})
+    );
+    else if(level===3)x=search(rng,
+      ()=>divCandidate(rng,3,1,false),
+      z=>useful(z)&&z.m.stageCount===3&&z.m.firstPartLen===1&&!z.m.zeroInDividend&&!z.m.quotientHasZero&&z.m.stages.every(s=>s.rem===0),
+      ()=>({a:864,b:2})
+    );
+    else if(level===4)x=search(rng,
+      ()=>divCandidate(rng,3,1,false),
+      z=>useful(z)&&z.m.stageCount===3&&z.m.firstPartLen===1&&!z.m.zeroInDividend&&!z.m.quotientHasZero&&z.m.intermediateNonZeroRemainders===1&&z.m.finalRemainder===0,
+      ()=>({a:672,b:4})
+    );
+    else if(level===5)x=search(rng,
+      ()=>divCandidate(rng,3,1,false),
+      z=>useful(z)&&z.m.firstPartLen===2&&z.m.stageCount===2&&!z.m.zeroInDividend&&!z.m.quotientHasZero&&z.m.finalRemainder===0,
+      ()=>({a:168,b:8})
+    );
+    else if(level===6)x=search(rng,
+      ()=>divCandidate(rng,3,1,false),
+      z=>useful(z)&&!z.m.zeroInDividend&&!z.m.quotientHasZero&&z.m.intermediateNonZeroRemainders>=2&&z.m.finalRemainder===0,
+      ()=>({a:688,b:8})
+    );
+    else if(level===7)x=search(rng,
+      ()=>divCandidate(rng,3,1,false),
+      z=>useful(z)&&z.m.zeroInDividend&&!z.m.quotientHasZero&&z.m.finalRemainder===0,
+      ()=>({a:609,b:7})
+    );
+    else if(level===8)x=search(rng,
+      ()=>{const d=randInt(rng,2,9),q=choice(rng,[101,102,104,105,201,203,304,405]),a=d*q;return{a,b:d,m:analyzeDivision(a,d)}},
+      z=>useful(z)&&z.m.quotientHasZero&&z.m.finalRemainder===0,
+      ()=>({a:808,b:8})
+    );
+    else if(level===9)x=search(rng,
+      ()=>divCandidate(rng,randInt(rng,4,5),1,false),
+      z=>useful(z)&&z.m.stageCount>=3&&!z.m.quotientHasZero&&z.m.finalRemainder===0,
+      ()=>({a:8648,b:4})
+    );
+    else if(level===10)x=search(rng,
+      ()=>divCandidate(rng,randInt(rng,3,4),1,true),
+      z=>useful(z)&&z.m.finalRemainder>0,
+      ()=>({a:956,b:4})
+    );
+    else if(level===11)x=search(rng,
+      ()=>{const d=choice(rng,[12,15,21,24,25]),q=randInt(rng,11,49),a=d*q;return{a,b:d,m:analyzeDivision(a,d)}},
+      z=>useful(z)&&z.m.divisorDigits===2&&z.m.quotient.length===2&&!z.m.quotientHasZero&&z.m.finalRemainder===0,
+      ()=>({a:288,b:12})
+    );
+    else if(level===12)x=search(rng,
+      ()=>{const d=randInt(rng,11,49),q=randInt(rng,11,79),a=d*q;return{a,b:d,m:analyzeDivision(a,d)}},
+      z=>useful(z)&&z.m.divisorDigits===2&&z.m.quotient.length===2&&!z.m.quotientHasZero&&z.m.intermediateNonZeroRemainders>=1&&z.m.finalRemainder===0,
+      ()=>({a:936,b:24})
+    );
+    else if(level===13)x=search(rng,
+      ()=>{const d=randInt(rng,11,89),q=randInt(rng,11,99),a=d*q;return{a,b:d,m:analyzeDivision(a,d)}},
+      z=>useful(z)&&z.m.divisorDigits===2&&z.m.quotient.length===2&&!z.m.quotientHasZero&&z.m.finalRemainder===0,
+      ()=>({a:1728,b:48})
+    );
+    else if(level===14)x=search(rng,
+      ()=>{const d=randInt(rng,11,89),q=randInt(rng,111,99999),a=d*q;return{a,b:d,m:analyzeDivision(a,d)}},
+      z=>useful(z)&&z.m.divisorDigits===2&&z.m.dividendDigits<=6&&z.m.stageCount<=5&&z.m.quotient.length>=3&&z.m.quotient.length<=5&&z.m.intermediateNonZeroRemainders>=2&&z.m.finalRemainder===0,
+      ()=>({a:98448,b:48})
+    );
+    else if(level===15)x=search(rng,
+      ()=>{const d=randInt(rng,11,89),q=choice(rng,[101,102,105,201,205,301,405,1005,2005,20501]),a=d*q;return{a,b:d,m:analyzeDivision(a,d)}},
+      z=>useful(z)&&z.m.divisorDigits===2&&z.m.dividendDigits<=6&&z.m.stageCount<=5&&(z.m.zeroInDividend||z.m.quotientHasZero)&&z.m.finalRemainder===0,
+      ()=>({a:98448,b:48})
+    );
+    else x=search(rng,
+      ()=>{const d=randInt(rng,11,89),q=randInt(rng,11,99999),rem=randInt(rng,1,d-1),a=d*q+rem;return{a,b:d,m:analyzeDivision(a,d)}},
+      z=>useful(z)&&z.m.divisorDigits===2&&z.m.dividendDigits<=6&&z.m.stageCount<=5&&z.m.quotient.length>=2&&z.m.quotient.length<=5&&z.m.finalRemainder>0,
+      ()=>({a:4756,b:38})
+    );
     return{op:'div',skill:'D'+level,a:x.a,b:x.b,meta:analyzeDivision(x.a,x.b)};
   }
 
@@ -622,22 +688,23 @@ body{background:
       if(l===13)return !m.singleDigit&&m.swapped&&m.bottomDigits>=3&&m.bottomNonZeroCount<m.topNonZeroCount;
       return !m.singleDigit&&m.bottomDigits>=3&&m.partialCount>=2&&m.partialCount<=3&&(m.finalAddCarryCount>0||m.zeroInBottom||m.zeroInTop||String(m.top).length===4);
     }
-    if(l===1)return m.divisorDigits===1&&m.dividendDigits===2&&m.firstPartLen===1&&m.finalRemainder===0&&m.stages.every(s=>s.rem===0);
-    if(l===2)return m.divisorDigits===1&&m.dividendDigits===2&&m.firstPartLen===2&&m.finalRemainder===0;
-    if(l===3)return m.divisorDigits===1&&m.dividendDigits===3&&m.firstPartLen===1&&m.stages.every(s=>s.rem===0);
-    if(l===4)return m.divisorDigits===1&&m.dividendDigits===3&&m.intermediateNonZeroRemainders===1&&m.finalRemainder===0;
-    if(l===5)return m.divisorDigits===1&&m.dividendDigits===3&&m.firstPartLen===2&&m.finalRemainder===0;
-    if(l===6)return m.divisorDigits===1&&m.dividendDigits===3&&m.intermediateNonZeroRemainders>=2&&m.finalRemainder===0;
-    if(l===7)return m.divisorDigits===1&&m.zeroInDividend&&!m.quotientHasZero&&m.finalRemainder===0;
-    if(l===8)return m.divisorDigits===1&&m.quotientHasZero&&m.finalRemainder===0;
-    if(l===9)return m.divisorDigits===1&&m.dividendDigits>=4&&m.dividendDigits<=5&&m.stageCount>=3&&m.finalRemainder===0;
-    if(l===10)return m.divisorDigits===1&&m.finalRemainder>0;
-    if(l===11)return m.divisorDigits===2&&m.quotient.length===1&&m.finalRemainder===0;
-    if(l===12)return m.divisorDigits===2&&easyDivisors().includes(task.b)&&m.quotient.length===2&&m.finalRemainder===0;
-    if(l===13)return m.divisorDigits===2&&m.quotient.length===2&&m.finalRemainder===0;
-    if(l===14)return m.divisorDigits===2&&m.dividendDigits<=6&&m.stageCount<=5&&m.quotient.length>=2&&m.quotient.length<=5&&m.intermediateNonZeroRemainders>=2&&m.finalRemainder===0;
-    if(l===15)return m.divisorDigits===2&&m.dividendDigits<=6&&m.stageCount<=5&&(m.zeroInDividend||m.quotientHasZero)&&m.finalRemainder===0;
-    return m.divisorDigits===2&&m.dividendDigits<=6&&m.stageCount<=5&&m.quotient.length>=2&&m.quotient.length<=5&&m.finalRemainder>0;
+    const usefulDivision=m.stageCount>=2&&m.quotient.length>=2&&Number(m.quotient)!==10;
+    if(l===1)return usefulDivision&&m.divisorDigits===1&&m.dividendDigits===2&&m.firstPartLen===1&&!m.zeroInDividend&&!m.quotientHasZero&&m.finalRemainder===0&&m.stages.every(s=>s.rem===0);
+    if(l===2)return usefulDivision&&m.divisorDigits===1&&m.dividendDigits===2&&m.firstPartLen===1&&!m.zeroInDividend&&!m.quotientHasZero&&m.intermediateNonZeroRemainders===1&&m.finalRemainder===0;
+    if(l===3)return usefulDivision&&m.divisorDigits===1&&m.dividendDigits===3&&m.stageCount===3&&m.firstPartLen===1&&!m.zeroInDividend&&!m.quotientHasZero&&m.finalRemainder===0&&m.stages.every(s=>s.rem===0);
+    if(l===4)return usefulDivision&&m.divisorDigits===1&&m.dividendDigits===3&&m.stageCount===3&&m.firstPartLen===1&&!m.zeroInDividend&&!m.quotientHasZero&&m.intermediateNonZeroRemainders===1&&m.finalRemainder===0;
+    if(l===5)return usefulDivision&&m.divisorDigits===1&&m.dividendDigits===3&&m.firstPartLen===2&&m.stageCount===2&&!m.zeroInDividend&&!m.quotientHasZero&&m.finalRemainder===0;
+    if(l===6)return usefulDivision&&m.divisorDigits===1&&m.dividendDigits===3&&!m.zeroInDividend&&!m.quotientHasZero&&m.intermediateNonZeroRemainders>=2&&m.finalRemainder===0;
+    if(l===7)return usefulDivision&&m.divisorDigits===1&&m.zeroInDividend&&!m.quotientHasZero&&m.finalRemainder===0;
+    if(l===8)return usefulDivision&&m.divisorDigits===1&&m.quotientHasZero&&m.finalRemainder===0;
+    if(l===9)return usefulDivision&&m.divisorDigits===1&&m.dividendDigits>=4&&m.dividendDigits<=5&&m.stageCount>=3&&!m.quotientHasZero&&m.finalRemainder===0;
+    if(l===10)return usefulDivision&&m.divisorDigits===1&&m.finalRemainder>0;
+    if(l===11)return usefulDivision&&m.divisorDigits===2&&m.quotient.length===2&&!m.quotientHasZero&&m.finalRemainder===0;
+    if(l===12)return usefulDivision&&m.divisorDigits===2&&m.quotient.length===2&&!m.quotientHasZero&&m.intermediateNonZeroRemainders>=1&&m.finalRemainder===0;
+    if(l===13)return usefulDivision&&m.divisorDigits===2&&m.quotient.length===2&&!m.quotientHasZero&&m.finalRemainder===0;
+    if(l===14)return usefulDivision&&m.divisorDigits===2&&m.dividendDigits<=6&&m.stageCount<=5&&m.quotient.length>=3&&m.quotient.length<=5&&m.intermediateNonZeroRemainders>=2&&m.finalRemainder===0;
+    if(l===15)return usefulDivision&&m.divisorDigits===2&&m.dividendDigits<=6&&m.stageCount<=5&&(m.zeroInDividend||m.quotientHasZero)&&m.finalRemainder===0;
+    return usefulDivision&&m.divisorDigits===2&&m.dividendDigits<=6&&m.stageCount<=5&&m.quotient.length>=2&&m.quotient.length<=5&&m.finalRemainder>0;
   }
   function easyDivisors(){return[12,15,20,21,24,25]}
   function skillList(){return[...Array(10)].map((_,i)=>'A'+(i+1)).concat([...Array(12)].map((_,i)=>'S'+(i+1)),[...Array(14)].map((_,i)=>'M'+(i+1)),[...Array(16)].map((_,i)=>'D'+(i+1)))}
