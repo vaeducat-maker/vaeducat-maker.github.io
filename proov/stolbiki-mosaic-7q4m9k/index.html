@@ -376,6 +376,16 @@ body{background:
 .lesson-detail-paper .entry.recommended,.lesson-detail-paper .entry.active,.lesson-detail-paper .entry.good{background:rgba(255,255,255,.9);box-shadow:inset 0 0 0 1px rgba(100,110,105,.18)}
 .lesson-detail-paper .division-layout{max-width:100%}.lesson-detail-paper .division-answer{width:auto;max-width:100%}.lesson-detail-paper .math-grid{color:#172d4d}
 .lesson-hidden{display:none!important}
+
+/* Division: put the answer beside the equation whenever real width permits it. */
+.division-answer.division-side{width:max-content;max-width:none;display:flex;flex-direction:row;align-items:center;justify-content:center;gap:8px}
+.division-answer.division-side .division-result{flex-direction:row;align-items:center;gap:6px}
+.division-answer.division-below{width:100%;display:flex;flex-direction:column;align-items:center;gap:4px}
+.division-answer.division-below .division-result{flex-direction:column;align-items:center;gap:3px}
+.world-replay,.world-skip{position:absolute;z-index:7;bottom:15px;right:13px;border-radius:14px;border:1px solid rgba(255,255,255,.65);background:rgba(255,255,255,.95);color:#254363;font-size:13px;font-weight:900;padding:10px 13px;display:none;box-shadow:0 7px 16px rgba(7,18,40,.28)}
+.proto-world.viewing .world-replay:not(.hidden),.proto-world.viewing .world-skip:not(.hidden){display:block}
+.world-timelapse-caption{position:absolute;z-index:7;left:50%;top:60px;transform:translateX(-50%);color:#fff;font-size:14px;font-weight:900;text-shadow:0 2px 8px #0c2442;text-align:center;white-space:nowrap;display:none}
+.proto-world.viewing .world-timelapse-caption:not(.hidden){display:block}
 </style>
   <link rel="preload" href="/games/korrutamine-test/assets/edukass-cat-transparent.png" as="image" fetchpriority="high">
 </head>
@@ -478,6 +488,9 @@ body{background:
   <section id="protoWorld" class="proto-world">
     <div class="proto-world-frame">
       <button class="world-view-back" id="worldViewBack" type="button">← Tagasi</button>
+       <button class="world-replay hidden" id="worldReplay" type="button">↻ Vaata uuesti</button>
+       <button class="world-skip hidden" id="worldSkip" type="button">Näita maailma →</button>
+       <div class="world-timelapse-caption hidden" id="worldTimelapseCaption">Sinu maailm kasvab...</div>
       <canvas id="protoWorldCanvas"></canvas>
       <div class="proto-world-count" id="protoWorldCount">50 / 550</div>
       <button type="button" class="proto-choice" id="pc0" aria-label="Ava siin"></button>
@@ -1098,8 +1111,15 @@ body{background:
     });
   }
 
+  function updateDivisionPlacement(){
+    const answer=$('#mathWrap .division-answer');if(!answer)return;
+    // Measure the actual combined width at the original font/cell sizes.
+    answer.classList.remove('division-below');answer.classList.add('division-side');
+    const maxWidth=Math.min($('#paper').clientWidth-24,$('#mathWrap').clientWidth-8);
+    if(answer.scrollWidth>maxWidth){answer.classList.remove('division-side');answer.classList.add('division-below')}
+  }
   function fitGrid(){
-    const g=$('.math-grid');if(!g)return;
+    const g=$('#mathWrap .math-grid');if(!g)return;
     const paper=$('#paper'),status=$('#status'),cols=+g.dataset.cols,rows=+g.dataset.rows;
     const aw=Math.max(180,paper.clientWidth-18);
     let ah=Math.max(180,paper.clientHeight-status.offsetHeight-18);
@@ -1230,8 +1250,9 @@ body{background:
       for(let i=0;i<remText.length;i++)inlineEntry(remLine,'ar'+i);
       result.appendChild(remLine);
     }
-    answer.append(expr,result);
+    answer.append(expr,result);answer.classList.add('division-side');
     const work=el('division-work','');host.append(answer,work);$('#mathWrap').replaceChildren(host);
+    updateDivisionPlacement();
 
     const cols=1+n,rows=1+st.length*2,g=createGrid(cols,rows,work);
     [...a].forEach((ch,i)=>fixed(g,1+i,0,ch));
@@ -1314,7 +1335,7 @@ body{background:
     completedSteps=new Set();selectedStepIndex=null;selectedTarget=null;guideCursor=0;
     if(t.op==='add')renderAdd(t);else if(t.op==='sub')renderSub(t);else if(t.op==='mul')renderMul(t);else renderDiv(t);
     phase=phaseOrder()[0];
-    requestAnimationFrame(()=>{fitGrid();refreshInteraction();scheduleAssistClock()});
+    requestAnimationFrame(()=>{updateDivisionPlacement();fitGrid();updateDivisionPlacement();refreshInteraction();scheduleAssistClock()});
   }
   function selectTarget(target){
     if(!current||transitioning||assisting)return;
@@ -1377,7 +1398,18 @@ body{background:
   let protoTask=0;
   if(!Number.isFinite(protoLevel)||protoLevel<1)protoLevel=1;
   if(!Number.isFinite(protoWorldCount)||protoWorldCount<50||protoWorldCount>550)protoWorldCount=50;
-  function saveProto(){localStorage.setItem('edukass-columns-full-level',String(protoLevel));localStorage.setItem('edukass-columns-full-world',String(protoWorldCount))}
+  const WORLD_HISTORY_KEY='edukass-columns-mosaic-order-v1';
+  let worldOpenedOrder=null;
+  try{
+    const prev=JSON.parse(localStorage.getItem(WORLD_HISTORY_KEY)||'null');
+    if(Array.isArray(prev)&&prev.length===protoWorldCount&&prev.every(k=>Number.isInteger(k)&&k>=0&&k<550)&&new Set(prev).size===prev.length)worldOpenedOrder=prev;
+  }catch{}
+  function worldUnlocks(){return worldOpenedOrder||protoOrder.slice(0,protoWorldCount)}
+  function saveProto(){
+    localStorage.setItem('edukass-columns-full-level',String(protoLevel));
+    localStorage.setItem('edukass-columns-full-world',String(protoWorldCount));
+    if(worldOpenedOrder)localStorage.setItem(WORLD_HISTORY_KEY,JSON.stringify(worldOpenedOrder));
+  }
   let lastMode=localStorage.getItem('edukass-columns-full-last-mode')||'mix';
   function syncProtoTop(){
     $('#protoWorldCount').textContent=`${protoWorldCount} / 550`;
@@ -1503,14 +1535,14 @@ body{background:
     writeNav('train',{mode:m},historyMode);nextTask()
   }
   function showHome({historyMode='none'}={}){
-    abandonLesson();$('#lessonScreen').classList.add('hidden');
+    stopWorldTimelapse();abandonLesson();$('#lessonScreen').classList.add('hidden');
     clearAssistTimers();taskToken++;
     $('#train').classList.add('hidden');$('#protoWorld').classList.remove('on','viewing');$('#finish').classList.add('hidden');
     renderHomeLevels();$('#home').classList.remove('hidden');
     if(historyMode!=='none')writeNav('home',{},historyMode);
   }
   function showIntro({historyMode='none'}={}){
-    abandonLesson();$('#lessonScreen').classList.add('hidden');
+    stopWorldTimelapse();abandonLesson();$('#lessonScreen').classList.add('hidden');
     clearAssistTimers();taskToken++;
     $('#home').classList.add('hidden');$('#train').classList.add('hidden');$('#protoWorld').classList.remove('on','viewing');$('#finish').classList.add('hidden');
     $('#introScreen').classList.remove('hidden');
@@ -1537,6 +1569,7 @@ body{background:
 
 
   const PCOLS=22,PROWS=25,PTOTAL=550,PSTART=50,PCX=11,PCY=14;let protoOrder=[],protoActive=new Set(),protoChoices=[];
+  let worldTimelapseId=0,worldTimelapseFrame=0;
   const pkey=(x,y)=>y*PCOLS+x,pxy=k=>[k%PCOLS,Math.floor(k/PCOLS)],pneigh=(x,y)=>[[x+1,y],[x-1,y],[x,y+1],[x,y-1]].filter(([a,b])=>a>=0&&a<PCOLS&&b>=0&&b<PROWS);
   function buildProtoOrder(){protoOrder=[];const A0=new Set(),F=new Set();function add(x,y){const k=pkey(x,y);if(A0.has(k))return;A0.add(k);protoOrder.push(k);F.delete(k);for(const[nx,ny]of pneigh(x,y)){const nk=pkey(nx,ny);if(!A0.has(nk))F.add(nk)}}add(PCX,PCY);const dirs=[[1,0],[-1,0],[0,-1],[0,1],[1,-1],[-1,-1],[1,1],[-1,1]],lens=[5,4,4,3,3,3,3,2];for(let a=0;a<dirs.length&&A0.size<PSTART;a++){let[dx,dy]=dirs[a],x=PCX,y=PCY;for(let s=0;s<lens[a]&&A0.size<PSTART;s++){x+=dx;y+=dy;if(x<1||x>=PCOLS-1||y<1||y>=PROWS-1)break;add(x,y);if(A0.size<PSTART&&s%2===0){const sx=dy===0?0:(a%2===0?1:-1),sy=dx===0?0:(a%2===0?-1:1);if(x+sx>=1&&x+sx<PCOLS-1&&y+sy>=1&&y+sy<PROWS-1)add(x+sx,y+sy)}}}while(A0.size<PSTART){let best=null,bs=1e9;for(const k of F){const[x,y]=pxy(k),dx=x-PCX,dy=y-PCY,an=Math.atan2(dy,dx),sp=Math.abs(Math.cos(4*an)),dist=Math.hypot(dx/1.2,dy),sc=dist-sp*1.15+((x*7+y*3)%11)/100;if(sc<bs){bs=sc;best=[x,y]}}add(best[0],best[1])}const targets=[[1,0],[-1,0],[0,-1],[0,1],[1,-1],[-1,-1],[1,1],[-1,1]];let ph=0;while(A0.size<PTOTAL){let best=null,bs=1e9;const[tx,ty]=targets[ph%targets.length];for(const k of F){const[x,y]=pxy(k),dx=x-PCX,dy=y-PCY,l=Math.hypot(dx,dy)||1,align=-(dx/l*tx+dy/l*ty),sc=align+((x*13+y*17+A0.size)%23)/250;if(sc<bs){bs=sc;best=[x,y]}}if(!best)break;add(best[0],best[1]);if(A0.size%16===0)ph++}}
   function fitProtoWorld(){const r=protoCv.getBoundingClientRect(),d=Math.min(devicePixelRatio||1,2);protoCv.width=Math.round(r.width*d);protoCv.height=Math.round(r.height*d);protoCtx.setTransform(d,0,0,d,0,0)}
@@ -1579,16 +1612,66 @@ body{background:
       homeCtx.drawImage(protoImg,x*srcCellW,y*srcCellH,srcCellW+.8,srcCellH+.8,(x-minX)*dxCell,(y-minY)*dyCell,dxCell+.6,dyCell+.6);
     }
   }
-  function rebuildProtoActive(){protoActive=new Set(protoOrder.slice(0,Math.min(protoWorldCount,protoOrder.length)))}
+  function rebuildProtoActive(){protoActive=new Set(worldUnlocks().slice(0,Math.min(protoWorldCount,protoOrder.length)))}
   function protoFrontier(){const s=new Set();for(const k of protoActive){const[x,y]=pxy(k);for(const[nx,ny]of pneigh(x,y)){const nk=pkey(nx,ny);if(!protoActive.has(nk))s.add(nk)}}return[...s]}
   function protoSeven(){const f=protoFrontier();if(f.length<=7)return f;const sec=Array.from({length:7},()=>[]);for(const k of f){const[x,y]=pxy(k);let a=Math.atan2(y-PCY,x-PCX);if(a<0)a+=Math.PI*2;sec[Math.min(6,Math.floor(a/(Math.PI*2)*7))].push(k)}const out=[];for(const arr of sec){if(!arr.length)continue;arr.sort((ka,kb)=>{const[a,b]=pxy(ka),[c,d]=pxy(kb);return Math.hypot(c-PCX,d-PCY)-Math.hypot(a-PCX,b-PCY)});out.push(arr[0])}const rem=f.filter(k=>!out.includes(k));while(out.length<7&&rem.length){let bi=0,bd=-1;for(let i=0;i<rem.length;i++){const[x,y]=pxy(rem[i]),md=out.length?Math.min(...out.map(q=>{const[a,b]=pxy(q);return Math.hypot(x-a,y-b)})):999;if(md>bd){bd=md;bi=i}}out.push(rem.splice(bi,1)[0])}return out.slice(0,7)}
   function hideProtoChoices(){for(let i=0;i<7;i++)$('#pc'+i).style.display='none';protoChoices=[]}
   function showProtoChoices(){hideProtoChoices();protoChoices=protoSeven();protoChoices.forEach((k,i)=>{const[x,y]=pxy(k),b=$('#pc'+i);b.dataset.k=k;b.style.left=((x+.5)/PCOLS*100)+'%';b.style.top=((y+.5)/PROWS*100)+'%';b.style.display='block'})}
-  function showProtoWorld({historyMode='replace'}={}){clearAssistTimers();taskToken++;$('#home').classList.add('hidden');$('#train').classList.add('hidden');$('#protoWorld').classList.remove('viewing');$('#protoWorld').classList.add('on');writeNav('world-reward',{mode:lastMode},historyMode);syncProtoTop();fitProtoWorld();rebuildProtoActive();drawProtoWorld();setTimeout(showProtoChoices,320)}
-  function showWorldView({historyMode='push'}={}){clearAssistTimers();taskToken++;$('#home').classList.add('hidden');$('#train').classList.add('hidden');$('#protoWorld').classList.add('on','viewing');hideProtoChoices();writeNav('world-view',{},historyMode);fitProtoWorld();rebuildProtoActive();drawProtoWorld()}
-  function chooseProtoWorld(k){playGameSound('world');hideProtoChoices();let st=null;function anim(ts){if(!st)st=ts;const p=Math.min(1,(ts-st)/620);drawProtoWorld(k,p);if(p<1)requestAnimationFrame(anim);else{protoActive.add(k);protoWorldCount=Math.min(550,protoWorldCount+1);protoLevel++;protoTask=0;saveProto();syncProtoTop();drawProtoWorld();setTimeout(()=>start(lastMode,{historyMode:'replace'}),650)}}requestAnimationFrame(anim)}
+
+  function stopWorldTimelapse(){
+    worldTimelapseId++;cancelAnimationFrame(worldTimelapseFrame);worldTimelapseFrame=0;
+  }
+  function endWorldTimelapse(){
+    stopWorldTimelapse();rebuildProtoActive();drawProtoWorld();syncProtoTop();
+    $('#worldSkip').classList.add('hidden');$('#worldReplay').classList.remove('hidden');
+    $('#worldTimelapseCaption').classList.add('hidden');
+  }
+  function playWorldTimelapse(){
+    stopWorldTimelapse();fitProtoWorld();hideProtoChoices();
+    const run=worldTimelapseId,order=worldUnlocks().slice(),total=order.length,duration=3400;
+    let started=null,lastCount=-1;
+    $('#worldReplay').classList.add('hidden');$('#worldSkip').classList.remove('hidden');
+    $('#worldTimelapseCaption').classList.remove('hidden');
+    function frame(ts){
+      if(run!==worldTimelapseId||!$('#protoWorld').classList.contains('viewing'))return;
+      if(started===null)started=ts;
+      const fraction=Math.min(1,(ts-started)/duration);
+      // From the original single tile, through ALL opened tiles, to today.
+      const count=Math.min(total,1+Math.floor((total-1)*fraction));
+      if(count!==lastCount){
+        protoActive=new Set(order.slice(0,count));
+        drawProtoWorld();
+        $('#protoWorldCount').textContent=count+' / 550';
+        lastCount=count;
+      }
+      if(fraction<1)worldTimelapseFrame=requestAnimationFrame(frame);
+      else endWorldTimelapse();
+    }
+    worldTimelapseFrame=requestAnimationFrame(frame);
+  }
+  $('#worldReplay').addEventListener('click',()=>{playGameSound('ui');playWorldTimelapse()});
+  $('#worldSkip').addEventListener('click',()=>{playGameSound('ui');endWorldTimelapse()});
+
+  function showProtoWorld({historyMode='replace'}={}){stopWorldTimelapse();clearAssistTimers();taskToken++;$('#home').classList.add('hidden');$('#train').classList.add('hidden');$('#protoWorld').classList.remove('viewing');$('#protoWorld').classList.add('on');writeNav('world-reward',{mode:lastMode},historyMode);syncProtoTop();fitProtoWorld();rebuildProtoActive();drawProtoWorld();setTimeout(showProtoChoices,320)}
+  function showWorldView({historyMode='push'}={}){clearAssistTimers();taskToken++;$('#home').classList.add('hidden');$('#train').classList.add('hidden');$('#protoWorld').classList.add('on','viewing');hideProtoChoices();writeNav('world-view',{},historyMode);fitProtoWorld();rebuildProtoActive();drawProtoWorld();if(protoImg.complete&&protoImg.naturalWidth)playWorldTimelapse()}
+  function chooseProtoWorld(k){
+    if(!Number.isInteger(k)||protoActive.has(k))return;
+    playGameSound('world');hideProtoChoices();let st=null;
+    function anim(ts){
+      if(st===null)st=ts;const p=Math.min(1,(ts-st)/620);drawProtoWorld(k,p);
+      if(p<1)requestAnimationFrame(anim);
+      else{
+        if(!worldOpenedOrder)worldOpenedOrder=protoOrder.slice(0,protoWorldCount);
+        worldOpenedOrder.push(k);protoActive.add(k);
+        protoWorldCount=Math.min(550,protoWorldCount+1);protoLevel++;protoTask=0;
+        saveProto();syncProtoTop();drawProtoWorld();
+        setTimeout(()=>{if(lessonReady())showLessonDone();else start(lastMode,{historyMode:'replace',continueLesson:true})},650);
+      }
+    }
+    requestAnimationFrame(anim);
+  }
   for(let i=0;i<7;i++)$('#pc'+i).addEventListener('click',e=>chooseProtoWorld(Number(e.currentTarget.dataset.k)));
-  protoImg.onload=()=>{buildProtoOrder();rebuildProtoActive();drawHomeWorld();runIntroTimelapse()};
+  protoImg.onload=()=>{buildProtoOrder();rebuildProtoActive();drawHomeWorld();runIntroTimelapse();if($('#protoWorld').classList.contains('viewing'))playWorldTimelapse()};
 
   function makeExample(op,a,b){
     a=Number(a);b=Number(b);
@@ -1599,7 +1682,7 @@ body{background:
     throw new Error('Unknown example operation '+op);
   }
   function startForcedTask(t,label='TEST'){
-    forced=true;mode=t.op;$('#home').classList.add('hidden');$('#finish').classList.add('hidden');$('#train').classList.remove('hidden');assignment={op:t.op,skill:t.skill||label,reason:'forced'};current=t;$('#route').textContent=label;$('#mode').textContent=`${LABEL[t.op][0]} ${LABEL[t.op][1]}`;renderTask(current);
+    forced=true;mode=t.op;$('#lessonScreen').classList.add('hidden');$('#home').classList.add('hidden');$('#finish').classList.add('hidden');$('#train').classList.remove('hidden');assignment={op:t.op,skill:t.skill||label,reason:'forced'};current=t;$('#route').textContent=label;$('#mode').textContent=`${LABEL[t.op][0]} ${LABEL[t.op][1]}`;renderTask(current);
   }
 
   $$('[data-op]').forEach(b=>b.addEventListener('click',()=>start(b.dataset.op)));
@@ -1643,7 +1726,7 @@ body{background:
     history.replaceState(navState(parent,{guard:false}),'',navAddress(parent));
     history.pushState(navState(parent,{guard:true}),'',navAddress(parent));
   });
-  window.addEventListener('resize',()=>{fitGrid();if(currentView==='lesson-detail')fitLessonDetail();drawHomeWorld();if(!$('#introScreen').classList.contains('hidden'))drawIntroTimelapse(550);if($('#protoWorld').classList.contains('on')){fitProtoWorld();drawProtoWorld()}});
+  window.addEventListener('resize',()=>{updateDivisionPlacement();fitGrid();if(currentView==='lesson-detail')fitLessonDetail();drawHomeWorld();if(!$('#introScreen').classList.contains('hidden'))drawIntroTimelapse(550);if($('#protoWorld').classList.contains('on')){fitProtoWorld();drawProtoWorld()}});
   buildProtoOrder();rebuildProtoActive();syncProtoTop();renderProfile();runIntroTimelapse();
 
   // Restore the current in-game screen after reload, then ensure Android Back
@@ -1691,7 +1774,8 @@ body{background:
     resetProfile:()=>{profile=A.createProfile();save();renderProfile()},
     getLesson:()=>({active:lesson.active,finished:lesson.finished,elapsed:lesson.elapsed,solved:lesson.entries.length}),
     setLessonElapsed:(ms)=>{lesson.elapsed=Math.min(LESSON_MS,Math.max(0,ms));updateLessonClock()},
-    showLessonDone:()=>showLessonDone()
+    showLessonDone:()=>showLessonDone(),
+    getWorldTileOrder:()=>worldUnlocks()
   };
 })();
 
