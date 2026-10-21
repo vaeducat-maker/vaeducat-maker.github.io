@@ -56,7 +56,27 @@ button{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent}
 
 
 /* Full-flow prototype: accepted v4.2 trainer + mosaic world */
-.home,.finish{display:none!important}
+.finish{display:none!important}
+.intro-screen{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:18px 8px;position:relative;overflow:hidden}
+.intro-screen.hidden{display:none!important}
+.intro-kicker{font-size:16px;font-weight:900;letter-spacing:.12em;color:#31516e;margin-bottom:8px}
+.intro-title{font-size:42px;line-height:1;font-weight:950;letter-spacing:-.04em;margin:0;color:#16334e}
+.intro-sub{font-size:15px;color:var(--muted);margin:8px 0 18px}
+.intro-art{width:min(100%,350px);aspect-ratio:1.25/1;border-radius:26px;overflow:hidden;position:relative;background:linear-gradient(#69bdf7,#eaf8ff);box-shadow:0 14px 34px rgba(31,72,110,.14);margin-bottom:20px}
+.intro-art img{width:100%;height:100%;object-fit:cover;display:block}
+.intro-art::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(255,255,255,.22),transparent 40%)}
+.intro-play{min-width:190px;min-height:54px;border:0;border-radius:18px;background:var(--accent);font-size:20px;font-weight:950;box-shadow:0 8px 20px rgba(79,199,177,.28)}
+.home{height:100%;padding:6px 2px 0;display:flex;flex-direction:column}
+.home.hidden{display:none!important}
+.home-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin:4px 0 14px}
+.home h1{margin:0;font-size:28px}.home p{margin:4px 0 0;color:var(--muted);font-size:14px}
+.world-pill{flex:0 0 auto;border:1px solid var(--line);background:#fff;border-radius:16px;padding:8px 10px;font-size:12px;font-weight:850;color:#31516e}
+.ops{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.op{min-height:94px;border:1px solid var(--line);background:var(--panel);border-radius:20px;font-weight:850;font-size:26px;box-shadow:0 1px 0 rgba(0,0,0,.02);padding:12px}
+.op small{display:block;font-size:15px;margin-top:4px}
+.op .lvl{display:block;font-size:12px;color:var(--muted);font-weight:750;margin-top:6px}
+.op.mix{grid-column:1/-1;min-height:76px}
+.home-note{margin-top:auto;padding:12px 4px 2px;text-align:center;color:var(--muted);font-size:12px}
 .topbar{grid-template-columns:72px 1fr 54px}
 .back{width:72px;height:34px;border:0;background:transparent;border-radius:0;font-size:12px;color:var(--muted);font-weight:800;padding:0;text-align:left}
 .mode{font-size:15px}.route{font-size:13px;font-weight:800;color:var(--muted)}
@@ -74,16 +94,27 @@ button{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent}
 </head>
 <body>
 <main class="app">
-  <section id="home" class="home">
-    <h1>Столбики</h1>
-    <p>Выбери действие. Сложность тренажёр подбирает сам.</p>
-    <div class="ops">
-      <button class="op" data-op="add">➕<small>Сложение</small></button>
-      <button class="op" data-op="sub">➖<small>Вычитание</small></button>
-      <button class="op" data-op="mul">✖️<small>Умножение</small></button>
-      <button class="op" data-op="div">➗<small>Деление</small></button>
-      <button class="op mix" data-op="mix">🎯 <small>Всё вместе</small></button>
+  <section id="introScreen" class="intro-screen">
+    <div class="intro-kicker">EDUKASS</div>
+    <h1 class="intro-title">Столбики</h1>
+    <div class="intro-sub">Письменные вычисления</div>
+    <div class="intro-art" aria-hidden="true"><img id="introWorldImage" alt=""></div>
+    <button id="introPlay" class="intro-play" type="button">ИГРАТЬ</button>
+  </section>
+
+  <section id="home" class="home hidden">
+    <div class="home-head">
+      <div><h1>Столбики</h1><p>Выбери, что тренировать</p></div>
+      <div class="world-pill" id="homeWorld">Мир 50 / 550</div>
     </div>
+    <div class="ops">
+      <button class="op mix" data-op="mix">🎯<small>Всё вместе</small><span class="lvl" id="lvl-mix">по текущим уровням</span></button>
+      <button class="op" data-op="add">＋<small>Сложение</small><span class="lvl" id="lvl-add">уровень 1</span></button>
+      <button class="op" data-op="sub">−<small>Вычитание</small><span class="lvl" id="lvl-sub">уровень 1</span></button>
+      <button class="op" data-op="mul">×<small>Умножение</small><span class="lvl" id="lvl-mul">уровень 1</span></button>
+      <button class="op" data-op="div">÷<small>Деление</small><span class="lvl" id="lvl-div">уровень 1</span></button>
+    </div>
+    <div class="home-note">Сложность подбирается автоматически</div>
     <details class="dev"><summary>Для разработки</summary><div id="profile"></div></details>
   </section>
 
@@ -844,7 +875,19 @@ button{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent}
   if(!Number.isFinite(protoLevel)||protoLevel<1)protoLevel=1;
   if(!Number.isFinite(protoWorldCount)||protoWorldCount<50||protoWorldCount>550)protoWorldCount=50;
   function saveProto(){localStorage.setItem('edukass-columns-full-level',String(protoLevel));localStorage.setItem('edukass-columns-full-world',String(protoWorldCount))}
-  function syncProtoTop(){$('#back').textContent=`${protoWorldCount} / 550`;$('#protoWorldCount').textContent=`${protoWorldCount} / 550`}
+  let lastMode=localStorage.getItem('edukass-columns-full-last-mode')||'mix';
+  function syncProtoTop(){
+    $('#protoWorldCount').textContent=`${protoWorldCount} / 550`;
+    const hw=$('#homeWorld');if(hw)hw.textContent=`Мир ${protoWorldCount} / 550`;
+  }
+  function renderHomeLevels(){
+    const snap=A.publicSnapshot(profile);
+    for(const op of ['add','sub','mul','div']){
+      const el=$('#lvl-'+op),st=snap[op];
+      if(el)el.textContent=st&&Number.isFinite(st.frontier)?`уровень ${st.frontier}`:'уровень 1';
+    }
+    syncProtoTop();
+  }
 
   function completeTask(){
     clearAssistTimers();const ms=Math.round(performance.now()-taskStarted);
@@ -856,13 +899,18 @@ button{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent}
     assignment=A.nextAssignment(session);const seed=++seedCounter;current=E.generateSkill(assignment.skill,seed);
     $('#route').textContent=`${protoTask+1} / 5`;$('#mode').textContent=`${protoLevel}. tase · ${PROTO_LABEL[current.op]||''}`;syncProtoTop();renderTask(current)
   }
-  function start(m='add'){
-    clearAssistTimers();forced=false;mode=m;session=A.createSession(profile,m,Math.random,Date.now());
+  function start(m='mix'){
+    clearAssistTimers();forced=false;mode=m;lastMode=m;localStorage.setItem('edukass-columns-full-last-mode',m);protoTask=0;
+    session=A.createSession(profile,m,Math.random,Date.now());
     $('#home').classList.add('hidden');$('#finish').classList.add('hidden');$('#protoWorld').classList.remove('on');$('#train').classList.remove('hidden');nextTask()
   }
-  function showHome(){start(mode||'add')}
+  function showHome(){
+    clearAssistTimers();taskToken++;
+    $('#train').classList.add('hidden');$('#protoWorld').classList.remove('on');$('#finish').classList.add('hidden');
+    renderHomeLevels();$('#home').classList.remove('hidden');
+  }
   function showFinish(){showProtoWorld()}
-  function renderProfile(){const snap=A.publicSnapshot(profile);$('#profile').innerHTML=Object.entries(snap).map(([op,s])=>`<p><b>${LABEL[op][0]} ${LABEL[op][1]}</b>: ${s.frontier}${s.diagnostic?' · диагностика':''}</p>`).join('')}
+  function renderProfile(){const snap=A.publicSnapshot(profile);$('#profile').innerHTML=Object.entries(snap).map(([op,s])=>`<p><b>${LABEL[op][0]} ${LABEL[op][1]}</b>: ${s.frontier}${s.diagnostic?' · диагностика':''}</p>`).join('');renderHomeLevels()}
 
   const protoCv=$('#protoWorldCanvas'),protoCtx=protoCv.getContext('2d'),protoImg=new Image();protoImg.src=PROTO_WORLD_IMG;
   const PCOLS=22,PROWS=25,PTOTAL=550,PSTART=50,PCX=11,PCY=14;let protoOrder=[],protoActive=new Set(),protoChoices=[];
@@ -876,7 +924,7 @@ button{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent}
   function hideProtoChoices(){for(let i=0;i<7;i++)$('#pc'+i).style.display='none';protoChoices=[]}
   function showProtoChoices(){hideProtoChoices();protoChoices=protoSeven();protoChoices.forEach((k,i)=>{const[x,y]=pxy(k),b=$('#pc'+i);b.dataset.k=k;b.style.left=((x+.5)/PCOLS*100)+'%';b.style.top=((y+.5)/PROWS*100)+'%';b.style.display='block'})}
   function showProtoWorld(){clearAssistTimers();taskToken++;$('#train').classList.add('hidden');$('#protoWorld').classList.add('on');syncProtoTop();fitProtoWorld();rebuildProtoActive();drawProtoWorld();setTimeout(showProtoChoices,320)}
-  function chooseProtoWorld(k){hideProtoChoices();let st=null;function anim(ts){if(!st)st=ts;const p=Math.min(1,(ts-st)/620);drawProtoWorld(k,p);if(p<1)requestAnimationFrame(anim);else{protoActive.add(k);protoWorldCount=Math.min(550,protoWorldCount+1);protoLevel++;protoTask=0;saveProto();syncProtoTop();drawProtoWorld();setTimeout(()=>start(mode||'add'),650)}}requestAnimationFrame(anim)}
+  function chooseProtoWorld(k){hideProtoChoices();let st=null;function anim(ts){if(!st)st=ts;const p=Math.min(1,(ts-st)/620);drawProtoWorld(k,p);if(p<1)requestAnimationFrame(anim);else{protoActive.add(k);protoWorldCount=Math.min(550,protoWorldCount+1);protoLevel++;protoTask=0;saveProto();syncProtoTop();drawProtoWorld();setTimeout(()=>start(lastMode),650)}}requestAnimationFrame(anim)}
   for(let i=0;i<7;i++)$('#pc'+i).addEventListener('click',e=>chooseProtoWorld(Number(e.currentTarget.dataset.k)));
   protoImg.onload=()=>{buildProtoOrder();rebuildProtoActive()};
 
@@ -894,7 +942,11 @@ button{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent}
 
   $$('[data-op]').forEach(b=>b.addEventListener('click',()=>start(b.dataset.op)));
   $$('#pad [data-key]').forEach(b=>b.addEventListener('click',()=>press(b.dataset.key)));
-  $('#back').onclick=()=>{};$('#other').onclick=()=>{};$('#again').onclick=()=>start(mode||'add');window.addEventListener('resize',()=>{fitGrid();if($('#protoWorld').classList.contains('on')){fitProtoWorld();drawProtoWorld()}});renderProfile();buildProtoOrder();rebuildProtoActive();syncProtoTop();start('add');
+  $('#back').onclick=showHome;$('#other').onclick=showHome;$('#again').onclick=()=>start(lastMode);
+  $('#introWorldImage').src=PROTO_WORLD_IMG;
+  $('#introPlay').addEventListener('click',()=>{$('#introScreen').classList.add('hidden');showHome()});
+  window.addEventListener('resize',()=>{fitGrid();if($('#protoWorld').classList.contains('on')){fitProtoWorld();drawProtoWorld()}});
+  buildProtoOrder();rebuildProtoActive();syncProtoTop();renderProfile();
 
   window.__EDUKASS_TEST__={
     version:'4.2',
