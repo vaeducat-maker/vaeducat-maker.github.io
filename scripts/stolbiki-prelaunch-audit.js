@@ -181,12 +181,31 @@ async function checkCompetitor() {
           await page.evaluate(()=>window.__EDUKASS_TEST__.setLessonElapsed(900000));
           const remains=await page.locator('#train').isVisible();
           note('competitor','Timer never interrupts an active written exercise',remains);
-          // Complete remaining digits. Only the next transition may end the lesson.
-          await page.evaluate(()=>window.__EDUKASS_TEST__.solveCurrent());
+          // Complete every remaining written cell through actual interface taps.
+          // No developer-only auto-solve calls: this catches real input and counting races.
+          await page.waitForTimeout(160);
+          let tapped=1;
+          for(let turn=0;turn<90;turn++){
+            if(!await page.locator('#train').isVisible())break;
+            const state=await page.evaluate(()=>window.__EDUKASS_TEST__.getState());
+            if(state.transitioning||state.assisting){await page.waitForTimeout(180);continue}
+            const step=state.steps[state.stepIndex];
+            if(!step){await page.waitForTimeout(180);continue}
+            const entry=page.locator('#mathWrap .entry[data-target="'+step.target+'"]');
+            if(!await entry.count())break;
+            await entry.click({timeout:2000});
+            for(const digit of String(step.value)){
+              await page.locator('#pad button[data-key="'+(digit==='•'?'dot':digit)+'"]').click({timeout:2000});
+            }
+            tapped++;
+            await page.waitForTimeout(145);
+          }
+          note('competitor','All written division cells can be entered using visible controls',tapped>=5,
+            tapped+' cells tapped, not simulated');
           await page.locator('#lessonScreen').waitFor({state:'visible',timeout:6000});
           const after=await page.evaluate(()=>window.__EDUKASS_TEST__.getLesson());
-          note('competitor','Completed solution is recorded during lesson',after.solved>=1,
-            'solved count: '+after.solved);
+          note('competitor','Exactly one completed exercise is counted once',after.solved===1,
+            'solved count: '+after.solved,'critical');
           note('competitor','15-minute lesson finishes naturally after solved problem',after.finished===true);
           const lessons=await page.locator('#lessonSolvedCount').innerText();
           note('competitor','15-minute completion report shows solved count',Number(lessons)>=1,lessons);
