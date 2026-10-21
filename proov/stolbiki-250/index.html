@@ -972,6 +972,34 @@ body{background:
 
   let profile;try{profile=A.normalizeProfile(JSON.parse(localStorage.getItem(KEY)||'null'))}catch{profile=A.createProfile()}
   const save=()=>localStorage.setItem(KEY,JSON.stringify(profile));
+  // DEVELOPMENT TEST: a 250-piece world should not look like the student
+  // has never practised mathematics. Seed a plausible adaptive profile ONCE.
+  // Real attempts after this point are saved and never overwritten on reload.
+  const TEST_MATH_SEED_KEY='edukass-stolbiki-250-math-seed-v1';
+  const TEST_MATH_LEVELS={add:9,sub:9,mul:10,div:10};
+  function seedMathematicsFor250World(){
+    if(localStorage.getItem(TEST_MATH_SEED_KEY)==='1')return;
+    const now=Date.now(),day=86400000;
+    for(const [op,target] of Object.entries(TEST_MATH_LEVELS)){
+      const state=profile.ops[op],meta=A.META[op];
+      const destination=Math.min(meta.max,Math.max(Number(state.frontier)||1,target));
+      for(let level=1;level<destination;level++){
+        const skill=state.skills[meta.prefix+level];
+        if(skill&&skill.attempts===0){
+          Object.assign(skill,{
+            attempts:6,firstTry:6,errors:0,assisted:0,totalMs:108000,
+            cleanStreak:6,mastered:true,reviewStage:2,
+            lastSeenAt:now-day,nextReviewAt:now+3*day
+          });
+        }
+      }
+      state.frontier=destination;
+      state.diagnostic=false;
+    }
+    save();
+    localStorage.setItem(TEST_MATH_SEED_KEY,'1');
+  }
+  if(location.pathname.includes('/proov/stolbiki-250/'))seedMathematicsFor250World();
   let mode='add',session=null,assignment=null,current=null,steps=[],stepIndex=0,taskErrors=0,taskStarted=0,seedCounter=(Date.now()>>>0),phase=null,transitioning=false,forced=false;
   let completedSteps=new Set(),selectedStepIndex=null,selectedTarget=null,guideCursor=0;
   let taskAssisted=false,assistNudgeTimer=null,assistFillTimer=null,assistRepeatTimer=null,assisting=false,taskToken=0;
@@ -1474,7 +1502,10 @@ body{background:
   function renderHomeLevels(){
     const snap=A.publicSnapshot(profile),max={add:10,sub:12,mul:14,div:16};
     for(const op of ['add','sub','mul','div']){
-      const st=snap[op],lvl=st&&Number.isFinite(st.frontier)?Math.max(1,Math.min(max[op],st.frontier)):1;
+      // The public snapshot uses skill IDs like "A9", not numeric levels.
+      // Read the actual numeric frontier from the adaptive profile.
+      const frontier=Number(profile.ops[op]?.frontier);
+      const lvl=Number.isFinite(frontier)?Math.max(1,Math.min(max[op],frontier)):1;
       const el=$('#lvl-'+op),bar=$('#prog-'+op);
       if(el)el.textContent=`tase ${lvl} / ${max[op]}`;
       if(bar)bar.style.width=(lvl/max[op]*100)+'%';
