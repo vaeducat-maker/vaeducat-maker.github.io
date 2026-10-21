@@ -218,6 +218,52 @@ async function checkCompetitor() {
             const retained=await guest.evaluate(()=>window.__EDUKASS_TEST__.getState().profile.add.frontier);
             note('competitor','Already earned arithmetic progress is never reset',
               retained==='A3',retained,'critical');
+            // Cross-device passport: use an independently isolated browser context.
+            await guest.evaluate(()=>{
+              const key='edukass_stolbiki_player_profile_v42',p=JSON.parse(localStorage.getItem(key));
+              p.ops.add.frontier=4;
+              p.ops.add.skills.A1.attempts=8;
+              p.ops.add.skills.A1.firstTry=6;
+              localStorage.setItem(key,JSON.stringify(p));
+              localStorage.setItem('edukass-columns-player-world','56');
+              localStorage.setItem('edukass-columns-player-level','7');
+            });
+            await guest.reload({waitUntil:'domcontentloaded'});
+            await guest.waitForFunction(()=>!!window.__EDUKASS_TEST__);
+            const passport=await guest.evaluate(()=>window.__EDUKASS_TEST__.passport.make());
+            const token=passport.split('#ekpass=')[1];
+            note('competitor','Passport creates a personal recovery URL without a backend',
+              token?.length>100&&token.length<17000&&token[0]==='g',
+              'code size '+(token?.length||0)+' characters','critical');
+            const secondDevice=await browser.newContext({
+              viewport:{width:390,height:844},isMobile:true,hasTouch:true,serviceWorkers:'block'
+            });
+            try{
+              const newPhone=await secondDevice.newPage();
+              await newPhone.goto('http://127.0.0.1:'+port+'/proov/stolbiki-mosaic-7q4m9k/index.html#ekpass='+token,
+                {waitUntil:'domcontentloaded',timeout:30000});
+              await newPhone.waitForFunction(()=>!!window.__EDUKASS_TEST__);
+              await newPhone.locator('#passportDialog').waitFor({state:'visible',timeout:10000});
+              const pre=await newPhone.evaluate(()=>window.__EDUKASS_TEST__.getRealWorldProgress().tiles);
+              note('competitor','Opening personal recovery link never overwrites progress silently',
+                pre===50,'world before confirmation: '+pre,'critical');
+              await screenshot(newPhone,'passport-confirm');
+              await newPhone.locator('#passportRestore').click();
+              const restored=await newPhone.evaluate(()=>({
+                world:window.__EDUKASS_TEST__.getRealWorldProgress().tiles,
+                frontier:window.__EDUKASS_TEST__.getState().profile.add.frontier
+              }));
+              note('competitor','Recovery restores complete world and mathematical levels on another device',
+                restored.world===56&&restored.frontier==='A4',JSON.stringify(restored),'critical');
+              await newPhone.reload({waitUntil:'domcontentloaded'});
+              await newPhone.waitForFunction(()=>!!window.__EDUKASS_TEST__);
+              const permanent=await newPhone.evaluate(()=>({
+                world:window.__EDUKASS_TEST__.getRealWorldProgress().tiles,
+                frontier:window.__EDUKASS_TEST__.getState().profile.add.frontier
+              }));
+              note('competitor','Transferred progress persists after a fresh browser reload',
+                permanent.world===56&&permanent.frontier==='A4',JSON.stringify(permanent),'critical');
+            }finally{await secondDevice.close()}
           }finally{await guest.close()}
           await page.locator('#openWorldView').click();
           await page.waitForTimeout(3900);
