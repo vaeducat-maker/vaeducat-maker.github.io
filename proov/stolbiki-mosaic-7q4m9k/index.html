@@ -11,16 +11,16 @@
 body{display:flex;justify-content:center}.app{width:min(100%,430px);min-height:100vh;padding:10px 12px 18px;background:linear-gradient(#f8fcff,#eaf6fd)}
 .top{display:flex;align-items:center;justify-content:space-between;height:44px}.brand{font-size:13px;font-weight:900;letter-spacing:.04em;color:#31516e}.worldCount{font-weight:900;font-size:13px;background:#fff;border-radius:999px;padding:7px 10px;box-shadow:0 4px 14px rgba(35,72,105,.11)}
 .level{text-align:center;font-weight:950;font-size:22px;margin:5px 0 1px}.meta{text-align:center;color:var(--muted);font-size:13px;margin-bottom:8px}.progress{height:6px;max-width:220px;margin:0 auto 10px;background:#d7eaf6;border-radius:999px;overflow:hidden}.progress i{display:block;height:100%;width:0;background:#62bc79;transition:width .25s ease}
-.boardCard{background:#fff;border-radius:24px;padding:12px 10px 14px;box-shadow:0 12px 30px rgba(36,77,112,.12)}
-.paper{position:relative;min-height:345px;border-radius:20px;overflow:hidden;background-color:#fff;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:36px 36px;border:1px solid #d8e8f2}
-.work{position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-weight:900;font-size:29px;line-height:36px;color:#17344e}
-.row{display:grid;grid-template-columns:36px repeat(4,36px);height:36px;align-items:center;justify-items:center}.op{font-size:25px}.bar{height:3px;background:#24445f;width:144px;margin-left:36px}
-.cell{width:33px;height:33px;display:flex;align-items:center;justify-content:center;border:2px solid transparent;border-radius:6px;background:rgba(255,255,255,.90)}.cell.input{border-color:#80b4d8}.cell.next{border-color:var(--green);background:#effff3;box-shadow:0 0 0 3px rgba(52,189,98,.14)}.cell.bad{border-color:var(--red);background:#fff0f0}.cell.good{border-color:var(--green);background:#edfff2}.carry{font-size:17px;color:#537692;height:28px;line-height:28px;text-align:center}.carryRow{display:grid;grid-template-columns:36px repeat(4,36px);height:28px;align-items:center;justify-items:center}
-.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px auto 0;max-width:320px}.pad button{height:48px;border:0;border-radius:15px;background:#eff6fb;color:#17344e;font-size:22px;font-weight:900;box-shadow:inset 0 0 0 1px #d4e5f0}.pad button:active{transform:scale(.97)}.erase{font-size:18px!important;color:#5e778b!important}.spacer{visibility:hidden}
-.world{display:none}.world.on{display:block}.trainer.off{display:none}.worldFrame{position:relative;min-height:650px;border-radius:24px;overflow:hidden;background:linear-gradient(#65b9f6,#edfaff);box-shadow:0 14px 34px rgba(31,72,110,.16)}
+.boardCard{flex:1;min-height:0;background:#fff;border-radius:21px;padding:8px;border:1px solid #d9ddda;display:flex;flex-direction:column;overflow:hidden}
+.paper{flex:1;min-height:0;border-radius:17px;overflow:hidden;background:#fff;display:flex;align-items:center;justify-content:center;padding:5px}
+.work{--cell:40px;position:relative;display:grid;grid-template-columns:repeat(5,var(--cell));grid-auto-rows:var(--cell);background-image:linear-gradient(to right,#e4e9e6 1px,transparent 1px),linear-gradient(to bottom,#e4e9e6 1px,transparent 1px);background-size:var(--cell) var(--cell);border-right:1px solid #e4e9e6;border-bottom:1px solid #e4e9e6;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-variant-numeric:tabular-nums;color:#171918}
+.row{display:contents}.op{font-size:calc(var(--cell)*.55);display:flex;align-items:center;justify-content:center}.bar{grid-column:2 / span 4;height:2px;background:#171918;align-self:end;width:100%;z-index:2}
+.cell,.fixed,.carry{width:var(--cell);height:var(--cell);display:flex;align-items:center;justify-content:center;font-size:calc(var(--cell)*.68);font-weight:700;line-height:1}.cell{border:0;border-radius:4px;background:rgba(255,255,255,.84);box-shadow:inset 0 0 0 1px rgba(100,110,105,.18);margin:2px;width:calc(var(--cell) - 4px);height:calc(var(--cell) - 4px)}.cell.next{background:#eef9f2;box-shadow:inset 0 0 0 2px #24a36a}.cell.bad{background:#fdeeee;box-shadow:inset 0 0 0 3px #d84a4a}.cell.good{background:#eaf8f0;box-shadow:inset 0 0 0 3px #24a36a;color:#12663f}.carry{font-size:calc(var(--cell)*.39);font-weight:850;color:#537692}.carryRow{display:contents}
+.pad{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:8px}.pad button{min-height:46px;border:1px solid #d9ddda;border-radius:14px;background:#fff;color:#171918;font-size:23px;font-weight:850}.pad button:active{transform:scale(.98);background:#e7f8f4}.erase{font-size:18px!important}.spacer{visibility:visible}
+.world{display:none}.world.on{display:block}.trainer{height:calc(100dvh - 54px);min-height:0;display:flex;flex-direction:column}.trainer.off{display:none}.worldFrame{position:relative;min-height:650px;border-radius:24px;overflow:hidden;background:linear-gradient(#65b9f6,#edfaff);box-shadow:0 14px 34px rgba(31,72,110,.16)}
 #worldCanvas{position:absolute;inset:0;width:100%;height:100%}.choice{position:absolute;width:46px;height:46px;border-radius:50%;border:3px solid #fff;background:rgba(55,199,88,.30);box-shadow:0 0 18px rgba(53,190,86,.72);transform:translate(-50%,-50%);display:none;z-index:4;animation:pulse 1.15s infinite}.choice::after{content:"+";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:27px;font-weight:950;text-shadow:0 2px 4px rgba(0,0,0,.25)}.worldBadge{position:absolute;right:10px;top:10px;z-index:5;background:rgba(255,255,255,.94);padding:7px 10px;border-radius:999px;font-weight:900;font-size:13px}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,.65),0 0 18px rgba(53,190,86,.60)}60%{box-shadow:0 0 0 13px rgba(255,255,255,0),0 0 25px rgba(53,190,86,.82)}}
-@media(max-width:360px){.paper{min-height:315px}.worldFrame{min-height:585px}}@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media(max-height:700px){.app{padding:7px}.trainer{height:calc(100dvh - 47px)}.pad{gap:5px}.pad button{min-height:42px}.boardCard{padding:5px}.paper{border-radius:17px}}@media(max-width:360px){.app{padding-left:8px;padding-right:8px}.pad{gap:5px}.pad button{min-height:44px}.worldFrame{min-height:585px}}@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
@@ -34,10 +34,9 @@ body{display:flex;justify-content:center}.app{width:min(100%,430px);min-height:1
     <div class="boardCard">
       <div class="paper"><div class="work" id="work"></div></div>
       <div class="pad" id="pad">
-        <button type="button" data-k="1">1</button><button type="button" data-k="2">2</button><button type="button" data-k="3">3</button>
-        <button type="button" data-k="4">4</button><button type="button" data-k="5">5</button><button type="button" data-k="6">6</button>
-        <button type="button" data-k="7">7</button><button type="button" data-k="8">8</button><button type="button" data-k="9">9</button>
-        <button type="button" class="erase" id="erase">⌫</button><button type="button" data-k="0">0</button><button type="button" class="spacer" disabled>·</button>
+        <button type="button" data-k="1">1</button><button type="button" data-k="2">2</button><button type="button" data-k="3">3</button><button type="button" data-k="4">4</button>
+        <button type="button" data-k="5">5</button><button type="button" data-k="6">6</button><button type="button" data-k="7">7</button><button type="button" data-k="8">8</button>
+        <button type="button" data-k="9">9</button><button type="button" data-k="0">0</button><button type="button" class="spacer" disabled>•</button><button type="button" class="erase" id="erase">⌫</button>
       </div>
     </div>
   </section>
@@ -67,22 +66,27 @@ const bank=[
 ];
 function cells4(n){return String(n).padStart(4,' ').split('')}
 function label(){return 'Liitmine'}
+function fitMathGrid(){
+ const paper=$('.paper'),g=$('#work');if(!paper||!g)return;
+ const cols=5,rows=4,aw=Math.max(180,paper.clientWidth-18),ah=Math.max(180,paper.clientHeight-18);
+ let c=Math.floor(Math.min(42,aw/cols,ah/rows));if(c<34)c=Math.max(30,c);
+ g.style.setProperty('--cell',c+'px');
+}
 function render(){
  locked=false;current=bank[((mission-1)*5+round)%bank.length];
- const answer=String(current.a+current.b);activeInput=answer.length-1;
+ const answer=String(current.a+current.b);activeInput=3;
  $('#level').textContent=mission+'. tase';$('#operation').textContent=label();$('#step').textContent=(round+1)+' / 5';$('#progressBar').style.width=(round/5*100)+'%';syncCount();
  const a=cells4(current.a),b=cells4(current.b);
  work.innerHTML='';
- const carry=document.createElement('div');carry.className='carryRow';
- carry.innerHTML='<div></div>'+[0,1,2,3].map(i=>'<div class="carry" data-carry="'+i+'"></div>').join('');work.appendChild(carry);
- const r1=document.createElement('div');r1.className='row';r1.innerHTML='<div></div>'+a.map(x=>'<div>'+x+'</div>').join('');work.appendChild(r1);
- const r2=document.createElement('div');r2.className='row';r2.innerHTML='<div class="op">+</div>'+b.map(x=>'<div>'+x+'</div>').join('');work.appendChild(r2);
- const bar=document.createElement('div');bar.className='bar';work.appendChild(bar);
- const r3=document.createElement('div');r3.className='row';r3.innerHTML='<div></div>'+Array.from({length:4},(_,i)=>'<button type="button" class="cell input" data-i="'+i+'"></button>').join('');work.appendChild(r3);
- $$('.cell.input').forEach(btn=>btn.addEventListener('click',()=>{activeInput=Number(btn.dataset.i);paintNext()}));
- // align answer to the right in 4 result cells; left blanks are skipped
- const shift=4-answer.length;activeInput=3;while(activeInput<shift)activeInput++;
- paintNext();
+ // 4 × 5 notebook grid: carry row, top number, bottom number, result row.
+ for(let i=0;i<4;i++){const d=document.createElement('div');d.className='carry';d.dataset.carry=i;d.style.gridColumn=String(i+2);d.style.gridRow='1';work.appendChild(d)}
+ a.forEach((x,i)=>{const d=document.createElement('div');d.className='fixed';d.textContent=x.trim();d.style.gridColumn=String(i+2);d.style.gridRow='2';work.appendChild(d)});
+ const op=document.createElement('div');op.className='op';op.textContent='+';op.style.gridColumn='1';op.style.gridRow='3';work.appendChild(op);
+ b.forEach((x,i)=>{const d=document.createElement('div');d.className='fixed';d.textContent=x.trim();d.style.gridColumn=String(i+2);d.style.gridRow='3';work.appendChild(d)});
+ const rule=document.createElement('div');rule.className='bar';rule.style.gridRow='3';work.appendChild(rule);
+ for(let i=0;i<4;i++){const d=document.createElement('button');d.type='button';d.className='cell input';d.dataset.i=i;d.style.gridColumn=String(i+2);d.style.gridRow='4';d.addEventListener('click',()=>{activeInput=i;paintNext()});work.appendChild(d)}
+ const shift=4-answer.length;activeInput=3;if(activeInput<shift)activeInput=shift;paintNext();
+ requestAnimationFrame(fitMathGrid);
 }
 function paintNext(){
  const answer=String(current.a+current.b),shift=4-answer.length;
@@ -116,7 +120,7 @@ function showChoices(){hideChoices();choices=seven();choices.forEach((k,i)=>{con
 function openWorld(){round=0;trainer.classList.add('off');world.classList.add('on');syncCount();fit();rebuild();draw();setTimeout(showChoices,350)}
 function choose(k){hideChoices();let st=null;function anim(ts){if(!st)st=ts;const p=Math.min(1,(ts-st)/620);draw(k,p);if(p<1)requestAnimationFrame(anim);else{active.add(k);worldCount=Math.min(550,worldCount+1);mission++;save();syncCount();setTimeout(()=>{world.classList.remove('on');trainer.classList.remove('off');render()},650)}}requestAnimationFrame(anim)}
 for(let i=0;i<7;i++)$('#c'+i).addEventListener('click',e=>choose(Number(e.currentTarget.dataset.k)));
-buildOrder();rebuild();syncCount();render();img.onload=()=>{if(world.classList.contains('on')){fit();draw()}};img.onerror=()=>{console.warn('World image failed to load; trainer remains usable.')};window.addEventListener('resize',()=>{if(world.classList.contains('on')){fit();draw()}});
+buildOrder();rebuild();syncCount();render();img.onload=()=>{if(world.classList.contains('on')){fit();draw()}};img.onerror=()=>{console.warn('World image failed to load; trainer remains usable.')};window.addEventListener('resize',()=>{fitMathGrid();if(world.classList.contains('on')){fit();draw()}});
 })();
 </script>
 </body>
