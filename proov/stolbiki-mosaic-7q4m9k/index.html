@@ -70,7 +70,7 @@ linear-gradient(90deg,rgba(255,255,255,.065) 1px,transparent 1px);
 background-size:44px 44px;transform:perspective(700px) rotateX(58deg) translateY(44%);transform-origin:50% 100%;opacity:.55}
 .intro-depth:after{content:"";position:absolute;width:320px;height:320px;border-radius:50%;right:-105px;top:-80px;background:radial-gradient(circle,rgba(255,211,77,.18),transparent 67%);filter:blur(2px);animation:introGlowDrift 5.5s ease-in-out infinite alternate}
 .intro-branding{position:relative;z-index:6;opacity:0;transform:translateY(-12px);animation:introTitleIn .48s .18s ease-out forwards}
-.intro-cat-brand{position:absolute;z-index:7;top:10px;left:14px;width:72px;height:72px;border-radius:20px;overflow:hidden;background:rgba(255,255,255,.94);box-shadow:0 10px 26px rgba(3,10,31,.32),0 0 0 2px rgba(255,255,255,.45);opacity:0;transform:translateY(-10px) rotate(-5deg) scale(.9);animation:introCatIn .55s .34s cubic-bezier(.16,.88,.23,1.12) forwards}
+.intro-cat-brand{position:absolute;z-index:7;top:10px;left:14px;width:72px;height:72px;border-radius:20px;overflow:hidden;background:rgba(255,255,255,.94);box-shadow:0 10px 26px rgba(3,10,31,.32),0 0 0 2px rgba(255,255,255,.45);opacity:1;transform:none}
 .intro-cat-brand img{width:100%;height:100%;object-fit:cover;transform:scale(1.45) translateY(-5%);transform-origin:50% 8%;display:block}
 @keyframes introCatIn{70%{opacity:1;transform:translateY(2px) rotate(2deg) scale(1.04)}100%{opacity:1;transform:none}}
 @media(max-width:360px){.intro-cat-brand{width:64px;height:64px;left:10px;top:9px}}
@@ -155,12 +155,13 @@ background-size:44px 44px;transform:perspective(700px) rotateX(58deg) translateY
 @media(prefers-reduced-motion:reduce){.proto-choice{animation:none}}
 
 </style>
+  <link rel="preload" href="/games/korrutamine-test/assets/edukass-cat-transparent.png" as="image" fetchpriority="high">
 </head>
 <body>
 <main class="app">
   <section id="introScreen" class="intro-screen">
     <div class="intro-depth" aria-hidden="true"></div>
-    <div class="intro-cat-brand" aria-hidden="true"><img src="/games/korrutamine-test/assets/edukass-cat-transparent.png" alt=""></div>
+    <div class="intro-cat-brand" aria-hidden="true"><img src="/games/korrutamine-test/assets/edukass-cat-transparent.png" alt="" loading="eager" decoding="sync" fetchpriority="high"></div>
     <div class="intro-branding">
       <div class="intro-kicker">EDUKASS</div>
       <h1 class="intro-title">Kirjalik arvutamine</h1>
