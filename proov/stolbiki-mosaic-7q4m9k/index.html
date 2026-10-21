@@ -419,6 +419,25 @@ body{background:
 .share-content .share-status{min-height:18px;font-weight:800;color:#fff0a6}
 .share-content .share-note{font-size:12px;color:#a3c2dd}
 @media(max-width:360px){.home-share-button{padding:5px 9px;font-size:11px}.home-share-tools{gap:3px}.share-link-row{flex-direction:column}.share-copy-button{min-height:42px}}
+
+/* EDUKASS Passport Lite: private, transferable, no cloud collection. */
+.passport-open{align-self:stretch;min-height:40px;margin-top:11px;border:1px solid #c5dadf;border-radius:13px;background:linear-gradient(120deg,#effbf9,#edf4ff);color:#244c67;font-size:13px;font-weight:900;letter-spacing:.01em;cursor:pointer}
+.passport-open:focus-visible,.passport-dialog button:focus-visible{outline:3px solid #67d6bf;outline-offset:2px}
+.passport-dialog{position:fixed;inset:0;max-width:min(92vw,440px);width:calc(100% - 26px);max-height:88dvh;overflow-y:auto;padding:0;border:1px solid rgba(255,255,255,.34);border-radius:23px;color:#f7fbff;background:radial-gradient(circle at 82% 9%,rgba(104,219,211,.20),transparent 30%),linear-gradient(145deg,#12294e,#263f6d 67%,#4a3874);box-shadow:0 20px 55px rgba(0,0,0,.45)}
+.passport-dialog::backdrop{background:rgba(6,16,38,.72);backdrop-filter:blur(5px)}
+.passport-content{padding:29px 21px 23px;display:flex;flex-direction:column;gap:11px;position:relative}
+.passport-content h2{margin:0;font-size:25px;font-weight:950}
+.passport-content p{margin:0;font-size:13px;line-height:1.45;color:#dbe9f7}
+.passport-content .passport-kicker{color:#9ee7da;font-size:11px;letter-spacing:.13em;font-weight:950}
+.passport-content button{border:1px solid rgba(255,255,255,.37);border-radius:13px;padding:11px 12px;background:rgba(255,255,255,.13);color:#fff;font-size:14px;font-weight:850}
+.passport-content button.passport-primary{border-color:#f6e2a8;background:linear-gradient(145deg,#fff4b0,#ffd066);color:#203c60}
+.passport-content button.passport-quiet{border:none;background:transparent;color:#c3d5ec}
+.passport-content textarea{width:100%;height:95px;resize:none;border:1px solid #9cc8d5;border-radius:12px;padding:10px;background:#fff;color:#213c5b;font-size:11px}
+.passport-content .passport-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.passport-content .passport-alert{font-size:12px;color:#ffdf9b}
+.passport-close{position:absolute;top:10px;right:11px;width:38px;height:38px;padding:0!important;border-radius:50%!important;font-size:23px!important;line-height:1}
+.passport-content .passport-status{min-height:19px;color:#b4ffe0;font-weight:900;font-size:13px}
+@media(max-height:680px){.passport-content{gap:8px;padding:23px 17px 15px}.passport-content textarea{height:64px}}
 </style>
   <link rel="preload" href="/games/korrutamine-test/assets/edukass-cat-transparent.png" as="image" fetchpriority="high">
 </head>
@@ -500,6 +519,7 @@ body{background:
         <button class="op" data-op="mul"><span class="op-symbol">×</span><span class="op-main"><small>Korrutamine</small><span class="lvl" id="lvl-mul">уровень 1 из 14</span></span><span class="op-progress"><i id="prog-mul"></i></span></button>
         <button class="op" data-op="div"><span class="op-symbol">÷</span><span class="op-main"><small>Jagamine</small><span class="lvl" id="lvl-div">уровень 1 из 16</span></span><span class="op-progress"><i id="prog-div"></i></span></button>
       </div>
+      <button id="openPassport" class="passport-open" type="button">🛡️ Minu edusammud · Teine seade</button>
     </div>
     <details class="dev"><summary>Для разработки</summary><div id="profile"></div></details>
   </section>
@@ -572,6 +592,29 @@ body{background:
     <p>Тренажёр уже учёл эту тренировку.</p>
     <div class="finishBtns"><button id="again" class="primary">Продолжить</button><button id="other">Другой вид</button></div>
   </section>
+  <dialog id="passportDialog" class="passport-dialog" aria-labelledby="passportTitle">
+    <div class="passport-content">
+      <button id="passportClose" class="passport-close" type="button" aria-label="Sulge">×</button>
+      <div class="passport-kicker">EDUKASS · PASSPORT LITE</div>
+      <h2 id="passportTitle">Minu edusammud</h2>
+      <p id="passportExplanation">Loo isiklik link, et oma matemaatika tasemeid ja maailma teises seadmes jätkata.</p>
+      <button id="passportCreate" type="button" class="passport-primary">🔗 Loo minu edusammude link</button>
+      <textarea id="passportLink" class="hidden" readonly aria-label="Isiklik taastamislink"></textarea>
+      <div id="passportShareActions" class="passport-actions hidden">
+        <button id="passportCopy" type="button">⧉ Kopeeri</button>
+        <button id="passportSend" type="button">↗ Saada</button>
+      </div>
+      <div id="passportRestoreActions" class="hidden">
+        <p id="passportImportSummary">Leidsime edusammude salvestuse.</p>
+        <p class="passport-alert">Taastamine asendab selle seadme praegused edusammud.</p>
+        <button class="passport-primary" id="passportRestore" type="button">✓ Taasta edusammud</button>
+        <button class="passport-quiet" id="passportDecline" type="button">Ära taasta</button>
+      </div>
+      <p class="passport-alert">See on isiklik link. Ära saada seda klassi ühisesse vestlusesse.</p>
+      <p>Andmed on lingis, mitte EDUKASSi pilves. Uute edusammude ülekandmiseks loo uus link.</p>
+      <p class="passport-status" role="status" aria-live="polite" id="passportStatus"></p>
+    </div>
+  </dialog>
   <dialog id="shareDialog" class="share-dialog" aria-labelledby="shareDialogTitle">
     <div class="share-content">
       <button id="shareClose" type="button" class="share-close" aria-label="Sulge jagamise aken">×</button>
@@ -1015,6 +1058,8 @@ body{background:
   'use strict';
   const E=window.EDUKASS_MATH_ENGINE,A=window.EDUKASS_ADAPTIVE;
   const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+  // Catch the recovery link before game history rewrites the address hash.
+  const incomingPassport=location.hash.startsWith('#ekpass=')?location.hash.slice(8):null;
   const KEY='edukass_stolbiki_player_profile_v42';
   const LABEL={add:['➕','Сложение'],sub:['➖','Вычитание'],mul:['✖️','Умножение'],div:['➗','Деление'],mix:['🎯','Всё вместе']};
   const CONFIG={borrowNotation:'dot'}; // Kostya's textbook: borrow is marked with dots only; no written '10' row.
@@ -1921,6 +1966,147 @@ body{background:
     tone(1568,.84,.24,.022,'sine');
   }
 
+
+  // Portable recovery link: all information stays in the fragment (#), which
+  // browsers do not send to a web server. No account, identifier or network API.
+  const passportDialog=$('#passportDialog'),passportStatus=$('#passportStatus'),passportLink=$('#passportLink');
+  let pendingPassport=null,latestPassportUrl='';
+  const passportBase=location.origin+location.pathname;
+  function passportSnapshot(){
+    return {type:'edukass-passport',v:1,
+      savedAt:Date.now(),profile:JSON.parse(JSON.stringify(profile)),
+      world:{count:protoWorldCount,level:protoLevel,order:worldUnlocks().slice()}};
+  }
+  function base64Url(bytes){
+    let binary='';
+    for(let i=0;i<bytes.length;i+=8192)binary+=String.fromCharCode(...bytes.subarray(i,i+8192));
+    return btoa(binary).replace(/\\+/g,'-').replace(/\\//g,'_').replace(/=+$/,'');
+  }
+  function fromBase64Url(text){
+    if(!/^[A-Za-z0-9_-]{1,32000}$/.test(text))throw Error('vigane link');
+    const bin=atob(text.replace(/-/g,'+').replace(/_/g,'/'));
+    return Uint8Array.from(bin,c=>c.charCodeAt(0));
+  }
+  async function encodePassport(snapshot){
+    const utf8=new TextEncoder().encode(JSON.stringify(snapshot));
+    if(utf8.byteLength>130000)throw Error('salvestus on liiga suur');
+    if(typeof CompressionStream==='function'){
+      const zipped=await new Response(new Blob([utf8]).stream().pipeThrough(new CompressionStream('gzip'))).arrayBuffer();
+      return 'g'+base64Url(new Uint8Array(zipped));
+    }
+    return 'j'+base64Url(utf8);
+  }
+  async function decodePassport(code){
+    const bytes=fromBase64Url(code.slice(1));
+    let raw=bytes;
+    if(code[0]==='g'){
+      if(typeof DecompressionStream!=='function')throw Error('See brauser ei toeta taastamist');
+      raw=new Uint8Array(await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'))).arrayBuffer());
+    }else if(code[0]!=='j')throw Error('Tundmatu salvestus');
+    if(raw.byteLength>130000)throw Error('salvestus on liiga suur');
+    return JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(raw));
+  }
+  function validatePassport(data){
+    if(!data||data.type!=='edukass-passport'||data.v!==1||data.profile?.version!==42)throw Error('Vale või vana salvestus');
+    const w=data.world;
+    if(!w||!Number.isInteger(w.count)||w.count<50||w.count>550||!Number.isInteger(w.level)||
+       w.level<1||w.level>551||!Array.isArray(w.order)||w.order.length!==w.count||
+       w.order.some(k=>!Number.isInteger(k)||k<0||k>=550)||new Set(w.order).size!==w.order.length)throw Error('Maailma salvestus on vigane');
+    const safe=A.createProfile(),src=data.profile;
+    if(!src.ops||!Number.isInteger(src.sessionNo)||src.sessionNo<0||src.sessionNo>1000000)throw Error('Tasemed on vigased');
+    safe.sessionNo=src.sessionNo;
+    const numericSkill=['attempts','firstTry','errors','assisted','totalMs','cleanStreak','reviewStage','nextReviewAt','lastSeenAt'];
+    for(const [op,meta] of Object.entries(A.META)){
+      const incoming=src.ops[op],target=safe.ops[op];
+      if(!incoming?.skills||!Number.isInteger(incoming.frontier)||incoming.frontier<1||incoming.frontier>meta.max)throw Error('Tasemed on vigased');
+      target.frontier=incoming.frontier;
+      target.diagnostic=Boolean(incoming.diagnostic);
+      for(const field of ['baselineMs','baselineSamples']){
+        const v=incoming[field];
+        if(typeof v!=='number'||!Number.isFinite(v)||v<0||v>1e15)throw Error('Tasemed on vigased');
+        target[field]=v;
+      }
+      for(let n=1;n<=meta.max;n++){
+        const id=meta.prefix+n,inSkill=incoming.skills[id];
+        if(!inSkill||typeof inSkill.mastered!=='boolean')throw Error('Salvestus on vigane');
+        const dest=target.skills[id];dest.mastered=inSkill.mastered;
+        for(const field of numericSkill){
+          const val=inSkill[field];
+          if(typeof val!=='number'||!Number.isFinite(val)||val<0||val>1e15)throw Error('Salvestus on vigane');
+          dest[field]=val;
+        }
+      }
+    }
+    return {profile:safe,world:{count:w.count,level:w.level,order:w.order}};
+  }
+  function showPassportDialog(mode){
+    passportStatus.textContent='';
+    const restoring=mode==='restore';
+    $('#passportCreate').classList.toggle('hidden',restoring);
+    $('#passportExplanation').textContent=restoring?
+      'Saabunud isiklik edasijõudmise link. Saad jätkata sellelt salvestuselt.':
+      'Salvesta oma maailm ja matemaatika tasemed isiklikku linki, et teises seadmes jätkata.';
+    $('#passportRestoreActions').classList.toggle('hidden',!restoring);
+    $('#passportShareActions').classList.add('hidden');
+    passportLink.classList.add('hidden');
+    if(typeof passportDialog.showModal==='function')passportDialog.showModal();
+  }
+  async function makePassportLink(){
+    passportStatus.textContent='Valmistan linki…';
+    try{
+      const code=await encodePassport(passportSnapshot());
+      latestPassportUrl=passportBase+'#ekpass='+code;
+      passportLink.value=latestPassportUrl;
+      passportLink.classList.remove('hidden');
+      $('#passportShareActions').classList.remove('hidden');
+      passportStatus.textContent='Isiklik link valmis!';
+    }catch(e){passportStatus.textContent='Linki ei õnnestunud luua.';console.error(e)}
+  }
+  async function copyPassportLink(){
+    if(!latestPassportUrl)return;
+    passportStatus.textContent='Kopeerin…';
+    let done=false;
+    try{if(navigator.clipboard&&isSecureContext){await navigator.clipboard.writeText(latestPassportUrl);done=true}}catch{}
+    if(!done){passportLink.focus();passportLink.select();try{done=document.execCommand('copy')}catch{}}
+    passportStatus.textContent=done?'Link kopeeritud!':'Vali tekst ja kopeeri käsitsi.';
+  }
+  async function sendPassportLink(){
+    if(!latestPassportUrl)return;
+    if(typeof navigator.share==='function'){
+      try{await navigator.share({title:'EDUKASS – Minu edusammud',text:'Minu isiklik EDUKASSi salvestus',url:latestPassportUrl});return}
+      catch(e){if(e?.name==='AbortError')return}
+    }
+    await copyPassportLink();
+  }
+  async function preparePassportRestore(){
+    if(!incomingPassport)return;
+    try{
+      pendingPassport=validatePassport(await decodePassport(incomingPassport));
+      $('#passportImportSummary').textContent='Maailm '+pendingPassport.world.count+' / 550 · Matemaatika tasemed on salvestatud.';
+      showPassportDialog('restore');
+    }catch(e){
+      pendingPassport=null;showPassportDialog('restore');
+      $('#passportRestore').classList.add('hidden');
+      passportStatus.textContent='Link ei sobi: '+(e.message||'vigane salvestus');
+    }
+  }
+  function restorePassport(){
+    if(!pendingPassport)return;
+    // Explicitly approved replacement; local data is updated together.
+    profile=pendingPassport.profile;
+    worldOpenedOrder=pendingPassport.world.order.slice();
+    protoWorldCount=pendingPassport.world.count;protoLevel=pendingPassport.world.level;
+    save();saveProto();rebuildProtoActive();syncProtoTop();renderProfile();drawHomeWorld();
+    pendingPassport=null;passportDialog.close();showHome({historyMode:'replace'});
+  }
+  $('#openPassport').addEventListener('click',()=>showPassportDialog('create'));
+  $('#passportCreate').addEventListener('click',makePassportLink);
+  $('#passportCopy').addEventListener('click',copyPassportLink);
+  $('#passportSend').addEventListener('click',sendPassportLink);
+  $('#passportClose').addEventListener('click',()=>passportDialog.close());
+  $('#passportRestore').addEventListener('click',restorePassport);
+  $('#passportDecline').addEventListener('click',()=>passportDialog.close());
+  passportDialog.addEventListener('click',e=>{if(e.target===passportDialog)passportDialog.close()});
   const SHARE_URL='https://edukass-preview.va-educat.workers.dev/proov/stolbiki-mosaic-7q4m9k/?invite=2';
   const shareDialog=$('#shareDialog'),shareInput=$('#shareUrlInput'),shareStatus=$('#shareStatus');
   function openShareFallback(){
@@ -2019,6 +2205,7 @@ body{background:
     currentView='intro';showIntro({historyMode:'none'});
   }
   armBackGuard(currentView,currentView==='world-reward'?{mode:lastMode}:{});
+  if(incomingPassport)preparePassportRestore();
 
 
   window.__EDUKASS_TEST__={
@@ -2038,7 +2225,9 @@ body{background:
     showLessonDone:()=>showLessonDone(),
     getWorldTileOrder:()=>worldUnlocks(),
     getWorldPreview:()=>({enabled:worldPreviewCount!==null,count:previewWorldUnlocks().length,actualCount:protoWorldCount}),
-    getRealWorldProgress:()=>({tiles:protoWorldCount,level:protoLevel,persisted:localStorage.getItem('edukass-columns-player-world'),baseline:TEST_WORLD_BASELINE})
+    getRealWorldProgress:()=>({tiles:protoWorldCount,level:protoLevel,persisted:localStorage.getItem('edukass-columns-player-world'),baseline:TEST_WORLD_BASELINE}),
+    passport:{make:async()=>passportBase+'#ekpass='+await encodePassport(passportSnapshot()),
+      validate:async code=>validatePassport(await decodePassport(code))}
   };
 })();
 
