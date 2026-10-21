@@ -232,16 +232,19 @@ function targetExists(reference, sourceFile) {
 }
 
 function collectHtmlReferences(content) {
+  // Ignore JavaScript inside inline script tags during static-reference scanning.
+  // Keep opening tags, so external <script src="..."> is still validated.
+  const markup=content.replace(/<script\b([^>]*)>[\s\S]*?<\/script>/gi,'<script$1></script>');
   const references = [];
-  for (const match of content.matchAll(/(?:href|src)=["']([^"']+)["']/gi)) {
+  for (const match of markup.matchAll(/(?:href|src)=["']([^"']+)["']/gi)) {
     references.push(match[1]);
   }
-  for (const match of content.matchAll(/srcset=["']([^"']+)["']/gi)) {
+  for (const match of markup.matchAll(/srcset=["']([^"']+)["']/gi)) {
     for (const candidate of match[1].split(',')) {
       references.push(candidate.trim().split(/\s+/, 1)[0]);
     }
   }
-  for (const match of content.matchAll(/url\(["']?([^"')]+)["']?\)/gi)) {
+  for (const match of markup.matchAll(/url\(["']?([^"')]+)["']?\)/gi)) {
     references.push(match[1]);
   }
   return references;
