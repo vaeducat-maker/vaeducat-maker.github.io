@@ -1371,9 +1371,26 @@ body{background:
   if(history.state?.marker===NAV_MARKER){
     $('#introScreen').classList.add('hidden');
     const st=history.state;
-    if(st.view==='world-view')showWorldView({historyMode:'none'});
-    else if(st.view==='world-reward'){lastMode=st.mode||lastMode;showProtoWorld({historyMode:'none'})}
-    else showHome({historyMode:'none'});
+    // After a page refresh the browser may only have this single game state,
+    // so hardware Back would otherwise leave the game immediately. Rebuild
+    // one internal parent entry first, then restore the current screen.
+    if(st.view==='world-view'){
+      history.replaceState(navState('home'),'',location.pathname+location.search+'#home');
+      history.pushState(navState('world-view'),' ',location.pathname+location.search+'#world');
+      showWorldView({historyMode:'none'});
+    }else if(st.view==='world-reward'){
+      lastMode=st.mode||lastMode;
+      history.replaceState(navState('home'),'',location.pathname+location.search+'#home');
+      history.pushState(navState('world-reward',{mode:lastMode}),'',location.pathname+location.search+'#world');
+      showProtoWorld({historyMode:'none'});
+    }else if(st.view==='train'){
+      lastMode=st.mode||lastMode;
+      history.replaceState(navState('home'),'',location.pathname+location.search+'#home');
+      history.pushState(navState('train',{mode:lastMode}),'',location.pathname+location.search+'#train');
+      showHome({historyMode:'none'});
+    }else{
+      showHome({historyMode:'none'});
+    }
   }
 
   window.__EDUKASS_TEST__={
