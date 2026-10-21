@@ -826,11 +826,29 @@ body{background:
   const SOUND_KEY='edukass-columns-sound';
   let soundEnabled=localStorage.getItem(SOUND_KEY)!=='false';
   let gameAudioContext=null;
+  let currentView='intro';
   function navState(view,data={}){return{marker:NAV_MARKER,view,...data}}
-  function writeNav(view,data={},mode='push'){
-    const state=navState(view,data),hash=view==='home'?'#home':view==='train'?'#train':view.startsWith('world')?'#world':'';
-    const url=location.pathname+location.search+hash;
-    if(mode==='replace')history.replaceState(state,'',url);else if(mode==='push')history.pushState(state,'',url);
+  function navHash(view){
+    if(view==='intro')return '#intro';
+    if(view==='home')return '#home';
+    if(view==='train')return '#train';
+    if(view.startsWith('world'))return '#world';
+    return '';
+  }
+  function navUrl(view){return location.pathname+location.search+navHash(view)}
+  function writeNav(view,data={},mode='replace'){
+    currentView=view;
+    sessionStorage.setItem('edukass-columns-current-view',JSON.stringify({view,...data}));
+    // Screen changes stay on the top "guard" history entry.
+    // Hardware Back then reaches the lower sentinel and is handled by popstate.
+    history.replaceState(navState(view,{...data,guard:true}),'',navUrl(view));
+  }
+  function armBackGuard(view,data={}){
+    currentView=view;
+    const st=history.state;
+    if(st?.marker===NAV_MARKER&&st.guard===true)return;
+    history.replaceState(navState(view,{...data,guard:false}),'',navUrl(view));
+    history.pushState(navState(view,{...data,guard:true}),'',navUrl(view));
   }
   function updateSoundButton(){
     const b=$('#soundToggleButton');if(!b)return;
@@ -1263,6 +1281,18 @@ body{background:
     renderHomeLevels();$('#home').classList.remove('hidden');
     if(historyMode!=='none')writeNav('home',{},historyMode);
   }
+  function showIntro({historyMode='none'}={}){
+    clearAssistTimers();taskToken++;
+    $('#home').classList.add('hidden');$('#train').classList.add('hidden');$('#protoWorld').classList.remove('on','viewing');$('#finish').classList.add('hidden');
+    $('#introScreen').classList.remove('hidden');
+    if(historyMode!=='none')writeNav('intro',{},historyMode);
+  }
+  function parentView(view){
+    if(view==='train'||view==='world-view'||view==='world-reward')return'home';
+    if(view==='home')return'intro';
+    return null;
+  }
+
   function showFinish(){showProtoWorld()}
   function renderProfile(){const snap=A.publicSnapshot(profile);$('#profile').innerHTML=Object.entries(snap).map(([op,s])=>`<p><b>${LABEL[op][0]} ${LABEL[op][1]}</b>: ${s.frontier}${s.diagnostic?' · диагностика':''}</p>`).join('');renderHomeLevels()}
 
@@ -1357,41 +1387,57 @@ body{background:
   });
   $('#openWorldView').addEventListener('click',()=>{playGameSound('ui');showWorldView({historyMode:'push'})});
   $('#worldViewBack').addEventListener('click',()=>{playGameSound('ui');if(history.state?.marker===NAV_MARKER)history.back();else showHome({historyMode:'replace'})});
-  window.addEventListener('popstate',event=>{
-    const st=event.state;
-    if(!st||st.marker!==NAV_MARKER)return;
-    $('#introScreen').classList.add('hidden');
-    if(st.view==='home')showHome({historyMode:'none'});
-    else if(st.view==='world-view')showWorldView({historyMode:'none'});
-    else if(st.view==='world-reward'){lastMode=st.mode||lastMode;showProtoWorld({historyMode:'none'})}
-    else if(st.view==='train')showHome({historyMode:'none'});
+  let allowingBrowserExit=false;
+  window.addEventListener('popstate',()=>{
+    if(allowingBrowserExit)return;
+    const from=currentView;
+    const parent=parentView(from);
+    if(!parent){
+      // We are already at the intro. A second Back is allowed to leave the game.
+      allowingBrowserExit=true;
+      setTimeout(()=>history.back(),0);
+      return;
+    }
+
+    // We are now on the lower sentinel entry. Turn it into the desired
+    // parent screen, render that screen, then put a fresh guard above it.
+    if(parent==='intro')showIntro({historyMode:'none'});
+    else showHome({historyMode:'none'});
+    currentView=parent;
+    sessionStorage.setItem('edukass-columns-current-view',JSON.stringify({view:parent}));
+    history.replaceState(navState(parent,{guard:false}),'',navUrl(parent));
+    history.pushState(navState(parent,{guard:true}),'',navUrl(parent));
   });
   window.addEventListener('resize',()=>{fitGrid();drawHomeWorld();if(!$('#introScreen').classList.contains('hidden'))drawIntroTimelapse(550);if($('#protoWorld').classList.contains('on')){fitProtoWorld();drawProtoWorld()}});
   buildProtoOrder();rebuildProtoActive();syncProtoTop();renderProfile();runIntroTimelapse();
-  if(history.state?.marker===NAV_MARKER){
-    $('#introScreen').classList.add('hidden');
-    const st=history.state;
-    // After a page refresh the browser may only have this single game state,
-    // so hardware Back would otherwise leave the game immediately. Rebuild
-    // one internal parent entry first, then restore the current screen.
-    if(st.view==='world-view'){
-      history.replaceState(navState('home'),'',location.pathname+location.search+'#home');
-      history.pushState(navState('world-view'),' ',location.pathname+location.search+'#world');
-      showWorldView({historyMode:'none'});
-    }else if(st.view==='world-reward'){
-      lastMode=st.mode||lastMode;
-      history.replaceState(navState('home'),'',location.pathname+location.search+'#home');
-      history.pushState(navState('world-reward',{mode:lastMode}),'',location.pathname+location.search+'#world');
-      showProtoWorld({historyMode:'none'});
-    }else if(st.view==='train'){
-      lastMode=st.mode||lastMode;
-      history.replaceState(navState('home'),'',location.pathname+location.search+'#home');
-      history.pushState(navState('train',{mode:lastMode}),'',location.pathname+location.search+'#train');
-      showHome({historyMode:'none'});
-    }else{
-      showHome({historyMode:'none'});
+
+  // Restore the current in-game screen after reload, then ensure Android Back
+  // has an internal sentinel to hit before it can leave the page.
+  let restored={view:'intro'};
+  try{
+    if(history.state?.marker===NAV_MARKER)restored={view:history.state.view,...history.state};
+    else{
+      const saved=JSON.parse(sessionStorage.getItem('edukass-columns-current-view')||'null');
+      if(saved?.view)restored=saved;
     }
+  }catch{}
+  currentView=restored.view||'intro';
+
+  if(currentView==='home'){
+    $('#introScreen').classList.add('hidden');showHome({historyMode:'none'});
+  }else if(currentView==='world-view'){
+    $('#introScreen').classList.add('hidden');showWorldView({historyMode:'none'});
+  }else if(currentView==='world-reward'){
+    lastMode=restored.mode||lastMode;$('#introScreen').classList.add('hidden');showProtoWorld({historyMode:'none'});
+  }else if(currentView==='train'){
+    // A half-completed arithmetic task is not reconstructed after reload;
+    // return safely to the game's home screen rather than leaving the game.
+    currentView='home';$('#introScreen').classList.add('hidden');showHome({historyMode:'none'});
+  }else{
+    currentView='intro';showIntro({historyMode:'none'});
   }
+  armBackGuard(currentView,currentView==='world-reward'?{mode:lastMode}:{});
+
 
   window.__EDUKASS_TEST__={
     version:'4.2',
