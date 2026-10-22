@@ -468,6 +468,26 @@ body{background:
 .world-new-dialog #newWorldPreview{width:128px;height:145px;border:3px solid #e1d9a2;border-radius:15px;background:#143c64;image-rendering:pixelated;box-shadow:0 8px 25px #040c1990}
 .world-new-actions{display:grid;gap:8px;width:100%}
 @media(min-width:510px){.world-gallery-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+/* Final mobile world polish: distinct tap zones; no gallery/sound overlap. */
+.proto-world-count{top:71px;left:50%;right:auto;transform:translateX(-50%);padding:7px 13px;white-space:nowrap}
+.proto-world .world-gallery-inview{top:13px;right:13px;max-width:46%;z-index:12}
+.proto-world .world-view-back{top:13px;left:13px;max-width:38%;z-index:12}
+.app:has(.proto-world.on)>.sound-toggle{
+  position:absolute;top:auto;right:auto;bottom:23px;left:23px;
+  width:39px;height:39px;z-index:12;
+}
+.world-continue{
+  position:absolute;z-index:14;bottom:21px;left:50%;transform:translateX(-50%);
+  min-height:49px;min-width:190px;border-radius:15px;padding:10px 17px;
+  border:2px solid #d9f6ff;background:linear-gradient(120deg,#00aaf3,#2778e9);
+  box-shadow:0 8px 25px #08183699;color:#fff;font-weight:900;font-size:14px;
+  white-space:nowrap;
+}
+.proto-world.viewing .world-continue:not(.hidden)~.world-replay{display:none}
+@media(max-width:380px){
+  .proto-world .world-gallery-inview{font-size:10px;padding:10px 7px}
+  .proto-world-count{top:76px;font-size:12px}
+}
 </style>
   <link rel="preload" href="/games/korrutamine-test/assets/edukass-cat-transparent.png" as="image" fetchpriority="high">
   <script src="/proov/stolbiki-mosaic-7q4m9k/worlds-pixel-data.js"></script>
@@ -583,6 +603,7 @@ body{background:
       <button class="world-view-back" id="worldViewBack" type="button">← Tagasi</button>
       <button class="world-gallery-inview" id="galleryFromWorld" type="button">🖼️ Maailmad</button>
        <button class="world-replay hidden" id="worldReplay" type="button">↻ Vaata uuesti</button>
+       <button class="world-continue hidden" id="worldContinue" type="button">▶ Jätka lahendamist</button>
        <button class="world-skip hidden" id="worldSkip" type="button">Näita maailma →</button>
        <div class="world-timelapse-caption hidden" id="worldTimelapseCaption">Sinu maailm kasvab...</div>
       <canvas id="protoWorldCanvas"></canvas>
@@ -2198,6 +2219,7 @@ body{background:
   $('#worldSkip').addEventListener('click',()=>{playGameSound('ui');endWorldTimelapse()});
 
   function showProtoWorld({historyMode='replace'}={}){
+    returnToLessonAfterWorld=false;$('#worldContinue').classList.add('hidden');
     stopWorldTimelapse();clearAssistTimers();taskToken++;
     $('#home').classList.add('hidden');$('#train').classList.add('hidden');
     $('#protoWorld').classList.remove('viewing');$('#protoWorld').classList.add('on');
@@ -2208,8 +2230,24 @@ body{background:
     $('#worldTimelapseCaption').classList.remove('hidden');
     setTimeout(showProtoChoices,320)
   }
-  function showWorldView({historyMode='push'}={}){clearAssistTimers();taskToken++;$('#home').classList.add('hidden');$('#train').classList.add('hidden');$('#protoWorld').classList.add('on','viewing');hideProtoChoices();writeNav('world-view',{},historyMode);fitProtoWorld();rebuildProtoActive();drawProtoWorld();if(protoImg.complete&&protoImg.naturalWidth)playWorldTimelapse()}
+  function showWorldView({historyMode='push',instant=false,resumeLesson=false}={}){
+    clearAssistTimers();taskToken++;
+    returnToLessonAfterWorld=!!resumeLesson;
+    $('#worldContinue').classList.toggle('hidden',!resumeLesson);
+    $('#home').classList.add('hidden');$('#train').classList.add('hidden');
+    $('#protoWorld').classList.add('on','viewing');hideProtoChoices();
+    writeNav('world-view',{},historyMode);
+    stopWorldTimelapse();fitProtoWorld();rebuildProtoActive();drawProtoWorld();syncProtoTop();
+    if(instant){
+      $('#worldSkip').classList.add('hidden');
+      $('#worldReplay').classList.remove('hidden');
+      $('#worldTimelapseCaption').classList.add('hidden');
+      return;
+    }
+    if(protoImg.complete&&protoImg.naturalWidth)playWorldTimelapse();
+  }
   let worldRewardBusy=false;
+  let returnToLessonAfterWorld=false;
   function addWorldPiece(k){
     if(!Number.isInteger(k)||protoActive.has(k)||protoWorldCount>=550)return false;
     if(!worldOpenedOrder)worldOpenedOrder=protoOrder.slice(0,protoWorldCount);
@@ -2227,7 +2265,27 @@ body{background:
       // The first piece is always chosen by the pupil. The additional pieces
       // earned by mastering a skill unfold automatically, in a connected area.
       // Save each reveal, so leaving or closing the browser never loses tiles.
-      const target=worldTarget(),rank=new Map(protoOrder.map((tile,i)=>[tile,i]));
+      const target=worldTarget();
+      // Keep ALL rewarded tiles on the side the child tapped.
+      // Select only connected frontier cells. Primary heading is the outward
+      // normal from the initial revealed island through the tapped "+".
+      const [ax,ay]=pxy(k);
+      let vx=ax-PCX,vy=ay-PCY;
+      if(Math.abs(vx)+Math.abs(vy)<.01){vx=1;vy=0}
+      const vlen=Math.hypot(vx,vy),ux=vx/vlen,uy=vy/vlen;
+      const newGrowth=[k];
+      function directionalScore(tile){
+        const [x,y]=pxy(tile),dx=x-ax,dy=y-ay;
+        const forward=dx*ux+dy*uy;
+        const lateral=Math.abs(dx*uy-dy*ux);
+        const towardNew=Math.min(...newGrowth.map(p=>{
+          const [px,py]=pxy(p);return Math.abs(x-px)+Math.abs(y-py)
+        }));
+        const backwards=Math.max(0,-forward);
+        // Big penalties for jumping to an unrelated side of the scene.
+        return backwards*30+lateral*3+towardNew*2-forward*.8+
+          ((x*17+y*31)%13)*.008;
+      }
       function revealBonus(){
         if(protoWorldCount>=target){
           worldRewardBusy=false;
@@ -2244,8 +2302,9 @@ body{background:
         }
         const frontier=protoFrontier();
         if(!frontier.length){worldRewardBusy=false;return}
-        frontier.sort((a,b)=>(rank.get(a)??9999)-(rank.get(b)??9999));
-        addWorldPiece(frontier[0]);drawProtoWorld();
+        frontier.sort((a,b)=>directionalScore(a)-directionalScore(b));
+        const next=frontier[0];
+        addWorldPiece(next);newGrowth.push(next);drawProtoWorld();
         if(protoWorldCount<target)requestAnimationFrame(()=>setTimeout(revealBonus,55));
         else revealBonus();
       }
@@ -2318,8 +2377,12 @@ body{background:
       small.textContent=id===collection.active?'✓ Praegune maailm':`${protoWorldCount} / 550 tükki`;
       details.append(bold,small);node.append(preview,details);
       node.addEventListener('click',()=>{
-        selectWorld(id);galleryDialog.close();
+        const switched=selectWorld(id);galleryDialog.close();
         playGameSound('ui');
+        if(switched){
+          // Do not dismiss the reward back to exercises or home.
+          showWorldView({historyMode:'replace',instant:true,resumeLesson:returnToLessonAfterWorld});
+        }
       });
       grid.append(node);paintWorldPreview(preview,id);
     }
@@ -2329,9 +2392,19 @@ body{background:
     if(useNew&&lastOfferedWorld)selectWorld(lastOfferedWorld);
     if(offerDialog.open)offerDialog.close();
     lastOfferedWorld='';
-    if(lessonReady())showLessonDone();
+    if(useNew){
+      // The child chose a reward: stay on the NEW scene until they decide.
+      showWorldView({historyMode:'replace',instant:true,resumeLesson:true});
+    }else if(lessonReady())showLessonDone();
     else start(lastMode,{historyMode:'replace',continueLesson:true});
   }
+  $('#worldContinue').addEventListener('click',()=>{
+    playGameSound('ui');
+    returnToLessonAfterWorld=false;
+    $('#worldContinue').classList.add('hidden');
+    if(lessonReady())showLessonDone();
+    else start(lastMode,{historyMode:'replace',continueLesson:true});
+  });
   function offerNewWorldIfDue(){
     const unlocked=discoveredIds();
     if(unlocked.length<=collection.noticed||unlocked.length<2)return false;
@@ -2571,7 +2644,15 @@ body{background:
     playIntroLaunchSound();$('#introScreen').classList.add('hidden');showHome({historyMode:'replace'});
   });
   $('#openWorldView').addEventListener('click',()=>{playGameSound('ui');showWorldView({historyMode:'push'})});
-  $('#worldViewBack').addEventListener('click',()=>{playGameSound('ui');if(history.state?.marker===NAV_MARKER)history.back();else showHome({historyMode:'replace'})});
+  $('#worldViewBack').addEventListener('click',()=>{
+    playGameSound('ui');
+    if(returnToLessonAfterWorld){
+      returnToLessonAfterWorld=false;$('#worldContinue').classList.add('hidden');
+      if(lessonReady())showLessonDone();
+      else start(lastMode,{historyMode:'replace',continueLesson:true});
+    }else if(history.state?.marker===NAV_MARKER)history.back();
+    else showHome({historyMode:'replace'});
+  });
   let allowingBrowserExit=false;
   window.addEventListener('popstate',()=>{
     if(allowingBrowserExit)return;
