@@ -1691,7 +1691,9 @@ body{background:
       }
       ops[op]=opVerified;
     }
-    const practice=Math.floor(solved/5);
+    // A visible chunk, not one barely perceptible pixel: 5 purposeful
+    // completed tasks give a small connected 12-tile expansion.
+    const practice=Math.floor(solved/5)*12;
     const achievement=Math.floor(500*verified/TOTAL_LEARNING_SKILLS);
     return{solved,verified,provisional,ops,practice,achievement,
       target:Math.min(550,50+Math.max(practice,achievement))};
@@ -1700,6 +1702,45 @@ body{background:
   function pendingWorldPieces(){return Math.max(0,worldTarget()-protoWorldCount)}
   const WORLD_HISTORY_KEY='edukass-columns-player-world-order-v1';
   let worldOpenedOrder=null;
+  const WORLDS=Array.isArray(window.EDUKASS_WORLD_ART)?window.EDUKASS_WORLD_ART:[];
+  const COLLECTION_KEY='edukass-columns-world-collection-v1';
+  // A world set is shuffled once per pupil, then saved. A classmate gets
+  // a different initial painting and a different sequence of reveals.
+  function worldShuffle(){
+    const ids=WORLDS.map(w=>w.id);
+    for(let i=ids.length-1;i>0;i--){
+      const a=new Uint32Array(1);
+      if(globalThis.crypto?.getRandomValues)crypto.getRandomValues(a);
+      else a[0]=Math.floor(Math.random()*0xffffffff);
+      const j=a[0]%(i+1);[ids[i],ids[j]]=[ids[j],ids[i]];
+    }
+    return ids;
+  }
+  function freshCollection(){
+    const order=worldShuffle();
+    return{version:1,order,active:order[0]||'',noticed:1};
+  }
+  let collection;
+  try{
+    const saved=JSON.parse(localStorage.getItem(COLLECTION_KEY)||'null');
+    collection=(saved?.version===1&&saved.order?.length===WORLDS.length&&
+      new Set(saved.order).size===WORLDS.length&&
+      saved.order.every(id=>WORLDS.some(a=>a.id===id))&&
+      saved.order.includes(saved.active))?saved:freshCollection();
+  }catch{collection=freshCollection()}
+  function saveCollection(){localStorage.setItem(COLLECTION_KEY,JSON.stringify(collection))}
+  saveCollection();
+  // First reveal after only five completed examples, then distribute the
+  // nine remaining designs through the 550-piece first collection.
+  const WORLD_DISCOVERY_MARKS=[50,62,110,160,210,260,310,360,410,460];
+  function discoveredCount(){
+    return WORLD_DISCOVERY_MARKS.filter(n=>protoWorldCount>=n).length;
+  }
+  function worldName(id=collection.active){return WORLDS.find(w=>w.id===id)?.name||'Minu maailm'}
+  function discoveredIds(){return collection.order.slice(0,discoveredCount())}
+  function activeWorldArt(){return WORLDS.find(w=>w.id===collection.active)||WORLDS[0]||null}
+  // Pupil artwork may change; the intro demo is an entirely different image.
+  
   try{
     const prev=JSON.parse(localStorage.getItem(WORLD_HISTORY_KEY)||'null');
     if(Array.isArray(prev)&&prev.length===protoWorldCount&&prev.every(k=>Number.isInteger(k)&&k>=0&&k<550)&&new Set(prev).size===prev.length)worldOpenedOrder=prev;
@@ -1763,6 +1804,13 @@ body{background:
     $('#protoWorldCount').textContent=`${protoWorldCount} / 550`;
     const hw=$('#homeWorld');
     if(hw)hw.textContent=`Maailm ${protoWorldCount} / 550`+(pendingWorldPieces()? ` · +${pendingWorldPieces()} ootel`:'');
+    const nm=$('#homeWorldName'),unlock=$('#unlockedWorldCount'),hint=$('#worldNextHint');
+    if(nm)nm.textContent=worldName().toUpperCase();
+    if(unlock)unlock.textContent=`${discoveredCount()} / 10 maailma`;
+    if(hint){
+      const mark=WORLD_DISCOVERY_MARKS.find(x=>x>protoWorldCount);
+      hint.textContent=mark?`Järgmine maailm: ${mark} tükki`:'Kõik 10 maailma on avastatud!';
+    }
   }
   function renderHomeLevels(){
     const snap=A.publicSnapshot(profile),max={add:10,sub:12,mul:14,div:16};
@@ -2043,7 +2091,8 @@ body{background:
   function showFinish(){showProtoWorld()}
   function renderProfile(){const snap=A.publicSnapshot(profile);$('#profile').innerHTML=Object.entries(snap).map(([op,s])=>`<p><b>${LABEL[op][0]} ${LABEL[op][1]}</b>: ${s.frontier}${s.diagnostic?' · диагностика':''}</p>`).join('');renderHomeLevels()}
 
-  const protoCv=$('#protoWorldCanvas'),protoCtx=protoCv.getContext('2d'),protoImg=new Image();protoImg.src=PROTO_WORLD_IMG;
+  const protoCv=$('#protoWorldCanvas'),protoCtx=protoCv.getContext('2d'),protoImg=new Image();
+  const introImg=new Image();introImg.src=PROTO_WORLD_IMG;
   const homeCv=$('#homeWorldCanvas'),homeCtx=homeCv.getContext('2d');
   const introTimeCv=$('#introTimelapseCanvas'),introTimeCtx=introTimeCv.getContext('2d');
   let introTimeStarted=false;
@@ -2057,17 +2106,17 @@ body{background:
   function fitProtoWorld(){const r=protoCv.getBoundingClientRect(),d=Math.min(devicePixelRatio||1,2);protoCv.width=Math.round(r.width*d);protoCv.height=Math.round(r.height*d);protoCtx.setTransform(d,0,0,d,0,0)}
   function drawProtoWorld(extra=null,alpha=1){const w=protoCv.clientWidth,h=protoCv.clientHeight;protoCtx.clearRect(0,0,w,h);if(!protoImg.complete||!protoImg.naturalWidth)return;const ir=protoImg.width/protoImg.height,br=w/h;let sx=0,sy=0,sw=protoImg.width,sh=protoImg.height;if(ir>br){sw=protoImg.height*br;sx=(protoImg.width-sw)/2}else{sh=protoImg.width/br;sy=(protoImg.height-sh)/2}const tw=w/PCOLS,th=h/PROWS,stw=sw/PCOLS,sth=sh/PROWS;for(const k of protoActive){const[x,y]=pxy(k);protoCtx.drawImage(protoImg,sx+x*stw,sy+y*sth,stw+.8,sth+.8,x*tw,y*th,tw+.45,th+.45)}if(extra!==null){const[x,y]=pxy(extra);protoCtx.save();protoCtx.globalAlpha=alpha;protoCtx.drawImage(protoImg,sx+x*stw,sy+y*sth,stw+.8,sth+.8,x*tw,y*th,tw+.45,th+.45);protoCtx.restore()}}
   function drawIntroTimelapse(count){
-    if(!introTimeCv||!introTimeCv.isConnected||!protoImg.complete||!protoImg.naturalWidth)return;
+    if(!introTimeCv||!introTimeCv.isConnected||!introImg.complete||!introImg.naturalWidth)return;
     const r=introTimeCv.getBoundingClientRect();if(!r.width||!r.height)return;
     const d=Math.min(devicePixelRatio||1,2);introTimeCv.width=Math.round(r.width*d);introTimeCv.height=Math.round(r.height*d);introTimeCtx.setTransform(d,0,0,d,0,0);
     const w=r.width,h=r.height,g=introTimeCtx.createLinearGradient(0,0,0,h);g.addColorStop(0,'#65b9f6');g.addColorStop(.58,'#c2e9ff');g.addColorStop(1,'#edfaff');introTimeCtx.fillStyle=g;introTimeCtx.fillRect(0,0,w,h);
-    const ir=protoImg.width/protoImg.height,br=w/h;let sx=0,sy=0,sw=protoImg.width,sh=protoImg.height;if(ir>br){sw=protoImg.height*br;sx=(protoImg.width-sw)/2}else{sh=protoImg.width/br;sy=(protoImg.height-sh)/2}
+    const ir=introImg.width/introImg.height,br=w/h;let sx=0,sy=0,sw=introImg.width,sh=introImg.height;if(ir>br){sw=introImg.height*br;sx=(introImg.width-sw)/2}else{sh=introImg.width/br;sy=(introImg.height-sh)/2}
     const tw=w/PCOLS,th=h/PROWS,stw=sw/PCOLS,sth=sh/PROWS;
     const n=Math.min(count,protoOrder.length);
-    for(let i=0;i<n;i++){const[x,y]=pxy(protoOrder[i]);introTimeCtx.drawImage(protoImg,sx+x*stw,sy+y*sth,stw+.8,sth+.8,x*tw,y*th,tw+.45,th+.45)}
+    for(let i=0;i<n;i++){const[x,y]=pxy(protoOrder[i]);introTimeCtx.drawImage(introImg,sx+x*stw,sy+y*sth,stw+.8,sth+.8,x*tw,y*th,tw+.45,th+.45)}
   }
   function runIntroTimelapse(){
-    if(introTimeStarted||!protoImg.complete||!protoImg.naturalWidth)return;
+    if(introTimeStarted||!introImg.complete||!introImg.naturalWidth)return;
     introTimeStarted=true;
     const stops=[50,100,150,250,350,450,550];
     let i=0;
@@ -2202,7 +2251,12 @@ body{background:
     requestAnimationFrame(anim);
   }
   for(let i=0;i<7;i++)$('#pc'+i).addEventListener('click',e=>chooseProtoWorld(Number(e.currentTarget.dataset.k)));
-  protoImg.onload=()=>{buildProtoOrder();rebuildProtoActive();drawHomeWorld();runIntroTimelapse();if($('#protoWorld').classList.contains('viewing'))playWorldTimelapse()};
+  protoImg.onload=()=>{buildProtoOrder();rebuildProtoActive();drawHomeWorld();
+    if($('#protoWorld').classList.contains('on')){fitProtoWorld();drawProtoWorld()}
+    if($('#protoWorld').classList.contains('viewing'))playWorldTimelapse()};
+  introImg.onload=()=>{buildProtoOrder();runIntroTimelapse()};
+  protoImg.src=activeWorldArt()?.src||PROTO_WORLD_IMG;
+  if(introImg.complete&&introImg.naturalWidth)runIntroTimelapse();
 
   function makeExample(op,a,b){
     a=Number(a);b=Number(b);
@@ -2238,7 +2292,7 @@ body{background:
   function passportSnapshot(){
     return {type:'edukass-passport',v:1,
       savedAt:Date.now(),profile:JSON.parse(JSON.stringify(profile)),
-      world:{count:protoWorldCount,level:protoLevel,order:worldUnlocks().slice()}};
+      world:{count:protoWorldCount,level:protoLevel,order:worldUnlocks().slice(),collection:JSON.parse(JSON.stringify(collection))}};
   }
   function base64Url(bytes){
     let binary='';
@@ -2362,6 +2416,13 @@ body{background:
     profile=pendingPassport.profile;
     worldOpenedOrder=pendingPassport.world.order.slice();
     protoWorldCount=pendingPassport.world.count;protoLevel=pendingPassport.world.level;
+    const cw=pendingPassport.world.collection;
+    if(cw?.version===1&&Array.isArray(cw.order)&&cw.order.length===WORLDS.length&&
+       new Set(cw.order).size===WORLDS.length&&cw.order.every(id=>WORLDS.some(a=>a.id===id))&&
+       cw.order.includes(cw.active)){
+      collection={version:1,order:cw.order,active:cw.active,noticed:Math.min(10,Math.max(1,Number(cw.noticed)||1))};
+      saveCollection();protoImg.src=activeWorldArt()?.src||PROTO_WORLD_IMG;
+    }
     save();saveProto();rebuildProtoActive();syncProtoTop();renderProfile();drawHomeWorld();
     pendingPassport=null;passportDialog.close();showHome({historyMode:'replace'});
   }
