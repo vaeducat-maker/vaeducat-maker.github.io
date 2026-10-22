@@ -1,0 +1,170 @@
+{
+  "schemaVersion": 1,
+  "descriptionRu": "Полный учёт поверхностей EDUKASS; без отдельного сценария нельзя объявить продукт проверенным или выпустить его изменение через Cloudflare.",
+  "products": [
+    {
+      "id": "games-kiire-sonatreener",
+      "pathPrefix": "games/kiire-sonatreener/",
+      "category": "interactive",
+      "acceptance": "requires-individual-audit"
+    },
+    {
+      "id": "games-koolikott",
+      "pathPrefix": "games/koolikott/",
+      "category": "interactive",
+      "acceptance": "requires-individual-audit"
+    },
+    {
+      "id": "games-korrutamine-test",
+      "pathPrefix": "games/korrutamine-test/",
+      "category": "interactive",
+      "acceptance": "requires-individual-audit"
+    },
+    {
+      "id": "games-liitmine",
+      "pathPrefix": "games/liitmine/",
+      "category": "interactive",
+      "acceptance": "requires-individual-audit"
+    },
+    {
+      "id": "games-lumesadu",
+      "pathPrefix": "games/lumesadu/",
+      "category": "interactive",
+      "acceptance": "requires-individual-audit"
+    },
+    {
+      "id": "games-metsarada",
+      "pathPrefix": "games/metsarada/",
+      "category": "interactive",
+      "acceptance": "requires-individual-audit"
+    },
+    {
+      "id": "games-minu-suvi",
+      "pathPrefix": "games/minu-suvi/",
+      "category": "interactive",
+      "acceptance": "requires-individual-audit"
+    },
+    {
+      "id": "games-septembri-sonamang",
+      "pathPrefix": "games/septembri-sonamang/",
+      "category": "interactive",
+      "acceptance": "requires-individual-audit"
+    },
+    {
+      "id": "materials-hommikulood",
+      "pathPrefix": "materials/hommikulood/",
+      "category": "learning-material",
+      "acceptance": "requires-individual-audit"
+    },
+    {
+      "id": "materials-koolikott",
+      "pathPrefix": "materials/koolikott/",
+      "category": "learning-material",
+      "acceptance": "requires-individual-audit"
+    },
+    {
+      "id": "materials-korrutustabel",
+      "pathPrefix": "materials/korrutustabel/",
+      "category": "learning-material",
+      "acceptance": "requires-individual-audit"
+    },
+    {
+      "id": "materials-loika-kosmoserada",
+      "pathPrefix": "materials/loika-kosmoserada/",
+      "category": "learning-material",
+      "acceptance": "requires-individual-audit"
+    },
+    {
+      "id": "materials-loikamine-kosmos-preview",
+      "pathPrefix": "materials/loikamine-kosmos-preview/",
+      "category": "learning-material",
+      "acceptance": "requires-individual-audit"
+    },
+    {
+      "id": "materials-loikamine-kosmos",
+      "pathPrefix": "materials/loikamine-kosmos/",
+      "category": "learning-material",
+      "acceptance": "requires-individual-audit"
+    },
+    {
+      "id": "materials-matemaatika",
+      "pathPrefix": "materials/matemaatika/",
+      "category": "learning-material",
+      "acceptance": "requires-individual-audit"
+    },
+    {
+      "id": "materials-metsloomad",
+      "pathPrefix": "materials/metsloomad/",
+      "category": "learning-material",
+      "acceptance": "requires-individual-audit"
+    },
+    {
+      "id": "materials-pildidetektiiv",
+      "pathPrefix": "materials/pildidetektiiv/",
+      "category": "learning-material",
+      "acceptance": "requires-individual-audit"
+    },
+    {
+      "id": "materials-riimid-preview",
+      "pathPrefix": "materials/riimid-preview/",
+      "category": "learning-material",
+      "acceptance": "requires-individual-audit"
+    },
+    {
+      "id": "materials-ristsonad-sugis",
+      "pathPrefix": "materials/ristsonad-sugis/",
+      "category": "learning-material",
+      "acceptance": "requires-individual-audit"
+    },
+    {
+      "id": "materials-tanased-ulesanded",
+      "pathPrefix": "materials/tanased-ulesanded/",
+      "category": "learning-material",
+      "acceptance": "requires-individual-audit"
+    },
+    {
+      "id": "materials-tunniplaan",
+      "pathPrefix": "materials/tunniplaan/",
+      "category": "learning-material",
+      "acceptance": "requires-individual-audit"
+    },
+    {
+      "id": "materials-tunniplaanid-10",
+      "pathPrefix": "materials/tunniplaanid-10/",
+      "category": "learning-material",
+      "acceptance": "requires-individual-audit"
+    },
+    {
+      "id": "materials-tunniplaanid-preview-1909",
+      "pathPrefix": "materials/tunniplaanid-preview-1909/",
+      "category": "learning-material",
+      "acceptance": "requires-individual-audit"
+    },
+    {
+      "id": "materials-umbermoot-pindala",
+      "pathPrefix": "materials/umbermoot-pindala/",
+      "category": "learning-material",
+      "acceptance": "requires-individual-audit"
+    },
+    {
+      "id": "proov-stolbiki-250",
+      "pathPrefix": "proov/stolbiki-250/",
+      "category": "experimental",
+      "acceptance": "requires-individual-audit"
+    },
+    {
+      "id": "proov-stolbiki-mosaic-7q4m9k",
+      "pathPrefix": "proov/stolbiki-mosaic-7q4m9k/",
+      "category": "experimental",
+      "acceptance": "verified",
+      "sourceContract": "quality/contracts/stolbiki-worlds.json",
+      "visualAudit": "scripts/stolbiki-prelaunch-audit.js"
+    },
+    {
+      "id": "proov-tegusonad-praegu-7q2m9x",
+      "pathPrefix": "proov/tegusonad-praegu-7q2m9x/",
+      "category": "experimental",
+      "acceptance": "requires-individual-audit"
+    }
+  ]
+}
