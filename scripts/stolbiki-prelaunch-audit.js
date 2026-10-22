@@ -235,6 +235,18 @@ async function checkCompetitor() {
             note('pedagogy','No repeated-digit or round-ten division patterns at entry',
               pedagogy.early.every(t=>!t.unhelpful&&t.a%11!==0&&t.a%10!==0),
               JSON.stringify(pedagogy.early.slice(0,12)),'critical');
+            const secondLevel=await guest.evaluate(()=>{
+              const T=window.__EDUKASS_TEST__,examples=[];
+              for(const skill of ['D2','D3','D4','D5','D6','S1','S2','M1','M2']){
+                for(let i=1;i<=24;i++){
+                  const t=T.challenge.generate(skill,i*173+9);
+                  if(T.challenge.unhelpful(t))examples.push(skill+': '+t.a+':'+t.b);
+                }
+              }
+              return examples;
+            });
+            note('pedagogy','200+ early lessons reject obviously pointless shortcut expressions',
+              secondLevel.length===0,JSON.stringify(secondLevel.slice(0,12)),'critical');
             note('pedagogy','Correct independent solving leads to varied skill stages in every operation',
               Object.values(pedagogy.sessions).every(s=>new Set(s.tasks.map(t=>t.skill)).size>=4&&s.tasks.every(t=>!t.unhelpful)),
               JSON.stringify(Object.fromEntries(Object.entries(pedagogy.sessions).map(([op,s])=>[op,[...new Set(s.tasks.map(t=>t.skill))]]))),'critical');
