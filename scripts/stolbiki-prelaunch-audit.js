@@ -434,7 +434,8 @@ async function checkCompetitor() {
               clean.resetUrlConsumed&&clean.otherSave==='keep'&&clean.skillsClean,
               JSON.stringify(clean),'critical');
             await guest.evaluate(()=>{
-              const p=JSON.parse(localStorage.getItem('edukass_stolbiki_player_profile_v42'));
+              const stored=localStorage.getItem('edukass_stolbiki_player_profile_v42');
+              const p=stored?JSON.parse(stored):window.EDUKASS_ADAPTIVE.createProfile();
               p.ops.add.frontier=3;
               localStorage.setItem('edukass_stolbiki_player_profile_v42',JSON.stringify(p));
               localStorage.setItem('edukass-columns-player-world','58');
