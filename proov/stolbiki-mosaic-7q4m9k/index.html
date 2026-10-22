@@ -2210,7 +2210,40 @@ body{background:
   const pkey=(x,y)=>y*PCOLS+x,pxy=k=>[k%PCOLS,Math.floor(k/PCOLS)],pneigh=(x,y)=>[[x+1,y],[x-1,y],[x,y+1],[x,y-1]].filter(([a,b])=>a>=0&&a<PCOLS&&b>=0&&b<PROWS);
   function buildProtoOrder(){protoOrder=[];const A0=new Set(),F=new Set();function add(x,y){const k=pkey(x,y);if(A0.has(k))return;A0.add(k);protoOrder.push(k);F.delete(k);for(const[nx,ny]of pneigh(x,y)){const nk=pkey(nx,ny);if(!A0.has(nk))F.add(nk)}}add(PCX,PCY);const dirs=[[1,0],[-1,0],[0,-1],[0,1],[1,-1],[-1,-1],[1,1],[-1,1]],lens=[5,4,4,3,3,3,3,2];for(let a=0;a<dirs.length&&A0.size<PSTART;a++){let[dx,dy]=dirs[a],x=PCX,y=PCY;for(let s=0;s<lens[a]&&A0.size<PSTART;s++){x+=dx;y+=dy;if(x<1||x>=PCOLS-1||y<1||y>=PROWS-1)break;add(x,y);if(A0.size<PSTART&&s%2===0){const sx=dy===0?0:(a%2===0?1:-1),sy=dx===0?0:(a%2===0?-1:1);if(x+sx>=1&&x+sx<PCOLS-1&&y+sy>=1&&y+sy<PROWS-1)add(x+sx,y+sy)}}}while(A0.size<PSTART){let best=null,bs=1e9;for(const k of F){const[x,y]=pxy(k),dx=x-PCX,dy=y-PCY,an=Math.atan2(dy,dx),sp=Math.abs(Math.cos(4*an)),dist=Math.hypot(dx/1.2,dy),sc=dist-sp*1.15+((x*7+y*3)%11)/100;if(sc<bs){bs=sc;best=[x,y]}}add(best[0],best[1])}const targets=[[1,0],[-1,0],[0,-1],[0,1],[1,-1],[-1,-1],[1,1],[-1,1]];let ph=0;while(A0.size<PTOTAL){let best=null,bs=1e9;const[tx,ty]=targets[ph%targets.length];for(const k of F){const[x,y]=pxy(k),dx=x-PCX,dy=y-PCY,l=Math.hypot(dx,dy)||1,align=-(dx/l*tx+dy/l*ty),sc=align+((x*13+y*17+A0.size)%23)/250;if(sc<bs){bs=sc;best=[x,y]}}if(!best)break;add(best[0],best[1]);if(A0.size%16===0)ph++}}
   function fitProtoWorld(){const r=protoCv.getBoundingClientRect(),d=Math.min(devicePixelRatio||1,2);protoCv.width=Math.round(r.width*d);protoCv.height=Math.round(r.height*d);protoCtx.setTransform(d,0,0,d,0,0)}
-  function drawProtoWorld(extra=null,alpha=1){const w=protoCv.clientWidth,h=protoCv.clientHeight;protoCtx.clearRect(0,0,w,h);if(!protoImg.complete||!protoImg.naturalWidth)return;const ir=protoImg.width/protoImg.height,br=w/h;let sx=0,sy=0,sw=protoImg.width,sh=protoImg.height;if(ir>br){sw=protoImg.height*br;sx=(protoImg.width-sw)/2}else{sh=protoImg.width/br;sy=(protoImg.height-sh)/2}const tw=w/PCOLS,th=h/PROWS,stw=sw/PCOLS,sth=sh/PROWS;for(const k of protoActive){const[x,y]=pxy(k);protoCtx.drawImage(protoImg,sx+x*stw,sy+y*sth,stw+.8,sth+.8,x*tw,y*th,tw+.45,th+.45)}if(extra!==null){const[x,y]=pxy(extra);protoCtx.save();protoCtx.globalAlpha=alpha;protoCtx.drawImage(protoImg,sx+x*stw,sy+y*sth,stw+.8,sth+.8,x*tw,y*th,tw+.45,th+.45);protoCtx.restore()}}
+  // One source image, one viewport transform. 550/550 is EXACTLY the
+  // original image, not a centre-cropped slice of it.
+  function worldImageBounds(img,w,h){
+    if(!img||!img.naturalWidth||!img.naturalHeight||w<=0||h<=0)return{x:0,y:0,w:0,h:0};
+    const scale=Math.min(w/img.naturalWidth,h/img.naturalHeight);
+    const iw=img.naturalWidth*scale,ih=img.naturalHeight*scale;
+    return{x:(w-iw)/2,y:(h-ih)/2,w:iw,h:ih};
+  }
+  function renderWorldTiles(ctx,img,opened,bounds,extra=null,alpha=1){
+    const {x:ox,y:oy,w,h}=bounds;
+    if(!img||!w||!h)return;
+    ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+    // This path is both visually exact and much faster than drawing 550
+    // individual clipped sprites on a mobile phone.
+    if(opened.size===PTOTAL&&extra===null){
+      ctx.drawImage(img,ox,oy,w,h);return;
+    }
+    const sw=img.naturalWidth/PCOLS,sh=img.naturalHeight/PROWS;
+    const tw=w/PCOLS,th=h/PROWS;
+    const tile=k=>{
+      const [x,y]=pxy(k);
+      ctx.drawImage(img,x*sw,y*sh,sw,sh,ox+x*tw,oy+y*th,tw+.18,th+.18);
+    };
+    for(const k of opened)tile(k);
+    if(extra!==null){
+      ctx.save();ctx.globalAlpha=alpha;tile(extra);ctx.restore();
+    }
+  }
+  function drawProtoWorld(extra=null,alpha=1){
+    const w=protoCv.clientWidth,h=protoCv.clientHeight;
+    protoCtx.clearRect(0,0,w,h);
+    if(!protoImg.complete||!protoImg.naturalWidth)return;
+    renderWorldTiles(protoCtx,protoImg,protoActive,worldImageBounds(protoImg,w,h),extra,alpha);
+  }
   function drawIntroTimelapse(count){
     if(!introTimeCv||!introTimeCv.isConnected||!introImg.complete||!introImg.naturalWidth)return;
     const r=introTimeCv.getBoundingClientRect();if(!r.width||!r.height)return;
@@ -2235,36 +2268,28 @@ body{background:
     const d=Math.min(devicePixelRatio||1,2),w=r.width,h=r.height;
     homeCv.width=Math.round(w*d);homeCv.height=Math.round(h*d);
     homeCtx.setTransform(d,0,0,d,0,0);
-    // Wide thumbnail, tall source art: keep ONE scale for both axes.
-    // The previous renderer stretched hills, bridges and waterfalls sideways.
     const bg=homeCtx.createLinearGradient(0,0,0,h);
     bg.addColorStop(0,'#15345d');bg.addColorStop(.58,'#285576');bg.addColorStop(1,'#60447b');
     homeCtx.fillStyle=bg;homeCtx.fillRect(0,0,w,h);
-    if(!protoActive.size)return;
-    const pts=[...protoActive].map(pxy);
-    let minX=PCOLS,maxX=0,minY=PROWS,maxY=0;
-    pts.forEach(([x,y])=>{minX=Math.min(minX,x);maxX=Math.max(maxX,x);minY=Math.min(minY,y);maxY=Math.max(maxY,y)});
-    const sw=protoImg.naturalWidth/PCOLS,sh=protoImg.naturalHeight/PROWS;
-    // Fit the revealed territory, then gently zoom for a scenic wide crop.
-    const padX=1.4,padY=1.5;
-    const spanW=(maxX-minX+1+2*padX)*sw,spanH=(maxY-minY+1+2*padY)*sh;
-    const contain=Math.min((w-14)/spanW,(h-12)/spanH);
-    const cover=Math.max((w-14)/spanW,(h-12)/spanH);
-    const scale=Math.min(cover,contain*1.65);
-    const centerX=(minX+maxX+1)/2,centerY=(minY+maxY+1)/2;
-    const dw=sw*scale,dh=sh*scale;
-    const ox=w/2-centerX*dw,oy=h/2-centerY*dh;
-    homeCtx.imageSmoothingEnabled=true;homeCtx.imageSmoothingQuality='high';
-    for(const k of protoActive){
-      const[x,y]=pxy(k);
-      homeCtx.drawImage(protoImg,x*sw,y*sh,sw+.4,sh+.4,ox+x*dw,oy+y*dh,dw+.35,dh+.35);
-    }
+    // Home previews must agree with the fully opened picture too.
+    const b=worldImageBounds(protoImg,w-12,h-12);b.x+=6;b.y+=6;
+    renderWorldTiles(homeCtx,protoImg,protoActive,b);
   }
   function rebuildProtoActive(){protoActive=new Set(worldUnlocks().slice(0,Math.min(protoWorldCount,protoOrder.length)))}
   function protoFrontier(){const s=new Set();for(const k of protoActive){const[x,y]=pxy(k);for(const[nx,ny]of pneigh(x,y)){const nk=pkey(nx,ny);if(!protoActive.has(nk))s.add(nk)}}return[...s]}
   function protoSeven(){const f=protoFrontier();if(f.length<=7)return f;const sec=Array.from({length:7},()=>[]);for(const k of f){const[x,y]=pxy(k);let a=Math.atan2(y-PCY,x-PCX);if(a<0)a+=Math.PI*2;sec[Math.min(6,Math.floor(a/(Math.PI*2)*7))].push(k)}const out=[];for(const arr of sec){if(!arr.length)continue;arr.sort((ka,kb)=>{const[a,b]=pxy(ka),[c,d]=pxy(kb);return Math.hypot(c-PCX,d-PCY)-Math.hypot(a-PCX,b-PCY)});out.push(arr[0])}const rem=f.filter(k=>!out.includes(k));while(out.length<7&&rem.length){let bi=0,bd=-1;for(let i=0;i<rem.length;i++){const[x,y]=pxy(rem[i]),md=out.length?Math.min(...out.map(q=>{const[a,b]=pxy(q);return Math.hypot(x-a,y-b)})):999;if(md>bd){bd=md;bi=i}}out.push(rem.splice(bi,1)[0])}return out.slice(0,7)}
   function hideProtoChoices(){for(let i=0;i<7;i++)$('#pc'+i).style.display='none';protoChoices=[]}
-  function showProtoChoices(){hideProtoChoices();protoChoices=protoSeven();protoChoices.forEach((k,i)=>{const[x,y]=pxy(k),b=$('#pc'+i);b.dataset.k=k;b.style.left=((x+.5)/PCOLS*100)+'%';b.style.top=((y+.5)/PROWS*100)+'%';b.style.display='block'})}
+  function showProtoChoices(){
+    hideProtoChoices();protoChoices=protoSeven();
+    const w=protoCv.clientWidth,h=protoCv.clientHeight,bounds=worldImageBounds(protoImg,w,h);
+    protoChoices.forEach((k,i)=>{
+      const [x,y]=pxy(k),button=$('#pc'+i);
+      button.dataset.k=k;
+      button.style.left=((bounds.x+(x+.5)*bounds.w/PCOLS)/w*100)+'%';
+      button.style.top=((bounds.y+(y+.5)*bounds.h/PROWS)/h*100)+'%';
+      button.style.display='block';
+    });
+  }
 
   function stopWorldTimelapse(){
     worldTimelapseId++;cancelAnimationFrame(worldTimelapseFrame);worldTimelapseFrame=0;
@@ -2472,7 +2497,7 @@ body{background:
       const ctx=canvas.getContext('2d'),img=imageForWorld(id,paint);
       if(!img)return;
       ctx.clearRect(0,0,canvas.width,canvas.height);
-      ctx.drawImage(img,0,0,canvas.width,canvas.height);
+      renderWorldTiles(ctx,img,new Set(protoOrder.slice(0,PTOTAL)),worldImageBounds(img,canvas.width,canvas.height));
     };
     paint();
     if(typeof dialog.showModal==='function')dialog.showModal();
@@ -2500,17 +2525,12 @@ body{background:
     const gradient=ctx.createLinearGradient(0,0,w,h);
     gradient.addColorStop(0,'#153c62');gradient.addColorStop(1,'#181c43');
     ctx.fillStyle=gradient;ctx.fillRect(0,0,w,h);
-    const img=imageForWorld(id,()=>paintWorldPreview(canvas,id));
+    const img=imageForWorld(id,()=>paintWorldPreview(canvas,id,packIndex));
     if(!img)return;
-    const tw=w/PCOLS,th=h/PROWS,sw=img.naturalWidth/PCOLS,sh=img.naturalHeight/PROWS;
     const p=library.packs[packIndex];
-    const shown=new Set((packIndex===library.activePack?worldUnlocks():
-      (p.history||protoOrder.slice(0,p.count))).slice(0,p.count));
-    // Same tiles within a single set, new art and rewards for every collection.
-    for(const k of shown){
-      const[x,y]=pxy(k);
-      ctx.drawImage(img,x*sw,y*sh,sw+.15,sh+.15,x*tw,y*th,tw+.25,th+.25);
-    }
+    const order=packIndex===library.activePack?worldUnlocks():(p.history||protoOrder.slice(0,p.count));
+    const shown=new Set(order.slice(0,p.count));
+    renderWorldTiles(ctx,img,shown,worldImageBounds(img,w,h));
   }
   function selectWorld(id){
     if(!discoveredIds().includes(id))return false;
