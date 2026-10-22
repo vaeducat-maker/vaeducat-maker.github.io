@@ -525,7 +525,9 @@ async function checkCompetitor() {
               });
               await wp.reload({waitUntil:'domcontentloaded'});
               await wp.waitForFunction(()=>!!window.__EDUKASS_TEST__&&!!window.EDUKASS_WORLD_COLLECTION_QA);
-              await wp.locator('#introPlay').click();
+              // Reload correctly restores the home screen, so intro can be absent.
+              if(await wp.locator('#introPlay').isVisible())await wp.locator('#introPlay').click();
+              await wp.locator('#home').waitFor({state:'visible'});
               await wp.locator('.continue-play').click();
               await wp.locator('#protoWorld.on').waitFor({state:'visible',timeout:6000});
               await wp.locator('#pc0').waitFor({state:'visible',timeout:6000});
