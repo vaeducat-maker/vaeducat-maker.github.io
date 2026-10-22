@@ -1064,6 +1064,31 @@ body{background:
   'use strict';
   const E=window.EDUKASS_MATH_ENGINE,A=window.EDUKASS_ADAPTIVE;
   const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+  // Explicit one-time clean-room entry for the owner to test the game as a
+  // genuinely NEW pupil. Never touch other EDUKASS games or unrelated storage.
+  // The URL parameter is consumed immediately: refresh must NOT erase progress.
+  const freshParams=new URLSearchParams(location.search);
+  const freshStart=freshParams.get('freshStart')==='1';
+  if(freshStart){
+    for(const key of [
+      'edukass_stolbiki_player_profile_v42',
+      'edukass-columns-player-level',
+      'edukass-columns-player-world',
+      'edukass-columns-player-world-order-v1',
+      'edukass-columns-full-last-mode',
+      'edukass-columns-before-250-boost-v1',
+      'edukass-stolbiki-250-math-seed-v1'
+    ])localStorage.removeItem(key);
+    sessionStorage.removeItem('edukass-columns-current-view');
+    freshParams.delete('freshStart');
+    // A saved-world preview, old personal recovery link or 250-tile boost must
+    // never override an explicitly requested pupil reset.
+    freshParams.delete('setworld');
+    freshParams.delete('preview');
+    freshParams.delete('demoWorld');
+    const remaining=freshParams.toString();
+    history.replaceState(null,'',location.pathname+(remaining?'?'+remaining:'')+'#intro');
+  }
   // Catch the recovery link before game history rewrites the address hash.
   const incomingPassport=location.hash.startsWith('#ekpass=')?location.hash.slice(8):null;
   const KEY='edukass_stolbiki_player_profile_v42';
