@@ -266,10 +266,10 @@ async function checkCompetitor() {
               };
             });
             note('competitor','Every fresh mathematical operation begins at stage one',
-              levels.frontiers.every(x=>/^[ASMD]1$/.test(x))&&levels.stages.every(x=>x?.startsWith('tase 1 /')),
+              levels.frontiers.every(x=>/^[ASMD]1$/.test(x))&&levels.stages.every(x=>x?.startsWith('Harjutad: 1. tase')),
               JSON.stringify(levels),'critical');
-            note('competitor','Fresh player has four completely empty progress bars',
-              levels.bars.every(x=>x==='0%'),JSON.stringify(levels.bars),'critical');
+            note('competitor','Fresh player has four tiny current-stage markers, not false course completion bars',
+              levels.bars.every(x=>x==='12px'),JSON.stringify(levels.bars),'critical');
             // Simulate husband's previously loaded, but unsolved, default profile (3/3/3/2).
             await guest.evaluate(()=>{
               const p=window.EDUKASS_ADAPTIVE.createProfile();
@@ -372,12 +372,22 @@ async function checkCompetitor() {
               await sw.locator('#home').waitFor({state:'visible'});
               await sw.locator('.continue-play').click();
               await sw.locator('#train').waitFor({state:'visible'});
-              await sw.evaluate(()=>{
-                const T=window.__EDUKASS_TEST__;
-                T.setLessonElapsed(480000);
-                T.solveCurrent();
-              });
-              await sw.waitForFunction(()=>window.__EDUKASS_TEST__.getLesson().solved===1,{timeout:5000});
+              await sw.evaluate(()=>window.__EDUKASS_TEST__.setLessonElapsed(480000));
+              // Solve the first A1 task as a real child would, with visible cell
+              // clicks and on-screen keyboard (not a developer auto-solve API).
+              for(let turn=0;turn<15;turn++){
+                const state=await sw.evaluate(()=>window.__EDUKASS_TEST__.getState());
+                if((await sw.evaluate(()=>window.__EDUKASS_TEST__.getLesson())).solved>0)break;
+                const step=state.steps[state.stepIndex];
+                if(!step) {await sw.waitForTimeout(100);continue}
+                const entry=sw.locator('#mathWrap .entry[data-target="'+step.target+'"]');
+                await entry.click({timeout:2500});
+                for(const char of String(step.value))
+                  await sw.locator('#pad button[data-key="'+(char==='•'?'dot':char)+'"]').click({timeout:2500});
+                await sw.waitForTimeout(140);
+              }
+              await sw.waitForFunction(()=>window.__EDUKASS_TEST__.getLesson().solved===1);
+              await sw.waitForFunction(()=>window.__EDUKASS_TEST__.getLesson().taskInWorld===1);
               const initial=await sw.evaluate(()=>window.__EDUKASS_TEST__.getLesson());
               await sw.locator('#back').click();
               await sw.locator('#home').waitFor({state:'visible',timeout:4500});
