@@ -3015,6 +3015,24 @@ body{background:
     getWorldTileOrder:()=>worldUnlocks(),
     getWorldPreview:()=>({enabled:worldPreviewCount!==null,count:previewWorldUnlocks().length,actualCount:protoWorldCount}),
     getRealWorldProgress:()=>({tiles:protoWorldCount,level:protoLevel,persisted:localStorage.getItem('edukass-columns-player-world'),baseline:TEST_WORLD_BASELINE,pending:pendingWorldPieces(),evidence:worldEvidence()}),
+    // VISUAL acceptance harness only: isolated QA data never reaches a child's
+    // normal localStorage. The browser still uses the ACTUAL renderer.
+    visualQA:{
+      setScene:async(packIndex,id)=>{
+        if(!WORLD_STUDENT||!Number.isInteger(packIndex)||packIndex<0||
+           packIndex>=PACK_IDS.length||!PACK_IDS[packIndex].includes(id))return false;
+        stopWorldTimelapse();library.activePack=packIndex;
+        collection=library.packs[packIndex];collection.active=id;collection.count=550;
+        collection.noticed=10;collection.completeNoticed=true;
+        protoWorldCount=550;protoLevel=501;
+        worldOpenedOrder=protoOrder.slice(0,550);
+        saveProto();
+        const art=activeWorldArt();protoImg.src=art.src;
+        try{await protoImg.decode()}catch{return false}
+        showWorldView({historyMode:'replace',instant:true});
+        return{packIndex,id,count:protoWorldCount};
+      }
+    },
     worldRewards:{evidence:()=>worldEvidence(),pending:pendingWorldPieces,claim:(first)=>{if(!worldRewardBusy){showProtoWorld();chooseProtoWorld(first)}}},
     challenge:{generate:(skill,seed)=>generateFreshTask(skill,seed),unhelpful:unhelpfulRoutine,simulate:(op,steps=18)=>{
       const p=A.createProfile(),session=A.createSession(p,op,()=>0.25,Date.now()),out=[];
