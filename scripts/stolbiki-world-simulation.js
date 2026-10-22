@@ -8,7 +8,7 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const root=path.resolve(__dirname,'..');
 const html=fs.readFileSync(path.join(root,'proov/stolbiki-mosaic-7q4m9k/index.html'),'utf8');
-const scripts=[...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)].map(x=>x[1]);
+const scripts=[...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)].map(x=>x[1]).filter(Boolean);
 assert(scripts.length===3,'Release test requires real game scripts');
 const ctx={module:{exports:{}},console};ctx.globalThis=ctx;vm.createContext(ctx);
 vm.runInContext(scripts[0],ctx,{timeout:10000});vm.runInContext(scripts[1],ctx,{timeout:10000});
