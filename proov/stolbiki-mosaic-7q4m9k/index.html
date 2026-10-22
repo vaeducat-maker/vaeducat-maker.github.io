@@ -1049,7 +1049,13 @@ body{background:
       // at higher stages we require longer, reliable practice.
       const starter=(op==='div'?level<=5:level<=3);
       const ready=starter?(s.cleanStreak>=2&&rate>=0.65):(s.attempts>=4&&s.cleanStreak>=2&&rate>=0.8);
-      if(level===state.frontier&&ready&&speedOK&&state.frontier<META[op].max){s.mastered=true;s.reviewStage=Math.max(1,s.reviewStage);s.nextReviewAt=session.now+DAY;state.frontier++}
+      if(level===state.frontier&&ready&&speedOK&&!s.mastered){
+        s.mastered=true;s.reviewStage=Math.max(1,s.reviewStage);
+        s.nextReviewAt=session.now+DAY;
+        // The FINAL skill must also become mastered and enter independent
+        // spaced verification; previously the last skill could never count.
+        if(state.frontier<META[op].max)state.frontier++;
+      }
       if(level===state.frontier&&s.attempts>=4&&rate<0.6&&state.frontier>1)state.frontier--;
     }
     if(s.mastered&&independent){const days=[1,3,7,21][Math.min(3,s.reviewStage-1)];s.nextReviewAt=session.now+days*DAY;if(s.reviewStage<4)s.reviewStage++}
@@ -1581,6 +1587,38 @@ body{background:
   let protoTask=0;
   if(!Number.isFinite(protoLevel)||protoLevel<1)protoLevel=1;
   if(!Number.isFinite(protoWorldCount)||protoWorldCount<50||protoWorldCount>550)protoWorldCount=50;
+  // World growth has two independent sources:
+  //   (1) meaningful completed practice: one piece per five exercises;
+  //   (2) VERIFIED learning: up to 500 additional pieces allocated across
+  //       the 52 skills, with a second independently solved, spaced revisit.
+  // We use max(), NOT sum(), so easy practice never makes the world finish
+  // ahead of actual mastery and strong pupils need not grind 2500 problems.
+  const TOTAL_LEARNING_SKILLS=Object.values(A.META).reduce((n,m)=>n+m.max,0);
+  function worldEvidence(p=profile){
+    let solved=0,verified=0,provisional=0;
+    const ops={};
+    for(const [op,state] of Object.entries(p.ops)){
+      let opVerified=0;
+      for(const skill of Object.values(state.skills)){
+        solved+=Math.max(0,Number(skill.attempts)||0);
+        if(skill.mastered){
+          provisional++;
+          const reliable=skill.reviewStage>=3&&skill.firstTry>=3&&
+            skill.firstTry/Math.max(1,skill.attempts)>=0.70&&
+            // A further independent response after initial advancement.
+            skill.assisted<skill.attempts;
+          if(reliable){verified++;opVerified++}
+        }
+      }
+      ops[op]=opVerified;
+    }
+    const practice=Math.floor(solved/5);
+    const achievement=Math.floor(500*verified/TOTAL_LEARNING_SKILLS);
+    return{solved,verified,provisional,ops,practice,achievement,
+      target:Math.min(550,50+Math.max(practice,achievement))};
+  }
+  function worldTarget(){return Math.max(protoWorldCount,worldEvidence().target)}
+  function pendingWorldPieces(){return Math.max(0,worldTarget()-protoWorldCount)}
   const WORLD_HISTORY_KEY='edukass-columns-player-world-order-v1';
   let worldOpenedOrder=null;
   try{
@@ -1640,10 +1678,12 @@ body{background:
       history.replaceState(history.state,'',location.pathname+(query?'?'+query:'')+location.hash);
     }
   }
+  protoTask=worldEvidence().solved%5;
   let lastMode=localStorage.getItem('edukass-columns-full-last-mode')||'mix';
   function syncProtoTop(){
     $('#protoWorldCount').textContent=`${protoWorldCount} / 550`;
-    const hw=$('#homeWorld');if(hw)hw.textContent=`Maailm ${protoWorldCount} / 550`;
+    const hw=$('#homeWorld');
+    if(hw)hw.textContent=`Maailm ${protoWorldCount} / 550`+(pendingWorldPieces()? ` · +${pendingWorldPieces()} ootel`:'');
   }
   function renderHomeLevels(){
     const snap=A.publicSnapshot(profile),max={add:10,sub:12,mul:14,div:16};
@@ -1760,7 +1800,7 @@ body{background:
     clearAssistTimers();const ms=Math.round(performance.now()-taskStarted);
     if(!forced){
       A.recordResult(session,assignment,{firstTry:taskErrors===0&&!taskAssisted,errors:taskErrors,ms,assisted:taskAssisted});
-      profile=session.profile;save();rememberSolved();protoTask++;renderProfile();
+      profile=session.profile;save();rememberSolved();protoTask=worldEvidence().solved%5;renderProfile();
       // Credit a correctly finished task IMMEDIATELY. If the pupil clicks
       // Back during the 700-ms celebration, the world reward is not lost.
     }
@@ -1768,7 +1808,7 @@ body{background:
     setTimeout(()=>{
       if(finishedToken!==taskToken)return;
       if(forced){if(lessonRedoIndex>=0)showLessonList();return}
-      if(protoTask>=5)showProtoWorld();
+      if(pendingWorldPieces()>0)showProtoWorld();
       else if(lessonReady())showLessonDone();
       else nextTask();
     },hold);
@@ -1873,7 +1913,7 @@ body{background:
   }
   function nextTask(){
     assignment=A.nextAssignment(session);const seed=++seedCounter;current=generateFreshTask(assignment.skill,seed);
-    $('#route').textContent=`${protoTask+1} / 5`;$('#mode').textContent=`${protoLevel}. tase · ${PROTO_LABEL[current.op]||''}`;syncProtoTop();renderTask(current)
+    $('#route').textContent=`${Math.min(5,protoTask+1)} / 5`;$('#mode').textContent=`${protoLevel}. tase · ${PROTO_LABEL[current.op]||''}`;syncProtoTop();renderTask(current)
   }
   function start(m='mix',{historyMode='push',continueLesson=false}={}){
     // A 15-minute class is shared by all four operations. Switching through
@@ -1881,7 +1921,7 @@ body{background:
     // upcoming retries, world progress or adaptive practice history.
     if(!lesson.active){
       beginLesson();
-      protoTask=0;
+      protoTask=worldEvidence().solved%5;
       session=A.createSession(profile,m,Math.random,Date.now());
     }else{
       if(lessonReady()){showLessonDone();return}
@@ -1893,7 +1933,7 @@ body{background:
     clearAssistTimers();forced=false;mode=m;lastMode=m;localStorage.setItem('edukass-columns-full-last-mode',m);
     // The fifth completed problem earns a world choice even if the pupil
     // navigated Home before the completion animation could finish.
-    if(protoTask>=5){showProtoWorld({historyMode:'replace'});return}
+    if(pendingWorldPieces()>0){showProtoWorld({historyMode:'replace'});return}
     $('#home').classList.add('hidden');$('#finish').classList.add('hidden');$('#protoWorld').classList.remove('on','viewing');$('#train').classList.remove('hidden');
     writeNav('train',{mode:m},historyMode);nextTask()
   }
@@ -2029,21 +2069,56 @@ body{background:
   $('#worldReplay').addEventListener('click',()=>{playGameSound('ui');playWorldTimelapse()});
   $('#worldSkip').addEventListener('click',()=>{playGameSound('ui');endWorldTimelapse()});
 
-  function showProtoWorld({historyMode='replace'}={}){stopWorldTimelapse();clearAssistTimers();taskToken++;$('#home').classList.add('hidden');$('#train').classList.add('hidden');$('#protoWorld').classList.remove('viewing');$('#protoWorld').classList.add('on');writeNav('world-reward',{mode:lastMode},historyMode);syncProtoTop();fitProtoWorld();rebuildProtoActive();drawProtoWorld();setTimeout(showProtoChoices,320)}
+  function showProtoWorld({historyMode='replace'}={}){
+    stopWorldTimelapse();clearAssistTimers();taskToken++;
+    $('#home').classList.add('hidden');$('#train').classList.add('hidden');
+    $('#protoWorld').classList.remove('viewing');$('#protoWorld').classList.add('on');
+    writeNav('world-reward',{mode:lastMode},historyMode);
+    syncProtoTop();fitProtoWorld();rebuildProtoActive();drawProtoWorld();
+    const earned=pendingWorldPieces();
+    $('#worldTimelapseCaption').textContent=earned>1?`Tubli töö! +${earned} maailma tükki`:'Vali uus maailma tükk!';
+    $('#worldTimelapseCaption').classList.remove('hidden');
+    setTimeout(showProtoChoices,320)
+  }
   function showWorldView({historyMode='push'}={}){clearAssistTimers();taskToken++;$('#home').classList.add('hidden');$('#train').classList.add('hidden');$('#protoWorld').classList.add('on','viewing');hideProtoChoices();writeNav('world-view',{},historyMode);fitProtoWorld();rebuildProtoActive();drawProtoWorld();if(protoImg.complete&&protoImg.naturalWidth)playWorldTimelapse()}
+  let worldRewardBusy=false;
+  function addWorldPiece(k){
+    if(!Number.isInteger(k)||protoActive.has(k)||protoWorldCount>=550)return false;
+    if(!worldOpenedOrder)worldOpenedOrder=protoOrder.slice(0,protoWorldCount);
+    worldOpenedOrder.push(k);protoActive.add(k);
+    protoWorldCount++;protoLevel=Math.max(protoLevel,protoWorldCount-PSTART+1);
+    saveProto();syncProtoTop();return true;
+  }
   function chooseProtoWorld(k){
-    if(!Number.isInteger(k)||protoActive.has(k))return;
-    playGameSound('world');hideProtoChoices();let st=null;
+    if(worldRewardBusy||!Number.isInteger(k)||protoActive.has(k)||pendingWorldPieces()===0)return;
+    worldRewardBusy=true;playGameSound('world');hideProtoChoices();let st=null;
     function anim(ts){
       if(st===null)st=ts;const p=Math.min(1,(ts-st)/620);drawProtoWorld(k,p);
-      if(p<1)requestAnimationFrame(anim);
-      else{
-        if(!worldOpenedOrder)worldOpenedOrder=protoOrder.slice(0,protoWorldCount);
-        worldOpenedOrder.push(k);protoActive.add(k);
-        protoWorldCount=Math.min(550,protoWorldCount+1);protoLevel++;protoTask=0;
-        saveProto();syncProtoTop();drawProtoWorld();
-        setTimeout(()=>{if(lessonReady())showLessonDone();else start(lastMode,{historyMode:'replace',continueLesson:true})},650);
+      if(p<1){requestAnimationFrame(anim);return}
+      addWorldPiece(k);drawProtoWorld();
+      // The first piece is always chosen by the pupil. The additional pieces
+      // earned by mastering a skill unfold automatically, in a connected area.
+      // Save each reveal, so leaving or closing the browser never loses tiles.
+      const target=worldTarget(),rank=new Map(protoOrder.map((tile,i)=>[tile,i]));
+      function revealBonus(){
+        if(protoWorldCount>=target){
+          worldRewardBusy=false;
+          $('#worldTimelapseCaption').classList.add('hidden');
+          drawProtoWorld();
+          setTimeout(()=>{
+            if(lessonReady())showLessonDone();
+            else start(lastMode,{historyMode:'replace',continueLesson:true});
+          },550);
+          return;
+        }
+        const frontier=protoFrontier();
+        if(!frontier.length){worldRewardBusy=false;return}
+        frontier.sort((a,b)=>(rank.get(a)??9999)-(rank.get(b)??9999));
+        addWorldPiece(frontier[0]);drawProtoWorld();
+        if(protoWorldCount<target)requestAnimationFrame(()=>setTimeout(revealBonus,55));
+        else revealBonus();
       }
+      revealBonus();
     }
     requestAnimationFrame(anim);
   }
@@ -2334,7 +2409,8 @@ body{background:
     showLessonDone:()=>showLessonDone(),
     getWorldTileOrder:()=>worldUnlocks(),
     getWorldPreview:()=>({enabled:worldPreviewCount!==null,count:previewWorldUnlocks().length,actualCount:protoWorldCount}),
-    getRealWorldProgress:()=>({tiles:protoWorldCount,level:protoLevel,persisted:localStorage.getItem('edukass-columns-player-world'),baseline:TEST_WORLD_BASELINE}),
+    getRealWorldProgress:()=>({tiles:protoWorldCount,level:protoLevel,persisted:localStorage.getItem('edukass-columns-player-world'),baseline:TEST_WORLD_BASELINE,pending:pendingWorldPieces(),evidence:worldEvidence()}),
+    worldRewards:{evidence:()=>worldEvidence(),pending:pendingWorldPieces,claim:(first)=>{if(!worldRewardBusy){showProtoWorld();chooseProtoWorld(first)}}},
     challenge:{generate:(skill,seed)=>generateFreshTask(skill,seed),unhelpful:unhelpfulRoutine,simulate:(op,steps=18)=>{
       const p=A.createProfile(),session=A.createSession(p,op,()=>0.25,Date.now()),out=[];
       for(let n=0;n<steps;n++){
