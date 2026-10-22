@@ -147,6 +147,7 @@ const publicFiles = [
   'privaatsus/index.html',
   'proov/stolbiki-250/index.html',
   'proov/stolbiki-mosaic-7q4m9k/index.html',
+  'proov/stolbiki-mosaic-7q4m9k/worlds-collections-v2.js',
   'proov/stolbiki-mosaic-7q4m9k/worlds-pixel-data.js',
   'teemad/ajalugu-ja-kultuur/index.html',
   'teemad/loodus/index.html'
