@@ -12,7 +12,7 @@ const vm=require('node:vm');
 
 const root=path.resolve(__dirname,'..');
 const source=fs.readFileSync(path.join(root,'proov/stolbiki-mosaic-7q4m9k/index.html'),'utf8');
-const scripts=[...source.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)].map(m=>m[1]);
+const scripts=[...source.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)].map(m=>m[1]).filter(Boolean);
 assert(scripts.length>=3,'Production game no longer contains expected engine and adaptive scripts');
 const context={module:{exports:{}},console};
 context.globalThis=context;
