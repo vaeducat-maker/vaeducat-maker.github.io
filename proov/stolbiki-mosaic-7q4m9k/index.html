@@ -503,22 +503,25 @@ body{background:
 <script src="/proov/stolbiki-mosaic-7q4m9k/approved-pack-4.js"></script>
 <script src="/proov/stolbiki-mosaic-7q4m9k/approved-pack-5.js"></script>
 <script>
+/* Use exactly the approved detailed fantasy landscape paintings.
+   Sprite intro art and mathematics engine remain separate. */
 (function(){
   const approved=window.EDUKASS_APPROVED_IMAGES||{};
   const worlds=window.EDUKASS_WORLD_ART||[];
   let applied=0;
-  worlds.forEach(world=>{
-    const art=approved[world.id];
-    if(art?.src){world.src=art.src;world.name=art.name||world.name;applied++}
-  });
+  for(const scene of worlds){
+    if(!approved[scene.id]?.src)continue;
+    scene.src=approved[scene.id].src;
+    scene.name=approved[scene.id].name||scene.name;
+    applied++;
+  }
+  if(applied!==50)console.error('EDUKASS: missing approved images',applied);
+  window.EDUKASS_VOXEL_ART_VERSION='3.0-approved-concept-art';
   window.EDUKASS_APPROVED_ART_COUNT=applied;
   window.EDUKASS_APPROVED_IMAGE_COUNT=applied;
-  window.EDUKASS_VOXEL_ART_VERSION='3.0-approved-concept-art';
   window.EDUKASS_APPROVED_ART_VERSION='approved-real-scenes-50-v1';
-  if(applied!==50)console.error('EDUKASS approved art failed to load: '+applied+'/50');
 })();
 </script>
-
 </head>
 <body>
 <main class="app">
