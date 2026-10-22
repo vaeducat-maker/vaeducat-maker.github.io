@@ -467,6 +467,11 @@ body{background:
 .world-new-dialog .world-collection-body{text-align:center;align-items:center;padding:25px 21px}
 .world-new-dialog #newWorldPreview{width:128px;height:145px;border:3px solid #e1d9a2;border-radius:15px;background:#143c64;image-rendering:pixelated;box-shadow:0 8px 25px #040c1990}
 .world-new-actions{display:grid;gap:8px;width:100%}
+.world-pack-heading{grid-column:1/-1;font-size:14px;font-weight:950;color:#a6f7ee;padding:10px 4px 3px;border-bottom:1px solid #ffffff30}
+.world-pack-heading small{display:block;font-size:11px;color:#a9bed8;font-weight:700;margin-top:2px}
+.world-gallery-item.archived{border-color:#e7c274;background:#ffffff19}
+.world-gallery-item.future{opacity:.6;pointer-events:none}
+#worldPackNext,#worldPackStay{width:100%}
 @media(min-width:510px){.world-gallery-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 /* Final mobile world polish: distinct tap zones; no gallery/sound overlap. */
 .proto-world-count{top:71px;left:50%;right:auto;transform:translateX(-50%);padding:7px 13px;white-space:nowrap}
@@ -656,7 +661,24 @@ body{background:
       <div class="world-collection-head"><div class="world-label">EDUKASS · MAAILMAD</div><h2 id="worldGalleryTitle">Minu maailmad</h2><p>Avastatud maailmad kasvavad koos sinu matemaatikaoskustega.</p></div>
       <button type="button" id="galleryClose" class="world-collection-close" aria-label="Sulge">×</button>
       <div id="worldGalleryTiles" class="world-gallery-grid"></div>
+      <button type="button" class="world-collection-secondary hidden" id="worldQANextPack">🧪 Test: lõpeta kogumik ja ava järgmine</button>
       <button type="button" id="galleryDone" class="world-collection-secondary">Jätka õppimist</button>
+    </div>
+  </dialog>
+  <dialog id="worldPackDone" class="world-collection-dialog world-new-dialog">
+    <div class="world-collection-body">
+      <div class="world-label">🏆 KOGUMIK VALMIS!</div>
+      <h2 id="worldPackDoneTitle">10 maailma avastatud!</h2>
+      <p>Valmis kogumik jääb sinu galeriisse. Kõik matemaatikaoskused säilivad.</p>
+      <button id="worldPackNext" type="button" class="world-collection-primary">Avasta järgmine kogumik →</button>
+      <button id="worldPackStay" type="button" class="world-collection-secondary">Vaata valminud maailmu</button>
+    </div>
+  </dialog>
+  <dialog id="worldArchiveDialog" class="world-collection-dialog world-new-dialog">
+    <div class="world-collection-body">
+      <h2 id="archiveWorldName">Valmis maailm</h2>
+      <canvas id="worldArchiveCanvas" width="300" height="345" style="width:min(76vw,300px);height:auto;border-radius:17px;background:#173452"></canvas>
+      <button id="worldArchiveClose" type="button" class="world-collection-secondary">← Tagasi galeriisse</button>
     </div>
   </dialog>
   <dialog id="worldNewDialog" class="world-collection-dialog world-new-dialog" aria-labelledby="worldNewTitle">
