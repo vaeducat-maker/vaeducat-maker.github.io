@@ -751,6 +751,67 @@ async function checkCompetitor() {
                 await vp.evaluate(()=>localStorage.getItem('edukass-columns-world-collection-v1')===null),
                 JSON.stringify(preserved),'critical');
             }finally{await victoryContext.close()}
+            // INDEPENDENT VISUAL ACCEPTANCE: compare the actual game canvas
+            // with the approved full-size source for ALL 50 paintings.
+            // Samples are retained as screenshots, and each image is checked
+            // numerically (not only by checking that its file exists).
+            const matrixContext=await browser.newContext({
+              viewport:{width:390,height:844},isMobile:true,hasTouch:true,
+              deviceScaleFactor:1,serviceWorkers:'block'
+            });
+            try{
+              const matrix=await matrixContext.newPage();
+              const matrixErrors=[];
+              matrix.on('pageerror',e=>matrixErrors.push(e.message));
+              await matrix.goto('http://127.0.0.1:'+port+
+                '/proov/stolbiki-mosaic-7q4m9k/index.html?worldTest=1&resetWorldTest=1',
+                {waitUntil:'domcontentloaded',timeout:45000});
+              await matrix.waitForFunction(()=>window.__EDUKASS_TEST__?.visualQA?.setScene);
+              const artMetrics=[];
+              for(let pack=0;pack<5;pack++){
+                const batch=await matrix.evaluate(async p=>{
+                  const all=window.EDUKASS_WORLD_ART;
+                  const order=window.EDUKASS_WORLD_PACKS[p];
+                  const result=[];
+                  for(const id of order){
+                    const switched=await window.__EDUKASS_TEST__.visualQA.setScene(p,id);
+                    if(!switched){result.push({id,error:'Cannot select isolated test scene'});continue}
+                    const current=document.querySelector('#protoWorldCanvas');
+                    const image=new Image();image.src=all.find(w=>w.id===id)?.src||'';
+                    try{await image.decode()}catch{result.push({id,error:'Source not decoded'});continue}
+                    const expected=document.createElement('canvas');
+                    expected.width=current.width;expected.height=current.height;
+                    const ectx=expected.getContext('2d');
+                    const scale=Math.min(expected.width/image.naturalWidth,expected.height/image.naturalHeight);
+                    const dw=image.naturalWidth*scale,dh=image.naturalHeight*scale;
+                    const dx=(expected.width-dw)/2,dy=(expected.height-dh)/2;
+                    ectx.drawImage(image,dx,dy,dw,dh);
+                    const actual=current.getContext('2d').getImageData(0,0,current.width,current.height).data;
+                    const reference=ectx.getImageData(0,0,expected.width,expected.height).data;
+                    let err=0,n=0;
+                    for(let k=0;k<reference.length;k+=16){
+                      for(let c=0;c<4;c++){err+=Math.abs(actual[k+c]-reference[k+c]);n++}
+                    }
+                    result.push({
+                      id,source:[image.naturalWidth,image.naturalHeight],
+                      drawn:[current.width,current.height],
+                      delta:+(err/n).toFixed(3),
+                      expectedMargins:[+dx.toFixed(2),+dy.toFixed(2)]
+                    });
+                  }
+                  return result;
+                },pack);
+                artMetrics.push(...batch);
+                await screenshot(matrix,'approved-world-pack-'+(pack+1)+'-full-scene');
+              }
+              const mismatches=artMetrics.filter(x=>x.error||x.delta>1||
+                !x.source||x.expectedMargins.some(n=>n<-.001));
+              note('visual-acceptance','ALL 50 game-rendered paintings match complete approved source images pixel-by-pixel',
+                artMetrics.length===50&&mismatches.length===0&&matrixErrors.length===0,
+                JSON.stringify({tested:artMetrics.length,mismatches,errors:matrixErrors}),'critical');
+              fs.writeFileSync(path.join(reportDir,'approved-art-50.json'),
+                JSON.stringify(artMetrics,null,2));
+            }finally{await matrixContext.close()}
             // Cross-device passport: use an independently isolated browser context.
             await guest.evaluate(()=>{
               const key='edukass_stolbiki_player_profile_v42',p=JSON.parse(localStorage.getItem(key));
