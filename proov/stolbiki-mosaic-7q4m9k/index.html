@@ -491,6 +491,137 @@ body{background:
 </style>
   <link rel="preload" href="/games/korrutamine-test/assets/edukass-cat-transparent.png" as="image" fetchpriority="high">
   <script src="/proov/stolbiki-mosaic-7q4m9k/worlds-pixel-data.js"></script>
+
+<script>
+/* EDUKASS worlds: original illustrated block-built scenes. Keep the demo
+   intro picture unchanged. Every pupil gets a shuffled selection. */
+(()=>{
+const themes=[
+ {id:'egiptus',name:'Kõrbetempel',sky:['#442c67','#f6a761'],ground:['#eeb66f','#b96b34','#79402d'],accent:'#ffe3a3',kind:'desert',seed:11},
+ {id:'kosmos',name:'Kosmosebaas',sky:['#070c39','#3a337c'],ground:['#a6b9d9','#5b7197','#374467'],accent:'#7ff7f1',kind:'space',seed:21},
+ {id:'halloween',name:'Halloweeni linn',sky:['#1b144b','#703572'],ground:['#484069','#2e2752','#191633'],accent:'#ffa84a',kind:'halloween',seed:31},
+ {id:'talv',name:'Lumemaailm',sky:['#2259a0','#a4e7ff'],ground:['#e9f7ff','#b0d8f8','#6082b7'],accent:'#a9ffff',kind:'snow',seed:41},
+ {id:'mets',name:'Võlumets',sky:['#0b3047','#447b6f'],ground:['#51996e','#235b56','#15364b'],accent:'#ffde8d',kind:'forest',seed:51},
+ {id:'linn',name:'Taevalinn',sky:['#637db7','#ffd7b2'],ground:['#7dc682','#376b65','#2d4a64'],accent:'#ffe0a4',kind:'castle',seed:61},
+ {id:'saladus',name:'Draakonisaar',sky:['#371744','#be5171'],ground:['#96585f','#4b314f','#281c37'],accent:'#ff6a3a',kind:'dragon',seed:71},
+ {id:'ookean',name:'Veealune kuningriik',sky:['#064574','#03a2bc'],ground:['#4bb7cc','#287f9b','#125273'],accent:'#a9feff',kind:'ocean',seed:81},
+ {id:'saared',name:'Õitemaailm',sky:['#7a87c9','#ffceea'],ground:['#85c979','#457e71','#386077'],accent:'#ff8bbb',kind:'blossom',seed:91},
+ {id:'kristall',name:'Kristallikoobas',sky:['#160e4e','#6547a0'],ground:['#604d9b','#392e75','#1d2052'],accent:'#de91ff',kind:'crystal',seed:101}
+];
+const r=(n)=>Math.round(n),tag=(s)=>s;
+function block(x,y,w,h,front,side,top,d=12){
+ x=r(x);y=r(y);w=r(w);h=r(h);d=r(d);
+ return '<polygon points="'+x+','+y+' '+(x+d)+','+(y-d*.55)+' '+(x+w+d)+','+(y-d*.55)+' '+(x+w)+','+y+'" fill="'+top+'"/>'+
+ '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="'+front+'"/>'+
+ '<polygon points="'+(x+w)+','+y+' '+(x+w+d)+','+(y-d*.55)+' '+(x+w+d)+','+(y+h-d*.55)+' '+(x+w)+','+(y+h)+'" fill="'+side+'"/>'+
+ '<path d="M'+x+' '+(y+h)+'h'+w+'" stroke="#080c3260" stroke-width="2"/>';
+}
+function pixelStars(seed,count,color){
+ let m=seed,s='';for(let i=0;i<count;i++){m=(m*1664525+1013904223)>>>0;const x=m%600;m=(m*1664525+1013904223)>>>0;const y=m%460;
+ const z=2+(m%5);s+='<rect x="'+x+'" y="'+y+'" width="'+z+'" height="'+z+'" fill="'+color+'" opacity="'+(.18+(m%6)*.10)+'"/>'}return s;
+}
+function art(t){
+ const [sky1,sky2]=t.sky,[g0,g1,g2]=t.ground;let s='';
+ s+='<svg xmlns="http://www.w3.org/2000/svg" width="600" height="680" viewBox="0 0 600 680"><defs>'+
+ '<linearGradient id="sky" x2=".7" y2="1"><stop stop-color="'+sky1+'"/><stop offset="1" stop-color="'+sky2+'"/></linearGradient>'+
+ '<radialGradient id="gl"><stop stop-color="'+t.accent+'" stop-opacity=".65"/><stop offset="1" stop-color="'+t.accent+'" stop-opacity="0"/></radialGradient>'+
+ '</defs><rect width="600" height="680" fill="url(#sky)"/><circle cx="444" cy="173" r="190" fill="url(#gl)"/>';
+ if(['space','halloween','crystal'].includes(t.kind))s+='<circle cx="442" cy="124" r="57" fill="'+t.accent+'" opacity=".65"/>';
+ else s+='<circle cx="459" cy="125" r="45" fill="'+t.accent+'" opacity=".75"/>';
+ s+=pixelStars(t.seed,68,'#ffffff');
+ const dark=['space','halloween','crystal','dragon'].includes(t.kind);
+ // Distant stepped block clouds, mountains and floating fragments.
+ for(let i=0;i<9;i++){
+  const x=(i*91+t.seed*3)%650-45,y=185+(i*49)%175,w=68+(i%3)*19;
+  s+=block(x,y,w,13,dark?'#92a2d436':'#ffffff56',dark?'#ffffff16':'#b2d7ec51',dark?'#c4caff33':'#ffffff73',9);
+ }
+ for(let i=0;i<8;i++){
+  const x=22+(i*113)%575,y=340+(i*37)%180;
+  s+=block(x,y,17+(i%2)*12,9,g1,g2,g0,7);
+ }
+ // Cubic floating island with descending 3-D stone strata.
+ for(let layer=5;layer>=0;layer--){
+  const w=455-layer*27,x=(600-w)/2,y=458+layer*19;
+  s+=block(x,y,w,33,g1,g2,layer===0?g0:g1,22);
+ }
+ // Vertical cube-cliff teeth and diagonal depth blocks.
+ for(let i=0;i<11;i++){
+  const x=104+i*39,down=20+((i*17+t.seed)%5)*18;
+  s+=block(x,582,32,down,g1,g2,g0,12);
+ }
+ function light(x,y,w=9,h=16,col=t.accent){s+='<rect x="'+r(x)+'" y="'+r(y)+'" width="'+w+'" height="'+h+'" fill="'+col+'" opacity=".94"/>'}
+ function tower(x,y,w,h,c=g0,roof=t.accent){
+  s+=block(x,y,w,h,c,g2,g1,13);
+  s+=block(x-8,y-19,w+16,19,roof,g2,roof,12);
+  s+=block(x-3,y-29,w+7,13,roof,g2,roof,7);
+  for(let j=0;j<Math.max(2,Math.floor(h/40));j++)light(x+w/2-5,y+24+j*39,10,13,t.accent);
+ }
+ function tree(x,y,leaves='#478c55',blossoms=false){
+  s+=block(x,y,17,76,'#80503e','#58372e','#ae7953',7);
+  s+=block(x-35,y-54,87,39,leaves,blossoms?'#a04b8a':'#264d4a',blossoms?'#ffc6df':'#73cc79',15);
+  s+=block(x-20,y-86,60,40,leaves,blossoms?'#a04b8a':'#264d4a',blossoms?'#ffdceb':'#73cc79',13);
+  s+=block(x-9,y-112,39,29,blossoms?'#ffb4d5':'#519b65',blossoms?'#a04b8a':'#255345',blossoms?'#ffe0ef':'#7bdc88',9);
+ }
+ if(t.kind==='castle'){
+  tower(200,281,54,188,'#f7ece1','#4787ed');tower(340,292,56,177,'#fff0dd','#3675da');
+  tower(274,245,72,220,'#ffeedb','#e2a352');tower(240,355,124,115,'#f7e4d2','#4588ed');
+  tree(160,405);tree(421,417);s+='<rect x="289" y="408" width="28" height="61" fill="#8e6d69"/>';
+ }else if(t.kind==='forest'){
+  for(let i=0;i<5;i++)tree(159+i*69,411-(i%2)*36,['#236852','#347d5e','#28694f'][i%3]);
+  tower(251,350,63,124,'#9d795f','#f3bb63');light(282,365,10,25,'#fff0b5');
+ }else if(t.kind==='desert'){
+  for(let level=0;level<5;level++){const w=270-level*39;s+=block(300-w/2,442-level*34,w,35,level%2?'#e6ac6a':'#f6cc83','#8e542d','#ffe0a4',16)}
+  tower(122,383,42,88,'#df9864','#f8c88b');tower(441,363,42,107,'#eeb274','#f8c88b');
+  s+='<rect x="286" y="351" width="34" height="74" fill="#654233"/>';
+ }else if(t.kind==='snow'){
+  tower(188,308,60,165,'#def8ff','#f8ffff');tower(356,314,57,161,'#e4efff','#ffffff');
+  tower(274,265,76,213,'#eff9ff','#b5eaff');
+  for(let i=0;i<5;i++){let x=139+i*77;s+=block(x,454,19,22,'#1f7290','#15567c','#b3f7ff');s+=block(x-13,422,46,31,'#d0f8ff','#4b96be','#f8ffff')}
+ }else if(t.kind==='space'){
+  tower(192,333,61,142,'#d2e4f7','#a6faff');tower(354,353,62,121,'#c4dff6','#82f3ff');
+  tower(265,242,78,233,'#f1f7ff','#85c8ed');
+  for(let i=0;i<4;i++)s+=block(179+i*72,423,62,33,'#6080a4','#324f86','#c4ecf6',10);
+  light(297,263,15,128,'#55efff');
+ }else if(t.kind==='ocean'){
+  tower(241,333,117,141,'#d5f4ed','#8cf7ed');
+  tower(195,386,39,90,'#d9faf0','#82e8de');
+  tower(386,396,39,82,'#d9faf0','#82e8de');
+  for(let i=0;i<7;i++){let x=145+i*51;s+=block(x,446-(i%3)*13,15,21,['#ff85c1','#be70f4','#46dfe6'][i%3],'#605ca0','#e1aeff',7)}
+ }else if(t.kind==='halloween'){
+  tower(205,285,75,190,'#393456','#a960aa');tower(333,300,63,177,'#3f355b','#8251ba');
+  tower(271,230,67,244,'#44375e','#6e43a4');
+  s+='<path d="M274 229l31-62 36 62Z" fill="#272040"/>';
+  for(let i=0;i<7;i++)light(229+i*25,399-(i%3)*61,9,18,'#ffad49');
+ }else if(t.kind==='crystal'){
+  for(let i=0;i<14;i++){let x=148+i*22,y=454-(i%4)*17,h=70+((i*47)%130);
+   s+='<polygon points="'+x+','+y+' '+(x+15)+','+(y-h)+' '+(x+35)+','+y+'" fill="'+(['#6deaff','#bd70ff','#ed9eff'][i%3])+'" stroke="#f9d9ff" stroke-width="3"/>';
+   s+='<polygon points="'+(x+15)+','+(y-h)+' '+(x+35)+','+y+' '+(x+19)+','+(y-10)+'" fill="#392d85" opacity=".65"/>'}
+  tower(265,362,56,107,'#3a3974','#a974f1');
+ }else if(t.kind==='blossom'){
+  tower(246,354,108,120,'#fae7e0','#ed9ba1');tree(179,389,'#f5a0d0',true);tree(389,394,'#ffacd5',true);
+  for(let i=0;i<18;i++){const x=155+(i*31)%290,y=340+(i*19)%135;light(x,y,5,6,['#ffe1f2','#fb84b9','#fff7c7'][i%3])}
+ }else if(t.kind==='dragon'){
+  tower(190,330,55,145,'#5d3b4c','#b85a57');tower(362,340,52,137,'#533448','#a45e69');
+  // Blocky fire dragon: square tail, wings, eyes and jaws.
+  s+=block(251,319,105,68,'#bb383b','#71243d','#ea6445',18);
+  s+=block(325,280,47,46,'#da453a','#84233a','#f46e41',11);
+  s+=block(360,296,45,18,'#ce453b','#872b2a','#f87346',9);
+  s+='<polygon points="265,325 212,225 305,289" fill="#d64b47"/><polygon points="346,321 393,224 311,285" fill="#9f2d48"/>';
+  light(373,286,9,9,'#ffe268');
+  for(let i=0;i<8;i++)light(160+i*40,480+i%3*9,28,9,['#ff8b31','#fb5a22','#ffe064'][i%3]);
+ }
+ // Tiny colored cube flora and magical dust.
+ for(let i=0;i<25;i++){
+  const x=140+(i*47+t.seed)%325,y=434+(i*31)%43;
+  s+=block(x,y,5+i%3*3,8+i%5,g0,g2,t.accent,3);
+ }
+ s+='<rect width="600" height="680" fill="none" stroke="#ffffff" stroke-opacity=".10" stroke-width="5"/></svg>';
+ return 'data:image/svg+xml;charset=UTF-8,'+encodeURIComponent(s);
+}
+window.EDUKASS_WORLD_ART=themes.map(t=>({id:t.id,name:t.name,src:art(t)}));
+window.EDUKASS_VOXEL_ART_VERSION='1.0';
+})();
+</script>
 </head>
 <body>
 <main class="app">
