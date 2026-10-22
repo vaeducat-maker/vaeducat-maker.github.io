@@ -1755,13 +1755,19 @@ body{background:
   $('#lessonRedo').onclick=redoLessonExample;
 
   function completeTask(){
+    if(transitioning)return; // a finished calculation can be recorded only once
+    transitioning=true;
     clearAssistTimers();const ms=Math.round(performance.now()-taskStarted);
-    if(!forced){A.recordResult(session,assignment,{firstTry:taskErrors===0&&!taskAssisted,errors:taskErrors,ms,assisted:taskAssisted});profile=session.profile;save();rememberSolved();renderProfile()}
+    if(!forced){
+      A.recordResult(session,assignment,{firstTry:taskErrors===0&&!taskAssisted,errors:taskErrors,ms,assisted:taskAssisted});
+      profile=session.profile;save();rememberSolved();protoTask++;renderProfile();
+      // Credit a correctly finished task IMMEDIATELY. If the pupil clicks
+      // Back during the 700-ms celebration, the world reward is not lost.
+    }
     $('#status').textContent='✓';playGameSound('correct');const hold=taskAssisted?ASSIST.finalHoldMs:700,finishedToken=taskToken;
     setTimeout(()=>{
       if(finishedToken!==taskToken)return;
       if(forced){if(lessonRedoIndex>=0)showLessonList();return}
-      protoTask++;
       if(protoTask>=5)showProtoWorld();
       else if(lessonReady())showLessonDone();
       else nextTask();
@@ -1885,6 +1891,9 @@ body{background:
     }
     $('#lessonClock').classList.remove('hidden');$('#lessonScreen').classList.add('hidden');
     clearAssistTimers();forced=false;mode=m;lastMode=m;localStorage.setItem('edukass-columns-full-last-mode',m);
+    // The fifth completed problem earns a world choice even if the pupil
+    // navigated Home before the completion animation could finish.
+    if(protoTask>=5){showProtoWorld({historyMode:'replace'});return}
     $('#home').classList.add('hidden');$('#finish').classList.add('hidden');$('#protoWorld').classList.remove('on','viewing');$('#train').classList.remove('hidden');
     writeNav('train',{mode:m},historyMode);nextTask()
   }
@@ -1892,7 +1901,7 @@ body{background:
     stopWorldTimelapse();worldPreviewCount=INITIAL_WORLD_PREVIEW;rebuildProtoActive();$('#lessonScreen').classList.add('hidden');
     clearAssistTimers();taskToken++;
     $('#train').classList.add('hidden');$('#protoWorld').classList.remove('on','viewing');$('#finish').classList.add('hidden');
-    renderHomeLevels();$('#home').classList.remove('hidden');
+    renderHomeLevels();updateLessonClock();$('#home').classList.remove('hidden');
     if(historyMode!=='none')writeNav('home',{},historyMode);
   }
   function showIntro({historyMode='none'}={}){
