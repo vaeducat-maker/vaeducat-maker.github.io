@@ -925,21 +925,25 @@ body{background:
     return Number(chars.join(''));
   }
   function denseNumber(rng,digitsN){let s='';for(let i=0;i<digitsN;i++)s+=String(randInt(rng,1,9));return Number(s)}
+  function searchMul(rng,make,test,fallback){
+    // Every operand is non-round: zeros are allowed INSIDE either number.
+    return search(rng,make,z=>z.a%10!==0&&z.b%10!==0&&test(z),fallback);
+  }
   function genMul(level,rng){let t;
-    if(level===1)t=search(rng,()=>mulTask(randInt(rng,10,99),randInt(rng,2,9),'M1'),z=>z.meta.one.internalCarryCount===0,()=>mulTask(23,3,'M1'));
-    else if(level===2)t=search(rng,()=>mulTask(randInt(rng,10,99),randInt(rng,2,9),'M2'),z=>z.meta.one.internalCarryCount>=1,()=>mulTask(27,4,'M2'));
-    else if(level===3)t=search(rng,()=>mulTask(randInt(rng,100,999),randInt(rng,2,9),'M3'),z=>z.meta.one.internalCarryCount===0,()=>mulTask(213,3,'M3'));
-    else if(level===4)t=search(rng,()=>mulTask(randInt(rng,100,999),randInt(rng,2,9),'M4'),z=>z.meta.one.internalCarryCount===1,()=>mulTask(241,4,'M4'));
-    else if(level===5)t=search(rng,()=>mulTask(randInt(rng,100,999),randInt(rng,2,9),'M5'),z=>z.meta.one.internalCarryCount>=2,()=>mulTask(368,7,'M5'));
-    else if(level===6)t=search(rng,()=>mulTask(randInt(rng,1000,9999),randInt(rng,2,9),'M6'),z=>z.meta.one.internalCarryCount>=1,()=>mulTask(3574,6,'M6'));
-    else if(level===7)t=search(rng,()=>mulTask(randInt(rng,100,9999),randInt(rng,2,9),'M7'),z=>z.meta.zeroInTop,()=>mulTask(3052,7,'M7'));
-    else if(level===8)t=search(rng,()=>mulTask(denseNumber(rng,randInt(rng,2,3)),denseNumber(rng,2),'M8'),z=>z.meta.bottomDigits===2&&z.meta.partialCount===2&&z.meta.finalAddCarryCount===0,()=>mulTask(123,21,'M8'));
-    else if(level===9)t=search(rng,()=>mulTask(denseNumber(rng,randInt(rng,2,3)),denseNumber(rng,2),'M9'),z=>z.meta.bottomDigits===2&&z.meta.partialCount===2&&z.meta.finalAddCarryCount>0,()=>mulTask(59,27,'M9'));
-    else if(level===10)t=search(rng,()=>mulTask(sparseNumber(rng,3,2,false),denseNumber(rng,2),'M10'),z=>z.meta.bottomDigits===2&&z.meta.partialCount===2&&z.meta.zeroInTop,()=>mulTask(305,27,'M10'));
-    else if(level===11)t=search(rng,()=>mulTask(denseNumber(rng,3),denseNumber(rng,3),'M11'),z=>z.meta.bottomDigits===3&&z.meta.partialCount===3,()=>mulTask(456,678,'M11'));
-    else if(level===12)t=search(rng,()=>mulTask(denseNumber(rng,3),sparseNumber(rng,randInt(rng,3,4),2,true),'M12'),z=>z.meta.bottomDigits>=3&&z.meta.partialCount===2&&z.meta.skippedZeroPositions.length>=1&&z.meta.maxShift>=2,()=>mulTask(258,3004,'M12'));
-    else if(level===13)t=search(rng,()=>{const sparse=sparseNumber(rng,randInt(rng,3,4),2,true),dense=denseNumber(rng,3);return mulTask(sparse,dense,'M13')},z=>z.meta.swapped&&z.meta.bottomDigits>=3&&z.meta.bottomNonZeroCount<z.meta.topNonZeroCount,()=>mulTask(3004,258,'M13'));
-    else t=search(rng,()=>{const a=randInt(rng,100,9999),b=randInt(rng,100,999);return mulTask(a,b,'M14')},z=>z.meta.bottomDigits>=3&&z.meta.partialCount>=2&&z.meta.partialCount<=3&&(z.meta.finalAddCarryCount>0||z.meta.zeroInBottom||z.meta.zeroInTop||String(z.meta.top).length===4),()=>mulTask(4786,683,'M14'));
+    if(level===1)t=searchMul(rng,()=>mulTask(randInt(rng,10,99),randInt(rng,2,9),'M1'),z=>z.meta.one.internalCarryCount===0,()=>mulTask(23,3,'M1'));
+    else if(level===2)t=searchMul(rng,()=>mulTask(randInt(rng,10,99),randInt(rng,2,9),'M2'),z=>z.meta.one.internalCarryCount>=1,()=>mulTask(27,4,'M2'));
+    else if(level===3)t=searchMul(rng,()=>mulTask(randInt(rng,100,999),randInt(rng,2,9),'M3'),z=>z.meta.one.internalCarryCount===0,()=>mulTask(213,3,'M3'));
+    else if(level===4)t=searchMul(rng,()=>mulTask(randInt(rng,100,999),randInt(rng,2,9),'M4'),z=>z.meta.one.internalCarryCount===1,()=>mulTask(241,4,'M4'));
+    else if(level===5)t=searchMul(rng,()=>mulTask(randInt(rng,100,999),randInt(rng,2,9),'M5'),z=>z.meta.one.internalCarryCount>=2,()=>mulTask(368,7,'M5'));
+    else if(level===6)t=searchMul(rng,()=>mulTask(randInt(rng,1000,9999),randInt(rng,2,9),'M6'),z=>z.meta.one.internalCarryCount>=1,()=>mulTask(3574,6,'M6'));
+    else if(level===7)t=searchMul(rng,()=>mulTask(randInt(rng,100,9999),randInt(rng,2,9),'M7'),z=>z.meta.zeroInTop,()=>mulTask(3052,7,'M7'));
+    else if(level===8)t=searchMul(rng,()=>mulTask(denseNumber(rng,randInt(rng,2,3)),denseNumber(rng,2),'M8'),z=>z.meta.bottomDigits===2&&z.meta.partialCount===2&&z.meta.finalAddCarryCount===0,()=>mulTask(123,21,'M8'));
+    else if(level===9)t=searchMul(rng,()=>mulTask(denseNumber(rng,randInt(rng,2,3)),denseNumber(rng,2),'M9'),z=>z.meta.bottomDigits===2&&z.meta.partialCount===2&&z.meta.finalAddCarryCount>0,()=>mulTask(59,27,'M9'));
+    else if(level===10)t=searchMul(rng,()=>mulTask(sparseNumber(rng,3,2,false),denseNumber(rng,2),'M10'),z=>z.meta.bottomDigits===2&&z.meta.partialCount===2&&z.meta.zeroInTop,()=>mulTask(305,27,'M10'));
+    else if(level===11)t=searchMul(rng,()=>mulTask(denseNumber(rng,3),denseNumber(rng,3),'M11'),z=>z.meta.bottomDigits===3&&z.meta.partialCount===3,()=>mulTask(456,678,'M11'));
+    else if(level===12)t=searchMul(rng,()=>mulTask(denseNumber(rng,3),sparseNumber(rng,randInt(rng,3,4),2,true),'M12'),z=>z.meta.bottomDigits>=3&&z.meta.partialCount===2&&z.meta.skippedZeroPositions.length>=1&&z.meta.maxShift>=2,()=>mulTask(258,3004,'M12'));
+    else if(level===13)t=searchMul(rng,()=>{const sparse=sparseNumber(rng,randInt(rng,3,4),2,true),dense=denseNumber(rng,3);return mulTask(sparse,dense,'M13')},z=>z.meta.swapped&&z.meta.bottomDigits>=3&&z.meta.bottomNonZeroCount<z.meta.topNonZeroCount,()=>mulTask(3004,258,'M13'));
+    else t=searchMul(rng,()=>{const a=randInt(rng,100,9999),b=randInt(rng,100,999);return mulTask(a,b,'M14')},z=>z.meta.bottomDigits>=3&&z.meta.partialCount>=2&&z.meta.partialCount<=3&&(z.meta.finalAddCarryCount>0||z.meta.zeroInBottom||z.meta.zeroInTop||String(z.meta.top).length===4),()=>mulTask(4786,683,'M14'));
     t.skill='M'+level;return t;
   }
 
@@ -1044,7 +1048,7 @@ body{background:
     if(task.op==='add'&&task.a+task.b!==m.sum)return false;
     if(task.op==='sub'&&task.a-task.b!==m.difference)return false;
     if(task.op==='mul'&&task.a*task.b!==m.product)return false;
-    if(task.op==='div'&&(task.a%10===0||task.b%10===0))return false;
+    if((task.op==='mul'||task.op==='div')&&(task.a%10===0||task.b%10===0))return false;
     if(task.op==='div'&&Math.floor(task.a/task.b)!==Number(m.quotient))return false;
     if(p==='A'){
       if(l===1)return m.digitCount===2&&m.carryCount===0;
@@ -2052,9 +2056,9 @@ body{background:
   // calibration, not an endless diet of mental-arithmetic examples.
   function unhelpfulRoutine(t){
     const {op,a,b}=t,level=Number(t.skill.slice(1));
+    // Written multiplication and division must not show round operands.
+    if((op==='mul'||op==='div')&&(a%10===0||b%10===0))return true;
     if(op==='div'){
-      // Written division: never present dividends or divisors ending in zero.
-      if(a%10===0||b%10===0)return true;
       const q=Math.floor(a/b),aText=String(a);
       if(level<=6&&(a%10===0||q===11||q===111))return true;
       if(level<=6&&aText.length>=2&&[...aText].every(d=>d===aText[0]))return true;
