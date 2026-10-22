@@ -2431,6 +2431,8 @@ body{background:
   if(introImg.complete&&introImg.naturalWidth)runIntroTimelapse();
 
   const galleryDialog=$('#worldGalleryDialog'),offerDialog=$('#worldNewDialog');
+  // A full-screen painting opened from the gallery must go BACK to gallery.
+  let worldOpenedFromGallery=false;
   const worldImages=new Map();
   let lastOfferedWorld='';
   function imageForWorld(id,cb){
@@ -2488,6 +2490,12 @@ body{background:
   });
   $('#worldArchiveClose').addEventListener('click',()=>{
     $('#worldArchiveDialog').close();showWorldGallery();
+  });
+  $('#worldArchiveDialog').addEventListener('cancel',e=>{
+    e.preventDefault();$('#worldArchiveDialog').close();showWorldGallery();
+  });
+  packDoneDialog.addEventListener('cancel',e=>{
+    e.preventDefault();packDoneDialog.close();showWorldGallery();
   });
   function openArchivedWorld(id){
     const dialog=$('#worldArchiveDialog');
@@ -2570,8 +2578,10 @@ body{background:
         node.addEventListener('click',()=>{
           galleryDialog.close();playGameSound('ui');
           if(archived){openArchivedWorld(id);return}
-          if(selectWorld(id))
+          if(selectWorld(id)){
+            worldOpenedFromGallery=true;
             showWorldView({historyMode:'replace',instant:true,resumeLesson:returnToLessonAfterWorld});
+          }
         });
         grid.append(node);
         paintWorldPreview(preview,id,packIndex);
@@ -2583,7 +2593,10 @@ body{background:
       next.textContent='✨ Alusta järgmist kogumikku →';
       next.addEventListener('click',()=>{
         galleryDialog.close();
-        if(advancePack())showWorldView({historyMode:'replace',instant:true,resumeLesson:true});
+        if(advancePack()){
+          worldOpenedFromGallery=true;
+          showWorldView({historyMode:'replace',instant:true,resumeLesson:true});
+        }
       });
       grid.append(next);
     }
@@ -2869,15 +2882,28 @@ body{background:
   $('#introPlay').addEventListener('click',()=>{
     playIntroLaunchSound();$('#introScreen').classList.add('hidden');showHome({historyMode:'replace'});
   });
-  $('#openWorldView').addEventListener('click',()=>{playGameSound('ui');showWorldView({historyMode:'push'})});
+  $('#openWorldView').addEventListener('click',()=>{
+    playGameSound('ui');worldOpenedFromGallery=false;showWorldView({historyMode:'push'});
+  });
+  function exitWorldView(mode='replace'){
+    stopWorldTimelapse();
+    if(returnToLessonAfterWorld){
+      returnToLessonAfterWorld=false;worldOpenedFromGallery=false;
+      $('#worldContinue').classList.add('hidden');
+      if(lessonReady())showLessonDone();
+      else start(lastMode,{historyMode:mode,continueLesson:true});
+      return;
+    }
+    const returnToGallery=worldOpenedFromGallery;
+    worldOpenedFromGallery=false;
+    showHome({historyMode:mode});
+    if(returnToGallery)showWorldGallery();
+  }
   $('#worldViewBack').addEventListener('click',()=>{
     playGameSound('ui');
-    if(returnToLessonAfterWorld){
-      returnToLessonAfterWorld=false;$('#worldContinue').classList.add('hidden');
-      if(lessonReady())showLessonDone();
-      else start(lastMode,{historyMode:'replace',continueLesson:true});
-    }else if(history.state?.marker===NAV_MARKER)history.back();
-    else showHome({historyMode:'replace'});
+    // Never use history.back() for an in-game button. Android WebView or
+    // a directly opened preview link may have NO usable predecessor.
+    exitWorldView('replace');
   });
   let allowingBrowserExit=false;
   window.addEventListener('popstate',()=>{
@@ -2893,7 +2919,11 @@ body{background:
 
     // We are now on the lower sentinel entry. Turn it into the desired
     // parent screen, render that screen, then put a fresh guard above it.
-    if(parent==='intro')showIntro({historyMode:'none'});
+    if(from==='world-view'&&returnToLessonAfterWorld){
+      exitWorldView('none');
+    }else if(from==='world-view'){
+      exitWorldView('none');
+    }else if(parent==='intro')showIntro({historyMode:'none'});
     else if(parent==='lesson-list')showLessonList({historyMode:'none'});
     else if(parent==='lesson-done')showLessonDone({historyMode:'none'});
     else showHome({historyMode:'none'});
