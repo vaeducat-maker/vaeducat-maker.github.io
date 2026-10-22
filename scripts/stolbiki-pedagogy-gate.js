@@ -40,6 +40,7 @@ function rubric(t){
   const {op,a,b,skill}=t,level=Number(skill.slice(1));
   const text=String(a),repeated=text.length>1&&[...text].every(d=>d===text[0]);
   if(op==='div'&&(a%10===0||b%10===0))return 'trailing-zero division shortcut';
+  if(op==='mul'&&(a%10===0||b%10===0))return 'trailing-zero multiplication shortcut';
   if(op==='div'&&level<=6){
     if(repeated)return 'digit-clone shortcut (11,22,33,44...)';
     if(a%10===0)return 'round-ten division solvable by inspection';
@@ -62,6 +63,9 @@ const negative=[
   {op:'div',skill:'D1',a:60,b:6},{op:'div',skill:'D11',a:330,b:30},
   {op:'div',skill:'D13',a:660,b:60},{op:'div',skill:'D14',a:23040,b:60},
   {op:'div',skill:'D16',a:17070,b:60},
+  {op:'mul',skill:'M1',a:80,b:7},{op:'mul',skill:'M3',a:930,b:3},
+  {op:'mul',skill:'M4',a:750,b:4},{op:'mul',skill:'M6',a:7570,b:7},
+  {op:'mul',skill:'M7',a:4110,b:8},{op:'mul',skill:'M14',a:615,b:9090},
   {op:'div',skill:'D1',a:77,b:11},{op:'mul',skill:'M1',a:20,b:4},
   {op:'sub',skill:'S1',a:89,b:4},{op:'add',skill:'A1',a:40,b:20}
 ];
@@ -73,6 +77,10 @@ for(const x of negative){
 for(const x of negative.filter(t=>t.op==='div'&&(t.a%10===0||t.b%10===0))){
   const task={...x,meta:E.analyzeDivision(x.a,x.b)};
   if(E.validateSkill(task))fail('Engine validator ACCEPTS forbidden trailing-zero division '+x.skill+' '+x.a+':'+x.b);
+}
+for(const x of negative.filter(t=>t.op==='mul'&&(t.a%10===0||t.b%10===0))){
+  const task={...x,meta:E.analyzeMultiplication(x.a,x.b)};
+  if(E.validateSkill(task))fail('Engine validator ACCEPTS forbidden trailing-zero multiplication '+x.skill+' '+x.a+'×'+x.b);
 }
 for(const skill of E.skillList()){
   for(let i=0;i<120;i++){
