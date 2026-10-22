@@ -1,0 +1,110 @@
+{
+  "version": 1,
+  "product": "stolbiki-worlds",
+  "approval": "EDUKASS confirmed voxel world concepts — 2026-10-22",
+  "page": "proov/stolbiki-mosaic-7q4m9k/index.html",
+  "sceneDefinitions": "proov/stolbiki-mosaic-7q4m9k/worlds-collections-v2.js",
+  "expectedSceneCount": 50,
+  "grid": {
+    "columns": 22,
+    "rows": 25,
+    "total": 550
+  },
+  "imageMime": "image/webp",
+  "imageMinBytes": 12000,
+  "collections": [
+    {
+      "number": 1,
+      "approvedBundle": "proov/stolbiki-mosaic-7q4m9k/approved-pack-1.js",
+      "gitBlobSha": "e4784d8048d621994ec19c07f68a5b942d1dd344",
+      "sceneIds": [
+        "egiptus",
+        "kosmos",
+        "halloween",
+        "talv",
+        "mets",
+        "linn",
+        "saladus",
+        "ookean",
+        "saared",
+        "kristall"
+      ]
+    },
+    {
+      "number": 2,
+      "approvedBundle": "proov/stolbiki-mosaic-7q4m9k/approved-pack-2.js",
+      "gitBlobSha": "c4a00e76789d9f1a9478654174e8b94e58e67c0e",
+      "sceneIds": [
+        "P2-meresadam",
+        "P2-talukyla",
+        "P2-tuulikud",
+        "P2-tramm",
+        "P2-ounaaed",
+        "P2-maalinn",
+        "P2-raamatukogu",
+        "P2-talvejaam",
+        "P2-kuujaam",
+        "P2-kommilaat"
+      ]
+    },
+    {
+      "number": 3,
+      "approvedBundle": "proov/stolbiki-mosaic-7q4m9k/approved-pack-3.js",
+      "gitBlobSha": "902c8d2ebc01dcceeb6296f43b6c2b8b13073044",
+      "sceneIds": [
+        "P3-dinod",
+        "P3-tarud",
+        "P3-korallid",
+        "P3-kaevandus",
+        "P3-pingviinid",
+        "P3-teaduspark",
+        "P3-vanaobserv",
+        "P3-metsarong",
+        "P3-laager",
+        "P3-kanjon"
+      ]
+    },
+    {
+      "number": 4,
+      "approvedBundle": "proov/stolbiki-mosaic-7q4m9k/approved-pack-4.js",
+      "gitBlobSha": "347e056cdac33bc240dd96a087cf53f3457c7df7",
+      "sceneIds": [
+        "P4-sakura",
+        "P4-termaal",
+        "P4-ohulaev",
+        "P4-robotid",
+        "P4-aurujaam",
+        "P4-seened",
+        "P4-lavendel",
+        "P4-kalur",
+        "P4-ohupallid",
+        "P4-puumajad"
+      ]
+    },
+    {
+      "number": 5,
+      "approvedBundle": "proov/stolbiki-mosaic-7q4m9k/approved-pack-5.js",
+      "gitBlobSha": "8f5256da512e2a66b03550566bdccf298f8a0f85",
+      "sceneIds": [
+        "P5-safari",
+        "P5-allveelaev",
+        "P5-lumejaam",
+        "P5-kasvuhoone",
+        "P5-majakas",
+        "P5-ohtuturg",
+        "P5-planeedid",
+        "P5-korvits",
+        "P5-sepp",
+        "P5-seiklus"
+      ]
+    }
+  ],
+  "releaseCriteria": [
+    "The 50 approved images are exactly the pinned bundles",
+    "The page loads all five approved bundles once",
+    "All original images decode and remain distinct",
+    "At 550/550 the rendered output includes 100% of the approved original without crop",
+    "From the art screen Back returns to gallery/home without browser escape",
+    "Math progress remains unchanged when art packages change"
+  ]
+}
