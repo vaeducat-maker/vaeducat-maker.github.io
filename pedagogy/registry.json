@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "updated": "2026-10-22",
+  "description_ru": "Исключения для игр, существовавших до утверждения Learning Quality Standard. Это не освобождает их от старых требований, только предотвращает автоматическую переделку. Каждую новую игру нужно регистрировать с паспортом и независимым аудитом.",
+  "legacy_paths": [
+    "games/kiire-sonatreener/index.html",
+    "games/koolikott/index.html",
+    "games/korrutamine-test/index.html",
+    "games/liitmine/index.html",
+    "games/lumesadu/index.html",
+    "games/metsarada/index.html",
+    "games/minu-suvi/index.html",
+    "games/septembri-sonamang/index.html",
+    "proov/stolbiki-250/index.html",
+    "proov/stolbiki-mosaic-7q4m9k/index.html"
+  ],
+  "new_games": []
+}
