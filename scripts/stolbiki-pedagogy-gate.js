@@ -14,19 +14,25 @@ const root=path.resolve(__dirname,'..');
 const source=fs.readFileSync(path.join(root,'proov/stolbiki-mosaic-7q4m9k/index.html'),'utf8');
 const scripts=[...source.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)].map(m=>m[1]).filter(Boolean);
 assert(scripts.length>=3,'Production game no longer contains expected engine and adaptive scripts');
+// Select scripts by their capabilities, never hard-coded array positions.
+// Adding a new visual-art script must not break the independent math audit.
+const engineScript=scripts.find(s=>s.includes('root.EDUKASS_MATH_ENGINE=api'));
+const adaptiveScript=scripts.find(s=>s.includes('root.EDUKASS_ADAPTIVE=api'));
+const gameScript=scripts.find(s=>s.includes('  // Pedagogical difficulty matters more than random-looking digits.')&&s.includes('  function nextTask(){'));
+assert(engineScript&&adaptiveScript&&gameScript,'Cannot locate the original production math, adaptive or player scripts');
 const context={module:{exports:{}},console};
 context.globalThis=context;
 vm.createContext(context);
-vm.runInContext(scripts[0],context,{timeout:10000});
-vm.runInContext(scripts[1],context,{timeout:10000});
+vm.runInContext(engineScript,context,{timeout:10000});
+vm.runInContext(adaptiveScript,context,{timeout:10000});
 const E=context.EDUKASS_MATH_ENGINE,A=context.EDUKASS_ADAPTIVE;
 assert(E&&A,'Unable to load real production math and adaptive engines');
 // Pull REAL task selector, including repetition memory, from the release build.
-const begin=scripts[2].indexOf('  // Pedagogical difficulty matters more than random-looking digits.');
-const end=scripts[2].indexOf('  function nextTask(){',begin);
+const begin=gameScript.indexOf('  // Pedagogical difficulty matters more than random-looking digits.');
+const end=gameScript.indexOf('  function nextTask(){',begin);
 assert(begin>=0&&end>begin,'Cannot find real player task-selection implementation; release blocked');
 context.E=E;
-vm.runInContext(scripts[2].slice(begin,end)+'\nthis.productionTask=generateFreshTask;',context,{timeout:10000});
+vm.runInContext(gameScript.slice(begin,end)+'\nthis.productionTask=generateFreshTask;',context,{timeout:10000});
 assert.equal(typeof context.productionTask,'function');
 
 function random(seed){let state=seed>>>0;return()=>{state=(Math.imul(1664525,state)+1013904223)>>>0;return state/4294967296};}
