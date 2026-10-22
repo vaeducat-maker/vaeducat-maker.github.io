@@ -517,6 +517,21 @@ async function checkCompetitor() {
               const soloCount=await wp.locator('#worldGalleryTiles button').count();
               note('world-gallery','Before first reward gallery reveals only original pupil artwork',
                 soloCount===1,String(soloCount),'critical');
+              const artDecode=await wp.evaluate(async()=>{
+                const all=window.EDUKASS_WORLD_ART||[];
+                const failed=[];
+                await Promise.all(all.map(w=>new Promise(resolve=>{
+                  const im=new Image();
+                  im.onload=()=>{if(!im.naturalWidth||!im.naturalHeight)failed.push(w.id);resolve()};
+                  im.onerror=()=>{failed.push(w.id);resolve()};
+                  im.src=w.src;
+                })));
+                return {total:all.length,unique:new Set(all.map(w=>w.id)).size,
+                  failed:failed.slice(0,15)};
+              });
+              note('world-gallery','All 50 distinct SVG scenes decode as real game images on mobile',
+                artDecode.total===50&&artDecode.unique===50&&artDecode.failed.length===0,
+                JSON.stringify(artDecode),'critical');
               await wp.locator('#galleryClose').click();
               await wp.evaluate(()=>{
                 const p=window.EDUKASS_ADAPTIVE.createProfile();
