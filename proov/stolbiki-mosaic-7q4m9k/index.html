@@ -951,7 +951,7 @@ body{background:
   }
   function genDiv(level,rng){
     let x;
-    const useful=(z)=>z.m.stageCount>=2&&z.m.quotient.length>=2&&Number(z.m.quotient)!==10;
+    const useful=(z)=>z.m.stageCount>=2&&z.m.quotient.length>=2&&Number(z.m.quotient)!==10&&z.a%10!==0&&z.b%10!==0;
     if(level===1)x=search(rng,
       ()=>divCandidate(rng,2,1,false),
       z=>useful(z)&&z.m.firstPartLen===1&&!z.m.zeroInDividend&&!z.m.quotientHasZero&&z.m.stages.every(s=>s.rem===0),
@@ -1044,6 +1044,7 @@ body{background:
     if(task.op==='add'&&task.a+task.b!==m.sum)return false;
     if(task.op==='sub'&&task.a-task.b!==m.difference)return false;
     if(task.op==='mul'&&task.a*task.b!==m.product)return false;
+    if(task.op==='div'&&(task.a%10===0||task.b%10===0))return false;
     if(task.op==='div'&&Math.floor(task.a/task.b)!==Number(m.quotient))return false;
     if(p==='A'){
       if(l===1)return m.digitCount===2&&m.carryCount===0;
@@ -2052,6 +2053,8 @@ body{background:
   function unhelpfulRoutine(t){
     const {op,a,b}=t,level=Number(t.skill.slice(1));
     if(op==='div'){
+      // Written division: never present dividends or divisors ending in zero.
+      if(a%10===0||b%10===0)return true;
       const q=Math.floor(a/b),aText=String(a);
       if(level<=6&&(a%10===0||q===11||q===111))return true;
       if(level<=6&&aText.length>=2&&[...aText].every(d=>d===aText[0]))return true;
