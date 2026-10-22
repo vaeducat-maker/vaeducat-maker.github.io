@@ -1,0 +1,9 @@
+# EDUKASS approved visual baselines and quality release criteria.
+# Review enforcement requires GitHub branch ruleset: Require code owner review.
+# Without a branch ruleset this file requests review but does NOT block direct pushes.
+/quality/contracts/ @vaeducat-maker
+/quality/product-registry.json @vaeducat-maker
+/.github/workflows/quality-gate.yml @vaeducat-maker
+/.github/workflows/cloudflare-preview.yml @vaeducat-maker
+/scripts/quality-*.js @vaeducat-maker
+/AGENTS.md @vaeducat-maker
