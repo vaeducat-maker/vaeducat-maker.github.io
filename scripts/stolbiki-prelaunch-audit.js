@@ -357,6 +357,77 @@ async function checkCompetitor() {
               return out;
             });
             independentClassroomReview(classroomLessons);
+            // The 15-minute class is ONE lesson across all operation choices.
+            // Reproduce the user's real path: eight minutes of mixed work,
+            // Back, choose division, Back, choose multiplication/mixed.
+            const switchContext=await browser.newContext({
+              viewport:{width:390,height:844},isMobile:true,hasTouch:true,serviceWorkers:'block'
+            });
+            try{
+              const sw=await switchContext.newPage();
+              await sw.goto('http://127.0.0.1:'+port+'/proov/stolbiki-mosaic-7q4m9k/index.html',
+                {waitUntil:'domcontentloaded',timeout:30000});
+              await sw.waitForFunction(()=>!!window.__EDUKASS_TEST__);
+              await sw.evaluate(()=>{
+                const T=window.__EDUKASS_TEST__;
+                T.startMode('mix');
+                T.setLessonElapsed(480000);
+                T.solveCurrent();
+              });
+              await sw.waitForFunction(()=>window.__EDUKASS_TEST__.getLesson().solved===1,{timeout:5000});
+              const initial=await sw.evaluate(()=>window.__EDUKASS_TEST__.getLesson());
+              await sw.locator('#back').click();
+              await sw.locator('#home').waitFor({state:'visible',timeout:4500});
+              const homeState=await sw.evaluate(()=>({
+                lesson:window.__EDUKASS_TEST__.getLesson(),
+                label:document.querySelector('#homeLessonTime').textContent,
+                levels:document.querySelector('#lvl-add').textContent,
+                dot:document.querySelector('#prog-add').style.width
+              }));
+              note('competitor','Back from mixed lesson keeps elapsed time, saved exercises and world reward counter',
+                homeState.lesson.active&&homeState.lesson.solved===1&&
+                homeState.lesson.elapsed>=480000&&homeState.lesson.elapsed<486000&&
+                homeState.lesson.taskInWorld===1&&homeState.label.includes('JÄÄNUD'),
+                JSON.stringify(homeState),'critical');
+              note('competitor','Home shows current learning stage, not a fake percent-completion bar',
+                homeState.levels.startsWith('Harjutad:')&&homeState.dot==='12px',
+                homeState.levels+'; marker '+homeState.dot,'critical');
+              await sw.locator('.op[data-op="div"]').click();
+              await sw.locator('#train').waitFor({state:'visible',timeout:4500});
+              const division=await sw.evaluate(()=>({
+                lesson:window.__EDUKASS_TEST__.getLesson(),
+                operation:window.__EDUKASS_TEST__.getState().current.op,
+                clock:document.querySelector('#lessonTime').textContent
+              }));
+              note('competitor','Switching mid-class to division keeps eight-minute clock and completed tasks',
+                division.operation==='div'&&division.lesson.mode==='div'&&
+                division.lesson.solved===1&&division.lesson.elapsed>=480000&&
+                division.lesson.elapsed<486000&&division.clock!=='15:00'&&
+                division.lesson.taskInWorld===1,
+                JSON.stringify(division),'critical');
+              await sw.locator('#back').click();
+              await sw.locator('#home').waitFor({state:'visible',timeout:4500});
+              await sw.locator('.op[data-op="mul"]').click();
+              const multiply=await sw.evaluate(()=>({
+                lesson:window.__EDUKASS_TEST__.getLesson(),
+                operation:window.__EDUKASS_TEST__.getState().current.op
+              }));
+              note('competitor','Mixed → division → multiplication remains one lesson with one reward counter',
+                multiply.operation==='mul'&&multiply.lesson.solved===1&&
+                multiply.lesson.elapsed>=480000&&multiply.lesson.taskInWorld===1,
+                JSON.stringify(multiply),'critical');
+              await sw.locator('#back').click();
+              await sw.locator('#home').waitFor({state:'visible',timeout:4500});
+              await sw.locator('.continue-play').click();
+              const final=await sw.evaluate(()=>({
+                lesson:window.__EDUKASS_TEST__.getLesson(),
+                operation:window.__EDUKASS_TEST__.getState().current.op
+              }));
+              note('competitor','Returning to Kõik koos continues the same 15-minute lesson',
+                final.lesson.mode==='mix'&&final.lesson.solved===1&&
+                final.lesson.elapsed>=480000&&final.lesson.taskInWorld===1,
+                JSON.stringify(final),'critical');
+            }finally{await switchContext.close()}
             // Cross-device passport: use an independently isolated browser context.
             await guest.evaluate(()=>{
               const key='edukass_stolbiki_player_profile_v42',p=JSON.parse(localStorage.getItem(key));
