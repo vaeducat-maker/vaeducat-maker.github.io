@@ -239,13 +239,33 @@ async function checkCompetitor() {
           checkpoint.stages[1].includes('11. tase')&&checkpoint.stages[2].includes('13. tase')&&
           checkpoint.stages[3].includes('15. tase')&&checkpoint.marker,
           JSON.stringify(checkpoint),'critical');
-        note('passport-visibility','Transfer progress button fully on screen at '+width+'×'+height,
-          checkpoint.visible,JSON.stringify(checkpoint.bounds),'critical');
+        // IMPORTANT: button must follow both second-row operation cards;
+        // a fixed footer that overlays them is a hard accessibility failure.
+        const transfer=demoPage.locator('#openPassport');
+        await transfer.scrollIntoViewIfNeeded();
+        const placement=await demoPage.evaluate(()=>{
+          const transfer=document.getElementById('openPassport');
+          const t=transfer.getBoundingClientRect();
+          const mul=document.querySelector('.op[data-op="mul"]').getBoundingClientRect();
+          const div=document.querySelector('.op[data-op="div"]').getBoundingClientRect();
+          const parent=document.querySelector('.route-card').getBoundingClientRect();
+          return {buttonY:t.y,buttonBottom:t.bottom,operationBottom:Math.max(mul.bottom,div.bottom),
+            routeBottom:parent.bottom,viewportHeight:innerHeight,
+            withinViewport:t.y>=0&&t.bottom<=innerHeight+1,
+            belowCards:t.y>=Math.max(mul.bottom,div.bottom)+8,
+            belowPanel:t.y>=parent.bottom+6,
+            position:getComputedStyle(transfer).position};
+        });
+        note('passport-visibility','Transfer button BELOW four cards, not covering multiplication or division on '+width+'×'+height,
+          placement.belowCards&&placement.belowPanel&&placement.position!=='absolute'&&placement.position!=='fixed',
+          JSON.stringify(placement),'critical');
+        note('passport-visibility','Transfer button can scroll fully into view on '+width+'×'+height,
+          placement.withinViewport,JSON.stringify(placement),'critical');
         note('late-stage-demo','Demo does not alter real math or art storage at '+width+'×'+height,
           checkpoint.originalProfile===null&&checkpoint.originalWorld===null,
           'owner storage untouched','critical');
         await screenshot(demoPage,'late-student-home-'+width);
-        await demoPage.locator('#openPassport').click({timeout:5500});
+        await transfer.click({timeout:5500});
         await demoPage.locator('#passportDialog[open]').waitFor({state:'visible',timeout:4500});
         note('passport-visibility','Transfer dialog opens at '+width+'×'+height,true);
         await demoPage.locator('#passportClose').click();
@@ -260,6 +280,30 @@ async function checkCompetitor() {
           gallery.cards===17&&gallery.headings===2&&gallery.finished===10,
           JSON.stringify(gallery),'critical');
         await screenshot(demoPage,'late-student-gallery-'+width);
+        if(width===390){
+          // Separate empty pupil (same layout, no advanced-demo badge) must
+          // also expose all four modes before the transfer action.
+          const normal=await demoContext.newPage();
+          await normal.goto('http://127.0.0.1:'+port+
+            '/proov/stolbiki-mosaic-7q4m9k/index.html?worldTest=1',
+            {waitUntil:'domcontentloaded',timeout:35000});
+          await normal.waitForFunction(()=>!!window.__EDUKASS_TEST__);
+          if(await normal.locator('#introPlay').isVisible())await normal.locator('#introPlay').click();
+          await normal.locator('#home').waitFor({state:'visible'});
+          await normal.locator('#openPassport').scrollIntoViewIfNeeded();
+          const order=await normal.evaluate(()=>{
+            const passport=document.querySelector('#openPassport').getBoundingClientRect();
+            const cards=[...document.querySelectorAll('.op[data-op]')].map(x=>x.getBoundingClientRect());
+            return {bottomOfCards:Math.max(...cards.map(x=>x.bottom)),
+              topOfPassport:passport.top,visible:passport.top>=0&&passport.bottom<=innerHeight+1,
+              count:cards.length};
+          });
+          note('passport-visibility','Normal beginner: all operation cards uncovered, transfer below',
+            order.count===4&&order.visible&&order.topOfPassport>=order.bottomOfCards+8,
+            JSON.stringify(order),'critical');
+          await screenshot(normal,'normal-pupil-passport-under-cards');
+          await normal.close();
+        }
         note('late-stage-demo','No uncaught browser exceptions on '+width+'×'+height,
           demoErrors.length===0,demoErrors.slice(0,3).join('; '),'critical');
       }catch(e){
