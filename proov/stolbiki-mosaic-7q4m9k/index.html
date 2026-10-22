@@ -1022,8 +1022,9 @@ body{background:
     const f=state.frontier,r=session.rng();
     // Never place a new pupil in a higher task as a diagnostic shortcut.
     if(f===1&&!state.skills[skillFor(op,1)].mastered)return{skill:skillFor(op,1),reason:'current'};
-    if(r<0.70)return{skill:skillFor(op,f),reason:'current'};
-    if(r<0.90)return{skill:skillFor(op,f-1),reason:'review'};
+    // A newly acquired easier stage is NOT repeated as random filler in every lesson.
+    // The review queue handles genuine retry/spaced practice separately.
+    if(r<0.90||f===META[op].max)return{skill:skillFor(op,f),reason:'current'};
     return{skill:skillFor(op,f+1),reason:'probe'};
   }
   function nextAssignment(session){const op=chooseOperation(session);const pick=chooseSkill(session,op);session.index++;return{op,...pick,index:session.index}}
@@ -1041,7 +1042,12 @@ body{background:
       else if(!independent){state.diagnostic=false;state.frontier=Math.max(1,level-1)}
       if(s.attempts>=2&&!independent)state.diagnostic=false;
     }else{
-      if(level===state.frontier&&s.attempts>=5&&rate>=0.9&&speedOK&&state.frontier<META[op].max){s.mastered=true;s.reviewStage=Math.max(1,s.reviewStage);s.nextReviewAt=session.now+DAY;state.frontier++}
+      // Early tasks are a SHORT calibration, not the entire 15-minute lesson.
+      // Two independently solved examples are enough to try a harder stage;
+      // at higher stages we require longer, reliable practice.
+      const starter=(op==='div'?level<=5:level<=3);
+      const ready=starter?(s.cleanStreak>=2&&rate>=0.65):(s.attempts>=4&&s.cleanStreak>=2&&rate>=0.8);
+      if(level===state.frontier&&ready&&speedOK&&state.frontier<META[op].max){s.mastered=true;s.reviewStage=Math.max(1,s.reviewStage);s.nextReviewAt=session.now+DAY;state.frontier++}
       if(level===state.frontier&&s.attempts>=4&&rate<0.6&&state.frontier>1)state.frontier--;
     }
     if(s.mastered&&independent){const days=[1,3,7,21][Math.min(3,s.reviewStage-1)];s.nextReviewAt=session.now+days*DAY;if(s.reviewStage<4)s.reviewStage++}
@@ -1716,7 +1722,39 @@ body{background:
       else nextTask();
     },hold);
   }
-  // Vary numeric operands without changing adaptive skill selection.
+  // Pedagogical difficulty matters more than random-looking digits.
+  // A first-stage written method may be easy, but it must be a brief
+  // calibration, not an endless diet of mental-arithmetic examples.
+  function unhelpfulRoutine(t){
+    const {op,a,b}=t,level=Number(t.skill.slice(1));
+    if(op==='div'){
+      const q=Math.floor(a/b),aText=String(a);
+      if(level<=6&&(a%10===0||q===11||q===111))return true;
+      if(level<=6&&/^(\\d)\\1+$/.test(aText))return true;
+      // Once a carry/remainder technique is being learned, examples without
+      // that technique don't qualify, regardless of cosmetic number changes.
+      if(level>=2&&level<=6&&t.meta.intermediateNonZeroRemainders===0&&(level===2||level===4||level===6))return true;
+    }
+    if(op==='sub'&&level<=4&&(b<10||a-b<12||a===b+1||a%10===0))return true;
+    if(op==='mul'&&level<=5&&(a%10===0||b===2||b===1))return true;
+    if(op==='add'&&level<=3&&(a%10===0||b%10===0||a===b))return true;
+    return false;
+  }
+  function routinePattern(t){
+    if(t.op==='div')return 'div:'+t.skill+':'+t.b+':'+(Number(t.meta.quotient)%10)+':'+t.meta.stages.map(s=>s.rem?'r':'0').join('');
+    if(t.op==='add'||t.op==='sub')return t.op+':'+t.skill+':'+(t.a%10)+':'+(t.b%10);
+    return 'mul:'+t.skill+':'+t.b+':'+(t.a%10);
+  }
+  const recentTaskPatterns=[];
+  function recentPenalty(t){
+    const pair=t.op+':'+t.a+':'+t.b,pattern=routinePattern(t);
+    if(recentTaskPairs.includes(pair))return 300;
+    let penalty=recentTaskPatterns.slice(-16).includes(pattern)?28:0;
+    if(t.op==='div'&&recentDivisors.slice(-4).includes(t.b))penalty+=26;
+    if(t.op==='mul'&&recentTaskPatterns.slice(-7).some(x=>x.startsWith('mul:'+t.skill+':'+t.b+':')))penalty+=12;
+    return penalty;
+  }
+  // Vary mathematical technique and operand structure, not just random digits.
   // Remember enough recent examples to avoid repetitive drills.
   const recentTaskPairs=[],recentDivisors=[],smallDivisionPools=new Map();
   function smallDivisionPool(level){
@@ -1755,24 +1793,28 @@ body{background:
         const ds=[...groups.keys()],b=ds[Math.floor(rng()*ds.length)],arr=groups.get(b);
         return arr[Math.floor(rng()*arr.length)];
       };
-      let options=pool.filter(t=>!recent.includes(t.b)&&!lastPairs.includes('div:'+t.a+':'+t.b));
-      if(!options.length)options=pool.filter(t=>!recent.includes(t.b));
-      if(!options.length)options=pool.filter(t=>t.b!==recentDivisors.at(-1));
-      result=choose(options.length?options:pool);
+      const educational=pool.filter(t=>!unhelpfulRoutine(t));
+      const relevant=educational.length?educational:pool;
+      let options=relevant.filter(t=>!recent.includes(t.b)&&!lastPairs.includes('div:'+t.a+':'+t.b)&&!recentTaskPatterns.slice(-10).includes(routinePattern(t)));
+      if(!options.length)options=relevant.filter(t=>!recent.includes(t.b)&&!lastPairs.includes('div:'+t.a+':'+t.b));
+      if(!options.length)options=relevant.filter(t=>!lastPairs.includes('div:'+t.a+':'+t.b));
+      result=choose(options.length?options:relevant);
     }else{
-      let fallback=null,lastDifferent=null;
-      for(let i=0;i<80;i++){
+      let best=null,bestPenalty=Infinity,backup=null;
+      for(let i=0;i<90;i++){
         const candidate=E.generateSkill(skill,(seed+Math.imul(i,0x9e3779b9))>>>0);
-        if(recentTaskPairs.includes(candidate.op+':'+candidate.a+':'+candidate.b))continue;
-        if(!fallback)fallback=candidate;
-        if((!isDiv||candidate.b!==recentDivisors.at(-1))&&!lastDifferent)lastDifferent=candidate;
-        if(isDiv&&recentDivisors.includes(candidate.b))continue;
-        result=candidate;break;
+        if(!backup)backup=candidate;
+        if(unhelpfulRoutine(candidate))continue;
+        const score=recentPenalty(candidate);
+        if(score<bestPenalty){best=candidate;bestPenalty=score}
+        if(score===0)break;
       }
-      result=result||lastDifferent||fallback||E.generateSkill(skill,seed);
+      result=best||backup||E.generateSkill(skill,seed);
     }
     recentTaskPairs.push(result.op+':'+result.a+':'+result.b);
     if(recentTaskPairs.length>50)recentTaskPairs.shift();
+    recentTaskPatterns.push(routinePattern(result));
+    if(recentTaskPatterns.length>30)recentTaskPatterns.shift();
     if(isDiv){recentDivisors.push(result.b);if(recentDivisors.length>5)recentDivisors.shift()}
     return result;
   }
@@ -2226,6 +2268,15 @@ body{background:
     getWorldTileOrder:()=>worldUnlocks(),
     getWorldPreview:()=>({enabled:worldPreviewCount!==null,count:previewWorldUnlocks().length,actualCount:protoWorldCount}),
     getRealWorldProgress:()=>({tiles:protoWorldCount,level:protoLevel,persisted:localStorage.getItem('edukass-columns-player-world'),baseline:TEST_WORLD_BASELINE}),
+    challenge:{generate:(skill,seed)=>generateFreshTask(skill,seed),unhelpful:unhelpfulRoutine,simulate:(op,steps=18)=>{
+      const p=A.createProfile(),session=A.createSession(p,op,()=>0.25,Date.now()),out=[];
+      for(let n=0;n<steps;n++){
+        const a=A.nextAssignment(session),task=generateFreshTask(a.skill,n+101);
+        out.push({skill:a.skill,a:task.a,b:task.b,unhelpful:unhelpfulRoutine(task)});
+        A.recordResult(session,a,{firstTry:true,errors:0,ms:12000,assisted:false});
+      }
+      return{tasks:out,frontier:A.publicSnapshot(p)[op].frontier};
+    }},
     passport:{make:async()=>passportBase+'#ekpass='+await encodePassport(passportSnapshot()),
       validate:async code=>validatePassport(await decodePassport(code))}
   };
