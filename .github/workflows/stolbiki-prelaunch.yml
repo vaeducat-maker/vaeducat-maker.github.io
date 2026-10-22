@@ -18,7 +18,8 @@ permissions:
 jobs:
   prelaunch-methodist-and-competitor:
     name: Arithmetic methodist and adversarial mobile check
-    runs-on: ubuntu-latest
+    # Chromium used by mobile QA is verified on Noble, not Ubuntu 26.04.
+    runs-on: ubuntu-24.04
     timeout-minutes: 25
     steps:
       - name: Checkout EDUKASS source
