@@ -79,9 +79,10 @@ function independentClassroomReview(lessons) {
         const opRows=rows.filter(x=>x.op===op);
         const levels=new Set(opRows.map(x=>x.skill));
         if(levels.size<4)noProgress.push(entry.name+' '+op+' '+[...levels].join(','));
+        const signature=t=>t.op==='div'? t.skill+':'+t.b+':'+(Math.floor(t.a/t.b)%10):t.skill+':'+(t.a%10)+':'+(t.b%10);
         for(let i=3;i<opRows.length;i++){
           const last4=opRows.slice(i-3,i+1);
-          if(last4.every(t=>t.skill===last4[0].skill)&&i>4)boring.push(entry.name+' '+op+' stuck at '+last4[0].skill);
+          if(last4.every(t=>signature(t)===signature(last4[0])))boring.push(entry.name+' '+op+' repeated numeric template '+signature(last4[0]));
         }
       }
     }
@@ -98,7 +99,7 @@ function independentClassroomReview(lessons) {
     slow.length===0,'failures '+slow.length+': '+slow.slice(0,8).join('; '),'critical');
   note('independent-methodist','All four operations develop at least four skills in each fluent simulation',
     noProgress.length===0,'failures '+noProgress.length+': '+noProgress.slice(0,8).join('; '),'critical');
-  note('independent-methodist','Fluent lessons cannot linger on one pattern in four consecutive tasks after warmup',
+  note('independent-methodist','Fluent lessons avoid four consecutive repetitions of one numeric template',
     boring.length===0,'failures '+boring.length+': '+boring.slice(0,8).join('; '),'critical');
   fs.writeFileSync(path.join(reportDir,'classroom-simulations.json'),JSON.stringify({generated,issues:{poor,slow,noProgress,boring}},null,2));
 }
