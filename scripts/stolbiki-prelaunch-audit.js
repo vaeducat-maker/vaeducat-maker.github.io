@@ -656,6 +656,40 @@ async function checkCompetitor() {
                 '/proov/stolbiki-mosaic-7q4m9k/index.html?victoryDemo=1&victoryReset=1';
               await vp.goto(victoryUrl,{waitUntil:'domcontentloaded',timeout:45000});
               await vp.locator('#worldPackDone[open]').waitFor({state:'visible',timeout:15000});
+              const fullPainting=await vp.evaluate(async()=>{
+                const source=window.EDUKASS_WORLD_ART.find(w=>w.id===window.EDUKASS_WORLD_COLLECTION_QA().active);
+                const img=new Image();img.src=source.src;await img.decode();
+                const canvas=document.querySelector('#protoWorldCanvas');
+                // Give the original app's image onload renderer a chance to paint.
+                for(let i=0;i<30;i++){
+                  const pixels=canvas.getContext('2d').getImageData(0,0,canvas.width,canvas.height).data;
+                  if(pixels.some((v,k)=>k%4===3&&v>0))break;
+                  await new Promise(resolve=>setTimeout(resolve,50));
+                }
+                const expected=document.createElement('canvas');
+                expected.width=canvas.width;expected.height=canvas.height;
+                const scale=Math.min(expected.width/img.naturalWidth,expected.height/img.naturalHeight);
+                const dw=img.naturalWidth*scale,dh=img.naturalHeight*scale;
+                expected.getContext('2d').drawImage(img,(expected.width-dw)/2,
+                  (expected.height-dh)/2,dw,dh);
+                const got=canvas.getContext('2d').getImageData(0,0,canvas.width,canvas.height).data;
+                const want=expected.getContext('2d').getImageData(0,0,canvas.width,canvas.height).data;
+                let diff=0,count=0,opaque=0;
+                for(let i=0;i<want.length;i+=16){
+                  for(let j=0;j<4;j++)diff+=Math.abs(got[i+j]-want[i+j]);
+                  opaque+=want[i+3]>0?1:0;
+                  count+=4;
+                }
+                return {meanPixelDifference:+(diff/count).toFixed(3),
+                  original:[img.naturalWidth,img.naturalHeight],
+                  canvas:[canvas.width,canvas.height],
+                  fullArtworkVisible:opaque>3000,
+                  margins:[(expected.width-dw)/2,(expected.height-dh)/2]};
+              });
+              note('world-gallery','Full 550/550 painting is pixel-equivalent to entire original approved image, not a crop',
+                fullPainting.fullArtworkVisible&&fullPainting.meanPixelDifference<3&&
+                fullPainting.margins.every(n=>n>=-0.01),
+                JSON.stringify(fullPainting),'critical');
               const victory=await vp.evaluate(()=>({
                 gallery:window.EDUKASS_WORLD_COLLECTION_QA(),
                 count:document.querySelector('#protoWorldCount').textContent,
@@ -684,6 +718,22 @@ async function checkCompetitor() {
               note('world-gallery','Winner can inspect any of the ten finished images in full screen',
                 chosen.count===550&&chosen.active===chosen.order[5],
                 JSON.stringify(chosen),'critical');
+              // The arrow MUST return to the gallery without invoking browser
+              // history.back(), particularly for an opened-from-message URL.
+              await vp.locator('#worldViewBack').click();
+              await vp.locator('#worldGalleryDialog[open]').waitFor({state:'visible',timeout:5000});
+              const returnToGallery=await vp.locator('#worldGalleryTiles .world-gallery-item').count();
+              note('world-gallery','World back arrow returns to all ten images, no freeze or app exit',
+                returnToGallery===10,'gallery images: '+returnToGallery,'critical');
+              await vp.locator('#galleryClose').click();
+              await vp.locator('#home').waitFor({state:'visible',timeout:5000});
+              await vp.locator('#openWorldView').click();
+              await vp.locator('#protoWorld.viewing').waitFor({state:'visible',timeout:5000});
+              await vp.locator('#worldViewBack').click();
+              await vp.locator('#home').waitFor({state:'visible',timeout:5000});
+              note('world-gallery','World back arrow works from home too, independent of history',
+                await vp.locator('#home').isVisible(),'returned to home','critical');
+              await vp.locator('#openWorldView').click();
               await vp.locator('#galleryFromWorld').click();
               await vp.locator('#worldGalleryDialog[open]').waitFor({state:'visible'});
               await vp.locator('#worldGalleryTiles .world-collection-primary').click();
