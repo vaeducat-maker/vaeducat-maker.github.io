@@ -526,6 +526,7 @@ async function checkCompetitor() {
               await wp.locator('.continue-play').click();
               await wp.locator('#protoWorld.on').waitFor({state:'visible',timeout:6000});
               await wp.locator('#pc0').waitFor({state:'visible',timeout:6000});
+              const tappedTile=await wp.locator('#pc0').getAttribute('data-k');
               await wp.locator('#pc0').click();
               await wp.waitForFunction(()=>window.__EDUKASS_TEST__.getRealWorldProgress().tiles===62,{timeout:10000});
               await wp.locator('#worldNewDialog[open]').waitFor({state:'visible',timeout:8000});
@@ -538,16 +539,45 @@ async function checkCompetitor() {
                 offered.world.tiles===62&&offered.collection.unlocked.length===2&&
                 offered.collection.notice===2&&offered.offer.includes('Avastasid:'),
                 JSON.stringify(offered),'critical');
+              const growthDirection=await wp.evaluate(tapped=>{
+                const tile=Number(tapped),x0=tile%22,y0=Math.floor(tile/22);
+                const dx=x0-11,dy=y0-14,len=Math.hypot(dx,dy)||1;
+                const saved=JSON.parse(localStorage.getItem('edukass-world-student-test-v1:edukass-columns-player-world-order-v1')||'[]');
+                const extra=saved.slice(51,62);
+                const rightWay=extra.filter(k=>(((k%22)-x0)*dx+(Math.floor(k/22)-y0)*dy)/len>=-.25);
+                return {extra:extra.length,onChosenSide:rightWay.length,tapped};
+              },tappedTile);
+              note('world-gallery','Eleven bonus tiles expand on the chosen tap side, not arbitrary remote sectors',
+                growthDirection.extra===11&&growthDirection.onChosenSide>=10,
+                JSON.stringify(growthDirection),'critical');
               await wp.locator('#tryNewWorld').click();
+              await wp.locator('#worldContinue').waitFor({state:'visible'});
+              const rewardUX=await wp.evaluate(()=>({
+                worldVisible:document.querySelector('#protoWorld').classList.contains('viewing'),
+                hasVoxelScenes:window.EDUKASS_VOXEL_ART_VERSION==='1.0',
+                galleryRect:document.querySelector('#galleryFromWorld').getBoundingClientRect().toJSON(),
+                countRect:document.querySelector('#protoWorldCount').getBoundingClientRect().toJSON(),
+                soundRect:document.querySelector('#soundToggleButton').getBoundingClientRect().toJSON()
+              }));
+              const overlaps=(a,b)=>a.x<b.right&&a.right>b.x&&a.y<b.bottom&&a.bottom>b.y;
+              note('world-gallery','New world is shown before next calculation, voxel art is active and mobile controls are separated',
+                rewardUX.worldVisible&&rewardUX.hasVoxelScenes&&
+                !overlaps(rewardUX.galleryRect,rewardUX.countRect)&&
+                !overlaps(rewardUX.galleryRect,rewardUX.soundRect)&&
+                !overlaps(rewardUX.countRect,rewardUX.soundRect),
+                JSON.stringify(rewardUX),'critical');
               const switched=await wp.evaluate(()=>window.EDUKASS_WORLD_COLLECTION_QA());
               note('world-gallery','Choosing newly discovered artwork preserves all 62 tiles',
                 switched.active===switched.unlocked[1]&&switched.count===62,
                 JSON.stringify(switched),'critical');
+              await wp.locator('#worldContinue').click();
+              await wp.locator('#train').waitFor({state:'visible'});
               await wp.locator('#back').click();
               await wp.locator('#home').waitFor({state:'visible'});
               await wp.locator('#openWorldGallery').click();
               const twoCount=await wp.locator('#worldGalleryTiles button').count();
               await wp.locator('#worldGalleryTiles button').first().click();
+              await wp.locator('#protoWorld.viewing').waitFor({state:'visible'});
               const returned=await wp.evaluate(()=>window.EDUKASS_WORLD_COLLECTION_QA());
               note('world-gallery','Both designs stay available and first artwork is instantly recoverable',
                 twoCount===2&&returned.active===first.collection.active&&returned.count===62,
