@@ -109,8 +109,11 @@ function checkMethodist() {
   const env = {module: {exports:{}}, console};
   env.globalThis = env;
   vm.createContext(env);
-  vm.runInContext(scripts[0], env, {timeout: 12000});
-  vm.runInContext(scripts[1], env, {timeout: 12000});
+  const engineSource=scripts.find(s=>s.includes('root.EDUKASS_MATH_ENGINE=api'));
+  const adaptiveSource=scripts.find(s=>s.includes('root.EDUKASS_ADAPTIVE=api'));
+  assert(engineSource&&adaptiveSource,'Missing real engine or adaptive script');
+  vm.runInContext(engineSource, env, {timeout: 12000});
+  vm.runInContext(adaptiveSource, env, {timeout: 12000});
   const engine = env.EDUKASS_MATH_ENGINE;
   const adaptive = env.EDUKASS_ADAPTIVE;
   assert(engine && adaptive, 'Math APIs missing');
