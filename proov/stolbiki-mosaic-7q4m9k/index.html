@@ -1214,6 +1214,7 @@ body{background:
       'edukass-columns-player-level',
       'edukass-columns-player-world',
       'edukass-columns-player-world-order-v1',
+      'edukass-columns-world-collection-v1',
       'edukass-columns-full-last-mode',
       'edukass-columns-before-250-boost-v1',
       'edukass-stolbiki-250-math-seed-v1'
@@ -2621,7 +2622,8 @@ body{background:
   function passportSnapshot(){
     return {type:'edukass-passport',v:1,
       savedAt:Date.now(),profile:JSON.parse(JSON.stringify(profile)),
-      world:{count:protoWorldCount,level:protoLevel,order:worldUnlocks().slice(),collection:JSON.parse(JSON.stringify(collection))}};
+      world:{count:protoWorldCount,level:protoLevel,order:worldUnlocks().slice(),
+        collection:JSON.parse(JSON.stringify(collection)),library:JSON.parse(JSON.stringify(library))}};
   }
   function base64Url(bytes){
     let binary='';
@@ -2686,7 +2688,19 @@ body{background:
         }
       }
     }
-    return {profile:safe,world:{count:w.count,level:w.level,order:w.order}};
+    let verifiedLibrary=null;
+    if(w.library?.version===2&&w.library.packs?.length===PACK_IDS.length&&
+       Number.isInteger(w.library.activePack)&&w.library.activePack>=0&&
+       w.library.activePack<PACK_IDS.length&&
+       w.library.packs.every((p,i)=>validPack(p,i)&&
+         (!p.history||(Array.isArray(p.history)&&p.history.length===p.count&&
+           new Set(p.history).size===p.history.length&&
+           p.history.every(k=>Number.isInteger(k)&&k>=0&&k<550))))&&
+       w.library.packs[w.library.activePack].count===w.count){
+      verifiedLibrary=JSON.parse(JSON.stringify(w.library));
+    }
+    return {profile:safe,world:{count:w.count,level:w.level,order:w.order,
+      library:verifiedLibrary,legacyCollection:w.collection}};
   }
   function showPassportDialog(mode){
     passportStatus.textContent='';
@@ -2741,18 +2755,28 @@ body{background:
   }
   function restorePassport(){
     if(!pendingPassport)return;
-    // Explicitly approved replacement; local data is updated together.
     profile=pendingPassport.profile;
     worldOpenedOrder=pendingPassport.world.order.slice();
     protoWorldCount=pendingPassport.world.count;protoLevel=pendingPassport.world.level;
-    const cw=pendingPassport.world.collection;
-    if(cw?.version===1&&Array.isArray(cw.order)&&cw.order.length===WORLDS.length&&
-       new Set(cw.order).size===WORLDS.length&&cw.order.every(id=>WORLDS.some(a=>a.id===id))&&
-       cw.order.includes(cw.active)){
-      collection={version:1,order:cw.order,active:cw.active,noticed:Math.min(10,Math.max(1,Number(cw.noticed)||1))};
-      saveCollection();protoImg.src=activeWorldArt()?.src||PROTO_WORLD_IMG;
+    const incoming=pendingPassport.world;
+    if(incoming.library){
+      library=incoming.library;
+      collection=library.packs[library.activePack];
+    }else{
+      const first=freshCollection();
+      const cw=incoming.legacyCollection;
+      if(cw?.order?.length===10&&cw.order.every(id=>PACK_IDS[0].includes(id))&&
+         cw.order.includes(cw.active)){
+        first.order=cw.order.slice();first.active=cw.active;
+        first.noticed=Math.min(10,Math.max(1,Number(cw.noticed)||1));
+      }
+      first.count=protoWorldCount;
+      library={version:2,activePack:0,packs:[first,...PACK_IDS.slice(1).map((_,i)=>freshCollection(i+1))]};
+      collection=first;
     }
-    save();saveProto();rebuildProtoActive();syncProtoTop();renderProfile();drawHomeWorld();
+    save();saveProto();
+    protoImg.src=activeWorldArt()?.src||PROTO_WORLD_IMG;
+    rebuildProtoActive();syncProtoTop();renderProfile();drawHomeWorld();
     pendingPassport=null;passportDialog.close();showHome({historyMode:'replace'});
   }
   $('#openPassport').addEventListener('click',()=>showPassportDialog('create'));
