@@ -486,6 +486,79 @@ async function checkCompetitor() {
                 kept.tiles===59&&kept.pending===0&&kept.evidence.verified===1,
                 JSON.stringify(kept),'critical');
             }finally{await achievementContext.close()}
+            // Real first-time pupil: a separate browser storage namespace,
+            // random artwork, early 12-tile reward, one offered picture and
+            // persistent switching to the original artwork.
+            const worldContext=await browser.newContext({
+              viewport:{width:390,height:844},isMobile:true,hasTouch:true,serviceWorkers:'block'
+            });
+            try{
+              const wp=await worldContext.newPage();
+              await wp.goto('http://127.0.0.1:'+port+'/proov/stolbiki-mosaic-7q4m9k/index.html?worldTest=1&resetWorldTest=1',
+                {waitUntil:'domcontentloaded',timeout:35000});
+              await wp.waitForFunction(()=>!!window.__EDUKASS_TEST__&&!!window.EDUKASS_WORLD_COLLECTION_QA);
+              const first=await wp.evaluate(()=>({
+                collection:window.EDUKASS_WORLD_COLLECTION_QA(),
+                math:window.__EDUKASS_TEST__.getState().profile,
+                original:localStorage.getItem('edukass_stolbiki_player_profile_v42')
+              }));
+              note('world-gallery','First-time test has ten real worlds, a randomly selected first artwork and zero external storage modification',
+                first.collection.count===50&&first.collection.order.length===10&&
+                first.collection.unlocked.length===1&&first.collection.introSeparate&&
+                first.collection.studentIsolated&&first.original===null&&
+                Object.values(first.math).every(x=>x.frontier.endsWith('1')),
+                JSON.stringify({scene:first.collection,original:first.original}),'critical');
+              await wp.locator('#introPlay').click();
+              await wp.locator('#openWorldGallery').click();
+              await wp.locator('#worldGalleryDialog[open]').waitFor({state:'visible'});
+              const soloCount=await wp.locator('#worldGalleryTiles button').count();
+              note('world-gallery','Before first reward gallery reveals only original pupil artwork',
+                soloCount===1,String(soloCount),'critical');
+              await wp.locator('#galleryClose').click();
+              await wp.evaluate(()=>{
+                const p=window.EDUKASS_ADAPTIVE.createProfile();
+                p.ops.add.skills.A1.attempts=5;
+                localStorage.setItem('edukass-world-student-test-v1:edukass_stolbiki_player_profile_v42',JSON.stringify(p));
+              });
+              await wp.reload({waitUntil:'domcontentloaded'});
+              await wp.waitForFunction(()=>!!window.__EDUKASS_TEST__&&!!window.EDUKASS_WORLD_COLLECTION_QA);
+              await wp.locator('#introPlay').click();
+              await wp.locator('.continue-play').click();
+              await wp.locator('#protoWorld.on').waitFor({state:'visible',timeout:6000});
+              await wp.locator('#pc0').waitFor({state:'visible',timeout:6000});
+              await wp.locator('#pc0').click();
+              await wp.waitForFunction(()=>window.__EDUKASS_TEST__.getRealWorldProgress().tiles===62,{timeout:10000});
+              await wp.locator('#worldNewDialog[open]').waitFor({state:'visible',timeout:8000});
+              const offered=await wp.evaluate(()=>({
+                collection:window.EDUKASS_WORLD_COLLECTION_QA(),
+                world:window.__EDUKASS_TEST__.getRealWorldProgress(),
+                offer:document.querySelector('#worldNewTitle').textContent
+              }));
+              note('world-gallery','First five problems grow world by twelve tiles and unlock exactly one new random scene',
+                offered.world.tiles===62&&offered.collection.unlocked.length===2&&
+                offered.collection.notice===2&&offered.offer.includes('Avastasid:'),
+                JSON.stringify(offered),'critical');
+              await wp.locator('#tryNewWorld').click();
+              const switched=await wp.evaluate(()=>window.EDUKASS_WORLD_COLLECTION_QA());
+              note('world-gallery','Choosing newly discovered artwork preserves all 62 tiles',
+                switched.active===switched.unlocked[1]&&switched.count===62,
+                JSON.stringify(switched),'critical');
+              await wp.locator('#back').click();
+              await wp.locator('#home').waitFor({state:'visible'});
+              await wp.locator('#openWorldGallery').click();
+              const twoCount=await wp.locator('#worldGalleryTiles button').count();
+              await wp.locator('#worldGalleryTiles button').first().click();
+              const returned=await wp.evaluate(()=>window.EDUKASS_WORLD_COLLECTION_QA());
+              note('world-gallery','Both designs stay available and first artwork is instantly recoverable',
+                twoCount===2&&returned.active===first.collection.active&&returned.count===62,
+                JSON.stringify(returned),'critical');
+              await wp.reload({waitUntil:'domcontentloaded'});
+              const persisted=await wp.evaluate(()=>window.EDUKASS_WORLD_COLLECTION_QA());
+              note('world-gallery','Same randomized order, selected picture and opening count survive reload',
+                persisted.active===returned.active&&persisted.count===62&&
+                persisted.order.every((id,i)=>id===first.collection.order[i]),
+                JSON.stringify(persisted),'critical');
+            }finally{await worldContext.close()}
             // Cross-device passport: use an independently isolated browser context.
             await guest.evaluate(()=>{
               const key='edukass_stolbiki_player_profile_v42',p=JSON.parse(localStorage.getItem(key));
