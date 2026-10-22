@@ -403,6 +403,7 @@ body{background:
 @media(max-width:370px){.world-replay,.world-skip{font-size:11px;padding:9px}}
 .world-timelapse-caption{position:absolute;z-index:7;left:50%;top:60px;transform:translateX(-50%);color:#fff;font-size:14px;font-weight:900;text-shadow:0 2px 8px #0c2442;text-align:center;white-space:nowrap;display:none}
 .proto-world.viewing .world-timelapse-caption:not(.hidden){display:block}
+.proto-world.on:not(.viewing) .world-timelapse-caption:not(.hidden){display:block;top:48px;font-size:12px;max-width:80%;white-space:normal}
 
 .home-share-tools{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0}
 .home-share-button{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:32px;padding:5px 12px;border:1px solid rgba(74,115,158,.24);border-radius:999px;background:linear-gradient(145deg,#fff,#e7f6fa);box-shadow:0 4px 12px rgba(19,52,87,.1);font-size:12px;font-weight:900;letter-spacing:.035em;color:#245277;cursor:pointer}
@@ -1002,9 +1003,15 @@ body{background:
   if(!MathEngine) throw new Error('Math engine required');
   const META={add:{prefix:'A',max:10,start:1},sub:{prefix:'S',max:12,start:1},mul:{prefix:'M',max:14,start:1},div:{prefix:'D',max:16,start:1}};
   const DAY=86400000;
-  function blankSkill(){return{attempts:0,firstTry:0,errors:0,assisted:0,totalMs:0,cleanStreak:0,mastered:false,reviewStage:0,nextReviewAt:0,lastSeenAt:0}}
+  function blankSkill(){return{attempts:0,firstTry:0,errors:0,assisted:0,totalMs:0,cleanStreak:0,mastered:false,verified:false,reviewStage:0,nextReviewAt:0,lastSeenAt:0}}
   function createProfile(){const p={version:42,sessionNo:0,ops:{}};for(const [op,m] of Object.entries(META)){const skills={};for(let i=1;i<=m.max;i++)skills[m.prefix+i]=blankSkill();p.ops[op]={frontier:m.start,diagnostic:false,baselineMs:0,baselineSamples:0,skills}}return p}
-  function normalizeProfile(raw){if(!raw||raw.version!==42)return createProfile();for(const [op,m] of Object.entries(META)){raw.ops??={};raw.ops[op]??={frontier:m.start,diagnostic:false,baselineMs:0,baselineSamples:0,skills:{}};for(let i=1;i<=m.max;i++){const k=m.prefix+i;raw.ops[op].skills[k]=Object.assign(blankSkill(),raw.ops[op].skills[k]||{})}}return raw}
+  function normalizeProfile(raw){if(!raw||raw.version!==42)return createProfile();for(const [op,m] of Object.entries(META)){raw.ops??={};raw.ops[op]??={frontier:m.start,diagnostic:false,baselineMs:0,baselineSamples:0,skills:{}};for(let i=1;i<=m.max;i++){const k=m.prefix+i,old=raw.ops[op].skills[k]||{};
+      raw.ops[op].skills[k]=Object.assign(blankSkill(),old);
+      // A pre-upgrade pupil's real, spaced, verified evidence is preserved.
+      if(!('verified' in old)){
+        const sk=raw.ops[op].skills[k];
+        sk.verified=Boolean(sk.mastered&&sk.reviewStage>=3&&sk.firstTry>=3&&sk.firstTry/Math.max(1,sk.attempts)>=0.70);
+      }}}return raw}
   function opFromSkill(skill){return skill[0]==='A'?'add':skill[0]==='S'?'sub':skill[0]==='M'?'mul':'div'}
   function levelFromSkill(skill){return Number(skill.slice(1))}
   function skillFor(op,level){return META[op].prefix+Math.max(1,Math.min(META[op].max,level))}
@@ -1059,6 +1066,11 @@ body{background:
       if(level===state.frontier&&s.attempts>=4&&rate<0.6&&state.frontier>1)state.frontier--;
     }
     if(s.mastered&&independent){const days=[1,3,7,21][Math.min(3,s.reviewStage-1)];s.nextReviewAt=session.now+days*DAY;if(s.reviewStage<4)s.reviewStage++}
+    // Only an independently successful repeat after progression can confirm
+    // a skill. Once earned, its world bonus is irrevocable; later errors
+    // trigger additional learning, not removal of earned artwork.
+    if(s.mastered&&s.reviewStage>=3&&s.firstTry>=3&&
+       s.firstTry/Math.max(1,s.attempts)>=.70)s.verified=true;
     session.answered++;session.history.push({op,skill,firstTry:independent,errors,assisted,ms,frontier:state.frontier});
   }
   function shouldFinish(session){const dueSoon=session.retryQueue.some(x=>x.dueAt<=session.index+1);return session.answered>=session.baseTarget&&!dueSoon||session.answered>=session.baseTarget+session.maxExtra}
@@ -1603,11 +1615,7 @@ body{background:
         solved+=Math.max(0,Number(skill.attempts)||0);
         if(skill.mastered){
           provisional++;
-          const reliable=skill.reviewStage>=3&&skill.firstTry>=3&&
-            skill.firstTry/Math.max(1,skill.attempts)>=0.70&&
-            // A further independent response after initial advancement.
-            skill.assisted<skill.attempts;
-          if(reliable){verified++;opVerified++}
+          if(skill.verified){verified++;opVerified++}
         }
       }
       ops[op]=opVerified;
@@ -2214,6 +2222,9 @@ body{background:
         const id=meta.prefix+n,inSkill=incoming.skills[id];
         if(!inSkill||typeof inSkill.mastered!=='boolean')throw Error('Salvestus on vigane');
         const dest=target.skills[id];dest.mastered=inSkill.mastered;
+        dest.verified=typeof inSkill.verified==='boolean'?inSkill.verified:
+          Boolean(inSkill.mastered&&inSkill.reviewStage>=3&&inSkill.firstTry>=3&&
+            inSkill.firstTry/Math.max(1,inSkill.attempts)>=.70);
         for(const field of numericSkill){
           const val=inSkill[field];
           if(typeof val!=='number'||!Number.isFinite(val)||val<0||val>1e15)throw Error('Salvestus on vigane');
