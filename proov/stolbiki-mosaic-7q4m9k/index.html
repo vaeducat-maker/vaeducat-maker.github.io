@@ -497,6 +497,26 @@ body{background:
   <link rel="preload" href="/games/korrutamine-test/assets/edukass-cat-transparent.png" as="image" fetchpriority="high">
 
 <script src="/proov/stolbiki-mosaic-7q4m9k/worlds-collections-v2.js"></script>
+<script src="/proov/stolbiki-mosaic-7q4m9k/approved-pack-1.js"></script>
+<script src="/proov/stolbiki-mosaic-7q4m9k/approved-pack-2.js"></script>
+<script src="/proov/stolbiki-mosaic-7q4m9k/approved-pack-3.js"></script>
+<script src="/proov/stolbiki-mosaic-7q4m9k/approved-pack-4.js"></script>
+<script src="/proov/stolbiki-mosaic-7q4m9k/approved-pack-5.js"></script>
+<script>
+/* The approved, detailed concept art is the ACTUAL game art.
+   The lightweight block SVG art was only a temporary placeholder. */
+(function(){
+  const approved=window.EDUKASS_APPROVED_IMAGES||{};
+  let applied=0;
+  (window.EDUKASS_WORLD_ART||[]).forEach(world=>{
+    const art=approved[world.id];
+    if(!art)return;
+    world.src=art.src; world.name=art.name; applied++;
+  });
+  window.EDUKASS_VOXEL_ART_VERSION='3.0-approved-concept-art';
+  window.EDUKASS_APPROVED_ART_COUNT=applied;
+})();
+</script>
 
 </head>
 <body>
