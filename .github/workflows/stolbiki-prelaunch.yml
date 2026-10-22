@@ -7,6 +7,7 @@ on:
     paths:
       - 'scripts/stolbiki-prelaunch-audit.js'
       - 'scripts/stolbiki-pedagogy-gate.js'
+      - 'scripts/stolbiki-world-simulation.js'
       - 'proov/stolbiki-mosaic-7q4m9k/index.html'
       - 'proov/stolbiki-250/index.html'
       - '.github/workflows/stolbiki-prelaunch.yml'
@@ -29,6 +30,9 @@ jobs:
       - name: Run independent pedagogical gate before browser tests
         run: node scripts/stolbiki-pedagogy-gate.js
 
+      - name: Verify educational world progression for three simulated pupil profiles
+        run: node scripts/stolbiki-world-simulation.js
+
       - name: Validate audit script syntax before downloading Chromium
         run: node --check scripts/stolbiki-prelaunch-audit.js
       - name: Install isolated Chromium test environment
@@ -46,6 +50,7 @@ jobs:
           path: |
             artifacts/stolbiki-prelaunch/
             artifacts/stolbiki-pedagogy/
+            artifacts/stolbiki-world-balance/
           if-no-files-found: warn
           retention-days: 30
       - name: Add human-readable release gate to GitHub summary
