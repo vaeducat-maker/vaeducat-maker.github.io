@@ -1730,7 +1730,7 @@ body{background:
     if(op==='div'){
       const q=Math.floor(a/b),aText=String(a);
       if(level<=6&&(a%10===0||q===11||q===111))return true;
-      if(level<=6&&/^(\\d)\\1+$/.test(aText))return true;
+      if(level<=6&&aText.length>=2&&[...aText].every(d=>d===aText[0]))return true;
       // Once a carry/remainder technique is being learned, examples without
       // that technique don't qualify, regardless of cosmetic number changes.
       if(level>=2&&level<=6&&t.meta.intermediateNonZeroRemainders===0&&(level===2||level===4||level===6))return true;
