@@ -11,7 +11,12 @@ permissions:
   contents: read
 
 jobs:
+  # A publication must never race ahead of the quality audit.
+  # This calls the independent, reusable acceptance workflow for the same SHA.
+  quality-gate:
+    uses: ./.github/workflows/quality-gate.yml
   deploy:
+    needs: quality-gate
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
