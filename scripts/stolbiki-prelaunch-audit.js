@@ -559,7 +559,7 @@ async function checkCompetitor() {
               await wp.locator('#worldContinue').waitFor({state:'visible'});
               const rewardUX=await wp.evaluate(()=>({
                 worldVisible:document.querySelector('#protoWorld').classList.contains('viewing'),
-                hasVoxelScenes:window.EDUKASS_VOXEL_ART_VERSION==='1.0',
+                hasVoxelScenes:window.EDUKASS_VOXEL_ART_VERSION==='2.0-50-worlds',
                 galleryRect:document.querySelector('#galleryFromWorld').getBoundingClientRect().toJSON(),
                 countRect:document.querySelector('#protoWorldCount').getBoundingClientRect().toJSON(),
                 soundRect:document.querySelector('#soundToggleButton').getBoundingClientRect().toJSON()
@@ -593,6 +593,38 @@ async function checkCompetitor() {
                 persisted.active===returned.active&&persisted.count===62&&
                 persisted.order.every((id,i)=>id===first.collection.order[i]),
                 JSON.stringify(persisted),'critical');
+              // Owner-only, isolated fast-forward: verify five independent
+              // collections and preservation of the school arithmetic profile.
+              await wp.locator('#introPlay').isVisible().then(async visible=>{
+                if(visible)await wp.locator('#introPlay').click();
+              });
+              await wp.locator('#openWorldGallery').click();
+              const fivePackLog=[];
+              for(let pk=2;pk<=5;pk++){
+                await wp.locator('#worldQANextPack').click();
+                await wp.locator('#protoWorld.viewing').waitFor({state:'visible'});
+                const pack=await wp.evaluate(()=>window.EDUKASS_WORLD_COLLECTION_QA());
+                fivePackLog.push({index:pack.activePack,tiles:pack.count,
+                  history:pack.packCounts.slice(),all:pack.totalWorlds,packs:pack.packIds});
+                if(pk<5)await wp.locator('#galleryFromWorld').click();
+              }
+              const afterPacks=await wp.evaluate(()=>({
+                state:window.EDUKASS_WORLD_COLLECTION_QA(),
+                math:window.__EDUKASS_TEST__.getState().profile
+              }));
+              note('world-gallery','Five different sets of ten scenes restart at 50 tiles and archive previous 550 pieces',
+                fivePackLog.length===4&&fivePackLog.every((p,i)=>
+                  p.index===i+2&&p.tiles===50&&p.all===50&&p.packs.every(n=>n===10)&&
+                  p.history.slice(0,i+1).every(n=>n===550))&&
+                Object.values(afterPacks.math).every(x=>x.frontier.endsWith('1')),
+                JSON.stringify(fivePackLog),'critical');
+              await wp.reload({waitUntil:'domcontentloaded'});
+              const persistPacks=await wp.evaluate(()=>window.EDUKASS_WORLD_COLLECTION_QA());
+              note('world-gallery','Entire archived library stays safe after reload',
+                persistPacks.activePack===5&&persistPacks.count===50&&
+                persistPacks.packCounts.slice(0,4).every(n=>n===550)&&
+                persistPacks.totalWorlds===50,
+                JSON.stringify(persistPacks),'critical');
             }finally{await worldContext.close()}
             // Cross-device passport: use an independently isolated browser context.
             await guest.evaluate(()=>{
