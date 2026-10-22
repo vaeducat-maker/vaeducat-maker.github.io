@@ -16,7 +16,7 @@ const pageFile = path.resolve(root, 'proov/stolbiki-mosaic-7q4m9k/index.html');
 const reportDir = path.resolve(root, 'artifacts/stolbiki-prelaunch');
 fs.mkdirSync(reportDir, { recursive: true });
 const html = fs.readFileSync(pageFile, 'utf8');
-const scripts = [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)].map(m => m[1]);
+const scripts = [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)].map(m => m[1]).filter(Boolean);
 const checks = [];
 const note = (role, name, ok, detail = '', severity = 'major') => {
   checks.push({role, name, passed: !!ok, detail: String(detail), severity});
