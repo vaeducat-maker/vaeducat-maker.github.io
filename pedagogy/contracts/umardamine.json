@@ -1,0 +1,475 @@
+{
+  "schema_version": 1,
+  "status": "planned",
+  "trainer_id": "umardamine",
+  "subject": "mathematics",
+  "title_et": "Ümardamine",
+  "purpose_ru": "Ученик самостоятельно округляет ранее не встречавшиеся натуральные числа до указанного разряда от десятков до миллиардов, включая серединные и переходные случаи.",
+  "entry_requirements": [
+    "Разрядный состав десятичной записи натуральных чисел",
+    "Сравнение соседних кратных 10, 100, 1000"
+  ],
+  "learning_evidence_ru": "Обобщённый навык подтверждается ответами без подсказки на новых числах и в разных целевых разрядах, а не только количеством повторов.",
+  "mastery_policy": {
+    "kind": "draft_subject_to_testing",
+    "initial_diagnostic": true,
+    "unseen_transfer": true,
+    "delayed_retention_check": true,
+    "note_ru": "Порог и длина контрольных сессий утверждать по результатам тестов. Не объявлять освоение после одной правильной задачи."
+  },
+  "task_contract": {
+    "mandatory_fields": [
+      "skill_id",
+      "case_type",
+      "question",
+      "expected_answer",
+      "signature"
+    ],
+    "rounding_convention": "nearest integer multiple of the requested power of 10; ties 5 round upward for nonnegative integers",
+    "target_unit_is_power_of_ten": true
+  },
+  "stages": [
+    {
+      "id": "R1",
+      "name_ru": "До десятков",
+      "targets": [
+        10
+      ],
+      "case_types": [
+        "below_half",
+        "exact_half",
+        "above_half",
+        "already_multiple",
+        "carry_to_next_hundred"
+      ],
+      "examples": [
+        {
+          "value": 42,
+          "unit": 10,
+          "answer": 40,
+          "case_type": "below_half"
+        },
+        {
+          "value": 45,
+          "unit": 10,
+          "answer": 50,
+          "case_type": "exact_half"
+        },
+        {
+          "value": 47,
+          "unit": 10,
+          "answer": 50,
+          "case_type": "above_half"
+        },
+        {
+          "value": 40,
+          "unit": 10,
+          "answer": 40,
+          "case_type": "already_multiple"
+        },
+        {
+          "value": 95,
+          "unit": 10,
+          "answer": 100,
+          "case_type": "carry_to_next_hundred"
+        }
+      ]
+    },
+    {
+      "id": "R2",
+      "name_ru": "До сотен",
+      "targets": [
+        100
+      ],
+      "case_types": [
+        "below_half",
+        "exact_half",
+        "above_half",
+        "already_multiple",
+        "carry_to_next_thousand"
+      ],
+      "examples": [
+        {
+          "value": 149,
+          "unit": 100,
+          "answer": 100,
+          "case_type": "below_half"
+        },
+        {
+          "value": 150,
+          "unit": 100,
+          "answer": 200,
+          "case_type": "exact_half"
+        },
+        {
+          "value": 178,
+          "unit": 100,
+          "answer": 200,
+          "case_type": "above_half"
+        },
+        {
+          "value": 300,
+          "unit": 100,
+          "answer": 300,
+          "case_type": "already_multiple"
+        },
+        {
+          "value": 950,
+          "unit": 100,
+          "answer": 1000,
+          "case_type": "carry_to_next_thousand"
+        }
+      ]
+    },
+    {
+      "id": "R3",
+      "name_ru": "До тысяч",
+      "targets": [
+        1000
+      ],
+      "case_types": [
+        "below_half",
+        "exact_half",
+        "above_half",
+        "already_multiple",
+        "carry_to_next_ten_thousand"
+      ],
+      "examples": [
+        {
+          "value": 1499,
+          "unit": 1000,
+          "answer": 1000,
+          "case_type": "below_half"
+        },
+        {
+          "value": 1500,
+          "unit": 1000,
+          "answer": 2000,
+          "case_type": "exact_half"
+        },
+        {
+          "value": 1765,
+          "unit": 1000,
+          "answer": 2000,
+          "case_type": "above_half"
+        },
+        {
+          "value": 5000,
+          "unit": 1000,
+          "answer": 5000,
+          "case_type": "already_multiple"
+        },
+        {
+          "value": 9500,
+          "unit": 1000,
+          "answer": 10000,
+          "case_type": "carry_to_next_ten_thousand"
+        }
+      ]
+    },
+    {
+      "id": "R4",
+      "name_ru": "До десятков и сотен тысяч",
+      "targets": [
+        10000,
+        100000
+      ],
+      "case_types": [
+        "below_half",
+        "exact_half",
+        "above_half",
+        "large_carry",
+        "internal_zeros"
+      ],
+      "examples": [
+        {
+          "value": 149999,
+          "unit": 100000,
+          "answer": 100000,
+          "case_type": "below_half"
+        },
+        {
+          "value": 150000,
+          "unit": 100000,
+          "answer": 200000,
+          "case_type": "exact_half"
+        },
+        {
+          "value": 176543,
+          "unit": 100000,
+          "answer": 200000,
+          "case_type": "above_half"
+        },
+        {
+          "value": 995000,
+          "unit": 10000,
+          "answer": 1000000,
+          "case_type": "large_carry"
+        },
+        {
+          "value": 201003,
+          "unit": 10000,
+          "answer": 200000,
+          "case_type": "internal_zeros"
+        }
+      ]
+    },
+    {
+      "id": "R5",
+      "name_ru": "До миллионов",
+      "targets": [
+        1000000
+      ],
+      "case_types": [
+        "below_half",
+        "exact_half",
+        "above_half",
+        "carry_to_ten_millions",
+        "internal_zeros"
+      ],
+      "examples": [
+        {
+          "value": 1499999,
+          "unit": 1000000,
+          "answer": 1000000,
+          "case_type": "below_half"
+        },
+        {
+          "value": 1500000,
+          "unit": 1000000,
+          "answer": 2000000,
+          "case_type": "exact_half"
+        },
+        {
+          "value": 1789012,
+          "unit": 1000000,
+          "answer": 2000000,
+          "case_type": "above_half"
+        },
+        {
+          "value": 9500000,
+          "unit": 1000000,
+          "answer": 10000000,
+          "case_type": "carry_to_ten_millions"
+        },
+        {
+          "value": 6000341,
+          "unit": 1000000,
+          "answer": 6000000,
+          "case_type": "internal_zeros"
+        }
+      ]
+    },
+    {
+      "id": "R6",
+      "name_ru": "До десятков и сотен миллионов",
+      "targets": [
+        10000000,
+        100000000
+      ],
+      "case_types": [
+        "below_half",
+        "exact_half",
+        "above_half",
+        "large_carry",
+        "internal_zeros"
+      ],
+      "examples": [
+        {
+          "value": 149999999,
+          "unit": 100000000,
+          "answer": 100000000,
+          "case_type": "below_half"
+        },
+        {
+          "value": 150000000,
+          "unit": 100000000,
+          "answer": 200000000,
+          "case_type": "exact_half"
+        },
+        {
+          "value": 187654321,
+          "unit": 100000000,
+          "answer": 200000000,
+          "case_type": "above_half"
+        },
+        {
+          "value": 995000000,
+          "unit": 10000000,
+          "answer": 1000000000,
+          "case_type": "large_carry"
+        },
+        {
+          "value": 406000012,
+          "unit": 10000000,
+          "answer": 410000000,
+          "case_type": "internal_zeros"
+        }
+      ]
+    },
+    {
+      "id": "R7",
+      "name_ru": "До миллиардов",
+      "targets": [
+        1000000000
+      ],
+      "case_types": [
+        "below_half",
+        "exact_half",
+        "above_half",
+        "carry_into_billions",
+        "already_multiple"
+      ],
+      "examples": [
+        {
+          "value": 1499999999,
+          "unit": 1000000000,
+          "answer": 1000000000,
+          "case_type": "below_half"
+        },
+        {
+          "value": 1500000000,
+          "unit": 1000000000,
+          "answer": 2000000000,
+          "case_type": "exact_half"
+        },
+        {
+          "value": 1799999999,
+          "unit": 1000000000,
+          "answer": 2000000000,
+          "case_type": "above_half"
+        },
+        {
+          "value": 999999999,
+          "unit": 1000000000,
+          "answer": 1000000000,
+          "case_type": "carry_into_billions"
+        },
+        {
+          "value": 3000000000,
+          "unit": 1000000000,
+          "answer": 3000000000,
+          "case_type": "already_multiple"
+        }
+      ]
+    },
+    {
+      "id": "R8",
+      "name_ru": "Смешанное применение",
+      "targets": [
+        10,
+        100,
+        1000,
+        10000,
+        100000,
+        1000000,
+        10000000,
+        100000000,
+        1000000000
+      ],
+      "case_types": [
+        "varied_target_same_number",
+        "unseen_boundary",
+        "nearby_values_opposite_rounding",
+        "mixed_digit_lengths"
+      ],
+      "examples": [
+        {
+          "value": 1465,
+          "unit": 10,
+          "answer": 1470,
+          "case_type": "varied_target_same_number"
+        },
+        {
+          "value": 1465,
+          "unit": 100,
+          "answer": 1500,
+          "case_type": "varied_target_same_number"
+        },
+        {
+          "value": 1465,
+          "unit": 1000,
+          "answer": 1000,
+          "case_type": "varied_target_same_number"
+        },
+        {
+          "value": 950000000,
+          "unit": 100000000,
+          "answer": 1000000000,
+          "case_type": "unseen_boundary"
+        },
+        {
+          "value": 149,
+          "unit": 100,
+          "answer": 100,
+          "case_type": "nearby_values_opposite_rounding"
+        },
+        {
+          "value": 150,
+          "unit": 100,
+          "answer": 200,
+          "case_type": "nearby_values_opposite_rounding"
+        },
+        {
+          "value": 1787654321,
+          "unit": 10000,
+          "answer": 1787650000,
+          "case_type": "mixed_digit_lengths"
+        }
+      ]
+    }
+  ],
+  "common_misconceptions": [
+    "Смотрит на цифру округляемого разряда вместо следующей справа",
+    "Всегда округляет вверх при любой ненулевой последующей цифре",
+    "Не переносит разряд через цифру 9",
+    "Путает число и целевой разряд",
+    "Ошибается на границе ровно 5 или при точном кратном разряду"
+  ],
+  "negative_controls": [
+    {
+      "id": "one_side_only",
+      "examples": [
+        "42→40",
+        "43→40",
+        "44→40",
+        "41→40"
+      ],
+      "why_ru": "Повторяются случаи округления вниз; нет середины, вверх и переходов"
+    },
+    {
+      "id": "all_easy",
+      "examples": [
+        "20→20",
+        "30→30",
+        "40→40",
+        "50→50"
+      ],
+      "why_ru": "Нет новой мыслительной операции"
+    },
+    {
+      "id": "no_boundary",
+      "examples": [
+        "21→20",
+        "22→20",
+        "23→20"
+      ],
+      "why_ru": "Нет сложных и пограничных случаев"
+    },
+    {
+      "id": "premature_mastery",
+      "examples": [
+        "один верный ответ и сразу «освоил»"
+      ],
+      "why_ru": "Навык не подтверждён на новых заданиях"
+    }
+  ],
+  "release_evidence": [
+    "Все учебные case_type реально представлены в генерируемых примерах",
+    "Проверка ответа независимой реализацией",
+    "Нет длинных механических серий с одинаковой структурой",
+    "Независимый аудит умеет отвергать negative_controls",
+    "Моделируются успешный, испытывающий трудности и неравномерно подготовленный ученик",
+    "Итоговая проверка использует новые числа"
+  ]
+}
