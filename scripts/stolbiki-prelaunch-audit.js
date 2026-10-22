@@ -12,7 +12,7 @@ const vm = require('node:vm');
 const { chromium } = require('playwright');
 
 const root = path.resolve(__dirname, '..');
-const pageFile = path.resolve(root, 'proov/stolbiki-250/index.html');
+const pageFile = path.resolve(root, 'proov/stolbiki-mosaic-7q4m9k/index.html');
 const reportDir = path.resolve(root, 'artifacts/stolbiki-prelaunch');
 fs.mkdirSync(reportDir, { recursive: true });
 const html = fs.readFileSync(pageFile, 'utf8');
@@ -27,6 +27,81 @@ const screenshot = async (page, name) => {
   try { await page.screenshot({ path: path.join(reportDir, name + '.png'), fullPage: true, timeout: 15000 }); }
   catch (e) { note('competitor', 'Screenshot ' + name, false, e.message, 'minor'); }
 };
+
+// INDEPENDENT educational contract. Never import the game's unhelpfulRoutine:
+// a faulty generator must not be allowed to certify itself.
+function classroomAudit(sample) {
+  const level=Number(sample.skill.slice(1)),{op,a,b}=sample;
+  const str=String(a),digits=[...str];
+  const repeatedDividend=digits.length>1&&digits.every(x=>x===digits[0]);
+  let ban='';
+  if(op==='div'&&level<=6) {
+    if(repeatedDividend)ban='repeated-digit mental division';
+    else if(a%10===0)ban='round-ten shortcut';
+    else if(a/b===11||a/b===111)ban='eleven-times table shortcut';
+    else if(a%b!==0&&level<=6)ban='unintended remainder at entry';
+  }
+  if(op==='mul'&&level<=5&&(a%10===0||b===1||b===2))ban='mental multiplication shortcut';
+  if(op==='sub'&&level<=4&&(b<10||a-b<12||a%10===0))ban='mental subtraction shortcut';
+  if(op==='add'&&level<=3&&(a%10===0||b%10===0||a===b))ban='mental addition shortcut';
+  // Stage one is foundational demonstration: acceptable very briefly, not
+  // as the dominant work in a quarter-hour session.
+  const warmup=level===1;
+  return {ban,warmup};
+}
+function independentClassroomReview(lessons) {
+  // Demonstrate that the reviewer can actually reject known wrong behavior.
+  const badExamples=[
+    {op:'div',skill:'D1',a:66,b:6},
+    {op:'div',skill:'D1',a:77,b:7},
+    {op:'div',skill:'D1',a:88,b:8},
+    {op:'div',skill:'D1',a:80,b:2},
+    {op:'div',skill:'D1',a:77,b:11},
+    {op:'mul',skill:'M1',a:20,b:4},
+    {op:'sub',skill:'S1',a:89,b:4}
+  ];
+  note('independent-methodist','Known bad examples are rejected by independent rules',
+    badExamples.every(t=>classroomAudit(t).ban),
+    JSON.stringify(badExamples.map(t=>t.a+':'+t.b+' → '+classroomAudit(t).ban)),'critical');
+  const poor=[],slow=[],noProgress=[],boring=[];
+  const generated=[];
+  for(const entry of lessons){
+    const rows=entry.tasks;
+    for(const t of rows){
+      const q=classroomAudit(t);
+      if(q.ban)poor.push(entry.kind+' '+t.skill+' '+t.a+':'+t.b+' '+q.ban);
+    }
+    if(entry.kind==='fluent'){
+      const warmups=rows.filter(x=>classroomAudit(x).warmup).length;
+      const lateWarmups=rows.slice(28).filter(x=>classroomAudit(x).warmup).length;
+      if(warmups>8||lateWarmups>0)slow.push(entry.name+': '+warmups+' warmups, '+lateWarmups+' after task 28');
+      for(const op of ['add','sub','mul','div']){
+        const opRows=rows.filter(x=>x.op===op);
+        const levels=new Set(opRows.map(x=>x.skill));
+        if(levels.size<4)noProgress.push(entry.name+' '+op+' '+[...levels].join(','));
+        for(let i=3;i<opRows.length;i++){
+          const last4=opRows.slice(i-3,i+1);
+          if(last4.every(t=>t.skill===last4[0].skill)&&i>4)boring.push(entry.name+' '+op+' stuck at '+last4[0].skill);
+        }
+      }
+    }
+    generated.push({
+      scenario:entry.name,kind:entry.kind,total:rows.length,
+      stages:Object.fromEntries(['add','sub','mul','div'].map(op=>[op,[...new Set(rows.filter(t=>t.op===op).map(t=>t.skill))]])),
+      first24:rows.slice(0,24).map(t=>t.a+({add:'+',sub:'-',mul:'×',div:':'}[t.op])+t.b),
+      last16:rows.slice(-16).map(t=>t.a+({add:'+',sub:'-',mul:'×',div:':'}[t.op])+t.b)
+    });
+  }
+  note('independent-methodist','Actual player sessions contain no blacklisted mental-arithmetic examples',
+    poor.length===0,'failures '+poor.length+': '+poor.slice(0,10).join('; '),'critical');
+  note('independent-methodist','Fluent pupils never spend an entire lesson on starter exercises',
+    slow.length===0,'failures '+slow.length+': '+slow.slice(0,8).join('; '),'critical');
+  note('independent-methodist','All four operations develop at least four skills in each fluent simulation',
+    noProgress.length===0,'failures '+noProgress.length+': '+noProgress.slice(0,8).join('; '),'critical');
+  note('independent-methodist','Fluent lessons cannot linger on one pattern in four consecutive tasks after warmup',
+    boring.length===0,'failures '+boring.length+': '+boring.slice(0,8).join('; '),'critical');
+  fs.writeFileSync(path.join(reportDir,'classroom-simulations.json'),JSON.stringify({generated,issues:{poor,slow,noProgress,boring}},null,2));
+}
 
 function checkMethodist() {
   assert(scripts.length >= 3, 'Embedded math and game scripts missing');
@@ -45,12 +120,12 @@ function checkMethodist() {
   let total = 0, invalid = [], badArithmetic = [], badRemainder = [];
   const byOperation = {};
   for (const skill of skills) {
-    const count = 36;
+    const count = 160;
     const op = skill[0];
     byOperation[op] = (byOperation[op] || 0) + count;
     for (let i = 0; i < count; i++) {
       total++;
-      const sample = engine.generateSkill(skill, ((Date.now() + i * 1664525 + skill.charCodeAt(0)*98711 + Number(skill.slice(1))*1013904223) >>> 0) || 1);
+      const sample = engine.generateSkill(skill, ((911827 + i * 1664525 + skill.charCodeAt(0)*98711 + Number(skill.slice(1))*1013904223) >>> 0) || 1);
       if (!engine.validateSkill(sample)) invalid.push(skill + ' ' + sample.a + ',' + sample.b);
       const {a,b,meta} = sample;
       if (sample.op === 'add' && a + b !== meta.sum) badArithmetic.push(skill);
@@ -255,6 +330,32 @@ async function checkCompetitor() {
               pedagogy.mix.some(t=>t.op==='div'&&Number(t.skill.slice(1))>=4)&&
               pedagogy.mix.some(t=>t.op==='mul'&&Number(t.skill.slice(1))>=4),
               JSON.stringify(pedagogy.mix.slice(0,24)),'critical');
+            // Run the actual player generator + adaptive policy over complete lessons.
+            // Judgment is performed OUTSIDE the player, against a separate rubric.
+            const classroomLessons=await guest.evaluate(()=>{
+              const T=window.__EDUKASS_TEST__,A=window.EDUKASS_ADAPTIVE;
+              function rngMaker(seed){
+                let n=seed>>>0;
+                return ()=>{n=(Math.imul(n,1664525)+1013904223)>>>0;return n/4294967296};
+              }
+              const out=[];
+              for(const kind of ['fluent','struggling','uneven']){
+                for(let run=0;run<16;run++){
+                  const random=rngMaker(500+run*43),p=A.createProfile();
+                  const s=A.createSession(p,'mix',random,Date.now()),tasks=[];
+                  for(let i=0;i<88;i++){
+                    const assignment=A.nextAssignment(s);
+                    const task=T.challenge.generate(assignment.skill,run*100000+i*139+71);
+                    const firstTry=kind==='fluent'||kind==='uneven'&&assignment.op==='add'||(kind==='struggling'&&i%7===0);
+                    tasks.push({op:assignment.op,skill:assignment.skill,a:task.a,b:task.b});
+                    A.recordResult(s,assignment,{firstTry,errors:firstTry?0:1,ms:12000,assisted:!firstTry});
+                  }
+                  out.push({kind,name:kind+'-'+run,tasks});
+                }
+              }
+              return out;
+            });
+            independentClassroomReview(classroomLessons);
             // Cross-device passport: use an independently isolated browser context.
             await guest.evaluate(()=>{
               const key='edukass_stolbiki_player_profile_v42',p=JSON.parse(localStorage.getItem(key));
