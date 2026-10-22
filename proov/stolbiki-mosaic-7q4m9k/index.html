@@ -441,8 +441,36 @@ body{background:
 .passport-close{position:absolute;top:10px;right:11px;width:38px;height:38px;padding:0!important;border-radius:50%!important;font-size:23px!important;line-height:1}
 .passport-content .passport-status{min-height:19px;color:#b4ffe0;font-weight:900;font-size:13px}
 @media(max-height:680px){.passport-content{gap:8px;padding:23px 17px 15px}.passport-content textarea{height:64px}}
+/* Artwork collection: mysterious thumbnails show only earned tiles. */
+.world-collection-strip{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:5px 8px 3px;color:#173c53}
+.world-collection-copy{display:flex;flex-direction:column;gap:1px;min-width:0}
+.world-collection-copy strong{font-size:12px}
+.world-collection-copy small{font-size:10px;color:#657d8c;font-weight:700}
+.world-gallery-btn,.world-gallery-inview{border:1px solid #8bbacc;color:#184a65;background:linear-gradient(135deg,#ecfffd,#dceffb);font-size:11px;font-weight:900;border-radius:15px;padding:10px 10px;cursor:pointer;white-space:nowrap}
+.world-gallery-inview{position:absolute;right:11px;top:13px;z-index:11;border-color:#d4e9ec}
+.world-collection-dialog{width:min(94vw,530px);max-height:87dvh;border:1px solid #76acba;border-radius:24px;background:linear-gradient(160deg,#122d4c,#1b4167 65%,#283c66);color:#f7ffff;padding:0;box-shadow:0 22px 70px #06142680;overflow-y:auto}
+.world-collection-dialog::backdrop{background:#031526bd;backdrop-filter:blur(4px)}
+.world-collection-body{padding:23px 17px;display:flex;flex-direction:column;gap:13px;position:relative}
+.world-collection-head{padding-right:27px}
+.world-collection-head h2,.world-new-dialog h2{font-size:25px;margin:4px 0 4px;line-height:1.12}
+.world-collection-body p{margin:0;font-size:13px;line-height:1.4;color:#cbddef}
+.world-collection-close{position:absolute;right:10px;top:9px;width:35px;height:35px;border-radius:50%;border:1px solid #8eaaba88;background:#ffffff22;color:white;font-size:24px}
+.world-gallery-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;max-height:53dvh;overflow-y:auto}
+.world-gallery-item{border:1px solid #789bb5aa;background:#ffffff0e;border-radius:17px;padding:8px;display:flex;align-items:center;gap:9px;color:#fff;text-align:left;min-width:0}
+.world-gallery-item.selected{border:2px solid #6fe2c2;background:#79ebba26}
+.world-gallery-item canvas{width:62px;height:72px;object-fit:fill;flex-shrink:0;border-radius:10px;background:#102944}
+.world-gallery-item strong{font-size:12px;display:block}
+.world-gallery-item small{font-size:10px;color:#c4d8ea}
+.world-collection-primary,.world-collection-secondary{min-height:46px;width:100%;border-radius:14px;border:1px solid #cde5e6;font-size:13px;font-weight:900;padding:10px}
+.world-collection-primary{background:linear-gradient(125deg,#fef0a2,#ffc866);color:#213d59}
+.world-collection-secondary{color:#fff;background:#fff2}
+.world-new-dialog .world-collection-body{text-align:center;align-items:center;padding:25px 21px}
+.world-new-dialog #newWorldPreview{width:128px;height:145px;border:3px solid #e1d9a2;border-radius:15px;background:#143c64;image-rendering:pixelated;box-shadow:0 8px 25px #040c1990}
+.world-new-actions{display:grid;gap:8px;width:100%}
+@media(min-width:510px){.world-gallery-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 </style>
   <link rel="preload" href="/games/korrutamine-test/assets/edukass-cat-transparent.png" as="image" fetchpriority="high">
+  <script defer src="/proov/stolbiki-mosaic-7q4m9k/worlds-pixel-data.js"></script>
 </head>
 <body>
 <main class="app">
@@ -504,10 +532,14 @@ body{background:
     <button class="home-world-card" id="openWorldView" type="button" aria-label="Ava minu maailm">
       <canvas id="homeWorldCanvas"></canvas>
       <span class="home-world-overlay">
-        <span class="home-world-top"><span class="home-world-name">MINU MAAILM</span></span>
+        <span class="home-world-top"><span class="home-world-name" id="homeWorldName">MINU MAAILM</span></span>
         <span class="home-world-open">Vaata maailma →</span>
       </span>
     </button>
+    <div class="world-collection-strip">
+      <div class="world-collection-copy"><strong>🌍 <span id="unlockedWorldCount">1 / 10 maailma</span></strong><small id="worldNextHint">Varsti avaneb uus maailm!</small></div>
+      <button id="openWorldGallery" type="button" class="world-gallery-btn">🖼️ Minu maailmad →</button>
+    </div>
 
     <div class="continue-card">
       <div class="continue-copy"><small id="homeLessonTime">⏳ 15 MINUTIT PÄEVAS</small><strong id="homeLessonAction">Kõik koos</strong></div>
@@ -549,6 +581,7 @@ body{background:
   <section id="protoWorld" class="proto-world">
     <div class="proto-world-frame">
       <button class="world-view-back" id="worldViewBack" type="button">← Tagasi</button>
+      <button class="world-gallery-inview" id="galleryFromWorld" type="button">🖼️ Maailmad</button>
        <button class="world-replay hidden" id="worldReplay" type="button">↻ Vaata uuesti</button>
        <button class="world-skip hidden" id="worldSkip" type="button">Näita maailma →</button>
        <div class="world-timelapse-caption hidden" id="worldTimelapseCaption">Sinu maailm kasvab...</div>
@@ -595,6 +628,23 @@ body{background:
     <p>Тренажёр уже учёл эту тренировку.</p>
     <div class="finishBtns"><button id="again" class="primary">Продолжить</button><button id="other">Другой вид</button></div>
   </section>
+  <dialog id="worldGalleryDialog" class="world-collection-dialog" aria-labelledby="worldGalleryTitle">
+    <div class="world-collection-body">
+      <div class="world-collection-head"><div class="world-label">EDUKASS · MAAILMAD</div><h2 id="worldGalleryTitle">Minu maailmad</h2><p>Avastatud maailmad kasvavad koos sinu matemaatikaoskustega.</p></div>
+      <button type="button" id="galleryClose" class="world-collection-close" aria-label="Sulge">×</button>
+      <div id="worldGalleryTiles" class="world-gallery-grid"></div>
+      <button type="button" id="galleryDone" class="world-collection-secondary">Jätka õppimist</button>
+    </div>
+  </dialog>
+  <dialog id="worldNewDialog" class="world-collection-dialog world-new-dialog" aria-labelledby="worldNewTitle">
+    <div class="world-collection-body">
+      <div class="world-label">✨ UUS MAAILM!</div>
+      <h2 id="worldNewTitle">Avastasid uue maailma!</h2>
+      <p>Teine maailm on nüüd saadaval. Sinu lahendatud ülesanded jäävad alles!</p>
+      <canvas id="newWorldPreview" width="176" height="200" aria-label="Uus avastatud maailm"></canvas>
+      <div class="world-new-actions"><button id="tryNewWorld" type="button" class="world-collection-primary">Proovi uut maailma</button><button id="keepOldWorld" type="button" class="world-collection-secondary">Jätka senisega</button></div>
+    </div>
+  </dialog>
   <dialog id="passportDialog" class="passport-dialog" aria-labelledby="passportTitle">
     <div class="passport-content">
       <button id="passportClose" class="passport-close" type="button" aria-label="Sulge">×</button>
@@ -1087,6 +1137,27 @@ body{background:
   // Explicit one-time clean-room entry for the owner to test the game as a
   // genuinely NEW pupil. Never touch other EDUKASS games or unrelated storage.
   // The URL parameter is consumed immediately: refresh must NOT erase progress.
+  // Isolated beginner test: no other games or existing Stolbiki saves touched.
+  const WORLD_STUDENT=new URLSearchParams(location.search).get('worldTest')==='1';
+  const rootStore=window.localStorage,rootSession=window.sessionStorage;
+  const STORE_PREFIX='edukass-world-student-test-v1:';
+  const wrapped=(src)=>({
+    getItem:k=>src.getItem(STORE_PREFIX+k),
+    setItem:(k,v)=>src.setItem(STORE_PREFIX+k,v),
+    removeItem:k=>src.removeItem(STORE_PREFIX+k)
+  });
+  const localStorage=WORLD_STUDENT?wrapped(rootStore):rootStore;
+  const sessionStorage=WORLD_STUDENT?wrapped(rootSession):rootSession;
+  if(WORLD_STUDENT&&new URLSearchParams(location.search).get('resetWorldTest')==='1'){
+    for(let i=rootStore.length-1;i>=0;i--){
+      const k=rootStore.key(i);if(k?.startsWith(STORE_PREFIX))rootStore.removeItem(k);
+    }
+    for(let i=rootSession.length-1;i>=0;i--){
+      const k=rootSession.key(i);if(k?.startsWith(STORE_PREFIX))rootSession.removeItem(k);
+    }
+    const q=new URLSearchParams(location.search);q.delete('resetWorldTest');
+    history.replaceState(null,'',location.pathname+'?'+q.toString()+'#intro');
+  }
   const freshParams=new URLSearchParams(location.search);
   const freshStart=freshParams.get('freshStart')==='1';
   // Opening the same link again from a message must NOT erase a freshly
