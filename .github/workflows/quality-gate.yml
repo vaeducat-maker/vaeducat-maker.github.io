@@ -14,12 +14,7 @@ on:
       - '.github/workflows/quality-gate.yml'
   pull_request:
     branches: [main]
-    paths:
-      - 'quality/**'
-      - 'scripts/quality-*.js'
-      - 'scripts/stolbiki-prelaunch-audit.js'
-      - 'proov/stolbiki-mosaic-7q4m9k/**'
-      - '.github/workflows/quality-gate.yml'
+    # Deliberately no paths filter: a new game, poster or PDF MUST still get QA.
 
 permissions:
   contents: read
