@@ -503,53 +503,19 @@ body{background:
 <script src="/proov/stolbiki-mosaic-7q4m9k/approved-pack-4.js"></script>
 <script src="/proov/stolbiki-mosaic-7q4m9k/approved-pack-5.js"></script>
 <script>
-/* Exact paintings from the approved visual moodboards, not generated SVG.
-   Keep mathematical engine, random rotation, saved packs and starter splash. */
-(()=>{
-  const images=window.EDUKASS_APPROVED_IMAGES||{};
-  const worlds=window.EDUKASS_WORLD_ART||[];
-  for(const scene of worlds){
-    const approved=images[scene.id];
-    if(approved){scene.src=approved.src;scene.name=approved.name}
-  }
-  window.EDUKASS_APPROVED_ART_VERSION='approved-real-scenes-50-v1';
-})();
-</script>
-<script src="/proov/stolbiki-mosaic-7q4m9k/approved-pack-1.js"></script>
-<script src="/proov/stolbiki-mosaic-7q4m9k/approved-pack-2.js"></script>
-<script src="/proov/stolbiki-mosaic-7q4m9k/approved-pack-3.js"></script>
-<script src="/proov/stolbiki-mosaic-7q4m9k/approved-pack-4.js"></script>
-<script src="/proov/stolbiki-mosaic-7q4m9k/approved-pack-5.js"></script>
-<script>
-(function(){
-  const images=window.EDUKASS_APPROVED_IMAGES||{};
-  const worlds=window.EDUKASS_WORLD_ART||[];
-  const missing=worlds.filter(w=>!images[w.id]||!images[w.id].src);
-  if(missing.length)console.error('EDUKASS: approved art missing',missing.map(w=>w.id));
-  window.EDUKASS_WORLD_ART=worlds.map(w=>images[w.id]?{
-    ...w,name:images[w.id].name||w.name,src:images[w.id].src
-  }:w);
-  window.EDUKASS_APPROVED_IMAGE_COUNT=worlds.length-missing.length;
-})();
-</script>
-<script src="/proov/stolbiki-mosaic-7q4m9k/approved-pack-1.js"></script>
-<script src="/proov/stolbiki-mosaic-7q4m9k/approved-pack-2.js"></script>
-<script src="/proov/stolbiki-mosaic-7q4m9k/approved-pack-3.js"></script>
-<script src="/proov/stolbiki-mosaic-7q4m9k/approved-pack-4.js"></script>
-<script src="/proov/stolbiki-mosaic-7q4m9k/approved-pack-5.js"></script>
-<script>
-/* The approved, detailed concept art is the ACTUAL game art.
-   The lightweight block SVG art was only a temporary placeholder. */
 (function(){
   const approved=window.EDUKASS_APPROVED_IMAGES||{};
+  const worlds=window.EDUKASS_WORLD_ART||[];
   let applied=0;
-  (window.EDUKASS_WORLD_ART||[]).forEach(world=>{
+  worlds.forEach(world=>{
     const art=approved[world.id];
-    if(!art)return;
-    world.src=art.src; world.name=art.name; applied++;
+    if(art?.src){world.src=art.src;world.name=art.name||world.name;applied++}
   });
-  window.EDUKASS_VOXEL_ART_VERSION='3.0-approved-concept-art';
   window.EDUKASS_APPROVED_ART_COUNT=applied;
+  window.EDUKASS_APPROVED_IMAGE_COUNT=applied;
+  window.EDUKASS_VOXEL_ART_VERSION='3.0-approved-concept-art';
+  window.EDUKASS_APPROVED_ART_VERSION='approved-real-scenes-50-v1';
+  if(applied!==50)console.error('EDUKASS approved art failed to load: '+applied+'/50');
 })();
 </script>
 
