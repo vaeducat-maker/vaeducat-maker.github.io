@@ -527,10 +527,12 @@ async function checkCompetitor() {
                   im.src=w.src;
                 })));
                 return {total:all.length,unique:new Set(all.map(w=>w.id)).size,
+                  approved:window.EDUKASS_APPROVED_ART_COUNT||0,
+                  allWebp:all.every(w=>w.src.startsWith('data:image/webp;base64,')),
                   failed:failed.slice(0,15)};
               });
               note('world-gallery','All 50 distinct SVG scenes decode as real game images on mobile',
-                artDecode.total===50&&artDecode.unique===50&&artDecode.failed.length===0,
+                artDecode.total===50&&artDecode.unique===50&&artDecode.approved===50&&artDecode.allWebp&&artDecode.failed.length===0,
                 JSON.stringify(artDecode),'critical');
               await wp.locator('#galleryClose').click();
               await wp.evaluate(()=>{
@@ -574,7 +576,7 @@ async function checkCompetitor() {
               await wp.locator('#worldContinue').waitFor({state:'visible'});
               const rewardUX=await wp.evaluate(()=>({
                 worldVisible:document.querySelector('#protoWorld').classList.contains('viewing'),
-                hasVoxelScenes:window.EDUKASS_VOXEL_ART_VERSION==='2.0-50-worlds',
+                hasVoxelScenes:window.EDUKASS_VOXEL_ART_VERSION==='3.0-approved-concept-art'&&window.EDUKASS_APPROVED_ART_COUNT===50,
                 galleryRect:document.querySelector('#galleryFromWorld').getBoundingClientRect().toJSON(),
                 countRect:document.querySelector('#protoWorldCount').getBoundingClientRect().toJSON(),
                 soundRect:document.querySelector('#soundToggleButton').getBoundingClientRect().toJSON()
