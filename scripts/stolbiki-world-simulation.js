@@ -27,7 +27,7 @@ function confirmSkills(p,n){
   let i=0;
   for(const st of Object.values(p.ops))for(const s of Object.values(st.skills)){
     if(i++>=n)continue;
-    Object.assign(s,{mastered:true,attempts:4,firstTry:4,assisted:0,reviewStage:3,cleanStreak:4});
+    Object.assign(s,{mastered:true,verified:true,attempts:4,firstTry:4,assisted:0,reviewStage:3,cleanStreak:4});
   }
 }
 const blank=A.createProfile();
@@ -44,7 +44,7 @@ const intro=A.createProfile();intro.ops.add.skills.A1=Object.assign(intro.ops.ad
 });
 assert.equal(evidence(intro).verified,0,'Two fast answers must not award mastery bonus');
 const oneOperation=A.createProfile();
-for(const s of Object.values(oneOperation.ops.div.skills))Object.assign(s,{attempts:4,firstTry:4,reviewStage:3,mastered:true});
+for(const s of Object.values(oneOperation.ops.div.skills))Object.assign(s,{attempts:4,firstTry:4,reviewStage:3,mastered:true,verified:true});
 assert.equal(evidence(oneOperation).verified,16,'Concentrated division mastery should count');
 assert(evidence(oneOperation).target>150,'Pupil concentrating on division deserves significant world progress');
 assert(evidence(oneOperation).target<550,'Single operation must not claim entire four-operation curriculum');
