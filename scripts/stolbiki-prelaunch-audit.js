@@ -41,6 +41,8 @@ function classroomAudit(sample) {
     else if(a/b===11||a/b===111)ban='eleven-times table shortcut';
     else if(a%b!==0&&level<=6)ban='unintended remainder at entry';
   }
+  if(op==='div'&&(a%10===0||b%10===0))ban='trailing-zero division shortcut';
+  if(op==='mul'&&(a%10===0||b%10===0))ban='trailing-zero multiplication shortcut';
   if(op==='mul'&&level<=5&&(a%10===0||b===1||b===2))ban='mental multiplication shortcut';
   if(op==='sub'&&level<=4&&(b<10||a-b<12||a%10===0))ban='mental subtraction shortcut';
   if(op==='add'&&level<=3&&(a%10===0||b%10===0||a===b))ban='mental addition shortcut';
@@ -56,6 +58,17 @@ function independentClassroomReview(lessons) {
     {op:'div',skill:'D1',a:77,b:7},
     {op:'div',skill:'D1',a:88,b:8},
     {op:'div',skill:'D1',a:80,b:2},
+    {op:'div',skill:'D1',a:60,b:6},
+    {op:'div',skill:'D11',a:330,b:30},
+    {op:'div',skill:'D13',a:660,b:60},
+    {op:'div',skill:'D14',a:23040,b:60},
+    {op:'div',skill:'D16',a:17070,b:60},
+    {op:'mul',skill:'M1',a:80,b:7},
+    {op:'mul',skill:'M3',a:930,b:3},
+    {op:'mul',skill:'M4',a:750,b:4},
+    {op:'mul',skill:'M6',a:7570,b:7},
+    {op:'mul',skill:'M7',a:4110,b:8},
+    {op:'mul',skill:'M14',a:615,b:9090},
     {op:'div',skill:'D1',a:77,b:11},
     {op:'mul',skill:'M1',a:20,b:4},
     {op:'sub',skill:'S1',a:89,b:4}
@@ -191,6 +204,69 @@ async function checkCompetitor() {
   let browser;
   try {
     browser=await chromium.launch({headless:true});
+    // A late-stage demo is a complete real-app interaction, with private
+    // storage and its own saved worlds. The transfer control must not clip.
+    for(const [width,height] of [[360,640],[390,844],[1440,900]]){
+      const demoContext=await browser.newContext({
+        viewport:{width,height},isMobile:width<900,hasTouch:width<900,
+        deviceScaleFactor:1,serviceWorkers:'block'
+      });
+      try{
+        const demoPage=await demoContext.newPage();
+        const demoErrors=[];
+        demoPage.on('pageerror',e=>demoErrors.push(e.message));
+        await demoPage.goto('http://127.0.0.1:'+port+
+          '/proov/stolbiki-mosaic-7q4m9k/index.html?lateDemo=1',
+          {waitUntil:'domcontentloaded',timeout:35000});
+        await demoPage.waitForFunction(()=>!!window.__EDUKASS_TEST__,null,{timeout:18000});
+        await demoPage.locator('#home').waitFor({state:'visible',timeout:8000});
+        await demoPage.waitForTimeout(250);
+        const checkpoint=await demoPage.evaluate(()=>{
+          const transfer=document.getElementById('openPassport');
+          const bounds=transfer.getBoundingClientRect(),marker=document.getElementById('lateDemoMark');
+          const stages=['add','sub','mul','div'].map(op=>document.getElementById('lvl-'+op).textContent);
+          return {world:window.__EDUKASS_TEST__.getRealWorldProgress().tiles,
+            stages,bounds:{x:bounds.x,y:bounds.y,w:bounds.width,h:bounds.height},
+            windowSize:{w:innerWidth,h:innerHeight},visible:getComputedStyle(transfer).visibility==='visible'&&
+              bounds.width>100&&bounds.height>=40&&bounds.y>=0&&bounds.bottom<=innerHeight+1,
+            marker:!marker.classList.contains('hidden'),
+            originalProfile:localStorage.getItem('edukass_stolbiki_player_profile_v42'),
+            originalWorld:localStorage.getItem('edukass-columns-player-world')
+          };
+        });
+        note('late-stage-demo','Real middle pupil near final skill stages on '+width+'×'+height,
+          checkpoint.world===350&&checkpoint.stages[0].includes('9. tase')&&
+          checkpoint.stages[1].includes('11. tase')&&checkpoint.stages[2].includes('13. tase')&&
+          checkpoint.stages[3].includes('15. tase')&&checkpoint.marker,
+          JSON.stringify(checkpoint),'critical');
+        note('passport-visibility','Transfer progress button fully on screen at '+width+'×'+height,
+          checkpoint.visible,JSON.stringify(checkpoint.bounds),'critical');
+        note('late-stage-demo','Demo does not alter real math or art storage at '+width+'×'+height,
+          checkpoint.originalProfile===null&&checkpoint.originalWorld===null,
+          'owner storage untouched','critical');
+        await screenshot(demoPage,'late-student-home-'+width);
+        await demoPage.locator('#openPassport').click({timeout:5500});
+        await demoPage.locator('#passportDialog[open]').waitFor({state:'visible',timeout:4500});
+        note('passport-visibility','Transfer dialog opens at '+width+'×'+height,true);
+        await demoPage.locator('#passportClose').click();
+        await demoPage.locator('#openWorldGallery').click();
+        await demoPage.locator('#worldGalleryDialog[open]').waitFor({state:'visible',timeout:4500});
+        const gallery=await demoPage.evaluate(()=>{
+          const cards=[...document.querySelectorAll('#worldGalleryTiles button.world-gallery-item')];
+          const headings=[...document.querySelectorAll('#worldGalleryTiles .world-pack-heading')];
+          return {cards:cards.length,headings:headings.length,finished:cards.filter(c=>c.classList.contains('archived')).length};
+        });
+        note('late-stage-demo','One complete collection plus seven discovered worlds in next pack',
+          gallery.cards===17&&gallery.headings===2&&gallery.finished===10,
+          JSON.stringify(gallery),'critical');
+        await screenshot(demoPage,'late-student-gallery-'+width);
+        note('late-stage-demo','No uncaught browser exceptions on '+width+'×'+height,
+          demoErrors.length===0,demoErrors.slice(0,3).join('; '),'critical');
+      }catch(e){
+        note('late-stage-demo','Full demo and bottom control at '+width+'×'+height,
+          false,e.stack?.slice(0,900)||String(e),'critical');
+      }finally{await demoContext.close()}
+    }
     for (const width of [360,390,412]) {
       const context = await browser.newContext({
         viewport:{width,height:844},isMobile:true,hasTouch:true,deviceScaleFactor:1,
