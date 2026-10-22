@@ -1,0 +1,86 @@
+name: EDUKASS Quality Gate
+
+on:
+  workflow_call:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'quality/**'
+      - 'scripts/quality-*.js'
+      - 'scripts/stolbiki-prelaunch-audit.js'
+      - 'scripts/stolbiki-pedagogy-gate.js'
+      - 'proov/stolbiki-mosaic-7q4m9k/**'
+      - '.github/workflows/quality-gate.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'quality/**'
+      - 'scripts/quality-*.js'
+      - 'scripts/stolbiki-prelaunch-audit.js'
+      - 'proov/stolbiki-mosaic-7q4m9k/**'
+      - '.github/workflows/quality-gate.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    name: Approved assets, math, real browser and navigation
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Check out EXACT candidate commit
+        uses: actions/checkout@v4
+      - name: Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Approved art and product contract — MUST pass
+        run: node scripts/quality-verify-contracts.js
+      - name: Negative controls — ensure gate actually catches errors
+        run: node scripts/quality-test-contracts.js
+      - name: Mathematical and pedagogical correctness
+        run: |
+          node scripts/stolbiki-pedagogy-gate.js
+          node scripts/stolbiki-world-simulation.js
+          node scripts/pedagogy/runner.js
+      - name: Catalog and application structure
+        run: |
+          node scripts/test-catalog-guard.js
+          node scripts/test-material-metadata.js
+          node scripts/catalog-guard.js
+          node scripts/check-sonatreener.js
+      - name: Validate real browser QA syntax
+        run: node --check scripts/stolbiki-prelaunch-audit.js
+      - name: Install sandboxed Chromium for phone-size tests
+        run: |
+          mkdir -p "$RUNNER_TEMP/edukass-qa"
+          npm install --prefix "$RUNNER_TEMP/edukass-qa" --no-save --no-audit --no-fund playwright@1.56.1
+          "$RUNNER_TEMP/edukass-qa/node_modules/.bin/playwright" install --with-deps chromium
+      - name: Real mobile browser — full art, back navigation and progress
+        run: NODE_PATH="$RUNNER_TEMP/edukass-qa/node_modules" node scripts/stolbiki-prelaunch-audit.js
+      - name: Collect evidence, even after failure
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: edukass-quality-evidence
+          path: |
+            artifacts/edukass-quality/
+            artifacts/stolbiki-prelaunch/
+            artifacts/stolbiki-pedagogy/
+            artifacts/stolbiki-world-balance/
+            artifacts/pedagogy/
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Put acceptance results into GitHub run summary
+        if: always()
+        run: |
+          echo '# EDUKASS Acceptance' >> "$GITHUB_STEP_SUMMARY"
+          echo "Candidate: $GITHUB_SHA" >> "$GITHUB_STEP_SUMMARY"
+          for f in artifacts/edukass-quality/contracts.md artifacts/stolbiki-prelaunch/report.md; do
+            if [ -s "$f" ]; then cat "$f" >> "$GITHUB_STEP_SUMMARY"; fi
+          done
+          if [ ! -s artifacts/stolbiki-prelaunch/report.md ]; then
+            echo 'Browser audit absent or interrupted — no quality approval.' >> "$GITHUB_STEP_SUMMARY"
+          fi
