@@ -595,10 +595,12 @@ async function checkCompetitor() {
                 JSON.stringify(persisted),'critical');
               // Owner-only, isolated fast-forward: verify five independent
               // collections and preservation of the school arithmetic profile.
-              await wp.locator('#introPlay').isVisible().then(async visible=>{
-                if(visible)await wp.locator('#introPlay').click();
-              });
-              await wp.locator('#openWorldGallery').click();
+              if(await wp.locator('#protoWorld.viewing').isVisible()){
+                await wp.locator('#galleryFromWorld').click();
+              }else{
+                if(await wp.locator('#introPlay').isVisible())await wp.locator('#introPlay').click();
+                await wp.locator('#openWorldGallery').click();
+              }
               const fivePackLog=[];
               for(let pk=2;pk<=5;pk++){
                 await wp.locator('#worldQANextPack').click();
