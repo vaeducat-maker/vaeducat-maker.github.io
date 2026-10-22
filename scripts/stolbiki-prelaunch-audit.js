@@ -42,6 +42,7 @@ function classroomAudit(sample) {
     else if(a%b!==0&&level<=6)ban='unintended remainder at entry';
   }
   if(op==='div'&&(a%10===0||b%10===0))ban='trailing-zero division shortcut';
+  if(op==='mul'&&(a%10===0||b%10===0))ban='trailing-zero multiplication shortcut';
   if(op==='mul'&&level<=5&&(a%10===0||b===1||b===2))ban='mental multiplication shortcut';
   if(op==='sub'&&level<=4&&(b<10||a-b<12||a%10===0))ban='mental subtraction shortcut';
   if(op==='add'&&level<=3&&(a%10===0||b%10===0||a===b))ban='mental addition shortcut';
@@ -62,6 +63,12 @@ function independentClassroomReview(lessons) {
     {op:'div',skill:'D13',a:660,b:60},
     {op:'div',skill:'D14',a:23040,b:60},
     {op:'div',skill:'D16',a:17070,b:60},
+    {op:'mul',skill:'M1',a:80,b:7},
+    {op:'mul',skill:'M3',a:930,b:3},
+    {op:'mul',skill:'M4',a:750,b:4},
+    {op:'mul',skill:'M6',a:7570,b:7},
+    {op:'mul',skill:'M7',a:4110,b:8},
+    {op:'mul',skill:'M14',a:615,b:9090},
     {op:'div',skill:'D1',a:77,b:11},
     {op:'mul',skill:'M1',a:20,b:4},
     {op:'sub',skill:'S1',a:89,b:4}
