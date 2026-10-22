@@ -645,6 +645,62 @@ async function checkCompetitor() {
                 persistPacks.totalWorlds===50,
                 JSON.stringify(persistPacks),'critical');
             }finally{await worldContext.close()}
+            // A dedicated view of the real 10-world victory moment. Its data
+            // must not modify normal play or the separate student-test profile.
+            const victoryContext=await browser.newContext({
+              viewport:{width:390,height:844},isMobile:true,hasTouch:true,serviceWorkers:'block'
+            });
+            try{
+              const vp=await victoryContext.newPage();
+              const victoryUrl='http://127.0.0.1:'+port+
+                '/proov/stolbiki-mosaic-7q4m9k/index.html?victoryDemo=1&victoryReset=1';
+              await vp.goto(victoryUrl,{waitUntil:'domcontentloaded',timeout:45000});
+              await vp.locator('#worldPackDone[open]').waitFor({state:'visible',timeout:15000});
+              const victory=await vp.evaluate(()=>({
+                gallery:window.EDUKASS_WORLD_COLLECTION_QA(),
+                count:document.querySelector('#protoWorldCount').textContent,
+                title:document.querySelector('#worldPackDoneTitle').textContent,
+                normalSave:localStorage.getItem('edukass-columns-world-collection-v1'),
+                normalMath:localStorage.getItem('edukass_stolbiki_player_profile_v42'),
+                testSave:localStorage.getItem('edukass-world-student-test-v1:edukass-columns-world-collection-v1'),
+                simWorld:localStorage.getItem('edukass-world-victory-demo-v1:edukass-columns-player-world')
+              }));
+              note('world-gallery','Victory deep link opens real first-collection celebration at 550/550 without touching actual saves',
+                victory.gallery.victoryDemo===true&&victory.gallery.count===550&&
+                victory.gallery.unlocked.length===10&&victory.gallery.activePack===1&&
+                victory.title.includes('kogumik')&&victory.simWorld==='550'&&
+                victory.normalSave===null&&victory.normalMath===null&&victory.testSave===null,
+                JSON.stringify(victory),'critical');
+              await screenshot(vp,'world-victory-first-pack');
+              await vp.locator('#worldPackStay').click();
+              await vp.locator('#worldGalleryDialog[open]').waitFor({state:'visible'});
+              const completeWorldCount=await vp.locator('#worldGalleryTiles .world-gallery-item').count();
+              note('world-gallery','Completed world gallery really contains ten fully-open selectable paintings',
+                completeWorldCount===10,'cards: '+completeWorldCount,'critical');
+              await screenshot(vp,'world-victory-gallery');
+              await vp.locator('#worldGalleryTiles .world-gallery-item').nth(5).click();
+              await vp.locator('#protoWorld.viewing').waitFor({state:'visible'});
+              const chosen=await vp.evaluate(()=>window.EDUKASS_WORLD_COLLECTION_QA());
+              note('world-gallery','Winner can inspect any of the ten finished images in full screen',
+                chosen.count===550&&chosen.active===chosen.order[5],
+                JSON.stringify(chosen),'critical');
+              await vp.locator('#galleryFromWorld').click();
+              await vp.locator('#worldGalleryDialog[open]').waitFor({state:'visible'});
+              await vp.locator('#worldGalleryTiles .world-collection-primary').click();
+              await vp.locator('#protoWorld.viewing').waitFor({state:'visible'});
+              const second=await vp.evaluate(()=>window.EDUKASS_WORLD_COLLECTION_QA());
+              note('world-gallery','After inspecting all ten, winner can start new ten-world collection at 50/550',
+                second.activePack===2&&second.count===50&&
+                second.packCounts[0]===550&&second.packCounts[1]===50,
+                JSON.stringify(second),'critical');
+              await vp.reload({waitUntil:'domcontentloaded'});
+              const preserved=await vp.evaluate(()=>window.EDUKASS_WORLD_COLLECTION_QA());
+              note('world-gallery','Victory simulation archive and next pack survive page reload without contaminating real saves',
+                preserved.activePack===2&&preserved.count===50&&preserved.packCounts[0]===550&&
+                preserved.victoryDemo&&
+                await vp.evaluate(()=>localStorage.getItem('edukass-columns-world-collection-v1')===null),
+                JSON.stringify(preserved),'critical');
+            }finally{await victoryContext.close()}
             // Cross-device passport: use an independently isolated browser context.
             await guest.evaluate(()=>{
               const key='edukass_stolbiki_player_profile_v42',p=JSON.parse(localStorage.getItem(key));
