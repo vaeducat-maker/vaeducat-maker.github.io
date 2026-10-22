@@ -9,15 +9,19 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('n
 const root=path.resolve(__dirname,'..');
 const html=fs.readFileSync(path.join(root,'proov/stolbiki-mosaic-7q4m9k/index.html'),'utf8');
 const scripts=[...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)].map(x=>x[1]).filter(Boolean);
-assert(scripts.length===3,'Release test requires real game scripts');
+assert(scripts.length>=3,'Release test requires real game scripts');
+const engineSource=scripts.find(s=>s.includes('root.EDUKASS_MATH_ENGINE=api'));
+const adaptiveSource=scripts.find(s=>s.includes('root.EDUKASS_ADAPTIVE=api'));
+const playerSource=scripts.find(s=>s.includes('  const TOTAL_LEARNING_SKILLS=')&&s.includes('  const WORLD_HISTORY_KEY='));
+assert(engineSource&&adaptiveSource&&playerSource,'Math or world policy source missing');
 const ctx={module:{exports:{}},console};ctx.globalThis=ctx;vm.createContext(ctx);
-vm.runInContext(scripts[0],ctx,{timeout:10000});vm.runInContext(scripts[1],ctx,{timeout:10000});
+vm.runInContext(engineSource,ctx,{timeout:10000});vm.runInContext(adaptiveSource,ctx,{timeout:10000});
 const E=ctx.EDUKASS_MATH_ENGINE,A=ctx.EDUKASS_ADAPTIVE;
 assert(E&&A,'Game mathematical engine unavailable');
-const first=scripts[2].indexOf('  const TOTAL_LEARNING_SKILLS='),last=scripts[2].indexOf("  const WORLD_HISTORY_KEY=",first);
+const first=playerSource.indexOf('  const TOTAL_LEARNING_SKILLS='),last=playerSource.indexOf("  const WORLD_HISTORY_KEY=",first);
 assert(first>=0&&last>first,'World reward policy not found in actual player');
 ctx.A=A;
-vm.runInContext(scripts[2].slice(first,last)+'\nthis.measureWorld=worldEvidence;',ctx,{timeout:10000});
+vm.runInContext(playerSource.slice(first,last)+'\nthis.measureWorld=worldEvidence;',ctx,{timeout:10000});
 const evidence=ctx.measureWorld;
 const total=Object.values(A.META).reduce((n,x)=>n+x.max,0);
 assert.equal(total,52,'Unexpected learning syllabus change');
@@ -91,7 +95,7 @@ assert(summary[0].simulatedSolved<2500,'Fluent child must NOT solve 2500 problem
 assert(summary[1].unlocked>200,'Typical pupil must see a growing world');
 assert(summary[2].unlocked>100,'Struggling pupil must see visible progress while learning');
 const report={purpose:'Pedagogical skill verification vs. world completion',totalSkills:total,
- rewardRule:'1 tile/5 completed tasks; verified stage contributes floor(500*verified/52) unlocked tiles; choose larger earned path; never revoke saved pieces',
+ rewardRule:'12 tiles/5 completed tasks; verified stage contributes floor(500*verified/52) unlocked tiles; choose larger earned path; never revoke saved pieces',
  verification:'Mastered stage + at least 3 independent first tries + at least one successful scheduled review (reviewStage >=3) + 70% independent accuracy',
 profiles:summary};
 const directory=path.join(root,'artifacts/stolbiki-world-balance');
