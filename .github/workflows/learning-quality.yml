@@ -1,0 +1,41 @@
+name: EDUKASS learning quality (all new trainers)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'AGENTS.md'
+      - 'docs/LEARNING_QUALITY_STANDARD.md'
+      - 'pedagogy/**'
+      - 'scripts/pedagogy/**'
+      - 'games/**'
+      - 'proov/**'
+      - '.github/workflows/learning-quality.yml'
+  pull_request:
+    paths:
+      - 'pedagogy/**'
+      - 'scripts/pedagogy/**'
+      - 'games/**'
+      - 'proov/**'
+      - '.github/workflows/learning-quality.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  pedagogical-release-gate:
+    name: Independent educational value check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate learning-quality checker syntax
+        run: node --check scripts/pedagogy/runner.js
+      - name: Validate pedagogical contracts and run independent game audits
+        run: node scripts/pedagogy/runner.js
