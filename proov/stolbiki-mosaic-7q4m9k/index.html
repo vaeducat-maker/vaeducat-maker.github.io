@@ -503,6 +503,24 @@ body{background:
 <script src="/proov/stolbiki-mosaic-7q4m9k/approved-pack-4.js"></script>
 <script src="/proov/stolbiki-mosaic-7q4m9k/approved-pack-5.js"></script>
 <script>
+/* Exact paintings from the approved visual moodboards, not generated SVG.
+   Keep mathematical engine, random rotation, saved packs and starter splash. */
+(()=>{
+  const images=window.EDUKASS_APPROVED_IMAGES||{};
+  const worlds=window.EDUKASS_WORLD_ART||[];
+  for(const scene of worlds){
+    const approved=images[scene.id];
+    if(approved){scene.src=approved.src;scene.name=approved.name}
+  }
+  window.EDUKASS_APPROVED_ART_VERSION='approved-real-scenes-50-v1';
+})();
+</script>
+<script src="/proov/stolbiki-mosaic-7q4m9k/approved-pack-1.js"></script>
+<script src="/proov/stolbiki-mosaic-7q4m9k/approved-pack-2.js"></script>
+<script src="/proov/stolbiki-mosaic-7q4m9k/approved-pack-3.js"></script>
+<script src="/proov/stolbiki-mosaic-7q4m9k/approved-pack-4.js"></script>
+<script src="/proov/stolbiki-mosaic-7q4m9k/approved-pack-5.js"></script>
+<script>
 (function(){
   const images=window.EDUKASS_APPROVED_IMAGES||{};
   const worlds=window.EDUKASS_WORLD_ART||[];
