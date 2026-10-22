@@ -441,6 +441,51 @@ async function checkCompetitor() {
                 final.lesson.elapsed>=480000&&final.lesson.taskInWorld===1,
                 JSON.stringify(final),'critical');
             }finally{await switchContext.close()}
+            // Strong learner earns GROUPED reward on spaced-verified mastery:
+            // one manual map choice + connected automatic reveals (never nine taps).
+            const achievementContext=await browser.newContext({
+              viewport:{width:390,height:844},isMobile:true,hasTouch:true,serviceWorkers:'block'
+            });
+            try{
+              const rewardPage=await achievementContext.newPage();
+              await rewardPage.goto('http://127.0.0.1:'+port+'/proov/stolbiki-mosaic-7q4m9k/index.html',
+                {waitUntil:'domcontentloaded',timeout:30000});
+              await rewardPage.evaluate(()=>{
+                const a=window.EDUKASS_ADAPTIVE,p=a.createProfile(),s=p.ops.add.skills.A1;
+                Object.assign(s,{mastered:true,verified:true,attempts:4,firstTry:4,reviewStage:3});
+                p.ops.add.frontier=2;
+                localStorage.setItem('edukass_stolbiki_player_profile_v42',JSON.stringify(p));
+                localStorage.setItem('edukass-columns-player-world','50');
+                localStorage.setItem('edukass-columns-player-level','1');
+                localStorage.removeItem('edukass-columns-player-world-order-v1');
+              });
+              await rewardPage.reload({waitUntil:'domcontentloaded'});
+              await rewardPage.waitForFunction(()=>!!window.__EDUKASS_TEST__);
+              const beforeReward=await rewardPage.evaluate(()=>window.__EDUKASS_TEST__.getRealWorldProgress());
+              note('world-balance','A verified skill releases nine pieces without hundreds of filler examples',
+                beforeReward.pending===9&&beforeReward.evidence.verified===1&&beforeReward.tiles===50,
+                JSON.stringify(beforeReward),'critical');
+              await rewardPage.locator('#introPlay').click();
+              await rewardPage.locator('.continue-play').click();
+              await rewardPage.locator('#protoWorld.on').waitFor({state:'visible',timeout:6000});
+              await rewardPage.waitForTimeout(430);
+              await rewardPage.locator('#pc0').click();
+              await rewardPage.waitForFunction(()=>window.__EDUKASS_TEST__.getRealWorldProgress().tiles===59,
+                {timeout:9000});
+              const rewarded=await rewardPage.evaluate(()=>{
+                const T=window.__EDUKASS_TEST__,w=T.getRealWorldProgress(),tiles=T.getWorldTileOrder();
+                return{world:w,unique:new Set(tiles).size===tiles.length,count:tiles.length}
+              });
+              note('world-balance','One world choice unveils all nine connected achievement pieces without resets',
+                rewarded.world.tiles===59&&rewarded.world.pending===0&&rewarded.unique&&rewarded.count===59,
+                JSON.stringify(rewarded),'critical');
+              await rewardPage.reload({waitUntil:'domcontentloaded'});
+              await rewardPage.waitForFunction(()=>!!window.__EDUKASS_TEST__);
+              const kept=await rewardPage.evaluate(()=>window.__EDUKASS_TEST__.getRealWorldProgress());
+              note('world-balance','All nine skill pieces and confirmation persist across device reload',
+                kept.tiles===59&&kept.pending===0&&kept.evidence.verified===1,
+                JSON.stringify(kept),'critical');
+            }finally{await achievementContext.close()}
             // Cross-device passport: use an independently isolated browser context.
             await guest.evaluate(()=>{
               const key='edukass_stolbiki_player_profile_v42',p=JSON.parse(localStorage.getItem(key));
