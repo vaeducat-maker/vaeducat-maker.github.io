@@ -493,6 +493,26 @@ body{background:
   .proto-world .world-gallery-inview{font-size:10px;padding:10px 7px}
   .proto-world-count{top:76px;font-size:12px}
 }
+
+/* Progress-transfer action: permanent bottom control, never clipped by the levels panel. */
+.home{overflow-y:auto;overscroll-behavior:contain;padding-bottom:70px}
+.route-card{overflow:visible}
+.home-passport{position:absolute;bottom:calc(12px + env(safe-area-inset-bottom));left:14px;right:14px;z-index:10;min-height:48px;margin:0;box-shadow:0 7px 19px rgba(25,63,98,.16)}
+@media(max-width:899px){
+  .home-world-card{flex-shrink:0;height:clamp(154px,28dvh,235px);min-height:154px}
+  .route-card{flex:0 0 auto;min-height:218px}
+  .ops{grid-auto-rows:minmax(76px,auto)}
+  .op{min-height:76px}
+}
+@media(min-width:900px){
+  .home{grid-template-rows:auto auto minmax(0,1fr) auto;padding-bottom:8px;overflow:hidden}
+  .home-world-card{grid-column:1;grid-row:2 / 4}
+  .world-collection-strip{grid-column:1;grid-row:4}
+  .continue-card{grid-column:2;grid-row:2}
+  .route-card{grid-column:2;grid-row:3;min-height:0;overflow:hidden}
+  .home-passport{position:static;grid-column:2;grid-row:4;min-height:46px}
+}
+.late-demo-mark{display:inline-block;margin-top:6px;padding:5px 9px;background:#fff2c8;color:#634510;border:1px solid #f2d788;border-radius:11px;font-size:11px;font-weight:900}
 </style>
   <link rel="preload" href="/games/korrutamine-test/assets/edukass-cat-transparent.png" as="image" fetchpriority="high">
 
@@ -571,7 +591,7 @@ body{background:
 
   <section id="home" class="home hidden">
     <div class="home-head">
-      <div class="home-title"><h1>Kirjalik arvutamine</h1><p>Sinu teekond</p></div>
+      <div class="home-title"><h1>Kirjalik arvutamine</h1><p>Sinu teekond</p><span id="lateDemoMark" class="late-demo-mark hidden">NÄIDIS: edasijõudnud õpilane · päris edusammud jäävad alles</span></div>
       <div class="home-share-tools">
         <div class="world-pill" id="homeWorld">Maailm 50 / 550</div>
         <button id="shareGameButton" class="home-share-button" type="button" aria-label="Jaga mängu">
@@ -605,8 +625,8 @@ body{background:
         <button class="op" data-op="mul"><span class="op-symbol">×</span><span class="op-main"><small>Korrutamine</small><span class="lvl" id="lvl-mul">Harjutad: 1. tase 14-st</span></span><span class="op-progress"><i id="prog-mul"></i></span></button>
         <button class="op" data-op="div"><span class="op-symbol">÷</span><span class="op-main"><small>Jagamine</small><span class="lvl" id="lvl-div">Harjutad: 1. tase 16-st</span></span><span class="op-progress"><i id="prog-div"></i></span></button>
       </div>
-      <button id="openPassport" class="passport-open" type="button">🛡️ Minu edusammud · Teine seade</button>
     </div>
+    <button id="openPassport" class="passport-open home-passport" type="button">🛡️ Minu edusammud · Teine seade</button>
     <details class="dev"><summary>Для разработки</summary><div id="profile"></div></details>
   </section>
 
@@ -1216,15 +1236,17 @@ body{background:
   // It must never change the owner's existing game OR her earlier test save.
   const WORLD_VICTORY_SIM=new URLSearchParams(location.search).get('victoryDemo')==='1';
   const WORLD_STUDENT=new URLSearchParams(location.search).get('worldTest')==='1'||WORLD_VICTORY_SIM;
+  const LATE_DEMO=new URLSearchParams(location.search).get('lateDemo')==='1';
+  const ISOLATED_STORAGE=WORLD_STUDENT||LATE_DEMO;
   const rootStore=window.localStorage,rootSession=window.sessionStorage;
-  const STORE_PREFIX=WORLD_VICTORY_SIM?'edukass-world-victory-demo-v1:':'edukass-world-student-test-v1:';
+  const STORE_PREFIX=LATE_DEMO?'edukass-columns-late-pupil-demo-v1:':WORLD_VICTORY_SIM?'edukass-world-victory-demo-v1:':'edukass-world-student-test-v1:';
   const wrapped=(src)=>({
     getItem:k=>src.getItem(STORE_PREFIX+k),
     setItem:(k,v)=>src.setItem(STORE_PREFIX+k,v),
     removeItem:k=>src.removeItem(STORE_PREFIX+k)
   });
-  const localStorage=WORLD_STUDENT?wrapped(rootStore):rootStore;
-  const sessionStorage=WORLD_STUDENT?wrapped(rootSession):rootSession;
+  const localStorage=ISOLATED_STORAGE?wrapped(rootStore):rootStore;
+  const sessionStorage=ISOLATED_STORAGE?wrapped(rootSession):rootSession;
   const victoryReset=WORLD_VICTORY_SIM&&new URLSearchParams(location.search).get('victoryReset')==='1';
   if(victoryReset||(WORLD_STUDENT&&new URLSearchParams(location.search).get('resetWorldTest')==='1')){
     for(let i=rootStore.length-1;i>=0;i--){
@@ -2784,6 +2806,7 @@ body{background:
     if(typeof passportDialog.showModal==='function')passportDialog.showModal();
   }
   async function makePassportLink(){
+    if(LATE_DEMO){passportStatus.textContent='See on näidiskonto. Oma päris edusammude jaoks ava tavaline mäng.';return;}
     passportStatus.textContent='Valmistan linki…';
     try{
       const code=await encodePassport(passportSnapshot());
@@ -2941,6 +2964,42 @@ body{background:
   });
   window.addEventListener('resize',()=>{updateDivisionPlacement();fitGrid();updateDivisionPlacement();if(currentView==='lesson-detail')fitLessonDetail();drawHomeWorld();if(!$('#introScreen').classList.contains('hidden'))drawIntroTimelapse(550);if($('#protoWorld').classList.contains('on')){fitProtoWorld();drawProtoWorld()}});
   buildProtoOrder();
+  // A representative late-stage pupil. Saved ONLY inside a dedicated demo
+  // namespace; a normal visit never reads or changes this simulated progress.
+  function initializeLateDemo(){
+    if(!LATE_DEMO)return;
+    $('#lateDemoMark').classList.remove('hidden');
+    if(localStorage.getItem('edukass-late-demo-ready')==='1')return;
+    const now=Date.now(),day=86400000;
+    profile=A.createProfile();profile.sessionNo=44;
+    const stages={add:9,sub:11,mul:13,div:15};
+    for(const [op,frontier] of Object.entries(stages)){
+      const st=profile.ops[op],prefix=A.META[op].prefix;
+      st.frontier=frontier;st.baselineMs=27000;st.baselineSamples=18;
+      for(let i=1;i<frontier;i++){
+        const sk=st.skills[prefix+i];
+        Object.assign(sk,{attempts:7,firstTry:6,errors:1,assisted:1,totalMs:189000,
+          cleanStreak:2,mastered:true,verified:true,reviewStage:3,
+          lastSeenAt:now-day,nextReviewAt:now+3*day});
+      }
+    }
+    // One finished collection and a second one well underway. Gallery shows
+    // ten finished pictures from collection 1 and seven partly uncovered in 2.
+    const first=library.packs[0],second=library.packs[1];
+    first.count=550;first.history=protoOrder.slice(0,550);
+    first.noticed=10;first.complete=true;first.completeNoticed=true;
+    second.count=350;second.noticed=7;second.history=protoOrder.slice(0,350);
+    second.active=second.order[3];second.complete=false;second.completeNoticed=false;
+    second.startSolved=186;second.startVerified=15;
+    library.activePack=1;collection=second;
+    protoWorldCount=350;protoLevel=301;
+    worldOpenedOrder=second.history.slice();
+    lastMode='mix';
+    save();saveProto();
+    localStorage.setItem('edukass-late-demo-ready','1');
+    protoImg.src=activeWorldArt()?.src||PROTO_WORLD_IMG;
+  }
+  initializeLateDemo();
   if(WORLD_VICTORY_SIM&&!localStorage.getItem('edukass-world-victory-demo-initialized')){
     // Precisely the state on the winning moment: 550/550 cells and ten
     // unlocked paintings, but before the congratulations popup appears.
@@ -2976,6 +3035,8 @@ body{background:
     $('#introScreen').classList.add('hidden');
     showWorldView({historyMode:'none',instant:true});
     setTimeout(()=>offerCompletedPackIfDue(),280);
+  }else if(LATE_DEMO){
+    currentView='home';$('#introScreen').classList.add('hidden');showHome({historyMode:'none'});
   }else if(REAL_WORLD_BOOST!==null){
     // Start in the real home screen with the persisted 250-tile world.
     currentView='home';$('#introScreen').classList.add('hidden');
