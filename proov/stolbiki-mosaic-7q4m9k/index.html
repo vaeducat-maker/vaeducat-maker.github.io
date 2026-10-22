@@ -483,7 +483,7 @@ body{background:
   box-shadow:0 8px 25px #08183699;color:#fff;font-weight:900;font-size:14px;
   white-space:nowrap;
 }
-.proto-world.viewing .world-continue:not(.hidden)~.world-replay{display:none}
+.proto-world.viewing:has(.world-continue:not(.hidden)) .world-replay{display:none!important}
 @media(max-width:380px){
   .proto-world .world-gallery-inview{font-size:10px;padding:10px 7px}
   .proto-world-count{top:76px;font-size:12px}
