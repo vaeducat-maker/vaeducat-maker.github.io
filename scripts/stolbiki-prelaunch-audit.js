@@ -218,6 +218,31 @@ async function checkCompetitor() {
             const retained=await guest.evaluate(()=>window.__EDUKASS_TEST__.getState().profile.add.frontier);
             note('competitor','Already earned arithmetic progress is never reset',
               retained==='A3',retained,'critical');
+            // A numeric skills audit cannot catch a monotonous lesson.
+            const pedagogy=await guest.evaluate(()=>{
+              const T=window.__EDUKASS_TEST__,A=window.EDUKASS_ADAPTIVE;
+              const early=Array.from({length:80},(_,i)=>T.challenge.generate('D1',i+1));
+              const sessions={};
+              for(const op of ['add','sub','mul','div'])sessions[op]=T.challenge.simulate(op,22);
+              const s=A.createSession(A.createProfile(),'mix',()=>0.25,Date.now()),mix=[];
+              for(let i=0;i<56;i++){
+                const assign=A.nextAssignment(s),task=T.challenge.generate(assign.skill,5000+i);
+                mix.push({skill:assign.skill,op:assign.op,a:task.a,b:task.b,unhelpful:T.challenge.unhelpful(task)});
+                A.recordResult(s,assign,{firstTry:true,errors:0,ms:12000,assisted:false});
+              }
+              return {early:early.map(x=>({a:x.a,b:x.b,unhelpful:T.challenge.unhelpful(x)})),sessions,mix};
+            });
+            note('pedagogy','No repeated-digit or round-ten division patterns at entry',
+              pedagogy.early.every(t=>!t.unhelpful&&t.a%11!==0&&t.a%10!==0),
+              JSON.stringify(pedagogy.early.slice(0,12)),'critical');
+            note('pedagogy','Correct independent solving leads to varied skill stages in every operation',
+              Object.values(pedagogy.sessions).every(s=>new Set(s.tasks.map(t=>t.skill)).size>=4&&s.tasks.every(t=>!t.unhelpful)),
+              JSON.stringify(Object.fromEntries(Object.entries(pedagogy.sessions).map(([op,s])=>[op,[...new Set(s.tasks.map(t=>t.skill))]]))),'critical');
+            note('pedagogy','56 example mixed lesson is not filled with mental-arithmetic templates',
+              pedagogy.mix.every(t=>!t.unhelpful)&&
+              pedagogy.mix.some(t=>t.op==='div'&&Number(t.skill.slice(1))>=4)&&
+              pedagogy.mix.some(t=>t.op==='mul'&&Number(t.skill.slice(1))>=4),
+              JSON.stringify(pedagogy.mix.slice(0,24)),'critical');
             // Cross-device passport: use an independently isolated browser context.
             await guest.evaluate(()=>{
               const key='edukass_stolbiki_player_profile_v42',p=JSON.parse(localStorage.getItem(key));
