@@ -1841,6 +1841,7 @@ body{background:
     localStorage.setItem('edukass-columns-player-level',String(protoLevel));
     localStorage.setItem('edukass-columns-player-world',String(protoWorldCount));
     if(worldOpenedOrder)localStorage.setItem(WORLD_HISTORY_KEY,JSON.stringify(worldOpenedOrder));
+    else localStorage.removeItem(WORLD_HISTORY_KEY);
     saveCollection();
   }
   const TEST_WORLD_BASELINE=50;
@@ -2348,6 +2349,7 @@ body{background:
           setTimeout(()=>{
             // An opening is an optional, one-time surprise after the pupil
             // receives the earned pieces. It never interrupts a calculation.
+            if(offerCompletedPackIfDue())return;
             if(offerNewWorldIfDue())return;
             if(lessonReady())showLessonDone();
             else start(lastMode,{historyMode:'replace',continueLesson:true});
@@ -2368,8 +2370,7 @@ body{background:
   }
   for(let i=0;i<7;i++)$('#pc'+i).addEventListener('click',e=>chooseProtoWorld(Number(e.currentTarget.dataset.k)));
   protoImg.onload=()=>{buildProtoOrder();rebuildProtoActive();drawHomeWorld();
-    if($('#protoWorld').classList.contains('on')){fitProtoWorld();drawProtoWorld()}
-    if($('#protoWorld').classList.contains('viewing'))playWorldTimelapse()};
+    if($('#protoWorld').classList.contains('on')){fitProtoWorld();drawProtoWorld()}};
   introImg.onload=()=>{buildProtoOrder();runIntroTimelapse()};
   protoImg.src=activeWorldArt()?.src||PROTO_WORLD_IMG;
   if(introImg.complete&&introImg.naturalWidth)runIntroTimelapse();
@@ -2390,7 +2391,78 @@ body{background:
     }
     return img;
   }
-  function paintWorldPreview(canvas,id){
+
+  // The next collection always starts with exactly 50 cells, even if the
+  // learner has already mastered the entire arithmetic curriculum.
+  function advancePack(){
+    if(protoWorldCount<550||library.activePack>=PACK_IDS.length-1)return false;
+    collection.complete=true;collection.count=550;
+    collection.history=worldOpenedOrder?worldOpenedOrder.slice():protoOrder.slice();
+    saveCollection();
+    library.activePack++;
+    collection=library.packs[library.activePack];
+    const evidence=worldEvidence();
+    collection.startSolved=evidence.solved;
+    collection.startVerified=evidence.verified;
+    protoWorldCount=collection.count=50;
+    protoLevel=1;
+    worldOpenedOrder=null;
+    saveProto();
+    protoImg.src=activeWorldArt()?.src||PROTO_WORLD_IMG;
+    rebuildProtoActive();syncProtoTop();drawHomeWorld();
+    return true;
+  }
+  const packDoneDialog=$('#worldPackDone');
+  function offerCompletedPackIfDue(){
+    if(protoWorldCount<550||collection.completeNoticed)return false;
+    collection.completeNoticed=true;saveCollection();
+    $('#worldPackDoneTitle').textContent=library.activePack===4?
+      'Kõik viis kogumikku on valmis!':(library.activePack+1)+'. kogumik on valmis!';
+    $('#worldPackNext').textContent=library.activePack===4?
+      'Vaata oma galeriid':'Avasta järgmine kogumik →';
+    if(typeof packDoneDialog.showModal==='function')packDoneDialog.showModal();
+    return true;
+  }
+  $('#worldPackNext').addEventListener('click',()=>{
+    packDoneDialog.close();
+    if(advancePack())showWorldView({historyMode:'replace',instant:true,resumeLesson:true});
+    else showWorldGallery();
+  });
+  $('#worldPackStay').addEventListener('click',()=>{
+    packDoneDialog.close();showWorldGallery();
+  });
+  $('#worldArchiveClose').addEventListener('click',()=>{
+    $('#worldArchiveDialog').close();showWorldGallery();
+  });
+  function openArchivedWorld(id){
+    const dialog=$('#worldArchiveDialog');
+    $('#archiveWorldName').textContent=worldName(id);
+    const canvas=$('#worldArchiveCanvas');
+    const paint=()=>{
+      const ctx=canvas.getContext('2d'),img=imageForWorld(id,paint);
+      if(!img)return;
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      ctx.drawImage(img,0,0,canvas.width,canvas.height);
+    };
+    paint();
+    if(typeof dialog.showModal==='function')dialog.showModal();
+  }
+  // This control is only visible when the OWNER opens isolated ?worldTest=1.
+  // It never touches a real student's mathematical profile or normal storage.
+  $('#worldQANextPack').classList.toggle('hidden',!WORLD_STUDENT);
+  $('#worldQANextPack').addEventListener('click',()=>{
+    if(!WORLD_STUDENT)return;
+    if(protoWorldCount<550){
+      worldOpenedOrder=protoOrder.slice();
+      protoWorldCount=550;protoLevel=501;
+      saveProto();
+    }
+    galleryDialog.close();
+    if(advancePack())showWorldView({historyMode:'replace',instant:true,resumeLesson:false});
+    else showWorldGallery();
+  });
+
+  function paintWorldPreview(canvas,id,packIndex=library.activePack){
     if(!canvas)return;
     const ctx=canvas.getContext('2d');if(!ctx)return;
     const w=canvas.width,h=canvas.height;
@@ -2401,8 +2473,10 @@ body{background:
     const img=imageForWorld(id,()=>paintWorldPreview(canvas,id));
     if(!img)return;
     const tw=w/PCOLS,th=h/PROWS,sw=img.naturalWidth/PCOLS,sh=img.naturalHeight/PROWS;
-    const shown=new Set(worldUnlocks().slice(0,protoWorldCount));
-    // Same pixels in each picture, completely different artwork underneath.
+    const p=library.packs[packIndex];
+    const shown=new Set((packIndex===library.activePack?worldUnlocks():
+      (p.history||protoOrder.slice(0,p.count))).slice(0,p.count));
+    // Same tiles within a single set, new art and rewards for every collection.
     for(const k of shown){
       const[x,y]=pxy(k);
       ctx.drawImage(img,x*sw,y*sh,sw+.15,sh+.15,x*tw,y*th,tw+.25,th+.25);
@@ -2421,24 +2495,47 @@ body{background:
   function showWorldGallery(){
     if(worldRewardBusy)return;
     const grid=$('#worldGalleryTiles');grid.replaceChildren();
-    for(const id of discoveredIds()){
-      const node=document.createElement('button');
-      node.type='button';node.className='world-gallery-item'+(id===collection.active?' selected':'');
-      const preview=document.createElement('canvas');preview.width=132;preview.height=150;
-      const details=document.createElement('span');
-      const bold=document.createElement('strong');bold.textContent=worldName(id);
-      const small=document.createElement('small');
-      small.textContent=id===collection.active?'✓ Praegune maailm':`${protoWorldCount} / 550 tükki`;
-      details.append(bold,small);node.append(preview,details);
-      node.addEventListener('click',()=>{
-        const switched=selectWorld(id);galleryDialog.close();
-        playGameSound('ui');
-        if(switched){
-          // Do not dismiss the reward back to exercises or home.
-          showWorldView({historyMode:'replace',instant:true,resumeLesson:returnToLessonAfterWorld});
-        }
+    for(let packIndex=0;packIndex<=library.activePack;packIndex++){
+      const p=library.packs[packIndex],archived=packIndex<library.activePack;
+      const heading=document.createElement('div');heading.className='world-pack-heading';
+      heading.textContent='🌍 KOGUMIK '+(packIndex+1)+' / '+PACK_IDS.length;
+      const subtitle=document.createElement('small');
+      subtitle.textContent=archived?'✓ Lõpetatud · 10 maailma':
+        discoveredInPack(p)+' / 10 maailma · '+p.count+' / 550 tükki';
+      heading.append(subtitle);grid.append(heading);
+      const count=archived?10:discoveredInPack(p);
+      for(const id of p.order.slice(0,count)){
+        const node=document.createElement('button');
+        node.type='button';
+        node.className='world-gallery-item'+(archived?' archived':'')+
+          (!archived&&id===collection.active?' selected':'');
+        const preview=document.createElement('canvas');
+        preview.width=132;preview.height=150;
+        const details=document.createElement('span');
+        const bold=document.createElement('strong');bold.textContent=worldName(id);
+        const small=document.createElement('small');
+        small.textContent=archived?'✓ Valmis':
+          (id===collection.active?'✓ Praegune maailm':p.count+' / 550 tükki');
+        details.append(bold,small);node.append(preview,details);
+        node.addEventListener('click',()=>{
+          galleryDialog.close();playGameSound('ui');
+          if(archived){openArchivedWorld(id);return}
+          if(selectWorld(id))
+            showWorldView({historyMode:'replace',instant:true,resumeLesson:returnToLessonAfterWorld});
+        });
+        grid.append(node);
+        paintWorldPreview(preview,id,packIndex);
+      }
+    }
+    if(library.activePack<4&&protoWorldCount===550){
+      const next=document.createElement('button');next.type='button';
+      next.className='world-collection-primary';next.style.gridColumn='1 / -1';
+      next.textContent='✨ Alusta järgmist kogumikku →';
+      next.addEventListener('click',()=>{
+        galleryDialog.close();
+        if(advancePack())showWorldView({historyMode:'replace',instant:true,resumeLesson:true});
       });
-      grid.append(node);paintWorldPreview(preview,id);
+      grid.append(next);
     }
     if(typeof galleryDialog.showModal==='function')galleryDialog.showModal();
   }
@@ -2484,6 +2581,8 @@ body{background:
     active:collection.active,order:collection.order.slice(),
     unlocked:discoveredIds(),notice:collection.noticed,
     count:protoWorldCount,artwork:activeWorldArt()?.name,
+    activePack:library.activePack+1,packCounts:library.packs.map(p=>p.count),
+    totalWorlds:WORLDS.length,packIds:PACK_IDS.map(p=>p.length),
     introSeparate:protoImg.src!==introImg.src,
     studentIsolated:WORLD_STUDENT
   });
