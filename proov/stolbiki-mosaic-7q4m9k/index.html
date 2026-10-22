@@ -245,7 +245,9 @@ body{background:
   text-shadow:0 2px 2px rgba(14,24,65,.24)
 }
 .op small{font-size:14px;color:#182f49}.op .lvl{color:#7a8795;font-weight:800}
-.op-progress{height:6px;background:#e7ecef}.op-progress i{background:var(--op-accent);box-shadow:0 0 8px color-mix(in srgb,var(--op-accent) 45%,transparent)}
+.op-progress{position:relative;height:4px;overflow:visible;background:repeating-linear-gradient(90deg,#dfe5e9 0,#dfe5e9 10px,transparent 10px,transparent 14px);border-radius:999px}
+.op-progress i{position:absolute;top:-4px;left:0;width:12px!important;height:12px;border:2px solid #fff;background:var(--op-accent);box-shadow:0 1px 5px color-mix(in srgb,var(--op-accent) 35%,transparent);border-radius:50%;transition:left .25s}
+.continue-card.lesson-in-progress{border-color:rgba(119,222,204,.6)}
 .op.current-mode{
   border-color:var(--op-accent);
   background:linear-gradient(155deg,#fff 0 45%,var(--op-soft) 100%);
@@ -507,17 +509,17 @@ body{background:
     </button>
 
     <div class="continue-card">
-      <div class="continue-copy"><small>⏳ 15 MINUTIT PÄEVAS</small><strong>Kõik koos</strong></div>
+      <div class="continue-copy"><small id="homeLessonTime">⏳ 15 MINUTIT PÄEVAS</small><strong id="homeLessonAction">Kõik koos</strong></div>
       <button class="continue-play" type="button" data-op="mix">MÄNGI!</button>
     </div>
 
     <div class="route-card">
-      <div class="route-head"><strong>Tasemed</strong><span>harjuta ka eraldi</span></div>
+      <div class="route-head"><strong>Tasemed</strong><span id="homeModeHint">Vali tehe · 15 minutit kokku</span></div>
       <div class="ops">
-        <button class="op" data-op="add"><span class="op-symbol">＋</span><span class="op-main"><small>Liitmine</small><span class="lvl" id="lvl-add">уровень 1 из 10</span></span><span class="op-progress"><i id="prog-add"></i></span></button>
-        <button class="op" data-op="sub"><span class="op-symbol">−</span><span class="op-main"><small>Lahutamine</small><span class="lvl" id="lvl-sub">уровень 1 из 12</span></span><span class="op-progress"><i id="prog-sub"></i></span></button>
-        <button class="op" data-op="mul"><span class="op-symbol">×</span><span class="op-main"><small>Korrutamine</small><span class="lvl" id="lvl-mul">уровень 1 из 14</span></span><span class="op-progress"><i id="prog-mul"></i></span></button>
-        <button class="op" data-op="div"><span class="op-symbol">÷</span><span class="op-main"><small>Jagamine</small><span class="lvl" id="lvl-div">уровень 1 из 16</span></span><span class="op-progress"><i id="prog-div"></i></span></button>
+        <button class="op" data-op="add"><span class="op-symbol">＋</span><span class="op-main"><small>Liitmine</small><span class="lvl" id="lvl-add">Harjutad: 1. tase 10-st</span></span><span class="op-progress"><i id="prog-add"></i></span></button>
+        <button class="op" data-op="sub"><span class="op-symbol">−</span><span class="op-main"><small>Lahutamine</small><span class="lvl" id="lvl-sub">Harjutad: 1. tase 12-st</span></span><span class="op-progress"><i id="prog-sub"></i></span></button>
+        <button class="op" data-op="mul"><span class="op-symbol">×</span><span class="op-main"><small>Korrutamine</small><span class="lvl" id="lvl-mul">Harjutad: 1. tase 14-st</span></span><span class="op-progress"><i id="prog-mul"></i></span></button>
+        <button class="op" data-op="div"><span class="op-symbol">÷</span><span class="op-main"><small>Jagamine</small><span class="lvl" id="lvl-div">Harjutad: 1. tase 16-st</span></span><span class="op-progress"><i id="prog-div"></i></span></button>
       </div>
       <button id="openPassport" class="passport-open" type="button">🛡️ Minu edusammud · Teine seade</button>
     </div>
@@ -1651,8 +1653,10 @@ body{background:
       const frontier=Number(profile.ops[op]?.frontier);
       const lvl=Number.isFinite(frontier)?Math.max(1,Math.min(max[op],frontier)):1;
       const el=$('#lvl-'+op),bar=$('#prog-'+op);
-      if(el)el.textContent=`tase ${lvl} / ${max[op]}`;
-      if(bar)bar.style.width=((lvl-1)/(max[op]-1)*100)+'%';
+      // Frontier is the current task type, not the share of the curriculum
+      // reliably mastered. Show a position marker, never a completion bar.
+      if(el)el.textContent=`Harjutad: ${lvl}. tase ${max[op]}-st`;
+      if(bar){bar.style.width='12px';bar.style.left=`calc(${((lvl-1)/(max[op]-1)*100).toFixed(2)}% - ${((lvl-1)/(max[op]-1)*12).toFixed(2)}px)`}
       const btn=document.querySelector('.op[data-op="'+op+'"]');if(btn)btn.classList.toggle('current-mode',lastMode===op);
     }
     syncProtoTop();
@@ -1665,8 +1669,18 @@ body{background:
   let lessonDetailIndex=0,lessonRedoIndex=-1;
   function updateLessonClock(){
     const left=Math.max(0,Math.ceil((LESSON_MS-lesson.elapsed)/1000));
-    $('#lessonTime').textContent=String(Math.floor(left/60)).padStart(2,'0')+':'+String(left%60).padStart(2,'0');
+    const timer=String(Math.floor(left/60)).padStart(2,'0')+':'+String(left%60).padStart(2,'0');
+    $('#lessonTime').textContent=timer;
     $('#lessonProgress').style.width=Math.min(100,lesson.elapsed/LESSON_MS*100)+'%';
+    const homeTimer=$('#homeLessonTime'),homeAction=$('#homeLessonAction'),continueButton=$('.continue-play'),hint=$('#homeModeHint');
+    if(homeTimer&&homeAction&&continueButton&&hint){
+      const live=lesson.active;
+      homeTimer.textContent=live?'⏳ '+timer+' JÄÄNUD':'⏳ 15 MINUTIT PÄEVAS';
+      homeAction.textContent=live?'Jätka tundi · Kõik koos':'Kõik koos';
+      continueButton.textContent=live?'JÄTKA!':'MÄNGI!';
+      hint.textContent=live?'Vaheta tehet · aeg jätkub':'Vali tehe · 15 minutit kokku';
+      $('.continue-card').classList.toggle('lesson-in-progress',live);
+    }
   }
   function abandonLesson(){lesson={active:false,finished:false,elapsed:0,lastTick:0,entries:[]};lessonRedoIndex=-1;updateLessonClock()}
   function beginLesson(){abandonLesson();lesson.active=true;lesson.lastTick=Date.now();updateLessonClock()}
@@ -1856,22 +1870,33 @@ body{background:
     $('#route').textContent=`${protoTask+1} / 5`;$('#mode').textContent=`${protoLevel}. tase · ${PROTO_LABEL[current.op]||''}`;syncProtoTop();renderTask(current)
   }
   function start(m='mix',{historyMode='push',continueLesson=false}={}){
-    if(!continueLesson||!lesson.active)beginLesson();
+    // A 15-minute class is shared by all four operations. Switching through
+    // the home page must neither reset time nor throw away completed work,
+    // upcoming retries, world progress or adaptive practice history.
+    if(!lesson.active){
+      beginLesson();
+      protoTask=0;
+      session=A.createSession(profile,m,Math.random,Date.now());
+    }else{
+      if(lessonReady()){showLessonDone();return}
+      if(!session)session=A.createSession(profile,m,Math.random,Date.now());
+      session.mode=m;session.ops=m==='mix'?['add','sub','mul','div']:[m];
+      session.opCursor=0;
+    }
     $('#lessonClock').classList.remove('hidden');$('#lessonScreen').classList.add('hidden');
-    clearAssistTimers();forced=false;mode=m;lastMode=m;localStorage.setItem('edukass-columns-full-last-mode',m);protoTask=0;
-    session=A.createSession(profile,m,Math.random,Date.now());
+    clearAssistTimers();forced=false;mode=m;lastMode=m;localStorage.setItem('edukass-columns-full-last-mode',m);
     $('#home').classList.add('hidden');$('#finish').classList.add('hidden');$('#protoWorld').classList.remove('on','viewing');$('#train').classList.remove('hidden');
     writeNav('train',{mode:m},historyMode);nextTask()
   }
   function showHome({historyMode='none'}={}){
-    stopWorldTimelapse();worldPreviewCount=INITIAL_WORLD_PREVIEW;rebuildProtoActive();abandonLesson();$('#lessonScreen').classList.add('hidden');
+    stopWorldTimelapse();worldPreviewCount=INITIAL_WORLD_PREVIEW;rebuildProtoActive();$('#lessonScreen').classList.add('hidden');
     clearAssistTimers();taskToken++;
     $('#train').classList.add('hidden');$('#protoWorld').classList.remove('on','viewing');$('#finish').classList.add('hidden');
     renderHomeLevels();$('#home').classList.remove('hidden');
     if(historyMode!=='none')writeNav('home',{},historyMode);
   }
   function showIntro({historyMode='none'}={}){
-    stopWorldTimelapse();abandonLesson();$('#lessonScreen').classList.add('hidden');
+    stopWorldTimelapse();$('#lessonScreen').classList.add('hidden');
     clearAssistTimers();taskToken++;
     $('#home').classList.add('hidden');$('#train').classList.add('hidden');$('#protoWorld').classList.remove('on','viewing');$('#finish').classList.add('hidden');
     $('#introScreen').classList.remove('hidden');
@@ -2295,7 +2320,7 @@ body{background:
     setAssistTimings:(v={})=>{if(Number.isFinite(v.nudgeMs))ASSIST.nudgeMs=Math.max(1,v.nudgeMs);if(Number.isFinite(v.fillMs))ASSIST.fillMs=Math.max(1,v.fillMs);if(Number.isFinite(v.stepPauseMs))ASSIST.stepPauseMs=Math.max(1,v.stepPauseMs);if(Number.isFinite(v.finalHoldMs))ASSIST.finalHoldMs=Math.max(1,v.finalHoldMs);scheduleAssistClock();return{...ASSIST}},
     solveCurrent:()=>{for(let i=0;i<steps.length;i++){const s=steps[i],p=stepPhase(s);if(p!==phase)switchPhase(p);const node=targetEl(s.target);if(node)node.textContent=s.value;completedSteps.add(i)}selectedTarget=null;selectedStepIndex=null;refreshInteraction()},
     resetProfile:()=>{profile=A.createProfile();save();renderProfile()},
-    getLesson:()=>({active:lesson.active,finished:lesson.finished,elapsed:lesson.elapsed,solved:lesson.entries.length}),
+    getLesson:()=>({active:lesson.active,finished:lesson.finished,elapsed:lesson.elapsed,solved:lesson.entries.length,mode:session?.mode,retries:session?.retryQueue.length||0,taskInWorld:protoTask}),
     setLessonElapsed:(ms)=>{lesson.elapsed=Math.min(LESSON_MS,Math.max(0,ms));updateLessonClock()},
     showLessonDone:()=>showLessonDone(),
     getWorldTileOrder:()=>worldUnlocks(),
