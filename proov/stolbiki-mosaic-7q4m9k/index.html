@@ -1069,7 +1069,10 @@ body{background:
   // The URL parameter is consumed immediately: refresh must NOT erase progress.
   const freshParams=new URLSearchParams(location.search);
   const freshStart=freshParams.get('freshStart')==='1';
-  if(freshStart){
+  // Opening the same link again from a message must NOT erase a freshly
+  // completed lesson. Keep an idempotency marker scoped to this one test.
+  const freshStartMarker='edukass-columns-owner-freshstart-20261022-v1';
+  if(freshStart && localStorage.getItem(freshStartMarker)!=='done'){
     for(const key of [
       'edukass_stolbiki_player_profile_v42',
       'edukass-columns-player-level',
@@ -1080,6 +1083,9 @@ body{background:
       'edukass-stolbiki-250-math-seed-v1'
     ])localStorage.removeItem(key);
     sessionStorage.removeItem('edukass-columns-current-view');
+    localStorage.setItem(freshStartMarker,'done');
+  }
+  if(freshStart){
     freshParams.delete('freshStart');
     // A saved-world preview, old personal recovery link or 250-tile boost must
     // never override an explicitly requested pupil reset.
