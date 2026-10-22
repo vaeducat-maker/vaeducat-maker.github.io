@@ -503,6 +503,23 @@ body{background:
 <script src="/proov/stolbiki-mosaic-7q4m9k/approved-pack-4.js"></script>
 <script src="/proov/stolbiki-mosaic-7q4m9k/approved-pack-5.js"></script>
 <script>
+(function(){
+  const images=window.EDUKASS_APPROVED_IMAGES||{};
+  const worlds=window.EDUKASS_WORLD_ART||[];
+  const missing=worlds.filter(w=>!images[w.id]||!images[w.id].src);
+  if(missing.length)console.error('EDUKASS: approved art missing',missing.map(w=>w.id));
+  window.EDUKASS_WORLD_ART=worlds.map(w=>images[w.id]?{
+    ...w,name:images[w.id].name||w.name,src:images[w.id].src
+  }:w);
+  window.EDUKASS_APPROVED_IMAGE_COUNT=worlds.length-missing.length;
+})();
+</script>
+<script src="/proov/stolbiki-mosaic-7q4m9k/approved-pack-1.js"></script>
+<script src="/proov/stolbiki-mosaic-7q4m9k/approved-pack-2.js"></script>
+<script src="/proov/stolbiki-mosaic-7q4m9k/approved-pack-3.js"></script>
+<script src="/proov/stolbiki-mosaic-7q4m9k/approved-pack-4.js"></script>
+<script src="/proov/stolbiki-mosaic-7q4m9k/approved-pack-5.js"></script>
+<script>
 /* The approved, detailed concept art is the ACTUAL game art.
    The lightweight block SVG art was only a temporary placeholder. */
 (function(){
