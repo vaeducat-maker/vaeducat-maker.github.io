@@ -450,6 +450,17 @@ async function checkCompetitor() {
             note('competitor','After reset, reload retains newly earned progress instead of repeatedly deleting it',
               retainedAfterReset.world===58&&retainedAfterReset.add==='A3'&&!retainedAfterReset.url.includes('freshStart'),
               JSON.stringify(retainedAfterReset),'critical');
+            await guest.goto('http://127.0.0.1:'+port+'/proov/stolbiki-mosaic-7q4m9k/index.html?freshStart=1',
+              {waitUntil:'domcontentloaded',timeout:30000});
+            await guest.waitForFunction(()=>!!window.__EDUKASS_TEST__);
+            const repeatedLink=await guest.evaluate(()=>({
+              world:window.__EDUKASS_TEST__.getRealWorldProgress().tiles,
+              add:window.__EDUKASS_TEST__.getState().profile.add.frontier,
+              consumed:!location.search.includes('freshStart')
+            }));
+            note('competitor','Owner reopening the ORIGINAL fresh-start chat link cannot destroy their new lesson',
+              repeatedLink.world===58&&repeatedLink.add==='A3'&&repeatedLink.consumed,
+              JSON.stringify(repeatedLink),'critical');
           }finally{await guest.close()}
           await page.locator('#openWorldView').click();
           await page.waitForTimeout(3900);
