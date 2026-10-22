@@ -1782,23 +1782,25 @@ body{background:
     let result=null;
     if(isDiv&&(level<=4||level===8)){
       const pool=smallDivisionPool(level),rng=E.mulberry32((seed^Math.imul(level,0x9e3779b9))>>>0);
-      const gap=level<=4?2:5,recent=recentDivisors.slice(-gap);
-      const lastPairs=recentTaskPairs.slice(-25);
-      const choose=(items)=>{
-        const groups=new Map();
-        for(const task of items){
-          if(!groups.has(task.b))groups.set(task.b,[]);
-          groups.get(task.b).push(task);
-        }
-        const ds=[...groups.keys()],b=ds[Math.floor(rng()*ds.length)],arr=groups.get(b);
-        return arr[Math.floor(rng()*arr.length)];
-      };
+      // D1 has only ~20 useful mathematical examples, so choosing a
+      // random divisor *first* gave enormous weight to the two examples
+      // with divisor 4. Select by LEAST RECENTLY SEEN FULL PROBLEM instead.
+      // This remains diverse even if a struggling pupil needs a long stage.
       const educational=pool.filter(t=>!unhelpfulRoutine(t));
       const relevant=educational.length?educational:pool;
-      let options=relevant.filter(t=>!recent.includes(t.b)&&!lastPairs.includes('div:'+t.a+':'+t.b)&&!recentTaskPatterns.slice(-10).includes(routinePattern(t)));
-      if(!options.length)options=relevant.filter(t=>!recent.includes(t.b)&&!lastPairs.includes('div:'+t.a+':'+t.b));
-      if(!options.length)options=relevant.filter(t=>!lastPairs.includes('div:'+t.a+':'+t.b));
-      result=choose(options.length?options:relevant);
+      let minimum=Infinity,options=[];
+      for(const t of relevant){
+        const pair='div:'+t.a+':'+t.b,previous=recentTaskPairs.lastIndexOf(pair);
+        const age=previous<0?Infinity:recentTaskPairs.length-1-previous;
+        // A recent exact repeat is MUCH worse than another divisor.
+        const repeated=previous<0?0:20000-age*100;
+        const divisorCost=recentDivisors.slice(-2).includes(t.b)?18:0;
+        const patternCost=recentTaskPatterns.slice(-8).includes(routinePattern(t))?8:0;
+        const score=repeated+divisorCost+patternCost;
+        if(score<minimum){minimum=score;options=[t]}
+        else if(score===minimum)options.push(t);
+      }
+      result=(options.length?options:relevant)[Math.floor(rng()*(options.length||relevant.length))];
     }else{
       let best=null,bestPenalty=Infinity,backup=null;
       for(let i=0;i<90;i++){
@@ -1812,7 +1814,7 @@ body{background:
       result=best||backup||E.generateSkill(skill,seed);
     }
     recentTaskPairs.push(result.op+':'+result.a+':'+result.b);
-    if(recentTaskPairs.length>50)recentTaskPairs.shift();
+    if(recentTaskPairs.length>180)recentTaskPairs.shift();
     recentTaskPatterns.push(routinePattern(result));
     if(recentTaskPatterns.length>30)recentTaskPatterns.shift();
     if(isDiv){recentDivisors.push(result.b);if(recentDivisors.length>5)recentDivisors.shift()}
