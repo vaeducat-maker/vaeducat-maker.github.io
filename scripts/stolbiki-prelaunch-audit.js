@@ -403,6 +403,50 @@ async function checkCompetitor() {
               note('competitor','Transferred progress persists after a fresh browser reload',
                 permanent.world===56&&permanent.frontier==='A4',JSON.stringify(permanent),'critical');
             }finally{await secondDevice.close()}
+            // Owner's genuine first-ever 15-minute lesson: one-time reset must
+            // erase this game's progress, start at stage 1 and not erase again
+            // when a later page is refreshed. Other EDUKASS keys are untouched.
+            await guest.evaluate(()=>{
+              localStorage.setItem('edukass-columns-player-world','57');
+              localStorage.setItem('edukass-columns-player-level','8');
+              localStorage.setItem('edukass-other-game-sentinel','keep');
+            });
+            await guest.goto('http://127.0.0.1:'+port+'/proov/stolbiki-mosaic-7q4m9k/index.html?freshStart=1',
+              {waitUntil:'domcontentloaded',timeout:30000});
+            await guest.waitForFunction(()=>!!window.__EDUKASS_TEST__);
+            const clean=await guest.evaluate(()=>{
+              const state=window.__EDUKASS_TEST__.getState();
+              return{
+                frontiers:Object.values(state.profile).map(x=>x.frontier),
+                world:window.__EDUKASS_TEST__.getRealWorldProgress().tiles,
+                level:window.__EDUKASS_TEST__.getRealWorldProgress().level,
+                intro:!document.querySelector('#introScreen').classList.contains('hidden'),
+                resetUrlConsumed:!location.search.includes('freshStart'),
+                otherSave:localStorage.getItem('edukass-other-game-sentinel'),
+                skillsClean:Object.values(JSON.parse(localStorage.getItem('edukass_stolbiki_player_profile_v42')||'null').ops)
+                  .every(x=>Object.values(x.skills).every(s=>s.attempts===0))
+              }
+            });
+            note('competitor','One-time fresh-entry URL erases all four math levels and saved world, not other games',
+              clean.frontiers.every(x=>x.endsWith('1'))&&clean.world===50&&clean.level===1&&clean.intro&&
+              clean.resetUrlConsumed&&clean.otherSave==='keep'&&clean.skillsClean,
+              JSON.stringify(clean),'critical');
+            await guest.evaluate(()=>{
+              const p=JSON.parse(localStorage.getItem('edukass_stolbiki_player_profile_v42'));
+              p.ops.add.frontier=3;
+              localStorage.setItem('edukass_stolbiki_player_profile_v42',JSON.stringify(p));
+              localStorage.setItem('edukass-columns-player-world','58');
+            });
+            await guest.reload({waitUntil:'domcontentloaded'});
+            await guest.waitForFunction(()=>!!window.__EDUKASS_TEST__);
+            const retainedAfterReset=await guest.evaluate(()=>({
+              world:window.__EDUKASS_TEST__.getRealWorldProgress().tiles,
+              add:window.__EDUKASS_TEST__.getState().profile.add.frontier,
+              url:location.search
+            }));
+            note('competitor','After reset, reload retains newly earned progress instead of repeatedly deleting it',
+              retainedAfterReset.world===58&&retainedAfterReset.add==='A3'&&!retainedAfterReset.url.includes('freshStart'),
+              JSON.stringify(retainedAfterReset),'critical');
           }finally{await guest.close()}
           await page.locator('#openWorldView').click();
           await page.waitForTimeout(3900);
