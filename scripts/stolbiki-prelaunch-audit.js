@@ -368,9 +368,12 @@ async function checkCompetitor() {
               await sw.goto('http://127.0.0.1:'+port+'/proov/stolbiki-mosaic-7q4m9k/index.html',
                 {waitUntil:'domcontentloaded',timeout:30000});
               await sw.waitForFunction(()=>!!window.__EDUKASS_TEST__);
+              await sw.locator('#introPlay').click();
+              await sw.locator('#home').waitFor({state:'visible'});
+              await sw.locator('.continue-play').click();
+              await sw.locator('#train').waitFor({state:'visible'});
               await sw.evaluate(()=>{
                 const T=window.__EDUKASS_TEST__;
-                T.startMode('mix');
                 T.setLessonElapsed(480000);
                 T.solveCurrent();
               });
