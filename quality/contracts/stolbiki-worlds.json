@@ -106,5 +106,6 @@
     "At 550/550 the rendered output includes 100% of the approved original without crop",
     "From the art screen Back returns to gallery/home without browser escape",
     "Math progress remains unchanged when art packages change"
-  ]
+  ],
+  "kind": "approved-image-bundles"
 }
