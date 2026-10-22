@@ -1207,9 +1207,12 @@ body{background:
   // genuinely NEW pupil. Never touch other EDUKASS games or unrelated storage.
   // The URL parameter is consumed immediately: refresh must NOT erase progress.
   // Isolated beginner test: no other games or existing Stolbiki saves touched.
-  const WORLD_STUDENT=new URLSearchParams(location.search).get('worldTest')==='1';
+  // Standalone first-collection victory rehearsal, with its OWN namespace.
+  // It must never change the owner's existing game OR her earlier test save.
+  const WORLD_VICTORY_SIM=new URLSearchParams(location.search).get('victoryDemo')==='1';
+  const WORLD_STUDENT=new URLSearchParams(location.search).get('worldTest')==='1'||WORLD_VICTORY_SIM;
   const rootStore=window.localStorage,rootSession=window.sessionStorage;
-  const STORE_PREFIX='edukass-world-student-test-v1:';
+  const STORE_PREFIX=WORLD_VICTORY_SIM?'edukass-world-victory-demo-v1:':'edukass-world-student-test-v1:';
   const wrapped=(src)=>({
     getItem:k=>src.getItem(STORE_PREFIX+k),
     setItem:(k,v)=>src.setItem(STORE_PREFIX+k,v),
@@ -1217,14 +1220,16 @@ body{background:
   });
   const localStorage=WORLD_STUDENT?wrapped(rootStore):rootStore;
   const sessionStorage=WORLD_STUDENT?wrapped(rootSession):rootSession;
-  if(WORLD_STUDENT&&new URLSearchParams(location.search).get('resetWorldTest')==='1'){
+  const victoryReset=WORLD_VICTORY_SIM&&new URLSearchParams(location.search).get('victoryReset')==='1';
+  if(victoryReset||(WORLD_STUDENT&&new URLSearchParams(location.search).get('resetWorldTest')==='1')){
     for(let i=rootStore.length-1;i>=0;i--){
       const k=rootStore.key(i);if(k?.startsWith(STORE_PREFIX))rootStore.removeItem(k);
     }
     for(let i=rootSession.length-1;i>=0;i--){
       const k=rootSession.key(i);if(k?.startsWith(STORE_PREFIX))rootSession.removeItem(k);
     }
-    const q=new URLSearchParams(location.search);q.delete('resetWorldTest');
+    const q=new URLSearchParams(location.search);
+    q.delete('resetWorldTest');q.delete('victoryReset');
     history.replaceState(null,'',location.pathname+'?'+q.toString()+'#intro');
   }
   const freshParams=new URLSearchParams(location.search);
@@ -2450,7 +2455,7 @@ body{background:
   }
   $('#worldPackNext').addEventListener('click',()=>{
     packDoneDialog.close();
-    if(advancePack())showWorldView({historyMode:'replace',instant:true,resumeLesson:true});
+    if(advancePack())showWorldView({historyMode:'replace',instant:true,resumeLesson:!WORLD_VICTORY_SIM});
     else showWorldGallery();
   });
   $('#worldPackStay').addEventListener('click',()=>{
@@ -2474,7 +2479,7 @@ body{background:
   }
   // This control is only visible when the OWNER opens isolated ?worldTest=1.
   // It never touches a real student's mathematical profile or normal storage.
-  $('#worldQANextPack').classList.toggle('hidden',!WORLD_STUDENT);
+  $('#worldQANextPack').classList.toggle('hidden',!WORLD_STUDENT||WORLD_VICTORY_SIM);
   $('#worldQANextPack').addEventListener('click',()=>{
     if(!WORLD_STUDENT)return;
     if(protoWorldCount<550){
@@ -2609,7 +2614,7 @@ body{background:
     activePack:library.activePack+1,packCounts:library.packs.map(p=>p.count),
     totalWorlds:WORLDS.length,packIds:PACK_IDS.map(p=>p.length),
     introSeparate:protoImg.src!==introImg.src,
-    studentIsolated:WORLD_STUDENT
+    studentIsolated:WORLD_STUDENT, victoryDemo:WORLD_VICTORY_SIM
   });
 
   function makeExample(op,a,b){
@@ -2878,7 +2883,23 @@ body{background:
     history.pushState(navState(parent,{guard:true}),'',navAddress(parent));
   });
   window.addEventListener('resize',()=>{updateDivisionPlacement();fitGrid();updateDivisionPlacement();if(currentView==='lesson-detail')fitLessonDetail();drawHomeWorld();if(!$('#introScreen').classList.contains('hidden'))drawIntroTimelapse(550);if($('#protoWorld').classList.contains('on')){fitProtoWorld();drawProtoWorld()}});
-  buildProtoOrder();applyRealWorldBoost();rebuildProtoActive();syncProtoTop();renderProfile();runIntroTimelapse();
+  buildProtoOrder();
+  if(WORLD_VICTORY_SIM&&!localStorage.getItem('edukass-world-victory-demo-initialized')){
+    // Precisely the state on the winning moment: 550/550 cells and ten
+    // unlocked paintings, but before the congratulations popup appears.
+    library.activePack=0;
+    collection=library.packs[0];
+    worldOpenedOrder=protoOrder.slice(0,550);
+    protoWorldCount=550;
+    protoLevel=501;
+    collection.count=550;
+    collection.noticed=10;
+    collection.complete=false;
+    collection.completeNoticed=false;
+    saveProto();
+    localStorage.setItem('edukass-world-victory-demo-initialized','1');
+  }
+  applyRealWorldBoost();rebuildProtoActive();syncProtoTop();renderProfile();runIntroTimelapse();
 
   // Restore the current in-game screen after reload, then ensure Android Back
   // has an internal sentinel to hit before it can leave the page.
@@ -2892,7 +2913,13 @@ body{background:
   }catch{}
   currentView=restored.view||'intro';
 
-  if(REAL_WORLD_BOOST!==null){
+  if(WORLD_VICTORY_SIM){
+    // Open behind the authentic victory dialog; gallery and next-pack buttons
+    // remain fully interactive. Reload restores whichever set they chose.
+    $('#introScreen').classList.add('hidden');
+    showWorldView({historyMode:'none',instant:true});
+    setTimeout(()=>offerCompletedPackIfDue(),280);
+  }else if(REAL_WORLD_BOOST!==null){
     // Start in the real home screen with the persisted 250-tile world.
     currentView='home';$('#introScreen').classList.add('hidden');
     showHome({historyMode:'none'});
