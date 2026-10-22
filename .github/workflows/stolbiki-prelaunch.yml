@@ -6,6 +6,9 @@ on:
     branches: [main]
     paths:
       - 'scripts/stolbiki-prelaunch-audit.js'
+      - 'scripts/stolbiki-pedagogy-gate.js'
+      - 'proov/stolbiki-mosaic-7q4m9k/index.html'
+      - 'proov/stolbiki-250/index.html'
       - '.github/workflows/stolbiki-prelaunch.yml'
 
 permissions:
@@ -23,6 +26,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Run independent pedagogical gate before browser tests
+        run: node scripts/stolbiki-pedagogy-gate.js
+
       - name: Validate audit script syntax before downloading Chromium
         run: node --check scripts/stolbiki-prelaunch-audit.js
       - name: Install isolated Chromium test environment
@@ -37,7 +43,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: stolbiki-prelaunch-evidence
-          path: artifacts/stolbiki-prelaunch/
+          path: |
+            artifacts/stolbiki-prelaunch/
+            artifacts/stolbiki-pedagogy/
           if-no-files-found: warn
           retention-days: 30
       - name: Add human-readable release gate to GitHub summary
