@@ -423,8 +423,10 @@ async function checkCompetitor() {
                 intro:!document.querySelector('#introScreen').classList.contains('hidden'),
                 resetUrlConsumed:!location.search.includes('freshStart'),
                 otherSave:localStorage.getItem('edukass-other-game-sentinel'),
-                skillsClean:Object.values(JSON.parse(localStorage.getItem('edukass_stolbiki_player_profile_v42')||'null').ops)
-                  .every(x=>Object.values(x.skills).every(s=>s.attempts===0))
+                skillsClean:(()=>{
+                  const saved=JSON.parse(localStorage.getItem('edukass_stolbiki_player_profile_v42')||'null');
+                  return !saved || Object.values(saved.ops).every(x=>Object.values(x.skills).every(s=>s.attempts===0));
+                })()
               }
             });
             note('competitor','One-time fresh-entry URL erases all four math levels and saved world, not other games',
