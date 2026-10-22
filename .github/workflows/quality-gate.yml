@@ -32,10 +32,16 @@ jobs:
     steps:
       - name: Check out EXACT candidate commit
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Node.js 22
         uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Product inventory and per-product acceptance coverage — MUST pass
+        run: |
+          node scripts/quality-test-product-coverage.js
+          node scripts/quality-check-product-coverage.js
       - name: Approved art and product contract — MUST pass
         run: node scripts/quality-verify-contracts.js
       - name: Negative controls — ensure gate actually catches errors
@@ -58,8 +64,8 @@ jobs:
           mkdir -p "$RUNNER_TEMP/edukass-qa"
           npm install --prefix "$RUNNER_TEMP/edukass-qa" --no-save --no-audit --no-fund playwright@1.56.1
           "$RUNNER_TEMP/edukass-qa/node_modules/.bin/playwright" install --with-deps chromium
-      - name: Real mobile browser — full art, back navigation and progress
-        run: NODE_PATH="$RUNNER_TEMP/edukass-qa/node_modules" node scripts/stolbiki-prelaunch-audit.js
+      - name: Registered independent product audits in a real browser
+        run: NODE_PATH="$RUNNER_TEMP/edukass-qa/node_modules" node scripts/quality-run-product-audits.js
       - name: Collect evidence, even after failure
         uses: actions/upload-artifact@v4
         if: always()
@@ -78,7 +84,7 @@ jobs:
         run: |
           echo '# EDUKASS Acceptance' >> "$GITHUB_STEP_SUMMARY"
           echo "Candidate: $GITHUB_SHA" >> "$GITHUB_STEP_SUMMARY"
-          for f in artifacts/edukass-quality/contracts.md artifacts/stolbiki-prelaunch/report.md; do
+          for f in artifacts/edukass-quality/product-coverage.md artifacts/edukass-quality/contracts.md artifacts/stolbiki-prelaunch/report.md; do
             if [ -s "$f" ]; then cat "$f" >> "$GITHUB_STEP_SUMMARY"; fi
           done
           if [ ! -s artifacts/stolbiki-prelaunch/report.md ]; then
