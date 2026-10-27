@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "page": "games/kiire-sonatreener/index.html",
+  "subject": "eesti-kirjandus",
+  "handler": "litAliceQuestionsLesson",
+  "lessonTitle": "Урок 8 — Alice ja valge jänes · Ülesanne 3",
+  "independentExpectedPairs": [
+    [
+      "Kellega Alice jõe ääres istus?",
+      "С кем Алиса сидела на берегу реки?",
+      "Alice istus koos oma õega.",
+      "Алиса сидела со своей сестрой."
+    ],
+    [
+      "Mida valge jänes ütles?",
+      "Что сказал белый кролик?",
+      "Jänes ütles: „Oh ei! Ma jään hiljaks!”",
+      "Кролик сказал: «О нет! Я опаздываю!»"
+    ],
+    [
+      "Miks Alice jänesele järele jooksis?",
+      "Почему Алиса побежала за кроликом?",
+      "Alice oli väga uudishimulik.",
+      "Алиса была очень любопытной."
+    ],
+    [
+      "Mida Alice maa-aluses ruumis nägi?",
+      "Что Алиса увидела в подземной комнате?",
+      "Alice nägi riiuleid, uksi ja erinevaid esemeid.",
+      "Алиса увидела полки, двери и разные предметы."
+    ],
+    [
+      "Mille ta leidis laualt?",
+      "Что она нашла на столе?",
+      "Ta leidis laualt väikese kuldse võtme.",
+      "Она нашла на столе маленький золотой ключ."
+    ],
+    [
+      "Mida ta väikese ukse taga nägi?",
+      "Что она увидела за маленькой дверью?",
+      "Ta nägi ilusat aeda.",
+      "Она увидела за маленькой дверью красивый сад."
+    ],
+    [
+      "Miks ei saanud Alice kohe aeda minna?",
+      "Почему Алиса не могла сразу попасть в сад?",
+      "Alice oli liiga suur.",
+      "Алиса была слишком большой."
+    ],
+    [
+      "Mis juhtus pärast seda, kui Alice pudelist jõi?",
+      "Что произошло после того, как Алиса выпила из бутылочки?",
+      "Alice muutus palju väiksemaks.",
+      "Алиса стала намного меньше."
+    ]
+  ]
+}
