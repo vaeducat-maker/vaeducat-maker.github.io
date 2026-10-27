@@ -6,7 +6,9 @@
       "id": "games-kiire-sonatreener",
       "pathPrefix": "games/kiire-sonatreener/",
       "category": "interactive",
-      "acceptance": "requires-individual-audit"
+      "acceptance": "verified",
+      "sourceContract": "quality/sonatreener-alice-acceptance.json",
+      "visualAudit": "scripts/quality-sonatreener-acceptance.js"
     },
     {
       "id": "games-koolikott",
