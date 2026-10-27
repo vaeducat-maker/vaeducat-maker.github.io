@@ -5,13 +5,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths:
-      - 'quality/**'
-      - 'scripts/quality-*.js'
-      - 'scripts/stolbiki-prelaunch-audit.js'
-      - 'scripts/stolbiki-pedagogy-gate.js'
-      - 'proov/stolbiki-mosaic-7q4m9k/**'
-      - '.github/workflows/quality-gate.yml'
+    # Run once for every release candidate. Cloudflare waits for this SHA's result.
   pull_request:
     branches: [main]
     # Deliberately no paths filter: a new game, poster or PDF MUST still get QA.
