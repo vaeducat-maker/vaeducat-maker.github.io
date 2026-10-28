@@ -1,0 +1,153 @@
+name: EDUKASS Facebook collage from live screenshots
+on:
+  push:
+    branches:
+      - chatgpt/korrutamine-fb-collage-20261028
+permissions:
+  contents: write
+jobs:
+  promo:
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install browser and graphics
+        run: |
+          python -m pip install --quiet playwright pillow
+          python -m playwright install --with-deps chromium
+      - name: Capture the actual EDUKASS screens and build the poster
+        run: |
+          mkdir -p promo/korrutamine
+          cat > /tmp/create_promo.py <<'PY'
+          from pathlib import Path
+          from playwright.sync_api import sync_playwright
+          from PIL import Image, ImageDraw, ImageFont, ImageFilter
+          import random, math
+          random.seed(42)
+          out=Path("promo/korrutamine"); out.mkdir(parents=True,exist_ok=True)
+          with sync_playwright() as p:
+              browser=p.chromium.launch(headless=True,args=["--no-sandbox","--disable-dev-shm-usage"])
+              page=browser.new_page(viewport={"width":1280,"height":800},device_scale_factor=1)
+              page.goto("https://edukass.ee/games/korrutamine-test/#missions",wait_until="domcontentloaded",timeout=60000)
+              page.wait_for_timeout(3500)
+              try:
+                  if page.locator("#introPlayButton").is_visible(timeout=2500):
+                      page.locator("#introPlayButton").click(force=True,timeout=3000)
+                      page.wait_for_timeout(1000)
+              except: pass
+              try:
+                  if page.locator("#lessonContinueButton").is_visible(timeout=1500):
+                      page.locator("#lessonContinueButton").click(force=True,timeout=3000)
+                      page.wait_for_timeout(1200)
+              except: pass
+              page.evaluate("""() => {
+                document.body.classList.remove('intro-active');
+                const intro=document.querySelector('#introScreen');
+                if(intro) intro.style.display='none';
+                for(const el of document.querySelectorAll('main .screen')){
+                  el.hidden=false;
+                  el.classList.toggle('is-active',el.id==='mapScreen');
+                }
+              }""")
+              page.wait_for_timeout(1200)
+              page.screenshot(path=str(out/"real-map.png"),animations="disabled")
+              clicked=False
+              for selector in ["#levelGrid button:not([disabled])","#levelGrid .level:not(.locked)","#levelGrid > *"]:
+                  try:
+                      loc=page.locator(selector).first
+                      if loc.count():
+                          loc.click(force=True,timeout=1800)
+                          page.wait_for_timeout(1200)
+                          if page.locator("#battleScreen").evaluate("(e)=>e.classList.contains('is-active')"):
+                              clicked=True
+                              break
+                  except: pass
+              if not clicked:
+                  # Use the genuine, built-in lesson screen rather than drawing fake answer choices.
+                  page.evaluate("""() => {
+                    for(const el of document.querySelectorAll('main .screen')){
+                      el.hidden=false;
+                      el.classList.toggle('is-active',el.id==='lessonScreen');
+                    }
+                  }""")
+              page.wait_for_timeout(1000)
+              page.screenshot(path=str(out/"real-gameplay-or-lesson.png"),animations="disabled")
+              browser.close()
+          W,H=1080,1350
+          I=Image.new("RGB",(W,H))
+          pix=I.load()
+          for y in range(H):
+              for x in range(W):
+                  v=y/H
+                  glow=max(0,1-math.dist((x,y),(900,490))/730)
+                  pix[x,y]=(int(8+5*v+9*glow),int(16+8*v+9*glow),int(42+28*v+21*glow))
+          # glowing decorative constellations
+          bg=Image.new("RGBA",(W,H),(0,0,0,0));gd=ImageDraw.Draw(bg)
+          for _ in range(115):
+              x=random.randrange(W); y=random.randrange(185,H-90)
+              r=random.choice([1,1,2,2,3])
+              gd.ellipse((x-r,y-r,x+r,y+r),fill=(170,213,249,random.randint(70,190)))
+          gd.ellipse((650,155,1260,765),outline=(38,124,178,100),width=3)
+          gd.ellipse((-150,655,460,1265),outline=(56,205,190,70),width=3)
+          I=Image.alpha_composite(I.convert("RGBA"),bg)
+          d=ImageDraw.Draw(I)
+          ff="/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
+          fr="/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
+          def font(sz,bold=True): return ImageFont.truetype(ff if bold else fr,sz)
+          # top brand
+          d.text((66,44),"EDU",font=font(53),fill="#6DE8D5")
+          d.text((192,44),"KASS",font=font(53),fill="#FFFFFF")
+          d.rounded_rectangle((821,49,1014,109),radius=30,fill="#70F1CB")
+          d.text((867,62),"TASUTA",font=font(25),fill="#06253F")
+          d.text((65,133),"KORRUTAMINE",font=font(71),fill="#FFFFFF")
+          d.text((65,214),"ON SEIKLUS!",font=font(70),fill="#FDE77D")
+          d.text((66,300),"Päris vaated meie mängust",font=font(23,False),fill="#B8D9F2")
+          def boxshot(path,rect,focus=0.5):
+              x,y,w,h=rect
+              src=Image.open(path).convert("RGB")
+              sw,sh=src.size; ratio=max(w/sw,h/sh)
+              src=src.resize((math.ceil(sw*ratio),math.ceil(sh*ratio)),Image.Resampling.LANCZOS)
+              left=max(0,int((src.width-w)*focus))
+              top=max(0,int((src.height-h)*0.4))
+              tile=src.crop((left,top,left+w,top+h))
+              mask=Image.new("L",(w,h),0)
+              ImageDraw.Draw(mask).rounded_rectangle((0,0,w-1,h-1),radius=23,fill=255)
+              shadow=Image.new("RGBA",(w+40,h+40),(0,0,0,0))
+              ImageDraw.Draw(shadow).rounded_rectangle((20,16,w+19,h+15),radius=28,fill=(0,0,0,190))
+              shadow=shadow.filter(ImageFilter.GaussianBlur(17))
+              I.alpha_composite(shadow,(x-20,y-8))
+              frame=Image.new("RGBA",(w+10,h+10),(0,0,0,0))
+              ImageDraw.Draw(frame).rounded_rectangle((0,0,w+9,h+9),radius=27,fill="#4FCDEB")
+              I.alpha_composite(frame,(x-5,y-5))
+              I.paste(tile,(x,y),mask)
+          boxshot(out/"real-map.png",(65,356,950,385),0.5)
+          d.rounded_rectangle((84,697,355,729),radius=15,fill="#D8F5FC")
+          d.text((103,701),"MISSIOONIDE KAART",font=font(17),fill="#092144")
+          boxshot(out/"real-gameplay-or-lesson.png",(115,774,850,315),0.54)
+          d.rounded_rectangle((660,1051,948,1082),radius=14,fill="#D8F5FC")
+          d.text((683,1055),"HARJUTA MÄNGIDES",font=font(17),fill="#092144")
+          d.rounded_rectangle((65,1119,1015,1189),radius=24,fill="#132F53",outline="#41638B",width=2)
+          d.text((150,1131),"16 PEATÜKKI",font=font(26),fill="#F6DE83")
+          d.ellipse((516,1150,525,1159),fill="#64CFD4")
+          d.text((585,1131),"252 MISSIOONI",font=font(26),fill="#F6DE83")
+          d.rounded_rectangle((65,1214,1015,1314),radius=32,fill="#54E6BC")
+          d.text((168,1234),"MÄNGI TASUTA  ·  edukass.ee",font=font(34),fill="#073A48")
+          I.convert("RGB").save(out/"EDUKASS-Facebook-Korrutamine.png",quality=96)
+          PY
+          python /tmp/create_promo.py
+      - name: Upload QA evidence and finished image
+        uses: actions/upload-artifact@v4
+        with:
+          name: EDUKASS-Real-Screenshots-Promo
+          path: promo/korrutamine/*.png
+      - name: Commit marketing assets only to this preview branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add promo/korrutamine/*.png
+          git diff --cached --quiet || git commit -m "Add Facebook graphic using live Korrutamine screenshots [skip ci]"
+          git push
