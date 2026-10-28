@@ -31,12 +31,3 @@ jobs:
           name: EDUKASS-real-gameplay-media
           path: promo/korrutamine/media/
           retention-days: 30
-      - name: Commit approved-for-review previews to separate branch
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add promo/korrutamine/media/*.png promo/korrutamine/media/*.mp4 promo/korrutamine/media/*.json
-          if ! git diff --cached --quiet; then
-            git commit -m "Add authentic promotional gameplay assets [skip ci]"
-            git push
-          fi
