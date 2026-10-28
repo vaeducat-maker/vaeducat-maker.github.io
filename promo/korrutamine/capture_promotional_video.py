@@ -51,7 +51,7 @@ with sync_playwright() as p:
                     }""",arg=prev,timeout=7000)
                 except PlaywrightTimeoutError:
                     raise RuntimeError("Correct answer did not advance, mission "+str(mid)+" question "+str(i)+"; state="+str(api("return t.getState();")))
-                page.wait_for_timeout(120)
+                page.wait_for_timeout(650)
             page.wait_for_timeout(2300)
             if not page.locator("#resultScreen").evaluate("(e)=>e.classList.contains('is-active')"):
                 raise RuntimeError("Mission "+str(mid)+" did not complete normally")
