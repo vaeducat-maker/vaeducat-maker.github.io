@@ -1,0 +1,42 @@
+name: EDUKASS genuine gameplay promo video and screenshots
+on:
+  push:
+    branches:
+      - chatgpt/korrutamine-fb-collage-20261028
+permissions:
+  contents: write
+jobs:
+  capture:
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout preview branch
+        uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install browser and media tools
+        run: |
+          python -m pip install playwright Pillow
+          python -m playwright install --with-deps chromium
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+      - name: Run genuine game capture
+        run: python promo/korrutamine/capture_promotional_video.py
+      - name: Archive complete screenshots and source footage
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: EDUKASS-real-gameplay-media
+          path: promo/korrutamine/media/
+          retention-days: 30
+      - name: Commit approved-for-review previews to separate branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add promo/korrutamine/media/*.png promo/korrutamine/media/*.mp4 promo/korrutamine/media/*.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Add authentic promotional gameplay assets [skip ci]"
+            git push
+          fi
