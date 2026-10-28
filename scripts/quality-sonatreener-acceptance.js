@@ -37,6 +37,7 @@ let browser;
 (async()=>{
   test('Acceptance page is Sõnatreener',CONTRACT.page==='games/kiire-sonatreener/index.html');
   test('Eight independently approved question/answer pairs',CONTRACT.independentExpectedPairs.length===8);
+  test('Eight independently approved tense transformations',CONTRACT.independentExpectedTensePairs.length===8);
   await new Promise((resolve,reject)=>server.listen(0,'127.0.0.1',err=>err?reject(err):resolve()));
   const base='http://127.0.0.1:'+server.address().port+'/games/kiire-sonatreener/index.html';
   browser=await chromium.launch({headless:true,args:['--no-sandbox']});
@@ -58,6 +59,26 @@ let browser;
     test('Answer '+(i+1)+' exact Estonian',(await card.locator('.aliceqa-answer').innerText()).trim()===etA);
     test('Answer '+(i+1)+' exact Russian', (await card.locator('.aliceqa-ru').last().innerText()).trim()===ruA);
   }
+
+  // Exercise 4 must appear immediately after the eight answers.
+  const exercise4=page.locator('#aliceqaExercise4');
+  test('Exercise 4 follows the eight written answers',await page.evaluate(()=>{
+    const target=document.querySelector('#aliceqaExercise4');
+    const last=document.querySelectorAll('.aliceqa-item')[7];
+    return !!target&&!!last&&!!(last.compareDocumentPosition(target)&Node.DOCUMENT_POSITION_FOLLOWING);
+  }));
+  test('Exercise 4 heading is correct',await exercise4.locator('h3').innerText()==='ÜLESANNE 4');
+  const headings=exercise4.locator('.aliceqa-tense-name');
+  test('Bold large OLEVIK / LIHTMINEVIK headings',await headings.count()===2&&
+    await headings.nth(0).innerText()==='OLEVIK'&&await headings.nth(1).innerText()==='LIHTMINEVIK'&&
+    await headings.evaluateAll(els=>els.every(el=>{const c=getComputedStyle(el);return parseInt(c.fontWeight,10)>=700&&parseFloat(c.fontSize)>=20})));
+  const tenseRows=exercise4.locator('.aliceqa-pair');
+  test('Eight visible tense conversion pairs',await tenseRows.count()===8);
+  for(let i=0;i<8;i++){
+    const [present,past]=CONTRACT.independentExpectedTensePairs[i];
+    test('Original present sentence '+(i+1),(await tenseRows.nth(i).locator('.aliceqa-present .aliceqa-tense-text').innerText()).trim()===present);
+    test('Correct simple-past sentence '+(i+1),(await tenseRows.nth(i).locator('.aliceqa-past .aliceqa-tense-text').innerText()).trim()===past);
+  }
   test('Answers are legible and not clipped', await page.evaluate(()=>{
     const a=[...document.querySelectorAll('.aliceqa-answer')];
     return a.length===8&&a.every(el=>{const r=el.getBoundingClientRect();return r.width>220&&r.height>30});
@@ -67,6 +88,7 @@ let browser;
   await page.locator('#aliceqaToggleRu').click();
   test('Russian translations hide',await page.locator('#aliceqaLesson').evaluate(el=>el.classList.contains('aliceqa-hide-ru')));
   test('Estonian answer remains visible',await page.locator('.aliceqa-answer').first().isVisible());
+  test('Tense exercise stays visible when translations hidden',await page.locator('.aliceqa-pair').first().isVisible());
   await page.locator('#aliceqaToggleRu').click();
   test('Russian translations reappear',await page.locator('.aliceqa-ru').first().isVisible());
   await page.locator('#aliceqaBack').click();

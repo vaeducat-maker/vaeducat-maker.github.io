@@ -3,7 +3,7 @@
   "page": "games/kiire-sonatreener/index.html",
   "subject": "eesti-kirjandus",
   "handler": "litAliceQuestionsLesson",
-  "lessonTitle": "Урок 8 — Alice ja valge jänes · Ülesanne 3",
+  "lessonTitle": "Урок 8 — Alice ja valge jänes · Ülesanded 3–4",
   "independentExpectedPairs": [
     [
       "Kellega Alice jõe ääres istus?",
@@ -52,6 +52,40 @@
       "Что произошло после того, как Алиса выпила из бутылочки?",
       "Alice muutus palju väiksemaks.",
       "Алиса стала намного меньше."
+    ]
+  ],
+  "independentExpectedTensePairs": [
+    [
+      "Alice vaatab jänest.",
+      "Alice vaatas jänest."
+    ],
+    [
+      "Jänes jookseb kiiresti.",
+      "Jänes jooksis kiiresti."
+    ],
+    [
+      "Alice läheb jänesele järele.",
+      "Alice läks jänesele järele."
+    ],
+    [
+      "Alice kukub auku.",
+      "Alice kukkus auku."
+    ],
+    [
+      "Ta näeb riiuleid.",
+      "Ta nägi riiuleid."
+    ],
+    [
+      "Alice leiab väikese võtme.",
+      "Alice leidis väikese võtme."
+    ],
+    [
+      "Ta avab ukse.",
+      "Ta avas ukse."
+    ],
+    [
+      "Alice joob pudelist.",
+      "Alice jõi pudelist."
     ]
   ]
 }
