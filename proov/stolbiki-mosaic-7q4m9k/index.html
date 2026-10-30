@@ -494,10 +494,11 @@ body{background:
   .proto-world-count{top:76px;font-size:12px}
 }
 
-/* Progress-transfer action: permanent bottom control, never clipped by the levels panel. */
-.home{overflow-y:auto;overscroll-behavior:contain;padding-bottom:70px}
+/* Progress-transfer action follows ALL FOUR arithmetic cards, without overlay.
+   The home panel may scroll vertically on short phones, but nothing is hidden. */
+.home{overflow-y:auto;overscroll-behavior:contain;padding-bottom:calc(15px + env(safe-area-inset-bottom))}
 .route-card{overflow:visible}
-.home-passport{position:absolute;bottom:calc(12px + env(safe-area-inset-bottom));left:14px;right:14px;z-index:10;min-height:48px;margin:0;box-shadow:0 7px 19px rgba(25,63,98,.16)}
+.home-passport{position:static;inset:auto;z-index:auto;flex:0 0 auto;min-height:48px;margin:0 4px 2px;box-shadow:0 7px 19px rgba(25,63,98,.16)}
 @media(max-width:899px){
   .home-world-card{flex-shrink:0;height:clamp(154px,28dvh,235px);min-height:154px}
   .route-card{flex:0 0 auto;min-height:218px}
