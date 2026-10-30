@@ -1632,19 +1632,27 @@ body{background:
     const work=el('division-work','');host.append(answer,work);$('#mathWrap').replaceChildren(host);
     updateDivisionPlacement();
 
-    const cols=1+n,rows=1+st.length*2,g=createGrid(cols,rows,work);
+    // A zero digit in the quotient is written in the answer, then the next
+    // dividend digit is brought down. Never draw a bogus "− 0" subtraction.
+    const cols=1+n,rows=1+st.reduce((total,step)=>total+(Number(step.q)===0?1:2),0),
+      g=createGrid(cols,rows,work);
     [...a].forEach((ch,i)=>fixed(g,1+i,0,ch));
     steps=[];
+    let rowCursor=1;
     st.forEach((s,si)=>{
-      const r=1+si*2;symbol(g,0,r,'−');const ps=String(s.prod),pstart=1+s.pStart;
-      for(let j=0;j<ps.length;j++)entry(g,pstart+j,r,`p${si}_${j}`);
-      rule(g,pstart,r,Math.max(1,s.end-s.pStart+1),'subrule');
+      const skipZeroProduct=Number(s.q)===0,r=rowCursor;
       addStep('q'+si,'q'+si,s.q);
-      [...ps].forEach((ch,j)=>addStep(`p${si}_${j}`,`p${si}_${j}`,ch));
-      const rr=r+1;
-      // Textbook rule: exact FINAL remainder 0 is omitted; non-zero final remainder stays.
+      if(!skipZeroProduct){
+        symbol(g,0,r,'−');const ps=String(s.prod),pstart=1+s.pStart;
+        for(let j=0;j<ps.length;j++)entry(g,pstart+j,r,`p${si}_${j}`);
+        rule(g,pstart,r,Math.max(1,s.end-s.pStart+1),'subrule');
+        [...ps].forEach((ch,j)=>addStep(`p${si}_${j}`,`p${si}_${j}`,ch));
+      }
+      const rr=r+(skipZeroProduct?0:1);
+      // A nonzero remainder is carried through. The final zero is omitted.
       if(s.rem>0){const rs=String(s.rem),start=1+s.end-rs.length+1;for(let j=0;j<rs.length;j++){entry(g,start+j,rr,`r${si}_${j}`);addStep(`r${si}_${j}`,`r${si}_${j}`,rs[j])}}
       if(!s.final){entry(g,1+s.nextIndex,rr,`down${si}`);addStep(`down${si}`,`down${si}`,s.nextDigit)}
+      rowCursor+=skipZeroProduct?1:2;
     });
     if(hasRemainder){for(let i=0;i<remText.length;i++)addStep('ar'+i,'ar'+i,remText[i])}
     return{grid:g,cols,rows};
