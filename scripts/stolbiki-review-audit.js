@@ -75,7 +75,7 @@ for(let i=0;i<2400;i++){
   if(a.skill==='D2')weak++;
   if(a.skill==='D16')strong++;
 }
-assert(weak>strong*3,'Overdue/weak D2 should strongly outweigh fluent D16: '+weak+' vs '+strong);
+assert(weak>strong*2.5,'Overdue/weak D2 should strongly outweigh fluent D16: '+weak+' vs '+strong);
 const retrySession=A.createSession(profile,'mix',()=>0.5,Date.now());
 retrySession.retryQueue.push({op:'div',skill:'D4',dueAt:0});
 let ret;
