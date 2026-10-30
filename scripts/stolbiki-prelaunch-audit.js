@@ -253,6 +253,20 @@ async function checkCompetitor() {
           top.equation==='984048 : 48 ='&&top.quotientSlots===5&&
           top.answerVisible&&top.firstGridVisible&&top.scrollTop===0,
           JSON.stringify(top),'critical');
+        const zeroWork=await p.evaluate(()=>{
+          const task=window.__EDUKASS_TEST__.getState().current,
+            stages=task.meta.stages,zeros=stages.map((s,i)=>Number(s.q)===0?i:-1).filter(i=>i>=0);
+          const symbols=[...document.querySelectorAll('#mathWrap .math-grid .symbol')].filter(x=>x.textContent==='−');
+          const forbidden=zeros.filter(i=>document.querySelector('#mathWrap [data-target="p'+i+'_0"]'));
+          const qCells=zeros.map(i=>document.querySelector('#mathWrap [data-target="q'+i+'"]')!==null);
+          return {zeros,zeroProductsRendered:forbidden.length,zeroQuotientSlotsPresent:qCells.every(Boolean),
+            shownSubtractions:symbols.length,expectedSubtractions:stages.length-zeros.length};
+        });
+        note('division-long-geometry','Zero quotient digits remain, but no meaningless −0 subtraction rows, '+width+'×'+height,
+          zeroWork.zeros.length===2&&zeroWork.zeroQuotientSlotsPresent&&
+          zeroWork.zeroProductsRendered===0&&
+          zeroWork.shownSubtractions===zeroWork.expectedSubtractions,
+          JSON.stringify(zeroWork),'critical');
         const bottom=await p.evaluate(()=>{
           const layout=document.querySelector('#mathWrap .division-layout');
           const grid=document.querySelector('#mathWrap .math-grid');
