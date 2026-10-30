@@ -262,10 +262,12 @@ async function checkCompetitor() {
           return {zeros,zeroProductsRendered:forbidden.length,zeroQuotientSlotsPresent:qCells.every(Boolean),
             shownSubtractions:symbols.length,expectedSubtractions:stages.length-zeros.length};
         });
-        note('division-long-geometry','Zero quotient digits remain, but no meaningless −0 subtraction rows, '+width+'×'+height,
+        // Regression baseline, NOT a new curricular rule: the pre-change
+        // layout explicitly renders all quotient stages, including zero stages.
+        note('division-long-geometry','Original zero-quotient stages preserved, no unrequested simplification, '+width+'×'+height,
           zeroWork.zeros.length===2&&zeroWork.zeroQuotientSlotsPresent&&
-          zeroWork.zeroProductsRendered===0&&
-          zeroWork.shownSubtractions===zeroWork.expectedSubtractions,
+          zeroWork.zeroProductsRendered===2&&
+          zeroWork.shownSubtractions===zeroWork.expectedSubtractions+zeroWork.zeros.length,
           JSON.stringify(zeroWork),'critical');
         const bottom=await p.evaluate(()=>{
           const layout=document.querySelector('#mathWrap .division-layout');
