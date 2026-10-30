@@ -17,6 +17,7 @@ window.EDUKASS_CATALOG=[
   ]},
   {id:"english",label:"English",icon:"🇬🇧",lessons:[
     {kind:"core",lang:"en",topic:"present-simple-words",extraMeta:"🔊 озвучка"},
+    {kind:"core",lang:"en",topic:"its-hot-today",extraMeta:"🔊 озвучка · ✍️ написание"},
     {kind:"custom",handler:"englishPresentSimple3",title:"Тренировка Present Simple — он, она, оно",meta:"7 глаголов · -s / -es / -ies"}
   ]},
   {id:"deutsch",label:"Deutsch",icon:"🇩🇪",lessons:[
