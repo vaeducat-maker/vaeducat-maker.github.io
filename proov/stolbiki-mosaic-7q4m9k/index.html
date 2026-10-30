@@ -595,7 +595,7 @@ body{background:
 
   <section id="home" class="home hidden">
     <div class="home-head">
-      <div class="home-title"><h1>Kirjalik arvutamine</h1><p>Sinu teekond</p><span id="lateDemoMark" class="late-demo-mark hidden">NÄIDIS: edasijõudnud õpilane · päris edusammud jäävad alles</span></div>
+      <div class="home-title"><h1>Kirjalik arvutamine</h1><p>Sinu teekond</p><span id="reviewStatus" class="late-demo-mark hidden">✓ Kordamine · kõik 52 taset omandatud</span><span id="lateDemoMark" class="late-demo-mark hidden">NÄIDIS: edasijõudnud õpilane · päris edusammud jäävad alles</span></div>
       <div class="home-share-tools">
         <div class="world-pill" id="homeWorld">Maailm 50 / 550</div>
         <button id="shareGameButton" class="home-share-button" type="button" aria-label="Jaga mängu">
@@ -1227,10 +1227,11 @@ body{background:
 });
 
 </script>
+<script src="./review-mode.js"></script>
 <script>
 (()=>{
   'use strict';
-  const E=window.EDUKASS_MATH_ENGINE,A=window.EDUKASS_ADAPTIVE;
+  const E=window.EDUKASS_MATH_ENGINE,A=window.EDUKASS_ADAPTIVE,R=window.EDUKASS_REVIEW_MODE;
   const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
   // Explicit one-time clean-room entry for the owner to test the game as a
   // genuinely NEW pupil. Never touch other EDUKASS games or unrelated storage.
@@ -1950,7 +1951,8 @@ body{background:
     }
   }
   function renderHomeLevels(){
-    const snap=A.publicSnapshot(profile),max={add:10,sub:12,mul:14,div:16};
+    const snap=A.publicSnapshot(profile),max={add:10,sub:12,mul:14,div:16},review=R.isComplete(profile);
+    $('#reviewStatus').classList.toggle('hidden',!review);
     for(const op of ['add','sub','mul','div']){
       // The public snapshot uses skill IDs like "A9", not numeric levels.
       // Read the actual numeric frontier from the adaptive profile.
@@ -1959,7 +1961,7 @@ body{background:
       const el=$('#lvl-'+op),bar=$('#prog-'+op);
       // Frontier is the current task type, not the share of the curriculum
       // reliably mastered. Show a position marker, never a completion bar.
-      if(el)el.textContent=`Harjutad: ${lvl}. tase ${max[op]}-st`;
+      if(el)el.textContent=review?`Kõik ${max[op]} taset omandatud`:`Harjutad: ${lvl}. tase ${max[op]}-st`;
       if(bar){bar.style.width='12px';bar.style.left=`calc(${((lvl-1)/(max[op]-1)*100).toFixed(2)}% - ${((lvl-1)/(max[op]-1)*12).toFixed(2)}px)`}
       const btn=document.querySelector('.op[data-op="'+op+'"]');if(btn)btn.classList.toggle('current-mode',lastMode===op);
     }
@@ -1980,9 +1982,10 @@ body{background:
     if(homeTimer&&homeAction&&continueButton&&hint){
       const live=lesson.active;
       homeTimer.textContent=live?'⏳ '+timer+' JÄÄNUD':'⏳ 15 MINUTIT PÄEVAS';
-      homeAction.textContent=live?'Jätka tundi · Kõik koos':'Kõik koos';
+      const review=R.isComplete(profile);
+      homeAction.textContent=review?(live?'Jätka kordamist':'Kordamine'):(live?'Jätka tundi · Kõik koos':'Kõik koos');
       continueButton.textContent=live?'JÄTKA!':'MÄNGI!';
-      hint.textContent=live?'Vaheta tehet · aeg jätkub':'Vali tehe · 15 minutit kokku';
+      hint.textContent=review?'Kõik neli tehet · 52 taset':(live?'Vaheta tehet · aeg jätkub':'Vali tehe · 15 minutit kokku');
       $('.continue-card').classList.toggle('lesson-in-progress',live);
     }
   }
@@ -2178,11 +2181,24 @@ body{background:
     return result;
   }
   function nextTask(){
-    assignment=A.nextAssignment(session);const seed=++seedCounter;current=generateFreshTask(assignment.skill,seed);
+    const review=R.isComplete(profile);
+    if(review){
+      // The last mastered skill can finish in the middle of an active lesson.
+      // Switch immediately without restarting the clock or clearing retries.
+      session.mode='mix';session.ops=['add','sub','mul','div'];mode='mix';
+    }
+    assignment=review?R.nextAssignment(session):A.nextAssignment(session);
+    const seed=++seedCounter;current=generateFreshTask(assignment.skill,seed);
     const realSkillLevel=Number(assignment.skill.slice(1));
-    $('#route').textContent=`${Math.min(5,protoTask+1)} / 5`;$('#mode').textContent=`${realSkillLevel}. tase · ${PROTO_LABEL[current.op]||''}`;syncProtoTop();renderTask(current)
+    $('#route').textContent=`${Math.min(5,protoTask+1)} / 5`;
+    $('#mode').textContent=review?`Kordamine · ${PROTO_LABEL[current.op]||''} · ${realSkillLevel}. tase`:
+      `${realSkillLevel}. tase · ${PROTO_LABEL[current.op]||''}`;
+    syncProtoTop();renderTask(current)
   }
   function start(m='mix',{historyMode='push',continueLesson=false}={}){
+    // After mastery of all 52 skills every play button enters mixed review.
+    // Before that, single-operation choices work exactly as previously.
+    if(R.isComplete(profile))m='mix';
     // A 15-minute class is shared by all four operations. Switching through
     // the home page must neither reset time nor throw away completed work,
     // upcoming retries, world progress or adaptive practice history.
@@ -3005,6 +3021,20 @@ body{background:
     protoImg.src=activeWorldArt()?.src||PROTO_WORLD_IMG;
   }
   initializeLateDemo();
+  // Safe, explicit simulation of post-curriculum repetition. Demo storage
+  // is isolated by LATE_DEMO. No normal player's data or world is touched.
+  const REVIEW_DEMO=LATE_DEMO&&new URLSearchParams(location.search).get('reviewDemo')==='1';
+  if(REVIEW_DEMO){
+    for(const [op,meta] of Object.entries(A.META)){
+      const state=profile.ops[op];state.frontier=meta.max;
+      for(let i=1;i<=meta.max;i++){
+        const sk=state.skills[meta.prefix+i];
+        Object.assign(sk,{mastered:true,verified:false,attempts:5,firstTry:5,
+          cleanStreak:3,reviewStage:2,nextReviewAt:Date.now()+86400000});
+      }
+    }
+    save();
+  }
   if(WORLD_VICTORY_SIM&&!localStorage.getItem('edukass-world-victory-demo-initialized')){
     // Precisely the state on the winning moment: 550/550 cells and ten
     // unlocked paintings, but before the congratulations popup appears.
@@ -3083,6 +3113,11 @@ body{background:
     solveCurrent:()=>{for(let i=0;i<steps.length;i++){const s=steps[i],p=stepPhase(s);if(p!==phase)switchPhase(p);const node=targetEl(s.target);if(node)node.textContent=s.value;completedSteps.add(i)}selectedTarget=null;selectedStepIndex=null;refreshInteraction()},
     resetProfile:()=>{profile=A.createProfile();save();renderProfile()},
     getLesson:()=>({active:lesson.active,finished:lesson.finished,elapsed:lesson.elapsed,solved:lesson.entries.length,mode:session?.mode,retries:session?.retryQueue.length||0,taskInWorld:protoTask}),
+    reviewQA:{state:()=>({mastered:R.masteredCount(profile),complete:R.isComplete(profile),
+      inReview:!!session?.reviewCursor,mode:session?.mode}),
+      // Available only in the isolated post-curriculum owner simulation.
+      next:()=>{if(!REVIEW_DEMO||!session)return null;nextTask();return{...assignment}}},
+
     setLessonElapsed:(ms)=>{lesson.elapsed=Math.min(LESSON_MS,Math.max(0,ms));updateLessonClock()},
     showLessonDone:()=>showLessonDone(),
     getWorldTileOrder:()=>worldUnlocks(),
