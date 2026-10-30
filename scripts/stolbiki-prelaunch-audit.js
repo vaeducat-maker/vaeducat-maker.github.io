@@ -204,6 +204,90 @@ async function checkCompetitor() {
   let browser;
   try {
     browser=await chromium.launch({headless:true});
+    // Regression from owner screenshot: D15 long division (984048 : 48) displayed
+    // only the subtraction grid because the divisor and quotient were clipped.
+    // The old header showed WORLD tile stage 301 instead of real math stage.
+    for(const [width,height] of [[1202,868],[390,844],[360,640]]){
+      const rc=await browser.newContext({
+        viewport:{width,height},isMobile:width<900,hasTouch:width<900,
+        deviceScaleFactor:1,serviceWorkers:'block'
+      });
+      try{
+        const p=await rc.newPage(),err=[];
+        p.on('pageerror',e=>err.push(e.message));
+        await p.goto('http://127.0.0.1:'+port+
+          '/proov/stolbiki-mosaic-7q4m9k/index.html?lateDemo=1',
+          {waitUntil:'domcontentloaded',timeout:35000});
+        await p.waitForFunction(()=>!!window.__EDUKASS_TEST__,null,{timeout:16000});
+        await p.locator('#home').waitFor({state:'visible'});
+        await p.locator('.op[data-op="div"]').click();
+        await p.locator('#train').waitFor({state:'visible'});
+        await p.waitForTimeout(220);
+        const stage=await p.evaluate(()=>{
+          const T=window.__EDUKASS_TEST__,st=T.getState(),
+            level=Number(st.assignment?.skill?.slice(1)),text=document.querySelector('#mode').textContent;
+          return{level,text,skill:st.assignment?.skill,world:T.getRealWorldProgress().level};
+        });
+        note('division-long-geometry','Training header shows true D skill, NOT world tile stage, '+width+'×'+height,
+          stage.level>=1&&stage.level<=16&&stage.text.startsWith(stage.level+'. tase')&&
+          !stage.text.startsWith(stage.world+'. tase'),JSON.stringify(stage),'critical');
+        await p.evaluate(()=>window.__EDUKASS_TEST__.startExample('div',984048,48));
+        await p.waitForTimeout(280);
+        const top=await p.evaluate(()=>{
+          const paper=document.querySelector('#paper'),layout=document.querySelector('#mathWrap .division-layout'),
+            answer=document.querySelector('#mathWrap .division-answer'),
+            expr=document.querySelector('#mathWrap .division-expression'),
+            grid=document.querySelector('#mathWrap .math-grid');
+          const q=document.querySelectorAll('#mathWrap .division-answer [data-target^="q"]');
+          const pr=paper.getBoundingClientRect(),ar=answer.getBoundingClientRect(),
+            gr=grid.getBoundingClientRect(),lr=layout.getBoundingClientRect();
+          return {equation:expr?.textContent,quotientSlots:q.length,
+            layoutTop:lr.top,answerTop:ar.top,answerBottom:ar.bottom,
+            gridTop:gr.top,gridBottom:gr.bottom,paperTop:pr.top,paperBottom:pr.bottom,
+            scrollTop:layout.scrollTop,scrollHeight:layout.scrollHeight,clientHeight:layout.clientHeight,
+            answerVisible:ar.top>=pr.top-1&&ar.bottom<=pr.bottom+1&&
+              ar.width>40&&ar.height>20&&gr.top>=ar.bottom-1&&
+              lr.top>=pr.top-1,firstGridVisible:gr.top<pr.bottom-20};
+        });
+        note('division-long-geometry','984048 : 48 = and five quotient cells visible before any scroll, '+width+'×'+height,
+          top.equation==='984048 : 48 ='&&top.quotientSlots===5&&
+          top.answerVisible&&top.firstGridVisible&&top.scrollTop===0,
+          JSON.stringify(top),'critical');
+        const zeroWork=await p.evaluate(()=>{
+          const task=window.__EDUKASS_TEST__.getState().current,
+            stages=task.meta.stages,zeros=stages.map((s,i)=>Number(s.q)===0?i:-1).filter(i=>i>=0);
+          const symbols=[...document.querySelectorAll('#mathWrap .math-grid .symbol')].filter(x=>x.textContent==='−');
+          const forbidden=zeros.filter(i=>document.querySelector('#mathWrap [data-target="p'+i+'_0"]'));
+          const qCells=zeros.map(i=>document.querySelector('#mathWrap [data-target="q'+i+'"]')!==null);
+          return {zeros,zeroProductsRendered:forbidden.length,zeroQuotientSlotsPresent:qCells.every(Boolean),
+            shownSubtractions:symbols.length,expectedSubtractions:stages.length-zeros.length};
+        });
+        note('division-long-geometry','Zero quotient digits remain, but no meaningless −0 subtraction rows, '+width+'×'+height,
+          zeroWork.zeros.length===2&&zeroWork.zeroQuotientSlotsPresent&&
+          zeroWork.zeroProductsRendered===0&&
+          zeroWork.shownSubtractions===zeroWork.expectedSubtractions,
+          JSON.stringify(zeroWork),'critical');
+        const bottom=await p.evaluate(()=>{
+          const layout=document.querySelector('#mathWrap .division-layout');
+          const grid=document.querySelector('#mathWrap .math-grid');
+          const paper=document.querySelector('#paper').getBoundingClientRect();
+          layout.scrollTop=layout.scrollHeight;
+          const g=grid.getBoundingClientRect();
+          return{gridBottom:g.bottom,paperBottom:paper.bottom,
+            reachable:g.bottom<=paper.bottom+1,scrollTop:layout.scrollTop,
+            scrollHeight:layout.scrollHeight,clientHeight:layout.clientHeight};
+        });
+        note('division-long-geometry','Bottom of written calculation is accessible, '+width+'×'+height,
+          bottom.reachable,JSON.stringify(bottom),'critical');
+        await p.evaluate(()=>{document.querySelector('#mathWrap .division-layout').scrollTop=0});
+        await screenshot(p,'long-division-header-'+width);
+        note('division-long-geometry','No browser exceptions in long division, '+width+'×'+height,
+          err.length===0,JSON.stringify(err.slice(0,3)),'critical');
+      }catch(e){
+        note('division-long-geometry','Long division screen '+width+'×'+height,false,
+          e.stack?.slice(0,900)||String(e),'critical');
+      }finally{await rc.close()}
+    }
     // A late-stage demo is a complete real-app interaction, with private
     // storage and its own saved worlds. The transfer control must not clip.
     for(const [width,height] of [[360,640],[390,844],[1440,900]]){
