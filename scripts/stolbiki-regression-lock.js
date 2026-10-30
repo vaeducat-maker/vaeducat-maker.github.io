@@ -70,7 +70,7 @@ negative('Relax the no-round-number mathematics constraint',
   SOURCE.replace('&&(task.a%10===0||task.b%10===0))return false;',
                  '&&(task.a%10===0&&task.b%10===0))return false;'));
 negative('Change world save behavior',
-  SOURCE.replace('function worldEvidence(){','function worldEvidence(){/* MUTATED */'));
+  SOURCE.replace('function worldEvidence(p=profile){','function worldEvidence(p=profile){/* MUTATED */'));
 
 const output=path.join(ROOT,'artifacts','edukass-quality');
 fs.mkdirSync(output,{recursive:true});
