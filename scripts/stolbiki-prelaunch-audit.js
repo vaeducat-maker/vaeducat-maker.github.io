@@ -204,6 +204,47 @@ async function checkCompetitor() {
   let browser;
   try {
     browser=await chromium.launch({headless:true});
+    // Public owner-only demo link: launches EXACT 3465 : 33 = 105 with a
+    // zero in the middle of the quotient, without touching ordinary saves.
+    for(const [width,height] of [[390,844],[1202,868]]){
+      const ctx=await browser.newContext({viewport:{width,height},
+        isMobile:width<900,hasTouch:width<900,deviceScaleFactor:1,serviceWorkers:'block'});
+      try{
+        const p=await ctx.newPage(),errs=[];
+        p.on('pageerror',e=>errs.push(e.message));
+        await p.goto('http://127.0.0.1:'+port+
+          '/proov/stolbiki-mosaic-7q4m9k/index.html?lateDemo=1&divisionExample=3465-33',
+          {waitUntil:'domcontentloaded',timeout:35000});
+        await p.waitForFunction(()=>window.__EDUKASS_TEST__?.getState()?.current?.a===3465,
+          null,{timeout:12000});
+        await p.waitForTimeout(150);
+        const v=await p.evaluate(()=>{
+          const t=window.__EDUKASS_TEST__.getState(),equation=document.querySelector('.division-expression');
+          const cells=[...document.querySelectorAll('.division-answer [data-target^="q"]')];
+          const paper=document.getElementById('paper').getBoundingClientRect(),
+            ar=document.querySelector('.division-answer').getBoundingClientRect();
+          const normal=localStorage.getItem('edukass_stolbiki_player_profile_v42');
+          return{a:t.current.a,b:t.current.b,quotient:t.current.meta.quotient,
+            displayed:equation?.textContent,slots:cells.length,mode:document.getElementById('mode').textContent,
+            visible:ar.top>=paper.top-1&&ar.bottom<=paper.bottom+1,
+            hasMidZero:t.steps.some(s=>s.target==='q1'&&s.value==='0'),
+            normalSave:normal};
+        });
+        note('direct-division-demo','Direct-link real interactive 3465 : 33 = 105, zero in quotient, '+width+'×'+height,
+          v.a===3465&&v.b===33&&String(v.quotient)==='105'&&v.displayed==='3465 : 33 ='&&
+          v.slots===3&&v.hasMidZero&&v.visible&&v.mode==='Jagamine · näide'&&
+          v.normalSave===null&&errs.length===0,JSON.stringify({...v,errors:errs}),'critical');
+        await p.locator('.division-answer [data-target="q0"]').click();
+        await p.locator('#pad [data-key="1"]').click();
+        const entered=await p.locator('.division-answer [data-target="q0"]').textContent();
+        note('direct-division-demo','Pupil can enter quotient digits in exact example',entered.trim()==='1',
+          'entered='+JSON.stringify(entered),'critical');
+        await screenshot(p,'direct-division-3465-zero-'+width);
+      }catch(e){
+        note('direct-division-demo','Direct-link division example '+width+'×'+height,false,
+          e.stack?.slice(0,900)||String(e),'critical');
+      }finally{await ctx.close()}
+    }
     // Regression from owner screenshot: D15 long division (984048 : 48) displayed
     // only the subtraction grid because the divisor and quotient were clipped.
     // The old header showed WORLD tile stage 301 instead of real math stage.
