@@ -35,6 +35,8 @@ jobs:
         run: node scripts/quality-verify-contracts.js
       - name: Negative controls — ensure gate actually catches errors
         run: node scripts/quality-test-contracts.js
+      - name: Frozen arithmetic and progress semantics vs last working commit
+        run: node scripts/stolbiki-regression-lock.js
       - name: Mathematical and pedagogical correctness
         run: |
           node scripts/stolbiki-pedagogy-gate.js
@@ -65,6 +67,7 @@ jobs:
             artifacts/stolbiki-prelaunch/
             artifacts/stolbiki-pedagogy/
             artifacts/stolbiki-world-balance/
+            artifacts/edukass-quality/stolbiki-regression-lock.json
             artifacts/pedagogy/
           if-no-files-found: warn
           retention-days: 30
