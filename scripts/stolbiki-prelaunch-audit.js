@@ -204,6 +204,66 @@ async function checkCompetitor() {
   let browser;
   try {
     browser=await chromium.launch({headless:true});
+    // All 52 mastered: real page switches to Kordamine, preserves 15 min
+    // and worlds. Direct owner simulation is strictly isolated by lateDemo.
+    for(const [width,height] of [[390,844],[1202,868]]){
+      const ctx=await browser.newContext({viewport:{width,height},
+        isMobile:width<900,hasTouch:width<900,deviceScaleFactor:1,serviceWorkers:'block'});
+      try{
+        const p=await ctx.newPage(),errors=[];
+        p.on('pageerror',e=>errors.push(e.message));
+        await p.goto('http://127.0.0.1:'+port+
+          '/proov/stolbiki-mosaic-7q4m9k/index.html?lateDemo=1&reviewDemo=1',
+          {waitUntil:'domcontentloaded',timeout:35000});
+        await p.waitForFunction(()=>window.__EDUKASS_TEST__?.reviewQA?.state()?.complete,
+          null,{timeout:12000});
+        const initial=await p.evaluate(()=>({
+          label:document.getElementById('homeLessonAction').textContent,
+          banner:!document.getElementById('reviewStatus').classList.contains('hidden'),
+          levels:[...document.querySelectorAll('.lvl')].map(x=>x.textContent),
+          demo:window.__EDUKASS_TEST__.reviewQA.state(),
+          tiles:window.__EDUKASS_TEST__.getRealWorldProgress().tiles,
+          normalSave:localStorage.getItem('edukass_stolbiki_player_profile_v42')
+        }));
+        note('mastered-review','All 52 mastered visible on home and real saves isolated, '+width+'×'+height,
+          initial.demo.mastered===52&&initial.banner&&initial.label==='Kordamine'&&
+          initial.levels.every(x=>x.includes('omandatud'))&&initial.normalSave===null,
+          JSON.stringify(initial),'critical');
+        await p.locator('.op[data-op="div"]').click();
+        await p.locator('#train').waitFor({state:'visible'});
+        const sessions=await p.evaluate(()=>{
+          const api=window.__EDUKASS_TEST__;
+          const before=api.getLesson();
+          api.setLessonElapsed(240000);
+          const samples=[api.getState().current.op];
+          const skills=[api.getState().assignment.skill];
+          for(let i=0;i<39;i++){
+            const a=api.reviewQA.next();
+            samples.push(a.op);skills.push(a.skill);
+          }
+          return{mode:api.getLesson().mode,
+            ops:samples,skills,clock:document.querySelector('#lessonTime').textContent,
+            after:api.getLesson(),tiles:api.getRealWorldProgress().tiles,
+            label:document.querySelector('#mode').textContent,
+            normalSave:localStorage.getItem('edukass_stolbiki_player_profile_v42')};
+        });
+        const freq={add:0,sub:0,mul:0,div:0};
+        for(const op of sessions.ops)freq[op]++;
+        note('mastered-review','Every entry automatically mixes all four operations across 40 tasks, '+width+'×'+height,
+          sessions.mode==='mix'&&Object.values(freq).every(n=>n===10)&&
+          new Set(sessions.skills).size>=12&&sessions.label.includes('Kordamine'),
+          JSON.stringify({freq,unique:new Set(sessions.skills).size,mode:sessions.mode,
+            label:sessions.label}),'critical');
+        note('mastered-review','15-min clock, 350 world tiles and user data stay untouched, '+width+'×'+height,
+          sessions.clock==='11:00'&&sessions.after.active&&
+          sessions.tiles===initial.tiles&&sessions.normalSave===null&&errors.length===0,
+          JSON.stringify({clock:sessions.clock,tiles:sessions.tiles,errors}),'critical');
+        await screenshot(p,'mastered-kordamine-'+width);
+      }catch(e){
+        note('mastered-review','Post-curriculum browser scenario '+width+'×'+height,
+          false,e.stack?.slice(0,1100)||String(e),'critical');
+      }finally{await ctx.close()}
+    }
     // Public owner-only demo link: launches EXACT 3465 : 33 = 105 with a
     // zero in the middle of the quotient, without touching ordinary saves.
     for(const [width,height] of [[390,844],[1202,868]]){
