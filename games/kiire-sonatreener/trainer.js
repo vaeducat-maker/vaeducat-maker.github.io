@@ -281,7 +281,11 @@ try{const savedDirection=localStorage.getItem("sonatreenerReviewDirection");if(s
 const shuffle=a=>{a=[...a];for(let i=a.length-1;i;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"})[c]);
 const locale=()=>DATA[lang]?.locale||"et";
-const norm=s=>String(s).toLocaleLowerCase(locale()).trim().replace(/[.,;:·]+/g," ").replace(/\s+/g," ");
+const norm=s=>{
+  let value=String(s).toLocaleLowerCase(locale()).trim();
+  if(lang==="en")value=value.replace(/[\u2018\u2019\u02BC]/g,"'");
+  return value.replace(/[.,;:·]+/g," ").replace(/\s+/g," ");
+};
 
 document.addEventListener("copy",e=>e.preventDefault());
 document.addEventListener("cut",e=>e.preventDefault());
@@ -521,12 +525,40 @@ function renderTyping(){
   const item=typingQueue[0];typingChecked=false;typingWasCorrect=false;counter.textContent=`Осталось: ${typingQueue.length}`;updateSub();
   const expected=typingExpected(item),instruction=currentTopic.typingInstruction||(lang==="de"?"Напиши формы du / er":`Напиши по-${targetName()}`);
   const posterButton=currentTopic&&currentTopic.poster?'<button class="secondary" id="typingPoster" style="width:100%">🖼 Посмотреть плакат</button>':'';
-  card.innerHTML=`<div class="typing-wrap">${posterButton}<div class="typing-kicker">${esc(instruction)}</div><div class="typing-prompt">${esc(typingPrompt(item))}</div>${lang==="de"?'<div class="tiny" style="text-align:center">Например: du gibst · er gibt</div>':''}<div class="input-row"><input id="typeInput" class="typing-input" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" aria-label="Ответ"><button class="primary" id="typeCheck">Проверить</button></div><div class="review-stats"><span>✓ ${typingGood}</span><span>✕ ${typingBad}</span></div><div id="typeFeedback"></div></div>`;
+  const englishTypingKeys=lang==="en"?`<div class="typing-english-keys" role="group" aria-label="Быстрый ввод знаков препинания">
+    <span class="tiny typing-keys-label">Символы:</span>
+    <div class="typing-keys-row">
+      <button type="button" data-typing-insert="&#39;" aria-label="Апостроф">&#39;</button>
+      <button type="button" data-typing-insert="?" aria-label="Вопросительный знак">?</button>
+      <button type="button" data-typing-insert="!" aria-label="Восклицательный знак">!</button>
+      <button type="button" data-typing-insert="." aria-label="Точка">.</button>
+      <button type="button" data-typing-backspace aria-label="Удалить символ слева">⌫</button>
+    </div>
+  </div>`:"";
+  card.innerHTML=`<div class="typing-wrap">${posterButton}<div class="typing-kicker">${esc(instruction)}</div><div class="typing-prompt">${esc(typingPrompt(item))}</div>${lang==="de"?'<div class="tiny" style="text-align:center">Например: du gibst · er gibt</div>':''}<div class="input-row"><input id="typeInput" class="typing-input" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" aria-label="Ответ"><button class="primary" id="typeCheck">Проверить</button></div>${englishTypingKeys}<div class="review-stats"><span>✓ ${typingGood}</span><span>✕ ${typingBad}</span></div><div id="typeFeedback"></div></div>`;
   if(currentTopic&&currentTopic.poster)card.querySelector("#typingPoster").onclick=()=>showPoster(currentTopic,"typing");
   const input=card.querySelector("#typeInput"),check=card.querySelector("#typeCheck");
   input.addEventListener("paste",e=>e.preventDefault());
   input.addEventListener("drop",e=>e.preventDefault());
   input.addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="v")e.preventDefault();if(e.key==="Insert"&&e.shiftKey)e.preventDefault();if(e.key==="Enter")checkTyping()});
+  if(lang==="en"){
+    const insertEnglishSymbol=(symbol,removeLeft=false)=>{
+      if(input.disabled||typingChecked)return;
+      const start=input.selectionStart??input.value.length;
+      const end=input.selectionEnd??input.value.length;
+      const from=removeLeft&&start===end?Math.max(0,start-1):start;
+      input.setRangeText(removeLeft?"":symbol,from,end,"end");
+      input.dispatchEvent(new Event("input",{bubbles:true}));
+      input.focus({preventScroll:true});
+    };
+    card.querySelectorAll(".typing-keys-row button").forEach(btn=>{
+      btn.addEventListener("pointerdown",event=>event.preventDefault());
+      btn.addEventListener("click",()=>{
+        if(btn.hasAttribute("data-typing-backspace"))insertEnglishSymbol("",true);
+        else insertEnglishSymbol(btn.dataset.typingInsert||"");
+      });
+    });
+  }
   check.onclick=checkTyping;setTimeout(()=>input.focus(),0);
 }
 
