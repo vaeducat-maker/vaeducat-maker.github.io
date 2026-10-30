@@ -247,6 +247,29 @@ const DATA={
         {word:"bank",ru:"банк"},
         {word:"garage",ru:"гараж"},
         {word:"like",ru:"нравиться"}
+      ]},
+      {id:"its-hot-today",title:"It's hot today!",subtitle:"English",active:false,poster:null,audio:true,audioLang:"en-GB",typingInstruction:"Напиши по-английски",words:[
+        {word:"raining",ru:"идёт дождь"},
+        {word:"windy",ru:"ветрено"},
+        {word:"hot",ru:"жарко"},
+        {word:"cold",ru:"холодно"},
+        {word:"snowing",ru:"идёт снег"},
+        {word:"sunny",ru:"солнечно"},
+        {word:"fly a kite",ru:"запускать воздушного змея"},
+        {word:"make a snowman",ru:"лепить снеговика"},
+        {word:"wear coats",ru:"носить куртки"},
+        {word:"go outside",ru:"выходить на улицу"},
+        {word:"go ice skating",ru:"кататься на коньках"},
+        {word:"bike",ru:"велосипед"},
+        {word:"kite",ru:"воздушный змей"},
+        {word:"nine",ru:"девять"},
+        {word:"white",ru:"белый"},
+        {word:"line",ru:"линия"},
+        {word:"What's the weather like?",ru:"Какая погода?"},
+        {word:"Put on your hat.",ru:"Надень шапку."},
+        {word:"Don't put on your coat.",ru:"Не надевай куртку."},
+        {word:"Open the window.",ru:"Открой окно."},
+        {word:"Don't open the window.",ru:"Не открывай окно."}
       ]}
     ]}
   ]}
