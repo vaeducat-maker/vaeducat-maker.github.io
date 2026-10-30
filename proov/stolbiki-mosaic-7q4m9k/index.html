@@ -56,8 +56,11 @@ button{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent}
 @media(max-width:340px){.app{padding-left:8px;padding-right:8px}.ops{gap:7px}.op{min-height:70px}.pad{gap:5px}.pad button{min-height:46px}}
 
 /* v4.2: portrait-first division. The answer no longer widens the notebook grid. */
-.division-layout{width:100%;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
-.division-answer{width:100%;display:flex;flex-direction:column;align-items:center;gap:4px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-variant-numeric:tabular-nums;font-weight:750}
+/* Quotient and divisor must remain visible above long written division.
+   Scrolling never begins mid-task: top of work is anchored inside the paper. */
+.math-wrap:has(.division-layout){flex:1 1 auto;align-items:stretch}
+.division-layout{width:100%;height:100%;min-height:0;max-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:8px;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;scrollbar-width:thin}
+.division-answer{flex:0 0 auto;width:100%;display:flex;flex-direction:column;align-items:center;gap:4px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-variant-numeric:tabular-nums;font-weight:750}
 .division-expression{font-size:clamp(19px,5.5vw,25px);line-height:1.15;white-space:nowrap}
 .division-result{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;white-space:nowrap}
 .division-result-line{min-height:calc(var(--cell)*.82);display:flex;align-items:center;justify-content:center;gap:2px}
@@ -65,7 +68,7 @@ button{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent}
 .division-result .answer-inline{flex:0 0 auto}
 .division-result .answer-comma{font-size:calc(var(--cell)*.56);padding:0 1px}
 .division-result .answer-label-inline{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;font-size:calc(var(--cell)*.32);font-weight:800;margin:0 3px 0 2px}
-.division-work{display:flex;justify-content:center;align-items:center;min-height:0;max-width:100%}
+.division-work{flex:0 0 auto;display:flex;justify-content:center;align-items:center;min-height:0;max-width:100%}
 @media(max-height:740px){.division-layout{gap:5px}.division-answer{gap:2px}.division-expression{font-size:19px}}
 
 @media (prefers-reduced-motion:reduce){.gcell.entry.assist-nudge{animation:none;transform:none}}
@@ -1710,7 +1713,7 @@ body{background:
     completedSteps=new Set();selectedStepIndex=null;selectedTarget=null;guideCursor=0;
     if(t.op==='add')renderAdd(t);else if(t.op==='sub')renderSub(t);else if(t.op==='mul')renderMul(t);else renderDiv(t);
     phase=phaseOrder()[0];
-    requestAnimationFrame(()=>{updateDivisionPlacement();fitGrid();updateDivisionPlacement();refreshInteraction();scheduleAssistClock()});
+    requestAnimationFrame(()=>{updateDivisionPlacement();fitGrid();updateDivisionPlacement();fitGrid();refreshInteraction();scheduleAssistClock()});
   }
   function selectTarget(target){
     if(!current||transitioning||assisting)return;
@@ -2176,7 +2179,8 @@ body{background:
   }
   function nextTask(){
     assignment=A.nextAssignment(session);const seed=++seedCounter;current=generateFreshTask(assignment.skill,seed);
-    $('#route').textContent=`${Math.min(5,protoTask+1)} / 5`;$('#mode').textContent=`${protoLevel}. tase · ${PROTO_LABEL[current.op]||''}`;syncProtoTop();renderTask(current)
+    const realSkillLevel=Number(assignment.skill.slice(1));
+    $('#route').textContent=`${Math.min(5,protoTask+1)} / 5`;$('#mode').textContent=`${realSkillLevel}. tase · ${PROTO_LABEL[current.op]||''}`;syncProtoTop();renderTask(current)
   }
   function start(m='mix',{historyMode='push',continueLesson=false}={}){
     // A 15-minute class is shared by all four operations. Switching through
