@@ -37,6 +37,8 @@ jobs:
         run: node scripts/quality-test-contracts.js
       - name: Frozen arithmetic and progress semantics vs last working commit
         run: node scripts/stolbiki-regression-lock.js
+      - name: Final mastery triggers independent mixed practice — 52-skill audit
+        run: node scripts/stolbiki-review-audit.js
       - name: Mathematical and pedagogical correctness
         run: |
           node scripts/stolbiki-pedagogy-gate.js
