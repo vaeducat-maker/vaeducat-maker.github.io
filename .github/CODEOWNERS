@@ -7,3 +7,4 @@
 /.github/workflows/cloudflare-preview.yml @vaeducat-maker
 /scripts/quality-*.js @vaeducat-maker
 /AGENTS.md @vaeducat-maker
+/scripts/stolbiki-regression-lock.js @vaeducat-maker
