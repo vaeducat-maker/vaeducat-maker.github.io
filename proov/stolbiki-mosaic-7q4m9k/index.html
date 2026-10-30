@@ -3119,6 +3119,13 @@ body{background:
     passport:{make:async()=>passportBase+'#ekpass='+await encodePassport(passportSnapshot()),
       validate:async code=>validatePassport(await decodePassport(code))}
   };
+  // An explicitly requested, isolated example of zero inside the quotient.
+  // Use the original renderer and step engine; never alter actual pupil saves.
+  // Query: ?lateDemo=1&divisionExample=3465-33
+  if(LATE_DEMO&&new URLSearchParams(location.search).get('divisionExample')==='3465-33'){
+    startForcedTask(makeExample('div',3465,33),'NÄIDIS · 3465 : 33');
+    $('#mode').textContent='Jagamine · näide';
+  }
 })();
 
 </script>
