@@ -17,6 +17,7 @@ const publicFiles = [
   'home-refresh.js',
   'home.css',
   'index.html',
+  'kirjalik-arvutamine/index.html',
   'styles.css',
 
   'assets/korrutustabel.png',
