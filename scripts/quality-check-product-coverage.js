@@ -11,7 +11,7 @@ const registryPath=path.join(ROOT,'quality/product-registry.json');
 const registry=JSON.parse(fs.readFileSync(registryPath,'utf8'));
 const candidateRoots=new Set(['games','materials','proov']);
 const crypto=require('node:crypto');
-const PUBLIC_ENTRY_APPROVAL='quality/contracts/stolbiki-public-entry.json';
+const PUBLIC_ENTRY_APPROVAL='quality/publication-approvals/stolbiki-20261031.json';
 function isAuthorizedSharedPublication(file){
   // A scoped, owner-approved release may change only the exact approved
   // bytes of homepage/catalog. Other shared files remain BLOCKED as before.
