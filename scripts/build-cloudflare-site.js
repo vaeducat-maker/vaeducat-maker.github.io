@@ -122,7 +122,6 @@ const INSTAGRAM_URL = 'https://www.instagram.com/edukass.ee/';
 const STYLE_MARKER = 'edukass-cloudflare-chrome';
 const SOCIAL_MARKER = 'edukass-social-links';
 const BACK_MARKER = 'edukass-game-back';
-const INSTALL_MARKER = 'edukass-simple-install';
 
 const sharedStyle = `
 <style id="${STYLE_MARKER}">
@@ -147,89 +146,6 @@ const socialMarkup = `
       </a>
     </div>`;
 
-const samsungSafeManifest = `
-<script id="edukass-smart-manifest">
-if(!/SamsungBrowser/i.test(navigator.userAgent)){
-  const manifest=document.createElement('link');
-  manifest.rel='manifest';
-  manifest.href='./manifest.webmanifest';
-  document.head.appendChild(manifest);
-}
-</script>`;
-
-const multiplicationInstallScript = `
-<script id="${INSTALL_MARKER}">
-(() => {
-  const originalButton=document.getElementById('installGameButton');
-  if(!originalButton)return;
-
-  const button=originalButton.cloneNode(true);
-  originalButton.replaceWith(button);
-  button.textContent='📲 LISA TELEFONI';
-
-  const dialog=document.getElementById('installDialog');
-  const title=document.getElementById('installDialogTitle');
-  const help=document.getElementById('installHelpText');
-  const confirm=document.getElementById('confirmInstallButton');
-  const continueButton=document.getElementById('continueInBrowserButton');
-  const ua=navigator.userAgent;
-  const samsung=/SamsungBrowser/i.test(ua);
-  const ios=/iPad|iPhone|iPod/.test(ua)&&!window.MSStream;
-  let installPrompt=null;
-
-  window.addEventListener('beforeinstallprompt',event=>{
-    event.preventDefault();
-    installPrompt=event;
-  });
-
-  window.addEventListener('appinstalled',()=>{
-    installPrompt=null;
-    button.textContent='✓ TELEFONIS';
-    button.disabled=true;
-  });
-
-  function showMessage(head,message){
-    if(!dialog||!title||!help)return;
-    title.textContent=head;
-    help.textContent=message;
-    if(confirm){confirm.textContent='SELGE';confirm.dataset.action='simple-close';confirm.hidden=false;}
-    if(continueButton)continueButton.hidden=true;
-    if(typeof dialog.showModal==='function')dialog.showModal();
-  }
-
-  if(confirm){
-    confirm.addEventListener('click',event=>{
-      if(confirm.dataset.action!=='simple-close')return;
-      event.preventDefault();
-      event.stopImmediatePropagation();
-      if(dialog&&dialog.open)dialog.close();
-    },true);
-  }
-
-  button.addEventListener('click',async()=>{
-    if(samsung){
-      location.href='intent://'+location.host+location.pathname+location.search+location.hash+'#Intent;scheme=https;package=com.android.chrome;end';
-      return;
-    }
-
-    if(ios){
-      showMessage('LISA TELEFONI','Vajuta „Jaga“ → „Lisa avakuvale“ → „Lisa“.');
-      return;
-    }
-
-    if(installPrompt){
-      const promptEvent=installPrompt;
-      installPrompt=null;
-      promptEvent.prompt();
-      try{await promptEvent.userChoice;}catch(e){}
-      return;
-    }
-
-    showMessage('ÜKS HETK','Oota paar sekundit ja vajuta nuppu veel kord.');
-  });
-})();
-</script>`;
-
 function injectSharedStyle(html) {
   if (html.includes(`id="${STYLE_MARKER}"`)) return html;
   if (!html.includes('</head>')) throw new Error('Unable to inject EDUKASS shared chrome styles: </head> missing');
@@ -248,7 +164,8 @@ function walkHtmlFiles(directory) {
 
 let socialPages = 0;
 let minuSuviBackLinks = 0;
-let simplifiedInstallPages = 0;
+let sonatreenerInstallPages = 0;
+let korrutamineTransferPages = 0;
 
 for (const filePath of walkHtmlFiles(output)) {
   const relativePath = path.relative(output, filePath).split(path.sep).join('/');
@@ -259,20 +176,21 @@ for (const filePath of walkHtmlFiles(output)) {
     if (!html.includes('rel="manifest"') && !html.includes("SamsungBrowser")) {
       throw new Error('Sõnatreener manifest setup missing');
     }
-    simplifiedInstallPages += 1;
+    sonatreenerInstallPages += 1;
     changed = true;
   }
 
   if (relativePath === 'games/korrutamine-test/index.html') {
-    const manifestLink = /\s*<link\b[^>]*\brel=(['"])manifest\1[^>]*>\s*/i;
-    if (!manifestLink.test(html)) throw new Error('Korrutustabel manifest link missing');
-    html = html.replace(manifestLink, `\n${samsungSafeManifest}\n`);
-    if (!html.includes(`id="${INSTALL_MARKER}"`)) {
-      if (!html.includes('</body>')) throw new Error('Unable to add simple install helper to Korrutustabel');
-      html = html.replace('</body>', `${multiplicationInstallScript}\n</body>`);
+    // Publishing must never re-inject the discontinued phone installer.
+    const required=['id="openPassportButton"','id="passportDialog"',
+      'progress-transfer.js?v=1','id="passportRestore"'];
+    for(const marker of required){
+      if(!html.includes(marker))throw new Error('Korrutustabel progress transfer missing: '+marker);
     }
-    simplifiedInstallPages += 1;
-    changed = true;
+    if(/rel=["']manifest["']|id=["']installGameButton["']|id=["']installDialog["']|edukass-simple-install/.test(html)){
+      throw new Error('Korrutustabel must not advertise PWA installation');
+    }
+    korrutamineTransferPages += 1;
   }
 
   if (html.includes('class="site-header"') && !html.includes(`class="${SOCIAL_MARKER}"`)) {
@@ -301,6 +219,6 @@ for (const filePath of walkHtmlFiles(output)) {
 
 if (socialPages === 0) throw new Error('No EDUKASS site-header pages were decorated with social links');
 if (minuSuviBackLinks !== 1) throw new Error(`Expected one Minu suvi back link, got ${minuSuviBackLinks}`);
-if (simplifiedInstallPages !== 2) throw new Error(`Expected 2 simplified install pages, got ${simplifiedInstallPages}`);
+if (sonatreenerInstallPages !== 1 || korrutamineTransferPages !== 1) throw new Error('Trainer publication contracts are incomplete');
 
-console.log(`Cloudflare chrome: social links added to ${socialPages} site pages; Minu suvi back link added; ${simplifiedInstallPages} trainers use simplified install flow.`);
+console.log(`Cloudflare chrome: social links added to ${socialPages} site pages; Minu suvi back link added; Sõnatreener installs, Korrutustabel transfers progress.`);
