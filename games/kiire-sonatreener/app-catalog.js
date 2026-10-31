@@ -33,7 +33,7 @@ window.EDUKASS_CATALOG=[
     {kind:"custom",handler:"litOmaOnnLesson",title:"Урок 5 — Igaühel oma õnn · 08.10.26",meta:"4 страницы · письменный план (A1)"},
     {kind:"custom",handler:"litAliceDiaryLesson",title:"Урок 6 — Alice imedemaal",meta:"Читательский дневник · эстонский A1 + перевод"},
     {kind:"custom",handler:"litCarrollLesson",title:"Урок 7 — Lewis Carroll – elulugu",meta:"Биография · 9 предложений · перевод по строкам"},
-    {kind:"custom",handler:"litAliceQuestionsLesson",title:"Урок 8 — Alice ja valge jänes · Ülesanded 3–4",meta:"8 вопросов с переводом · 8 предложений в прошедшем времени"}
+    {kind:"custom",handler:"litAliceQuestionsLesson",title:"Урок 8 — Alice ja valge jänes · Ülesanded 3–7",meta:"Задания 3–7 · ответы для распечатки"}
   ]},
   {id:"muusika",label:"Muusika",icon:"🎵",lessons:[
     {kind:"custom",handler:"musicLesson1",title:"Урок 1 — Kontrolltöö: tämber, dünaamika · 03.10.26",meta:"19 эстонских слов · 13 музыкальных терминов"}
