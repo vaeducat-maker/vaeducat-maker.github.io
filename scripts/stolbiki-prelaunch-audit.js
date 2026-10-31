@@ -215,7 +215,7 @@ async function checkCompetitor() {
       try{
         const page=await ctx.newPage(),errors=[];
         page.on('pageerror',e=>errors.push(e.message));
-        await page.goto('http://127.0.0.1:'+port+'/',{waitUntil:'domcontentloaded',timeout:30000});
+        await page.goto('http://127.0.0.1:'+port+'/index.html',{waitUntil:'domcontentloaded',timeout:30000});
         const publicLinks=await page.evaluate(()=>{
           const list=[...document.querySelectorAll('a[href="kirjalik-arvutamine/"]')];
           const catalogCount=document.querySelectorAll('.home-new-stolbiki').length;
