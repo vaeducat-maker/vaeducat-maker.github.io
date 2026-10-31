@@ -1,4 +1,6 @@
 function trackPlausible(eventName){
+  // Do not count the owner's unlock-all QA simulation as pupil activity.
+  if(new URLSearchParams(location.search).get('edukass-test')==='all')return;
   if(typeof window.plausible==='function')window.plausible(eventName);
 }
 const screens=[...document.querySelectorAll('.screen')];
@@ -385,6 +387,7 @@ let currentQuestion=null;
 let questionQueue=[];
 let currentAnswer='';
 let correct=0;
+let firstAnswerTracked=false;
 let mistakes=0;
 let inputLocked=false;
 let roundActive=false;
@@ -914,6 +917,11 @@ function showScreen(id,{historyMode='push',historyView=null,historyData={}}={}){
 }
 
 function recordFact(question,isCorrect){
+  // First submitted answer of this page visit, whether correct or incorrect.
+  if(!firstAnswerTracked){
+    firstAnswerTracked=true;
+    trackPlausible('Korrutustabel First Answer');
+  }
   const key=questionKey(question);
   const stat=progress.factStats[key]||{correct:0,mistakes:0};
   stat[isCorrect?'correct':'mistakes']++;
