@@ -25,6 +25,27 @@
   <!-- End MailerLite Universal -->
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script defer src="/assets/timetable-preview.js?v=2"></script>
+<style id="edukass-stolbiki-promo-style">
+  .home-new-stolbiki .edukass-stolbiki-promo,
+  .home-feature-card .edukass-stolbiki-promo {
+    min-width:0;display:flex;align-items:center;justify-content:center;
+    padding:clamp(12px,2vw,28px);
+    background:linear-gradient(155deg,#f1fafb,#e2edf6);
+  }
+  .edukass-stolbiki-promo video {
+    display:block;width:100%;height:auto;max-width:100%;border-radius:16px;
+    background:#ecf5f8;box-shadow:0 10px 24px rgba(18,45,73,.13);
+  }
+  .edukass-stolbiki-promo .edukass-stolbiki-promo-mobile {display:none}
+  .home-new-stolbiki .edukass-stolbiki-promo{min-height:270px}
+  .home-feature-card .edukass-stolbiki-promo{min-height:390px}
+  @media(max-width:640px){
+    .edukass-stolbiki-promo .edukass-stolbiki-promo-desktop{display:none}
+    .edukass-stolbiki-promo .edukass-stolbiki-promo-mobile{display:block;max-width:380px}
+    .home-new-stolbiki .edukass-stolbiki-promo,
+    .home-feature-card .edukass-stolbiki-promo{min-height:0;padding:14px}
+  }
+  </style>
 </head>
 <body class="home-page">
 <header class="site-header">
@@ -83,13 +104,15 @@
 
       <div class="home-new-grid">
         <article class="home-new-card home-new-stolbiki">
-          <div class="home-new-card-visual" style="background:radial-gradient(circle at 20% 15%,#55e0d388,transparent 35%),linear-gradient(145deg,#10284e,#244c86 60%,#594083)">
-            <div role="img" aria-label="Kirjaliku arvutamise neli tehet" style="display:flex;flex-wrap:wrap;align-content:center;justify-content:center;gap:13px;max-width:290px;padding:22px">
-              <span style="display:grid;place-items:center;width:83px;height:83px;border-radius:24px;background:linear-gradient(145deg,#84efe1,#30a6a0);color:#143652;font-size:64px;font-weight:900;box-shadow:0 12px 24px #091b3666">+</span>
-              <span style="display:grid;place-items:center;width:83px;height:83px;border-radius:24px;background:linear-gradient(145deg,#ffb8d3,#dc6598);color:#143652;font-size:64px;font-weight:900;box-shadow:0 12px 24px #091b3666">−</span>
-              <span style="display:grid;place-items:center;width:83px;height:83px;border-radius:24px;background:linear-gradient(145deg,#ffe78d,#efa63b);color:#143652;font-size:64px;font-weight:900;box-shadow:0 12px 24px #091b3666">×</span>
-              <span style="display:grid;place-items:center;width:83px;height:83px;border-radius:24px;background:linear-gradient(145deg,#d0b6ff,#8069c8);color:#fff;font-size:64px;font-weight:900;box-shadow:0 12px 24px #091b3666">÷</span>
-            </div>
+          <div class="home-new-card-visual edukass-stolbiki-promo" aria-label="Kirjaliku arvutamise mängu videodemonstratsioon">
+            <video class="edukass-stolbiki-promo-desktop" controls playsinline preload="none" poster="/stolbiki-esitlus/media/stolbiki-promo-sait-39s.jpg" aria-label="Kirjalik arvutamine: video arvutamisest ja pildimaailma avamisest">
+              <source src="/stolbiki-esitlus/media/stolbiki-promo-sait-39s.mp4" type="video/mp4">
+              <a href="/stolbiki-esitlus/">Vaata mängu tutvustust</a>
+            </video>
+            <video class="edukass-stolbiki-promo-mobile" controls playsinline preload="none" poster="/stolbiki-esitlus/media/stolbiki-promo-mobiil-39s.jpg" aria-label="Kirjalik arvutamine: mobiilne videodemonstratsioon">
+              <source src="/stolbiki-esitlus/media/stolbiki-promo-mobiil-39s.mp4" type="video/mp4">
+              <a href="/stolbiki-esitlus/">Vaata mängu tutvustust</a>
+            </video>
           </div>
           <div class="home-new-card-copy">
             <div class="home-card-meta">MATEMAATIKA · ONLINE · TASUTA</div>
@@ -154,14 +177,16 @@
   <section class="home-feature" id="mangud" aria-labelledby="feature-title">
     <div class="container">
       <article class="home-feature-card" style="margin-bottom:25px">
-        <div class="home-feature-image" style="display:grid;place-items:center;background:radial-gradient(circle at 75% 25%,#387fc8,transparent 45%),linear-gradient(145deg,#14385c,#1d3d6e 60%,#554179)">
-          <div style="display:grid;grid-template-columns:repeat(2,minmax(0,112px));gap:16px;padding:35px" aria-label="Kirjalik arvutamine: liitmine, lahutamine, korrutamine ja jagamine" role="img">
-            <span style="display:grid;place-items:center;aspect-ratio:1;border-radius:26px;background:linear-gradient(145deg,#8bf1e5,#46b7b1);color:#17365f;font-size:77px;font-weight:900">+</span>
-            <span style="display:grid;place-items:center;aspect-ratio:1;border-radius:26px;background:linear-gradient(145deg,#ffb7d2,#e5729d);color:#17365f;font-size:77px;font-weight:900">−</span>
-            <span style="display:grid;place-items:center;aspect-ratio:1;border-radius:26px;background:linear-gradient(145deg,#ffed93,#eeba53);color:#17365f;font-size:77px;font-weight:900">×</span>
-            <span style="display:grid;place-items:center;aspect-ratio:1;border-radius:26px;background:linear-gradient(145deg,#bcabff,#7767d0);color:#fff;font-size:77px;font-weight:900">÷</span>
+        <div class="home-feature-image edukass-stolbiki-promo" aria-label="Kirjaliku arvutamise mängu videodemonstratsioon">
+            <video class="edukass-stolbiki-promo-desktop" controls playsinline preload="none" poster="/stolbiki-esitlus/media/stolbiki-promo-sait-39s.jpg" aria-label="Kirjalik arvutamine: video arvutamisest ja pildimaailma avamisest">
+              <source src="/stolbiki-esitlus/media/stolbiki-promo-sait-39s.mp4" type="video/mp4">
+              <a href="/stolbiki-esitlus/">Vaata mängu tutvustust</a>
+            </video>
+            <video class="edukass-stolbiki-promo-mobile" controls playsinline preload="none" poster="/stolbiki-esitlus/media/stolbiki-promo-mobiil-39s.jpg" aria-label="Kirjalik arvutamine: mobiilne videodemonstratsioon">
+              <source src="/stolbiki-esitlus/media/stolbiki-promo-mobiil-39s.mp4" type="video/mp4">
+              <a href="/stolbiki-esitlus/">Vaata mängu tutvustust</a>
+            </video>
           </div>
-        </div>
         <div class="home-feature-copy">
           <div class="home-kicker">EDUKASS · UUS ÕPPEMÄNG · MATEMAATIKA</div>
           <h2>Kirjalik arvutamine</h2>

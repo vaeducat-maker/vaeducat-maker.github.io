@@ -2,13 +2,13 @@
   "schemaVersion": 1,
   "status": "owner-approved-publication",
   "ownerApproval": true,
-  "ownerDecision": "Опубликовать готовый тренажёр Столбики в открытом доступе на EDUKASS, 2026-10-31.",
+  "ownerDecision": "Встроить утверждённую видео-презентацию столбиков в видимые карточки UUS!!! и Mängud на главной EDUKASS, сохранив игру и прогресс — 2026-10-31.",
   "gameSource": "proov/stolbiki-mosaic-7q4m9k/index.html",
   "publicEntry": "kirjalik-arvutamine/index.html",
   "catalogId": "kirjalik-arvutamine",
   "sourceAudit": "scripts/stolbiki-prelaunch-audit.js",
   "allowedChangedSharedFiles": {
-    "index.html": "80971c462bb7613979bd1058220e50518a897170",
+    "index.html": "a9b669b91c8ab1dcfadfe3cf07858d7f46c8571e",
     "data/catalog.json": "4d7b47342ab0795cda2cabba4261a00773390eb1"
   },
   "acceptance": [
@@ -17,6 +17,7 @@
     "Public permalink redirects to the exact original game in the same origin",
     "Public catalog entry describes the free 52-level 4-operation game",
     "Browser clicks live homepage link and loads game successfully",
-    "Cloudflare build includes the public permalink"
+    "Cloudflare build includes the public permalink",
+    "Homepage UUS!!! and Mängud show responsive 39-second videos with poster and muted-by-default controls; click Mängi kohe still opens original game"
   ]
 }
