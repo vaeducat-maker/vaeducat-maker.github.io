@@ -233,7 +233,25 @@ async function checkCompetitor() {
           entry.priceType==='free'&&entry.page==='/kirjalik-arvutamine/'&&
           entry.catalogPage==='/'&&entry.catalogHref==='kirjalik-arvutamine/',
           JSON.stringify(entry),'critical');
-        await page.locator('.home-new-stolbiki a[href="kirjalik-arvutamine/"]').click();
+        // Human touch flow: scroll to card, let the site settle, then tap.
+        // styles.css enables scroll-behavior:smooth; auto-scroll plus an
+        // immediate synthetic click can race the animation and hit the hero.
+        const launchLink=page.locator('.home-new-stolbiki a[href="kirjalik-arvutamine/"]');
+        await page.evaluate(()=>{
+          document.querySelector('.home-new-stolbiki a[href="kirjalik-arvutamine/"]')
+            .scrollIntoView({behavior:'instant',block:'center'});
+        });
+        await page.waitForTimeout(550);
+        const touchHit=await page.evaluate(()=>{
+          const a=document.querySelector('.home-new-stolbiki a[href="kirjalik-arvutamine/"]');
+          const r=a.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height/2;
+          return{targetOK:document.elementFromPoint(x,y)?.closest('a')===a,
+            x,y,viewport:innerHeight,scrollY,href:a.getAttribute('href')};
+        });
+        note('public-launch','Actual mobile tap area is unobstructed after scrolling to game card',
+          touchHit.targetOK&&touchHit.y>=0&&touchHit.y<=touchHit.viewport,
+          JSON.stringify(touchHit),'critical');
+        await launchLink.click({timeout:12000});
         await page.waitForURL(u=>u.pathname==='/proov/stolbiki-mosaic-7q4m9k/',
           {timeout:18000});
         await page.waitForFunction(()=>!!window.__EDUKASS_TEST__,null,{timeout:15000});
