@@ -191,7 +191,12 @@ function checkMethodist() {
 async function checkCompetitor() {
   const server = http.createServer((req,res)=>{
     const pathname = decodeURIComponent((req.url || '/').split('?')[0]);
-    const full = path.resolve(root, '.' + pathname);
+    const candidate = path.resolve(root, '.' + pathname);
+    // Match GitHub Pages/Cloudflare static hosting: /folder/ serves /folder/index.html.
+    // Without this the test returns 404 for valid published permalink URLs.
+    const full = candidate.startsWith(root+path.sep) &&
+      fs.existsSync(candidate) && fs.statSync(candidate).isDirectory()
+      ? path.join(candidate,'index.html') : candidate;
     if (!full.startsWith(root+path.sep) || !fs.existsSync(full) || !fs.statSync(full).isFile()) {
       res.writeHead(404);res.end('Not Found');return;
     }
