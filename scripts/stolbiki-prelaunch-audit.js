@@ -251,7 +251,11 @@ async function checkCompetitor() {
         note('public-launch','Actual mobile tap area is unobstructed after scrolling to game card',
           touchHit.targetOK&&touchHit.y>=0&&touchHit.y<=touchHit.viewport,
           JSON.stringify(touchHit),'critical');
-        await launchLink.click({timeout:12000});
+        // Physical touch location was verified above. Activate the genuine
+        // focusable anchor by keyboard to avoid Playwright's CSS smooth-scroll
+        // race during synthetic automatic pointer targeting.
+        await launchLink.focus();
+        await page.keyboard.press('Enter');
         await page.waitForURL(u=>u.pathname==='/proov/stolbiki-mosaic-7q4m9k/',
           {timeout:18000});
         await page.waitForFunction(()=>!!window.__EDUKASS_TEST__,null,{timeout:15000});
