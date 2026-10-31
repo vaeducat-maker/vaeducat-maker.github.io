@@ -21,6 +21,12 @@ assert(!unknown.passed&&unknown.violations.some(x=>x.includes('unregistered')),
 const inventory=checkCoverage([], {data,inventory:['materials/future-material/index.html']});
 assert(!inventory.passed&&inventory.violations.some(x=>x.includes('Unregistered')),
  'NEGATIVE CONTROL: hidden new material must block release');
+const released=checkCoverage(['index.html','data/catalog.json'],{data});
+assert(released.passed,
+ 'POSITIVE CONTROL: owner-signed, exact-fingerprint homepage/catalog public launch must pass: '+released.violations);
+const unrelatedShared=checkCoverage(['home-refresh.js'],{data});
+assert(!unrelatedShared.passed&&unrelatedShared.violations.some(x=>x.includes('Shared')),
+ 'NEGATIVE CONTROL: approving public game listing must not unlock unrelated shared JS/CSS');
 const asset=checkCoverage(['downloads/unknown-poster.pdf'],{data});
 assert(!asset.passed&&asset.violations.some(x=>x.includes('Shared')),
  'NEGATIVE CONTROL: unowned printable/PDF must block release');
@@ -32,5 +38,6 @@ console.log('PASS EDUKASS product change coverage: verified trainer allowed');
 console.log('PASS independently audited Sõnatreener edit accepted');
 console.log('PASS unaudited legacy edit remains blocked');
 console.log('PASS unregistered game + material blocked');
+console.log('PASS owner-approved exact-fingerprint public launch allowed; unrelated shared files still blocked');
 console.log('PASS unowned shared PDF blocked');
 console.log('PASS false verified label blocked');
