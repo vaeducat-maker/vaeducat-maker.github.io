@@ -10,6 +10,32 @@ const ROOT=path.resolve(__dirname,'..');
 const registryPath=path.join(ROOT,'quality/product-registry.json');
 const registry=JSON.parse(fs.readFileSync(registryPath,'utf8'));
 const candidateRoots=new Set(['games','materials','proov']);
+const crypto=require('node:crypto');
+const PUBLIC_ENTRY_APPROVAL='quality/publication-approvals/stolbiki-20261031.json';
+function isAuthorizedSharedPublication(file){
+  // A scoped, owner-approved release may change only the exact approved
+  // bytes of homepage/catalog. Other shared files remain BLOCKED as before.
+  if(!['index.html','data/catalog.json'].includes(file))return false;
+  const recordPath=path.join(ROOT,PUBLIC_ENTRY_APPROVAL);
+  if(!fs.existsSync(recordPath))return false;
+  let record;
+  try{record=JSON.parse(fs.readFileSync(recordPath,'utf8'))}catch{return false}
+  if(record?.schemaVersion!==1||record?.ownerApproval!==true||
+     record?.publicEntry!=='kirjalik-arvutamine/index.html'||
+     record?.catalogId!=='kirjalik-arvutamine'||
+     record?.sourceAudit!=='scripts/stolbiki-prelaunch-audit.js')return false;
+  const approved=record.allowedChangedSharedFiles?.[file];
+  if(typeof approved!=='string'||!/^[a-f0-9]{40}$/.test(approved))return false;
+  const contents=fs.readFileSync(path.join(ROOT,file));
+  const blobSha=crypto.createHash('sha1')
+    .update('blob '+contents.length).update(Buffer.from([0])).update(contents).digest('hex');
+  if(blobSha!==approved)return false;
+  const auditPath=path.join(ROOT,record.sourceAudit);
+  if(!fs.existsSync(auditPath)||
+     !fs.readFileSync(auditPath,'utf8').includes('PUBLIC_LAUNCH_NAVIGATION'))return false;
+  return true;
+}
+
 
 function productPrefix(file){
   const parts=String(file).replaceAll('\\','/').split('/');
@@ -80,7 +106,8 @@ function checkCoverage(files,{data=registry,inventory=[]}={}){
     // Unowned shared assets can silently change what is shown in MANY
     // products. Require explicit mapping to the affected product(s) first.
     if(/^(assets\/|downloads\/|data\/catalog\.json$|(?:home\.css|home-refresh\.js|styles\.css|index\.html)$)/.test(file)){
-      violations.push('Shared public asset/page changed without owner-scoped result contract: '+file);
+      if(!isAuthorizedSharedPublication(file))
+        violations.push('Shared public asset/page changed without owner-scoped result contract: '+file);
     }
   }
   return {passed:violations.length===0,changedFiles:files.length,

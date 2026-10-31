@@ -191,7 +191,12 @@ function checkMethodist() {
 async function checkCompetitor() {
   const server = http.createServer((req,res)=>{
     const pathname = decodeURIComponent((req.url || '/').split('?')[0]);
-    const full = path.resolve(root, '.' + pathname);
+    const candidate = path.resolve(root, '.' + pathname);
+    // Match GitHub Pages/Cloudflare static hosting: /folder/ serves /folder/index.html.
+    // Without this the test returns 404 for valid published permalink URLs.
+    const full = candidate.startsWith(root+path.sep) &&
+      fs.existsSync(candidate) && fs.statSync(candidate).isDirectory()
+      ? path.join(candidate,'index.html') : candidate;
     if (!full.startsWith(root+path.sep) || !fs.existsSync(full) || !fs.statSync(full).isFile()) {
       res.writeHead(404);res.end('Not Found');return;
     }
@@ -204,6 +209,108 @@ async function checkCompetitor() {
   let browser;
   try {
     browser=await chromium.launch({headless:true});
+
+    // PUBLIC_LAUNCH_NAVIGATION: real first-visit from the public homepage.
+    // The user approved publication only after the whole game passed QA.
+    // Check both discovery surfaces and play via the stable public permalink,
+    // without touching the verified arithmetic renderer or saved profiles.
+    {
+      const ctx=await browser.newContext({viewport:{width:390,height:844},
+        isMobile:true,hasTouch:true,deviceScaleFactor:1,serviceWorkers:'block'});
+      try{
+        const page=await ctx.newPage(),errors=[];
+        page.on('pageerror',e=>errors.push(e.message));
+        await page.goto('http://127.0.0.1:'+port+'/index.html',{waitUntil:'domcontentloaded',timeout:30000});
+        const publicLinks=await page.evaluate(()=>{
+          const list=[...document.querySelectorAll('a[href="kirjalik-arvutamine/"]')];
+          const catalogCount=document.querySelectorAll('.home-new-stolbiki').length;
+          return{count:list.length,newCards:catalogCount,
+            visibleNames:list.map(x=>x.closest('article')?.querySelector('h2,h3')?.textContent||'')};
+        });
+        note('public-launch','Stolbiki has discoverable public entries in UUS and Mängud',
+          publicLinks.count===2&&publicLinks.newCards===1&&
+          publicLinks.visibleNames.every(x=>x.includes('Kirjalik arvutamine')),
+          JSON.stringify(publicLinks),'critical');
+        const catalog=await page.evaluate(async()=>await(await fetch('/data/catalog.json')).json());
+        const entry=catalog.products.find(p=>p.id==='kirjalik-arvutamine');
+        note('public-launch','Public free game registered with 52-stage destination and permanent URL',
+          !!entry&&entry.status==='published'&&entry.type==='game'&&
+          entry.priceType==='free'&&entry.page==='/kirjalik-arvutamine/'&&
+          entry.catalogPage==='/'&&entry.catalogHref==='kirjalik-arvutamine/',
+          JSON.stringify(entry),'critical');
+        // Human touch flow: scroll to card, let the site settle, then tap.
+        // styles.css enables scroll-behavior:smooth; auto-scroll plus an
+        // immediate synthetic click can race the animation and hit the hero.
+        const launchLink=page.locator('.home-new-stolbiki a[href="kirjalik-arvutamine/"]');
+        await page.evaluate(()=>{
+          document.querySelector('.home-new-stolbiki a[href="kirjalik-arvutamine/"]')
+            .scrollIntoView({behavior:'instant',block:'center'});
+        });
+        await page.waitForTimeout(550);
+        const touchHit=await page.evaluate(()=>{
+          const a=document.querySelector('.home-new-stolbiki a[href="kirjalik-arvutamine/"]');
+          const r=a.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height/2;
+          return{targetOK:document.elementFromPoint(x,y)?.closest('a')===a,
+            x,y,viewport:innerHeight,scrollY,href:a.getAttribute('href')};
+        });
+        note('public-launch','Actual mobile tap area is unobstructed after scrolling to game card',
+          touchHit.targetOK&&touchHit.y>=0&&touchHit.y<=touchHit.viewport,
+          JSON.stringify(touchHit),'critical');
+        // Physical touch location was verified above. Activate the genuine
+        // focusable anchor by keyboard to avoid Playwright's CSS smooth-scroll
+        // race during synthetic automatic pointer targeting.
+        await launchLink.focus();
+        await page.keyboard.press('Enter');
+        await page.waitForURL(u=>u.pathname==='/proov/stolbiki-mosaic-7q4m9k/',
+          {timeout:18000});
+        await page.waitForFunction(()=>!!window.__EDUKASS_TEST__,null,{timeout:15000});
+        if(await page.locator('#introPlay').isVisible()){
+          await page.locator('#introPlay').click();
+        }
+        await page.locator('#home').waitFor({state:'visible',timeout:8000});
+        const launch=await page.evaluate(()=>({
+          path:location.pathname,
+          title:document.querySelector('#home h1')?.textContent,
+          levels:[...document.querySelectorAll('.op')].length,
+          world:window.__EDUKASS_TEST__?.getRealWorldProgress()?.tiles,
+          realStorage:localStorage.getItem('edukass_stolbiki_player_profile_v42')}));
+        note('public-launch','Homepage click enters exact full trainer with all four operations and player world',
+          launch.path==='/proov/stolbiki-mosaic-7q4m9k/'&&
+          launch.title==='Kirjalik arvutamine'&&launch.levels===4&&launch.world>=50&&
+          errors.length===0,JSON.stringify({launch,errors}),'critical');
+        await screenshot(page,'published-stolbiki-from-homepage');
+        await page.locator('.op[data-op="add"]').click();
+        await page.locator('#train').waitFor({state:'visible',timeout:8000});
+        note('public-launch','Visitor can start a real arithmetic exercise from published homepage',true);
+        // Real personal transfer: the app consumes #ekpass before its router
+        // changes the address to #intro. The visible RESTORE dialog, rather
+        // than a surviving URL hash, is the user-observable acceptance.
+        const sourceTransfer=await page.evaluate(()=>window.__EDUKASS_TEST__.passport.make());
+        const code=sourceTransfer.split('#ekpass=')[1];
+        if(!code||code.length<50)throw new Error('Cannot create authentic personal transfer link');
+        const publicPage=await ctx.newPage();
+        await publicPage.goto('http://127.0.0.1:'+port+
+          '/kirjalik-arvutamine/?from=site#ekpass='+code,{waitUntil:'domcontentloaded'});
+        await publicPage.waitForURL(u=>u.pathname==='/proov/stolbiki-mosaic-7q4m9k/',{timeout:12000});
+        await publicPage.locator('#passportDialog[open]').waitFor({state:'visible',timeout:10000});
+        const forwarding=await publicPage.evaluate(()=>({
+          search:location.search,
+          restoreVisible:!document.getElementById('passportRestore').classList.contains('hidden'),
+          summary:document.getElementById('passportImportSummary').textContent,
+          realStorage:localStorage.getItem('edukass_stolbiki_player_profile_v42')
+        }));
+        note('public-launch','Public permalink passes a real personal backup and shows restore confirmation',
+          forwarding.search==='?from=site'&&forwarding.restoreVisible&&
+          forwarding.summary.includes('Maailm')&&
+          forwarding.realStorage===null,
+          JSON.stringify(forwarding),'critical');
+        await publicPage.close();
+      }catch(e){
+        note('public-launch','Real public homepage -> full Stolbiki trainer',
+          false,e.stack?.slice(0,1350)||String(e),'critical');
+      }finally{await ctx.close()}
+    }
+
     // Match the owner's real Android screenshot: at normal first opening,
     // BOTH the full title and the transfer button must fit without scrolling.
     // Prior test only scrolled the transfer button into view, hiding the title.
