@@ -22,6 +22,7 @@ const extraFiles = [
   'stolbiki-esitlus/media/stolbiki-promo-mobiil-39s.jpg',
   'stolbiki-esitlus/index.html',
   'kirjalik-arvutamine-esitlus/index.html',
+  'arvuta/index.html',
   'kirjalik-arvutamine-esitlus/media/kirjalik-arvutamine-promo-sait-39s.mp4',
   'kirjalik-arvutamine-esitlus/media/kirjalik-arvutamine-promo-mobiil-39s.mp4',
   'kirjalik-arvutamine-esitlus/media/kirjalik-arvutamine-promo-sait-39s.jpg',
