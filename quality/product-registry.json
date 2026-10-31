@@ -20,7 +20,9 @@
       "id": "games-korrutamine-test",
       "pathPrefix": "games/korrutamine-test/",
       "category": "interactive",
-      "acceptance": "requires-individual-audit"
+      "acceptance": "verified",
+      "sourceContract": "quality/korrutamine-progress-acceptance.json",
+      "visualAudit": "scripts/quality-korrutamine-progress-acceptance.js"
     },
     {
       "id": "games-liitmine",
