@@ -59,6 +59,17 @@ jobs:
           "$RUNNER_TEMP/edukass-qa/node_modules/.bin/playwright" install --with-deps chromium
       - name: Registered independent product audits in a real browser
         run: NODE_PATH="$RUNNER_TEMP/edukass-qa/node_modules" node scripts/quality-run-product-audits.js
+      - name: Capture real multiplication game screens for a one-off video
+        if: contains(github.head_ref, 'capture-korrutamine')
+        run: NODE_PATH="$RUNNER_TEMP/edukass-qa/node_modules" node scripts/marketing/capture-korrutamine.cjs
+      - name: Export original-game captures for video assembly
+        if: contains(github.head_ref, 'capture-korrutamine')
+        uses: actions/upload-artifact@v4
+        with:
+          name: edukass-korrutamine-video-screens
+          path: artifacts/korrutamine-promo-captures/
+          retention-days: 7
+          if-no-files-found: error
       - name: Collect evidence, even after failure
         uses: actions/upload-artifact@v4
         if: always()
