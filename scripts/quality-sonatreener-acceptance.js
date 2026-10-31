@@ -103,7 +103,7 @@ let browser;
       test('Worksheet '+num+' highlights changed words '+(i+1),(await row.locator('.aliceqa-ws-write strong').innerText())===focus);
     }
   }
-  test('Only intended answers are large and bold',await page.locator('.aliceqa-ws-write').evaluateAll(els=>els.length===23&&els.every(el=>{
+  test('Only intended answers are large and bold',await page.locator('.aliceqa-ws-write').evaluateAll(els=>els.length===24&&els.every(el=>{
     const s=getComputedStyle(el);return parseFloat(s.fontSize)>=22&&parseFloat(s.fontWeight)>=700;
   })));
   await page.locator('[data-go-ex="7"]').click();
