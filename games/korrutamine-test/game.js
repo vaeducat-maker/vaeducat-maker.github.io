@@ -138,12 +138,6 @@ const rewardFxCanvas=document.querySelector('#rewardFxCanvas');
 const introScreen=document.querySelector('#introScreen');
 const introPlayButton=document.querySelector('#introPlayButton');
 const introPlayLabel=document.querySelector('#introPlayLabel');
-const installGameButton=document.querySelector('#installGameButton');
-const installDialog=document.querySelector('#installDialog');
-const confirmInstallButton=document.querySelector('#confirmInstallButton');
-const continueInBrowserButton=document.querySelector('#continueInBrowserButton');
-const installDialogTitle=document.querySelector('#installDialogTitle');
-const installHelpText=document.querySelector('#installHelpText');
 const shareGameButton=document.querySelector('#shareGameButton');
 const shareDialog=document.querySelector('#shareDialog');
 const shareUrlInput=document.querySelector('#shareUrlInput');
@@ -414,7 +408,6 @@ let cinematicTimers=[];
 let lastQuestionEquationKey='';
 let introReadyTimer=null;
 let introExitTimer=null;
-let deferredInstallPrompt=null;
 let roundPaused=false;
 let pausedAt=0;
 let totalPausedTime=0;
@@ -2743,63 +2736,6 @@ function prepareIntro(){
   }
 }
 
-function isSamsungInternet(){
-  return /SamsungBrowser/i.test(navigator.userAgent);
-}
-
-function isIOS(){
-  return /iPad|iPhone|iPod/.test(navigator.userAgent)&&!window.MSStream;
-}
-
-function isStandaloneMode(){
-  return window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;
-}
-
-function openInChrome(){
-  const target=`intent://${location.host}${location.pathname}${location.search}${location.hash}#Intent;scheme=https;package=com.android.chrome;end`;
-  window.location.href=target;
-}
-
-function configureInstallDialog(){
-  const samsung=isSamsungInternet();
-  const ios=isIOS();
-  continueInBrowserButton.hidden=false;
-  if(samsung){
-    installDialogTitle.textContent='AVA MÄNG CHROME’IS';
-    installHelpText.textContent='Turvaliseks lisamiseks telefoni ava EDUKASS Google Chrome’i brauseris. Mängida saab kohe ka siin brauseris.';
-    confirmInstallButton.textContent='AVA CHROME’IS';
-    confirmInstallButton.dataset.action='chrome';
-    return;
-  }
-  if(ios){
-    installDialogTitle.textContent='LISA TELEFONI AVAKUVALE';
-    installHelpText.textContent='Ava mäng Safaris, vajuta jagamise nuppu ja vali „Lisa avakuvale“. Mängida saab kohe ka brauseris.';
-    confirmInstallButton.textContent='SELGE';
-    confirmInstallButton.dataset.action='close';
-    return;
-  }
-  installDialogTitle.textContent='LISA TELEFONI AVAKUVALE';
-  installHelpText.textContent='Mängu ikoon ilmub sinu telefoni. Kui automaatse lisamise aken ei avane, vali brauseri menüüst „Lisa avakuvale“.';
-  confirmInstallButton.textContent='📲 LISA TELEFONI AVAKUVALE';
-  confirmInstallButton.dataset.action='install';
-}
-
-function openInstallHelp(){
-  if(isStandaloneMode())return;
-  if(isSamsungInternet()){
-    configureInstallDialog();
-    if(typeof installDialog.showModal==='function')installDialog.showModal();
-    return;
-  }
-  if(deferredInstallPrompt){
-    deferredInstallPrompt.prompt();
-    deferredInstallPrompt.userChoice.finally(()=>{deferredInstallPrompt=null});
-    return;
-  }
-  configureInstallDialog();
-  if(typeof installDialog.showModal==='function')installDialog.showModal();
-}
-
 function pauseRoundForVisibility(){
   if(!roundActive)return;
   roundPaused=true;
@@ -2879,25 +2815,6 @@ copyShareLinkButton.addEventListener('click',copyShareLink);
 shareDialog.addEventListener('click',event=>{
   if(event.target===shareDialog)shareDialog.close();
 });
-installGameButton.addEventListener('click',openInstallHelp);
-confirmInstallButton.addEventListener('click',()=>{
-  const action=confirmInstallButton.dataset.action;
-  if(action==='chrome'){openInChrome();return;}
-  if(action==='close'){installDialog.close();return;}
-  if(deferredInstallPrompt){
-    deferredInstallPrompt.prompt();
-    deferredInstallPrompt.userChoice.finally(()=>{deferredInstallPrompt=null});
-  }
-});
-continueInBrowserButton.addEventListener('click',()=>installDialog.close());
-installDialog.addEventListener('click',event=>{if(event.target===installDialog)installDialog.close()});
-window.addEventListener('beforeinstallprompt',event=>{
-  if(isSamsungInternet())return;
-  event.preventDefault();
-  deferredInstallPrompt=event;
-  confirmInstallButton.hidden=false;
-});
-window.addEventListener('appinstalled',()=>{deferredInstallPrompt=null;if(installDialog.open)installDialog.close()});
 document.addEventListener('visibilitychange',()=>document.hidden?pauseRoundForVisibility():resumeRoundFromVisibility());
 introPlayButton.addEventListener('click',event=>{
   event.stopPropagation();
@@ -2932,7 +2849,12 @@ else{
   showMap({historyMode:'replace'});
 }
 prepareIntro();
-if('serviceWorker' in navigator)navigator.serviceWorker.register('./service-worker.js',{updateViaCache:'none'}).then(registration=>registration.update()).catch(()=>{});
+// Retire the old installable app; player progress in localStorage is untouched.
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.getRegistration('./').then(registration=>{
+    if(registration && registration.scope===new URL('./',location.href).href)registration.unregister();
+  }).catch(()=>{});
+}
 
 window.__EDUKASS_TEST__={
   LEVELS,
