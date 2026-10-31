@@ -3,7 +3,7 @@
   "page": "games/kiire-sonatreener/index.html",
   "subject": "eesti-kirjandus",
   "handler": "litAliceQuestionsLesson",
-  "lessonTitle": "Урок 8 — Alice ja valge jänes · Ülesanded 3–4",
+  "lessonTitle": "Урок 8 — Alice ja valge jänes · Ülesanded 3–7",
   "independentExpectedPairs": [
     [
       "Kellega Alice jõe ääres istus?",
@@ -86,6 +86,148 @@
     [
       "Alice joob pudelist.",
       "Alice jõi pudelist."
+    ]
+  ],
+  "expectedWorksheet5": [
+    [
+      "väga sügav koht, kuhu saab sisse kukkuda",
+      "auk",
+      ""
+    ],
+    [
+      "asi, millega saab lukku avada",
+      "võti",
+      ""
+    ],
+    [
+      "inimene või loom, kes ei jõua õigeks ajaks",
+      "jään hiljaks",
+      "Только фраза кролика «Ma jään hiljaks!». В тексте нет названия такого человека или животного."
+    ],
+    [
+      "millegi ümber vaatama",
+      "vaatas ringi",
+      ""
+    ],
+    [
+      "järsku ära kaduma",
+      "kadus järsku",
+      ""
+    ],
+    [
+      "ettevaatlikult ja tähelepanelikult midagi tegema",
+      null,
+      "Точного выражения с таким значением в рассказе нет. Не вписывай выдуманное слово."
+    ],
+    [
+      "järjest väiksemaks muutuma",
+      "muutus järjest väiksemaks",
+      ""
+    ],
+    [
+      "millegi alguses olema",
+      "alguses",
+      ""
+    ]
+  ],
+  "expectedWorksheet6": [
+    [
+      "Alice vaatas ringi ja märkas valget jänest.",
+      "Alice ",
+      "vaatas enda ümber",
+      " ja märkas valget jänest."
+    ],
+    [
+      "Jänes ütles, et ta jääb hiljaks.",
+      "Jänes ütles, et ta ",
+      "ei jõua õigeks ajaks",
+      "."
+    ],
+    [
+      "Alice läks jänesele järele.",
+      "Alice ",
+      "järgnes jänesele",
+      "."
+    ],
+    [
+      "Jänes kadus järsku auku.",
+      "Jänes ",
+      "kadus äkitselt",
+      " auku."
+    ],
+    [
+      "Alice tõusis püsti ja vaatas ringi.",
+      "Alice ",
+      "tõusis üles",
+      " ja vaatas ringi."
+    ],
+    [
+      "Uks oli Alice'i jaoks liiga väike.",
+      "Uks ",
+      "ei olnud Alice'i jaoks piisavalt suur",
+      "."
+    ],
+    [
+      "Alice jõi pudelist väikese lonksu.",
+      "Alice jõi pudelist ",
+      "natuke",
+      "."
+    ],
+    [
+      "Alice muutus järjest väiksemaks.",
+      "Alice ",
+      "muutus üha väiksemaks",
+      "."
+    ]
+  ],
+  "expectedWorksheet7": [
+    [
+      "Alice'il oli igav. Ta otsustas ringi vaadata.",
+      "Alice otsustas ringi vaadata, ",
+      "sest",
+      " tal oli igav."
+    ],
+    [
+      "Jänes jooksis kiiresti. Alice läks talle järele.",
+      "",
+      "Kui",
+      " jänes kiiresti jooksis, läks Alice talle järele."
+    ],
+    [
+      "Alice ei teadnud, kuhu jänes läheb. Ta järgnes talle ikkagi.",
+      "",
+      "Kuigi",
+      " Alice ei teadnud, kuhu jänes läheb, järgnes ta talle ikkagi."
+    ],
+    [
+      "Alice kukkus sügavasse auku. Ta ei saanud enam tagasi minna.",
+      "Alice ei saanud enam tagasi minna, ",
+      "sest",
+      " ta kukkus sügavasse auku."
+    ],
+    [
+      "Alice leidis väikese võtme. Ta proovis ust avada.",
+      "",
+      "Pärast seda, kui",
+      " Alice leidis väikese võtme, proovis ta ust avada."
+    ],
+    [
+      "Uks läks lahti. Alice nägi ilusat aeda.",
+      "",
+      "Kui",
+      " uks läks lahti, nägi Alice ilusat aeda."
+    ],
+    [
+      "Alice tahtis aeda minna. Uks oli tema jaoks liiga väike.",
+      "",
+      "Kuigi",
+      " Alice tahtis aeda minna, oli uks tema jaoks liiga väike."
+    ],
+    [
+      "Alice jõi pudelist. Ta muutus väiksemaks.",
+      "",
+      "Pärast seda, kui",
+      " Alice pudelist jõi, muutus ta väiksemaks."
     ]
   ]
 }

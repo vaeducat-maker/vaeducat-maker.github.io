@@ -79,6 +79,35 @@ let browser;
     test('Original present sentence '+(i+1),(await tenseRows.nth(i).locator('.aliceqa-present .aliceqa-tense-text').innerText()).trim()===present);
     test('Correct simple-past sentence '+(i+1),(await tenseRows.nth(i).locator('.aliceqa-past .aliceqa-tense-text').innerText()).trim()===past);
   }
+
+  // Check actual end-user output of all print-workbook exercises against independent expectations.
+  const w5=page.locator('#aliceqaExercise5'),w6=page.locator('#aliceqaExercise6'),w7=page.locator('#aliceqaExercise7');
+  test('Exercises 5–7 follow exercise 4 in order',await page.evaluate(()=>{
+    const elements=[4,5,6,7].map(x=>document.getElementById('aliceqaExercise'+x));
+    return elements.every(Boolean)&&elements.slice(1).every((el,i)=>!!(elements[i].compareDocumentPosition(el)&Node.DOCUMENT_POSITION_FOLLOWING));
+  }));
+  test('8 numbered places per worksheet exercise',
+    await w5.locator('[data-print5]').count()===8&&await w6.locator('[data-print6]').count()===8&&await w7.locator('[data-print7]').count()===8);
+  for(let i=0;i<8;i++){
+    const [definition,expected,note]=CONTRACT.expectedWorksheet5[i];
+    const row=w5.locator('[data-print5="'+(i+1)+'"]');
+    test('Worksheet 5 prompt '+(i+1),(await row.locator('.aliceqa-ws-prompt').innerText()).trim()===(i+1)+'. '+definition);
+    if(expected)test('Worksheet 5 copy answer '+(i+1),(await row.locator('.aliceqa-ws-write').innerText()).trim()===expected);
+    else test('Worksheet 5 flags missing exact equivalent',await row.locator('[data-no-exact-answer="true"]').count()===1);
+  }
+  for(const [num,section,expected] of [[6,w6,CONTRACT.expectedWorksheet6],[7,w7,CONTRACT.expectedWorksheet7]]){
+    for(let i=0;i<8;i++){
+      const [original,left,focus,right]=expected[i];
+      const row=section.locator('[data-print'+num+'="'+(i+1)+'"]');
+      test('Worksheet '+num+' copyable sentence '+(i+1),(await row.locator('.aliceqa-ws-write').innerText()).trim()===left+focus+right);
+      test('Worksheet '+num+' highlights changed words '+(i+1),(await row.locator('.aliceqa-ws-write strong').innerText())===focus);
+    }
+  }
+  test('Only intended answers are large and bold',await page.locator('.aliceqa-ws-write').evaluateAll(els=>els.length===23&&els.every(el=>{
+    const s=getComputedStyle(el);return parseFloat(s.fontSize)>=22&&parseFloat(s.fontWeight)>=700;
+  })));
+  await page.locator('[data-go-ex="7"]').click();
+  test('Worksheet 7 jump control works',await w7.isVisible());
   test('Answers are legible and not clipped', await page.evaluate(()=>{
     const a=[...document.querySelectorAll('.aliceqa-answer')];
     return a.length===8&&a.every(el=>{const r=el.getBoundingClientRect();return r.width>220&&r.height>30});
@@ -89,6 +118,7 @@ let browser;
   test('Russian translations hide',await page.locator('#aliceqaLesson').evaluate(el=>el.classList.contains('aliceqa-hide-ru')));
   test('Estonian answer remains visible',await page.locator('.aliceqa-answer').first().isVisible());
   test('Tense exercise stays visible when translations hidden',await page.locator('.aliceqa-pair').first().isVisible());
+  test('Worksheet answers remain visible when translations hidden',await w7.locator('.aliceqa-ws-write').first().isVisible());
   await page.locator('#aliceqaToggleRu').click();
   test('Russian translations reappear',await page.locator('.aliceqa-ru').first().isVisible());
   await page.locator('#aliceqaBack').click();
