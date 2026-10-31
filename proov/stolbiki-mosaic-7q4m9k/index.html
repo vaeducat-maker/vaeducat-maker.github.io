@@ -516,6 +516,24 @@ body{background:
   .route-card{grid-column:2;grid-row:3;min-height:0;overflow:hidden}
   .home-passport{position:static;grid-column:2;grid-row:4;min-height:46px}
 }
+/* Compact PHONE home: keep the whole real first screen visible above browser chrome.
+   Tablet/desktop and the arithmetic workspace are deliberately untouched. */
+@media (max-width:899px) and (max-height:760px){
+  .home{gap:6px;padding:4px 4px calc(7px + env(safe-area-inset-bottom))}
+  .home h1{font-size:26px;line-height:1}
+  .home p{margin-top:3px}
+  .home-world-card{flex-shrink:0;height:clamp(132px,21.5dvh,158px);min-height:132px}
+  .home-world-overlay{padding:10px}
+  .world-collection-strip{padding:1px 6px}
+  .world-gallery-btn{min-height:39px;padding:8px 9px}
+  .continue-card{min-height:52px;padding:7px 11px}
+  .continue-play{min-height:44px;min-width:94px}
+  .route-card{min-height:182px;padding:7px 9px}
+  .route-head{padding:1px 2px 6px}
+  .ops{gap:7px;grid-auto-rows:minmax(70px,auto)}
+  .op{min-height:70px;padding:6px 9px}
+  .home-passport{min-height:44px;margin:0 4px 0}
+}
 .late-demo-mark{display:inline-block;margin-top:6px;padding:5px 9px;background:#fff2c8;color:#634510;border:1px solid #f2d788;border-radius:11px;font-size:11px;font-weight:900}
 </style>
   <link rel="preload" href="/games/korrutamine-test/assets/edukass-cat-transparent.png" as="image" fetchpriority="high">
