@@ -224,11 +224,17 @@ async function checkCompetitor() {
         const publicLinks=await page.evaluate(()=>{
           const list=[...document.querySelectorAll('a[href="kirjalik-arvutamine/"]')];
           const catalogCount=document.querySelectorAll('.home-new-stolbiki').length;
-          return{count:list.length,newCards:catalogCount,
-            visibleNames:list.map(x=>x.closest('article')?.querySelector('h2,h3')?.textContent||'')};
+          const videoFirst=!!document.querySelector('main > .top-math-promo video');
+          const heroLink=!!document.querySelector('.top-math-promo a[href="kirjalik-arvutamine/"]');
+          const uusLink=!!document.querySelector('.home-new-stolbiki a[href="kirjalik-arvutamine/"]');
+          const gamesLink=!!document.querySelector('.home-feature-card a[href="kirjalik-arvutamine/"]');
+          const heroAtTop=document.querySelector('.top-math-promo')?.getBoundingClientRect().top<innerHeight;
+          return{count:list.length,newCards:catalogCount,videoFirst,heroLink,uusLink,gamesLink,heroAtTop,
+            visibleNames:list.map(x=>x.closest('article,.top-math-promo')?.querySelector('h1,h2,h3')?.textContent||'')};
         });
-        note('public-launch','Stolbiki has discoverable public entries in UUS and Mängud',
-          publicLinks.count===2&&publicLinks.newCards===1&&
+        note('public-launch','Kirjalik arvutamine visible at the very top and in UUS and Mängud',
+          publicLinks.count===3&&publicLinks.newCards===1&&
+          publicLinks.videoFirst&&publicLinks.heroLink&&publicLinks.uusLink&&publicLinks.gamesLink&&publicLinks.heroAtTop&&
           publicLinks.visibleNames.every(x=>x.includes('Kirjalik arvutamine')),
           JSON.stringify(publicLinks),'critical');
         const catalog=await page.evaluate(async()=>await(await fetch('/data/catalog.json')).json());

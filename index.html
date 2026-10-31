@@ -7,7 +7,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png?v=108">
   <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png?v=108">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=108">
-  <title>EDUKASS — õppematerjalid ja mängud</title>
+  <title>EDUKASS — tasuta õppemängud ja kirjalik arvutamine</title>
   <meta name="description" content="EDUKASS — õppemängud, digitaalsed harjutused ja prinditavad õppematerjalid lastele.">
   <link rel="stylesheet" href="styles.css?v=124">
   <link rel="stylesheet" href="home.css?v=119">
@@ -25,27 +25,28 @@
   <!-- End MailerLite Universal -->
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script defer src="/assets/timetable-preview.js?v=2"></script>
-<style id="edukass-stolbiki-promo-style">
-  .home-new-stolbiki .edukass-stolbiki-promo,
-  .home-feature-card .edukass-stolbiki-promo {
-    min-width:0;display:flex;align-items:center;justify-content:center;
-    padding:clamp(12px,2vw,28px);
-    background:linear-gradient(155deg,#f1fafb,#e2edf6);
-  }
-  .edukass-stolbiki-promo video {
-    display:block;width:100%;height:auto;max-width:100%;border-radius:16px;
-    background:#ecf5f8;box-shadow:0 10px 24px rgba(18,45,73,.13);
-  }
-  .edukass-stolbiki-promo .edukass-stolbiki-promo-mobile {display:none}
-  .home-new-stolbiki .edukass-stolbiki-promo{min-height:270px}
-  .home-feature-card .edukass-stolbiki-promo{min-height:390px}
-  @media(max-width:640px){
-    .edukass-stolbiki-promo .edukass-stolbiki-promo-desktop{display:none}
-    .edukass-stolbiki-promo .edukass-stolbiki-promo-mobile{display:block;max-width:380px}
-    .home-new-stolbiki .edukass-stolbiki-promo,
-    .home-feature-card .edukass-stolbiki-promo{min-height:0;padding:14px}
-  }
-  </style>
+<style id="edukass-kirjalik-arvutamine-promo">
+.top-math-promo{padding:clamp(18px,3.3vw,44px) 0 52px;background:linear-gradient(160deg,#eef9f9,#f4faff 58%,#f4effc)}
+.top-math-layout{display:grid;grid-template-columns:minmax(0,1.16fr) minmax(300px,.84fr);align-items:center;gap:clamp(20px,3vw,48px)}
+.top-math-player{min-width:0;border:1px solid #d8e8ec;border-radius:24px;padding:11px;background:#fff;box-shadow:0 18px 38px rgba(21,56,89,.11)}
+.top-math-player video{display:block;width:100%;max-width:100%;aspect-ratio:16/9;height:auto;object-fit:contain;background:#e9f5f9;border-radius:15px}
+.top-math-copy{min-width:0}
+.top-math-eyebrow{display:flex;align-items:center;flex-wrap:wrap;gap:12px;font-size:.75rem;font-weight:900;letter-spacing:.09em;color:#257c7a}
+.top-math-eyebrow strong{display:inline-block;padding:7px 13px;background:#77e4d2;border-radius:999px;color:#143855}
+.top-math-promo h1{font-size:clamp(2.35rem,4.3vw,4.5rem);line-height:1.03;margin:13px 0 17px;color:#18395f;letter-spacing:-.04em}
+.top-math-copy p{font-size:clamp(1rem,1.5vw,1.15rem);line-height:1.5;color:#465e70;margin:0 0 17px}
+.top-math-facts{display:flex;flex-wrap:wrap;gap:8px}
+.top-math-facts span{background:#fff;border:1px solid #d6e8e5;border-radius:999px;padding:7px 11px;font-size:.82rem;font-weight:800;color:#193f60}
+.top-math-actions{display:flex;align-items:center;flex-wrap:wrap;gap:18px;margin-top:24px}
+.top-math-actions>a:not(.home-button){font-weight:800;color:#204b63;text-decoration:underline;text-underline-offset:4px}
+.top-math-thumbnail{display:grid;place-items:center;position:relative;min-width:0;overflow:hidden;text-decoration:none;background:linear-gradient(145deg,#edf9fb,#e3f0fa)}
+.home-new-card>.top-math-thumbnail{min-height:260px}
+.home-feature-card>.top-math-thumbnail{min-height:350px}
+.top-math-thumbnail img{display:block;width:min(94%,630px);height:auto;max-height:380px;object-fit:contain;border-radius:12px}
+.top-math-thumbnail span{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);display:grid;place-items:center;width:56px;height:56px;border-radius:50%;background:rgba(20,48,76,.9);border:2px solid white;color:white;font-size:22px}
+@media(max-width:900px){.top-math-layout{grid-template-columns:1fr;gap:18px}.top-math-player{order:0}.top-math-copy{order:1}.top-math-promo{padding:18px 0 35px}}
+@media(max-width:640px){.top-math-player{width:100%;max-width:440px;margin:0 auto;padding:8px;border-radius:18px}.top-math-player video{aspect-ratio:4/5;border-radius:12px}.top-math-promo h1{font-size:clamp(2.2rem,9vw,3.45rem);margin:12px 0}.top-math-facts{gap:6px}.top-math-facts span{font-size:.76rem;padding:6px 9px}.top-math-actions{gap:12px;margin-top:18px}.top-math-actions .home-button{width:auto;min-width:152px}.home-new-card>.top-math-thumbnail,.home-feature-card>.top-math-thumbnail{min-height:210px}}
+</style>
 </head>
 <body class="home-page">
 <header class="site-header">
@@ -63,31 +64,21 @@
 </header>
 
 <main>
-  <section class="home-hero">
-    <div class="container home-hero-grid">
-      <div class="home-hero-copy">
-        <div class="home-eyebrow">ÕPPEMÄNGUD, HARJUTUSED JA MATERJALID</div>
-        <h1>Õppimine algab uudishimust.</h1>
-        <p>EDUKASSist leiad õppemänge, digitaalseid harjutusi ja prinditavaid materjale eri teemadel.</p>
-        <div class="home-trust-marks" aria-label="Mida EDUKASSist leiab">
-          <span>✓ Õppemängud</span>
-          <span>✓ Prinditavad materjalid</span>
-          <span>✓ Järjest lisanduvad teemad</span>
-        </div>
-        <div class="home-actions">
-          <a class="home-button home-button-primary" href="#mangud">Vaata mänge</a>
-          <a class="home-button home-button-secondary" href="materials/">Vaata materjale</a>
-        </div>
+  <section class="top-math-promo" aria-labelledby="top-math-title">
+    <div class="container top-math-layout">
+      <div class="top-math-player">
+        <video controls autoplay muted playsinline loop preload="metadata" poster="/kirjalik-arvutamine-esitlus/media/kirjalik-arvutamine-promo-sait-39s.jpg" aria-label="Kirjalik arvutamine: ülesannete lahendamine ja maailma avamine">
+          <source src="/kirjalik-arvutamine-esitlus/media/kirjalik-arvutamine-promo-mobiil-39s.mp4" media="(max-width:640px)" type="video/mp4">
+          <source src="/kirjalik-arvutamine-esitlus/media/kirjalik-arvutamine-promo-sait-39s.mp4" type="video/mp4">
+          <a href="/kirjalik-arvutamine-esitlus/">Vaata videodemonstratsiooni</a>
+        </video>
       </div>
-      <div class="home-hero-visual" aria-hidden="true">
-        <div class="home-hero-orbit home-orbit-one"></div>
-        <div class="home-hero-orbit home-orbit-two"></div>
-        <img src="games/korrutamine-test/assets/edukass-cat-transparent.png" alt="">
-        <span class="home-hero-star star-one">★</span>
-        <span class="home-hero-star star-two">✦</span>
-        <span class="home-hero-topic home-topic-language">Aa</span>
-        <span class="home-hero-topic home-topic-math">6 × 4</span>
-        <span class="home-hero-topic home-topic-discover">?</span>
+      <div class="top-math-copy">
+        <div class="top-math-eyebrow">EDUKASS · MATEMAATIKA <strong>TASUTA</strong></div>
+        <h1 id="top-math-title">Kirjalik arvutamine</h1>
+        <p>Harjuta liitmist, lahutamist, korrutamist ja jagamist kirjalikult. Lahenda tehteid ja avasta mängides pildimaailmu.</p>
+        <div class="top-math-facts"><span>4 tehet</span><span>52 taset</span><span>50 maailma</span><span>15 minutit</span></div>
+        <div class="top-math-actions"><a class="home-button home-button-primary" href="kirjalik-arvutamine/">Mängi kohe</a><a href="#mangud">Vaata kõiki mänge</a></div>
       </div>
     </div>
   </section>
@@ -104,17 +95,7 @@
 
       <div class="home-new-grid">
         <article class="home-new-card home-new-stolbiki">
-          <div class="home-new-card-visual edukass-stolbiki-promo" aria-label="Kirjaliku arvutamise mängu videodemonstratsioon">
-            <video class="edukass-stolbiki-promo-desktop" controls playsinline preload="none" poster="/stolbiki-esitlus/media/stolbiki-promo-sait-39s.jpg" aria-label="Kirjalik arvutamine: video arvutamisest ja pildimaailma avamisest">
-              <source src="/stolbiki-esitlus/media/stolbiki-promo-sait-39s.mp4" type="video/mp4">
-              <a href="/stolbiki-esitlus/">Vaata mängu tutvustust</a>
-            </video>
-            <video class="edukass-stolbiki-promo-mobile" controls playsinline preload="none" poster="/stolbiki-esitlus/media/stolbiki-promo-mobiil-39s.jpg" aria-label="Kirjalik arvutamine: mobiilne videodemonstratsioon">
-              <source src="/stolbiki-esitlus/media/stolbiki-promo-mobiil-39s.mp4" type="video/mp4">
-              <a href="/stolbiki-esitlus/">Vaata mängu tutvustust</a>
-            </video>
-          </div>
-          <div class="home-new-card-copy">
+          <a class="top-math-thumbnail" href="/kirjalik-arvutamine-esitlus/" aria-label="Vaata kirjaliku arvutamise videot"><img src="/kirjalik-arvutamine-esitlus/media/kirjalik-arvutamine-promo-sait-39s.jpg" alt="Kirjaliku arvutamise mängu eelvaade" loading="lazy"><span aria-hidden="true">▶</span></a><div class="home-new-card-copy">
             <div class="home-card-meta">MATEMAATIKA · ONLINE · TASUTA</div>
             <h3>Kirjalik arvutamine</h3>
             <p>Õpi liitmist, lahutamist, korrutamist ja jagamist kirjalikult. 52 taset, 15-minutilised harjutused ning 50 avastatavat pildimaailma.</p>
@@ -177,17 +158,7 @@
   <section class="home-feature" id="mangud" aria-labelledby="feature-title">
     <div class="container">
       <article class="home-feature-card" style="margin-bottom:25px">
-        <div class="home-feature-image edukass-stolbiki-promo" aria-label="Kirjaliku arvutamise mängu videodemonstratsioon">
-            <video class="edukass-stolbiki-promo-desktop" controls playsinline preload="none" poster="/stolbiki-esitlus/media/stolbiki-promo-sait-39s.jpg" aria-label="Kirjalik arvutamine: video arvutamisest ja pildimaailma avamisest">
-              <source src="/stolbiki-esitlus/media/stolbiki-promo-sait-39s.mp4" type="video/mp4">
-              <a href="/stolbiki-esitlus/">Vaata mängu tutvustust</a>
-            </video>
-            <video class="edukass-stolbiki-promo-mobile" controls playsinline preload="none" poster="/stolbiki-esitlus/media/stolbiki-promo-mobiil-39s.jpg" aria-label="Kirjalik arvutamine: mobiilne videodemonstratsioon">
-              <source src="/stolbiki-esitlus/media/stolbiki-promo-mobiil-39s.mp4" type="video/mp4">
-              <a href="/stolbiki-esitlus/">Vaata mängu tutvustust</a>
-            </video>
-          </div>
-        <div class="home-feature-copy">
+        <a class="top-math-thumbnail" href="/kirjalik-arvutamine-esitlus/" aria-label="Vaata kirjaliku arvutamise videot"><img src="/kirjalik-arvutamine-esitlus/media/kirjalik-arvutamine-promo-sait-39s.jpg" alt="Kirjaliku arvutamise mängu eelvaade" loading="lazy"><span aria-hidden="true">▶</span></a><div class="home-feature-copy">
           <div class="home-kicker">EDUKASS · UUS ÕPPEMÄNG · MATEMAATIKA</div>
           <h2>Kirjalik arvutamine</h2>
           <div class="home-facts"><span>52 taset</span><span>4 tehet</span><span>50 maailma</span><span>Tasuta</span></div>
@@ -317,5 +288,8 @@
   </div>
 </footer>
   <script src="home-refresh.js?v=118"></script>
+<script id="edukass-kirjalik-arvutamine-poster">
+  (function(){var v=document.querySelector('.top-math-player video');if(!v)return;if(window.matchMedia&&window.matchMedia('(max-width:640px)').matches){v.poster='/kirjalik-arvutamine-esitlus/media/kirjalik-arvutamine-promo-mobiil-39s.jpg';}})();
+</script>
 </body>
 </html>

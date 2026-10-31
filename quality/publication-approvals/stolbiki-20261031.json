@@ -2,13 +2,13 @@
   "schemaVersion": 1,
   "status": "owner-approved-publication",
   "ownerApproval": true,
-  "ownerDecision": "Встроить утверждённую видео-презентацию столбиков в видимые карточки UUS!!! и Mängud на главной EDUKASS, сохранив игру и прогресс — 2026-10-31.",
+  "ownerDecision": "Показать видеопрезентацию Kirjalik arvutamine в самом верху главной EDUKASS на компьютере и телефоне. Публичный адрес презентации только на эстонском; сохранить работу игры и прогресс.",
   "gameSource": "proov/stolbiki-mosaic-7q4m9k/index.html",
   "publicEntry": "kirjalik-arvutamine/index.html",
   "catalogId": "kirjalik-arvutamine",
   "sourceAudit": "scripts/stolbiki-prelaunch-audit.js",
   "allowedChangedSharedFiles": {
-    "index.html": "a9b669b91c8ab1dcfadfe3cf07858d7f46c8571e",
+    "index.html": "5fb0787a042c51b44fff36d7973da3cc95c4b4a0",
     "data/catalog.json": "4d7b47342ab0795cda2cabba4261a00773390eb1"
   },
   "acceptance": [
@@ -18,6 +18,8 @@
     "Public catalog entry describes the free 52-level 4-operation game",
     "Browser clicks live homepage link and loads game successfully",
     "Cloudflare build includes the public permalink",
-    "Homepage UUS!!! and Mängud show responsive 39-second videos with poster and muted-by-default controls; click Mängi kohe still opens original game"
+    "Homepage UUS!!! and Mängud show responsive 39-second videos with poster and muted-by-default controls; click Mängi kohe still opens original game",
+    "Homepage first section presents Kirjalik arvutamine video, desktop 16:9 and phone 4:5, without distracting lower duplicates",
+    "Public video presentation slug, SEO title and asset names use Estonian Kirjalik arvutamine, with old inbound URL redirecting"
   ]
 }
