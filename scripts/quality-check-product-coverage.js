@@ -28,7 +28,7 @@ function isAuthorizedSharedPublication(file){
   if(typeof approved!=='string'||!/^[a-f0-9]{40}$/.test(approved))return false;
   const contents=fs.readFileSync(path.join(ROOT,file));
   const blobSha=crypto.createHash('sha1')
-    .update(Buffer.from('blob '+contents.length+'\\0')).update(contents).digest('hex');
+    .update('blob '+contents.length).update(Buffer.from([0])).update(contents).digest('hex');
   if(blobSha!==approved)return false;
   const auditPath=path.join(ROOT,record.sourceAudit);
   if(!fs.existsSync(auditPath)||
