@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "page": "games/korrutamine-test/index.html",
+  "product": "EDUKASS Korrutustabeli treener",
+  "targetLocale": "et",
+  "expectedMissionCount": 252,
+  "expectedChapterCount": 16,
+  "expectedRoundLength": 15,
+  "storageKey": "edukass-chapter-one-v18",
+  "schemaVersion": 2,
+  "transferScript": "games/korrutamine-test/progress-transfer.js",
+  "exportButton": "#openPassportButton",
+  "installButtonMustBeAbsent": "#installGameButton",
+  "importConfirmation": "#passportRestore",
+  "expectedExportLabel": "Minu edusammud",
+  "expectedExistingProgressCount": 2,
+  "expectedTransferredProgressCount": 42,
+  "tests": [
+    "real browser desktop/mobile",
+    "no PWA installation prompt",
+    "export from actual saved progress",
+    "private hash stripped on arrival",
+    "no automatic overwrite",
+    "explicit decline",
+    "confirmed restore",
+    "persist after page reload",
+    "intact fact statistics",
+    "no mobile horizontal scroll"
+  ]
+}

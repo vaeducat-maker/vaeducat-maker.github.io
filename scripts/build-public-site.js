@@ -94,6 +94,7 @@ const publicFiles = [
   'games/korrutamine-test/locales/et.js',
   'games/korrutamine-test/manifest.webmanifest',
   'games/korrutamine-test/progress-store.js',
+  'games/korrutamine-test/progress-transfer.js',
   'games/korrutamine-test/question-engine.js',
   'games/korrutamine-test/service-worker.js',
 

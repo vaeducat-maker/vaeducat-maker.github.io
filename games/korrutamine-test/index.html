@@ -10,7 +10,6 @@
   <meta name="theme-color" content="#eef8fb">
   <meta name="color-scheme" content="light">
   <meta name="supported-color-schemes" content="light">
-  <link rel="manifest" href="manifest.webmanifest">
     <link rel="icon" href="assets/icon-192.png?v=60">
     <link rel="apple-touch-icon" href="assets/icon-192.png?v=60">
   <title data-i18n="meta.title">EDUKASS — Korrutustabeli treener</title>
@@ -24,12 +23,34 @@
   <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="stylesheet" href="game.css?v=119">
+  <!-- Consume the private recovery fragment before any third-party scripts execute. -->
+  <script>
+    if(location.hash.startsWith('#ekpass=')){
+      window.__EDUKASS_INCOMING_PASSPORT=location.hash.slice(8);
+      history.replaceState(history.state,'',location.pathname+location.search);
+    }
+  </script>
   <!-- Privacy-friendly analytics by Plausible -->
   <script async src="https://plausible.io/js/pa-3mkwYCn93BZZKvx5orDK8.js"></script>
   <script>
     window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
     plausible.init()
   </script>
+
+  <style id="edukass-passport-styles">
+    .passport-dialog [hidden]{display:none!important}
+    .passport-content{max-height:min(87dvh,760px);overflow-y:auto}
+    .passport-symbol{font-size:2.15rem;background:linear-gradient(145deg,#207b86,#6450ae)}
+    .passport-primary{min-height:50px;padding:12px 20px;border-radius:15px;cursor:pointer}
+    .passport-link{display:block;width:100%;height:90px;resize:vertical;margin:12px 0;padding:11px;border:1px solid #c7dce1;border-radius:12px;background:#fff;color:#17365f;font-size:.75rem;overflow-wrap:anywhere}
+    .passport-actions{display:flex;gap:9px;margin:11px 0;justify-content:center;flex-wrap:wrap}
+    .passport-actions button{min-height:45px;padding:9px 17px;border-radius:13px}
+    #passportRestoreActions{margin:14px 0}
+    #passportRestoreActions button{margin:5px}
+    .passport-alert{font-size:.83rem!important;font-weight:800;color:#8b3e54!important;line-height:1.4;margin:15px auto 8px!important}
+    .passport-note{font-size:.82rem;color:#64778b;line-height:1.45;margin:8px auto}
+    @media(max-width:480px){.passport-content{padding:27px 15px 20px}.passport-content h2{font-size:1.6rem}.passport-link{height:76px}}
+  </style>
 </head>
 <body class="intro-active">
   <section class="game-intro is-running" id="introScreen" aria-label="EDUKASSi mängu algus" data-i18n-aria-label="intro.aria">
@@ -65,7 +86,7 @@
       <span><b>EDU</b>KASS</span>
     </a>
     <div class="top-actions">
-      <button class="tiny-button install-button" id="installGameButton" type="button"><span class="install-button-icon" aria-hidden="true">📲</span><span data-i18n="install.button">LISA TELEFONI AVAKUVALE</span></button>
+      <button class="tiny-button install-button" id="openPassportButton" type="button" aria-haspopup="dialog"><span class="install-button-icon" aria-hidden="true">🔗</span><span>MINU EDUSAMMUD</span></button>
       <button class="tiny-button share-button" id="shareGameButton" type="button" aria-label="Jaga mängu" data-i18n-aria-label="share.buttonAria">
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <circle cx="18" cy="5" r="2.5"></circle>
@@ -813,16 +834,29 @@
     </form>
   </dialog>
 
-  <dialog class="share-dialog install-dialog" id="installDialog" aria-labelledby="installDialogTitle">
-    <form method="dialog" class="share-content">
-      <button class="share-close" type="submit" aria-label="Sulge">×</button>
-    <div class="install-phone" aria-hidden="true"><img src="assets/icon-192.png?v=61" alt=""></div>
-      <p class="eyebrow">EDUKASS</p>
-      <h2 id="installDialogTitle">LISA TELEFONI AVAKUVALE</h2>
-      <p id="installHelpText">Mängu ikoon ilmub sinu telefoni. Kui automaatse lisamise aken ei avane, vali brauseri menüüst „Lisa avakuvale“.</p>
-      <button class="primary-button" id="confirmInstallButton" type="button">📲 LISA TELEFONI AVAKUVALE</button>
-      <button class="secondary-button install-secondary" id="continueInBrowserButton" type="button" hidden>JÄTKA BRAUSERIS</button>
-    </form>
+  <dialog class="share-dialog passport-dialog" id="passportDialog" aria-labelledby="passportTitle">
+    <div class="share-content passport-content">
+      <button class="share-close" id="passportClose" type="button" aria-label="Sulge">×</button>
+      <div class="share-symbol passport-symbol" aria-hidden="true">🔗</div>
+      <p class="eyebrow">EDUKASS · MINU EDUSAMMUD</p>
+      <h2 id="passportTitle">Minu edusammud</h2>
+      <p id="passportExplanation">Loo isiklik link ja jätka oma korrutamise missioone teises seadmes.</p>
+      <button class="primary-button passport-primary" id="passportCreate" type="button">🔗 Loo minu edusammude link</button>
+      <textarea class="passport-link" id="passportLink" readonly hidden aria-label="Isiklik taastamislink"></textarea>
+      <div class="passport-actions" id="passportShareActions" hidden>
+        <button class="primary-button" id="passportCopy" type="button">⧉ Kopeeri</button>
+        <button class="secondary-button" id="passportSend" type="button">↗ Saada</button>
+      </div>
+      <div id="passportRestoreActions" hidden>
+        <p id="passportImportSummary">Leidsime salvestatud edusammud.</p>
+        <p class="passport-alert">Taastamine asendab selle seadme praegused edusammud.</p>
+        <button class="primary-button passport-primary" id="passportRestore" type="button">✓ Taasta edusammud</button>
+        <button class="secondary-button" id="passportDecline" type="button">Ära taasta</button>
+      </div>
+      <p class="passport-alert">See on isiklik link. Ära saada seda klassi ühisesse vestlusesse.</p>
+      <p class="passport-note">Andmed on lingis, mitte pilves. Uute edusammude jaoks loo uus link.</p>
+      <p class="share-status" id="passportStatus" role="status" aria-live="polite"></p>
+    </div>
   </dialog>
 
   <script src="locales/et.js?v=112"></script>
@@ -830,6 +864,7 @@
   <script src="i18n.js?v=61"></script>
   <script src="question-engine.js?v=61"></script>
   <script src="progress-store.js?v=92"></script>
-  <script src="game.js?v=124"></script>
+  <script src="progress-transfer.js?v=1"></script>
+  <script src="game.js?v=125"></script>
 </body>
 </html>
