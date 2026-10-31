@@ -89,8 +89,10 @@
     const restoreActions=document.getElementById('passportRestoreActions');
     const create=document.getElementById('passportCreate');
     let latestLink='',pending=null;
-    const incoming=location.hash.startsWith('#ekpass=')?location.hash.slice(8):null;
-    if(incoming!==null)history.replaceState(history.state,'',location.pathname+location.search);
+    const incoming=typeof window.__EDUKASS_INCOMING_PASSPORT==='string'?window.__EDUKASS_INCOMING_PASSPORT:
+      (location.hash.startsWith('#ekpass=')?location.hash.slice(8):null);
+    window.__EDUKASS_INCOMING_PASSPORT=null;
+    if(incoming!==null&&location.hash.startsWith('#ekpass='))history.replaceState(history.state,'',location.pathname+location.search);
     function show(mode){
       status.textContent='';
       create.hidden=mode==='restore';
