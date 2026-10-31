@@ -204,6 +204,58 @@ async function checkCompetitor() {
   let browser;
   try {
     browser=await chromium.launch({headless:true});
+    // Match the owner's real Android screenshot: at normal first opening,
+    // BOTH the full title and the transfer button must fit without scrolling.
+    // Prior test only scrolled the transfer button into view, hiding the title.
+    for(const [width,height] of [[360,640],[390,700],[390,844]]){
+      const ctx=await browser.newContext({viewport:{width,height},
+        isMobile:true,hasTouch:true,deviceScaleFactor:1,serviceWorkers:'block'});
+      try{
+        const page=await ctx.newPage(),errors=[];
+        page.on('pageerror',e=>errors.push(e.message));
+        await page.goto('http://127.0.0.1:'+port+
+          '/proov/stolbiki-mosaic-7q4m9k/index.html?freshStart=1',
+          {waitUntil:'domcontentloaded',timeout:35000});
+        await page.waitForFunction(()=>!!window.__EDUKASS_TEST__,null,{timeout:15000});
+        if(!(await page.locator('#home').isVisible())){
+          await page.locator('#introPlay').click({force:true,timeout:9000});
+        }
+        await page.locator('#home').waitFor({state:'visible',timeout:10000});
+        await page.waitForTimeout(250);
+        const state=await page.evaluate(()=>{
+          const home=document.getElementById('home'),
+            keys=['.home-head','.home-world-card','.world-collection-strip',
+              '.continue-card','.route-card','#openPassport'];
+          const bounds=keys.map(selector=>{
+            const b=document.querySelector(selector).getBoundingClientRect();
+            return{selector,top:Math.round(b.top),bottom:Math.round(b.bottom),
+              height:Math.round(b.height)};
+          });
+          const top=bounds[0],bottom=bounds[bounds.length-1];
+          return{viewport:{width:innerWidth,height:innerHeight},
+            scrollHeight:home.scrollHeight,clientHeight:home.clientHeight,
+            scrollTop:home.scrollTop,bounds,
+            fits:home.scrollHeight<=home.clientHeight+2 &&
+              home.scrollTop===0&&top.top>=0&&bottom.bottom<=innerHeight-5 &&
+              bounds.every(b=>b.top>=0&&b.bottom<=innerHeight) &&
+              bounds[1].height>=130&&bounds[3].height>=44&&
+              bounds[5].height>=44};
+        });
+        note('first-open-phone-fit','Full title, world, four cards and progress-transfer all fit WITHOUT scroll at '+width+'×'+height,
+          state.fits&&errors.length===0,JSON.stringify({...state,errors}),'critical');
+        await screenshot(page,'real-first-open-fits-'+width+'x'+height);
+        await page.locator('#openPassport').click({timeout:5000});
+        await page.locator('#passportDialog[open]').waitFor({state:'visible'});
+        note('first-open-phone-fit','Bottom transfer button remains tappable at '+width+'×'+height,true);
+        await page.locator('#passportClose').click();
+        await page.locator('.op[data-op="add"]').click();
+        await page.locator('#train').waitFor({state:'visible'});
+        note('first-open-phone-fit','Addition still starts after compact home at '+width+'×'+height,true);
+      }catch(e){
+        note('first-open-phone-fit','Real beginner first opening at '+width+'×'+height,
+          false,e.stack?.slice(0,1200)||String(e),'critical');
+      }finally{await ctx.close()}
+    }
     // All 52 mastered: real page switches to Kordamine, preserves 15 min
     // and worlds. Direct owner simulation is strictly isolated by lateDemo.
     for(const [width,height] of [[390,844],[1202,868]]){
