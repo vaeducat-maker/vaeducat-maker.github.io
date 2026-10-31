@@ -92,42 +92,42 @@
     [
       "väga sügav koht, kuhu saab sisse kukkuda",
       "auk",
-      ""
+      "Из текста: „ühte auku ... see oli väga sügav“."
     ],
     [
       "asi, millega saab lukku avada",
       "võti",
-      ""
+      "Из текста: „väikest kuldset võtit“."
     ],
     [
       "inimene või loom, kes ei jõua õigeks ajaks",
-      "jään hiljaks",
-      "Только фраза кролика «Ma jään hiljaks!». В тексте нет названия такого человека или животного."
+      "hiljaks jääja",
+      "От „Ma jään hiljaks!“: форма для обозначения того, кто опаздывает."
     ],
     [
       "millegi ümber vaatama",
-      "vaatas ringi",
-      ""
+      "ringi vaatama",
+      "Из текста: „Alice vaatas ringi“ → начальная форма."
     ],
     [
       "järsku ära kaduma",
-      "kadus järsku",
-      ""
+      "järsku kaduma",
+      "Из текста: „kadus järsku ühte auku“ → начальная форма."
     ],
     [
       "ettevaatlikult ja tähelepanelikult midagi tegema",
-      null,
-      "Точного выражения с таким значением в рассказе нет. Не вписывай выдуманное слово."
+      "ettevaatlikult vaatama",
+      "Из текста: „Alice vaatas pudelit ettevaatlikult“ → начальная форма."
     ],
     [
       "järjest väiksemaks muutuma",
-      "muutus järjest väiksemaks",
-      ""
+      "järjest väiksemaks muutuma",
+      "Из текста: „Alice muutus järjest väiksemaks“ → начальная форма."
     ],
     [
       "millegi alguses olema",
-      "alguses",
-      ""
+      "algama",
+      "Из текста: „seiklus Imedemaal oli alles algamas“ → начальная форма."
     ]
   ],
   "expectedWorksheet6": [
