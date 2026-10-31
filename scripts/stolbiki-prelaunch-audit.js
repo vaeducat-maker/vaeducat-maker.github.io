@@ -282,14 +282,27 @@ async function checkCompetitor() {
         await page.locator('.op[data-op="add"]').click();
         await page.locator('#train').waitFor({state:'visible',timeout:8000});
         note('public-launch','Visitor can start a real arithmetic exercise from published homepage',true);
-        // Personal transfer URLs are passed through the public redirect intact.
+        // Real personal transfer: the app consumes #ekpass before its router
+        // changes the address to #intro. The visible RESTORE dialog, rather
+        // than a surviving URL hash, is the user-observable acceptance.
+        const sourceTransfer=await page.evaluate(()=>window.__EDUKASS_TEST__.passport.make());
+        const code=sourceTransfer.split('#ekpass=')[1];
+        if(!code||code.length<50)throw new Error('Cannot create authentic personal transfer link');
         const publicPage=await ctx.newPage();
         await publicPage.goto('http://127.0.0.1:'+port+
-          '/kirjalik-arvutamine/?from=site#personal-link',{waitUntil:'domcontentloaded'});
+          '/kirjalik-arvutamine/?from=site#ekpass='+code,{waitUntil:'domcontentloaded'});
         await publicPage.waitForURL(u=>u.pathname==='/proov/stolbiki-mosaic-7q4m9k/',{timeout:12000});
-        const forwarding=await publicPage.evaluate(()=>({search:location.search,hash:location.hash}));
-        note('public-launch','Public permanent link keeps query and fragment for transfer/deep links',
-          forwarding.search==='?from=site'&&forwarding.hash==='#personal-link',
+        await publicPage.locator('#passportDialog[open]').waitFor({state:'visible',timeout:10000});
+        const forwarding=await publicPage.evaluate(()=>({
+          search:location.search,
+          restoreVisible:!document.getElementById('passportRestore').classList.contains('hidden'),
+          summary:document.getElementById('passportImportSummary').textContent,
+          realStorage:localStorage.getItem('edukass_stolbiki_player_profile_v42')
+        }));
+        note('public-launch','Public permalink passes a real personal backup and shows restore confirmation',
+          forwarding.search==='?from=site'&&forwarding.restoreVisible&&
+          forwarding.summary.includes('Maailm')&&
+          forwarding.realStorage===null,
           JSON.stringify(forwarding),'critical');
         await publicPage.close();
       }catch(e){
