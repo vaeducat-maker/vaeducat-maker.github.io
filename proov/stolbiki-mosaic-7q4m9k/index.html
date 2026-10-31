@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>EDUKASS – Kirjalik arvutamine</title>
 <meta name="description" content="Kirjaliku arvutamise treener: liitmine, lahutamine, korrutamine ja jagamine. 15 minutit päevas.">
+<!-- EDUKASS: the same privacy-friendly Plausible site as the home page -->
+<script async src="https://plausible.io/js/pa-3mkwYCn93BZZKvx5orDK8.js"></script>
+<script>
+  window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
+  plausible.init();
+</script>
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="EDUKASS">
 <meta property="og:title" content="EDUKASS – Kirjalik arvutamine">
@@ -1261,6 +1267,10 @@ body{background:
   const WORLD_STUDENT=new URLSearchParams(location.search).get('worldTest')==='1'||WORLD_VICTORY_SIM;
   const LATE_DEMO=new URLSearchParams(location.search).get('lateDemo')==='1';
   const ISOLATED_STORAGE=WORLD_STUDENT||LATE_DEMO;
+  function trackTraining(eventName){
+    // Exclude isolated owner demonstrations: only real learners generate goals.
+    if(!ISOLATED_STORAGE&&typeof window.plausible==='function')window.plausible(eventName);
+  }
   const rootStore=window.localStorage,rootSession=window.sessionStorage;
   const STORE_PREFIX=LATE_DEMO?'edukass-columns-late-pupil-demo-v1:':WORLD_VICTORY_SIM?'edukass-world-victory-demo-v1:':'edukass-world-student-test-v1:';
   const wrapped=(src)=>({
@@ -2008,7 +2018,7 @@ body{background:
     }
   }
   function abandonLesson(){lesson={active:false,finished:false,elapsed:0,lastTick:0,entries:[]};lessonRedoIndex=-1;updateLessonClock()}
-  function beginLesson(){abandonLesson();lesson.active=true;lesson.lastTick=Date.now();updateLessonClock()}
+  function beginLesson(){abandonLesson();lesson.active=true;lesson.lastTick=Date.now();updateLessonClock();trackTraining('Kirjalik arvutamine Lesson Start')}
   function tickLesson(){
     const now=Date.now();
     if(!lesson.active)return;
@@ -2023,6 +2033,7 @@ body{background:
     if(!lesson.active||forced||!current)return;
     // Preserve the child's own written cells; never replace them with a generated answer.
     lesson.entries.push({task:current,markup:$('#mathWrap').innerHTML,expression:solvedExpression(current)});
+    if(lesson.entries.length===1)trackTraining('Kirjalik arvutamine First Solved');
   }
   function lessonPanels(which){
     $('#lessonScreen').classList.remove('hidden');
@@ -2033,6 +2044,10 @@ body{background:
     $('#lessonDetailView').classList.toggle('lesson-hidden',which!=='detail');
   }
   function showLessonDone({historyMode='replace'}={}){
+    // Count real, timed lessons once; navigation and owner demos must not inflate goals.
+    if(lesson.active&&!lesson.finished&&lesson.elapsed>=LESSON_MS&&lesson.entries.length>0){
+      trackTraining('Kirjalik arvutamine Lesson Complete');
+    }
     clearAssistTimers();taskToken++;lesson.active=false;lesson.finished=true;lessonRedoIndex=-1;
     lessonPanels('done');$('#lessonSolvedCount').textContent=lesson.entries.length;
     if(historyMode!=='none')writeNav('lesson-done',{},historyMode);
@@ -2949,6 +2964,7 @@ body{background:
   shareDialog.addEventListener('click',e=>{if(e.target===shareDialog)shareDialog.close()});
   $('#soundToggleButton').addEventListener('click',toggleSound);updateSoundButton();
   $('#introPlay').addEventListener('click',()=>{
+    trackTraining('Kirjalik arvutamine Intro Play');
     playIntroLaunchSound();$('#introScreen').classList.add('hidden');showHome({historyMode:'replace'});
   });
   $('#openWorldView').addEventListener('click',()=>{
