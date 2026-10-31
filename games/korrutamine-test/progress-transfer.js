@@ -146,7 +146,9 @@
       try{
         store.save(pending);
         pending=null;dialog.close();
-        location.replace(location.pathname+location.search+'#missions');
+        // Reload the active game so its in-memory progress picks up the restored save.
+        history.replaceState(history.state,'',location.pathname+location.search+'#missions');
+        location.reload();
       }catch(error){status.textContent='Salvestamine ebaõnnestus. Proovi uuesti.';}
     }
     document.getElementById('openPassportButton').addEventListener('click',()=>show('create'));
