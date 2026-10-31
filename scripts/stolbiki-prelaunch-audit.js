@@ -204,6 +204,73 @@ async function checkCompetitor() {
   let browser;
   try {
     browser=await chromium.launch({headless:true});
+
+    // PUBLIC_LAUNCH_NAVIGATION: real first-visit from the public homepage.
+    // The user approved publication only after the whole game passed QA.
+    // Check both discovery surfaces and play via the stable public permalink,
+    // without touching the verified arithmetic renderer or saved profiles.
+    {
+      const ctx=await browser.newContext({viewport:{width:390,height:844},
+        isMobile:true,hasTouch:true,deviceScaleFactor:1,serviceWorkers:'block'});
+      try{
+        const page=await ctx.newPage(),errors=[];
+        page.on('pageerror',e=>errors.push(e.message));
+        await page.goto('http://127.0.0.1:'+port+'/',{waitUntil:'domcontentloaded',timeout:30000});
+        const publicLinks=await page.evaluate(()=>{
+          const list=[...document.querySelectorAll('a[href="kirjalik-arvutamine/"]')];
+          const catalogCount=document.querySelectorAll('.home-new-stolbiki').length;
+          return{count:list.length,newCards:catalogCount,
+            visibleNames:list.map(x=>x.closest('article')?.querySelector('h2,h3')?.textContent||'')};
+        });
+        note('public-launch','Stolbiki has discoverable public entries in UUS and Mängud',
+          publicLinks.count===2&&publicLinks.newCards===1&&
+          publicLinks.visibleNames.every(x=>x.includes('Kirjalik arvutamine')),
+          JSON.stringify(publicLinks),'critical');
+        const catalog=await page.evaluate(async()=>await(await fetch('/data/catalog.json')).json());
+        const entry=catalog.products.find(p=>p.id==='kirjalik-arvutamine');
+        note('public-launch','Public free game registered with 52-stage destination and permanent URL',
+          !!entry&&entry.status==='published'&&entry.type==='game'&&
+          entry.priceType==='free'&&entry.page==='/kirjalik-arvutamine/'&&
+          entry.catalogPage==='/'&&entry.catalogHref==='kirjalik-arvutamine/',
+          JSON.stringify(entry),'critical');
+        await page.locator('.home-new-stolbiki a[href="kirjalik-arvutamine/"]').click();
+        await page.waitForURL(u=>u.pathname==='/proov/stolbiki-mosaic-7q4m9k/',
+          {timeout:18000});
+        await page.waitForFunction(()=>!!window.__EDUKASS_TEST__,null,{timeout:15000});
+        if(await page.locator('#introPlay').isVisible()){
+          await page.locator('#introPlay').click();
+        }
+        await page.locator('#home').waitFor({state:'visible',timeout:8000});
+        const launch=await page.evaluate(()=>({
+          path:location.pathname,
+          title:document.querySelector('#home h1')?.textContent,
+          levels:[...document.querySelectorAll('.op')].length,
+          world:window.__EDUKASS_TEST__?.getRealWorldProgress()?.tiles,
+          realStorage:localStorage.getItem('edukass_stolbiki_player_profile_v42')}));
+        note('public-launch','Homepage click enters exact full trainer with all four operations and player world',
+          launch.path==='/proov/stolbiki-mosaic-7q4m9k/'&&
+          launch.title==='Kirjalik arvutamine'&&launch.levels===4&&launch.world>=50&&
+          errors.length===0,JSON.stringify({launch,errors}),'critical');
+        await screenshot(page,'published-stolbiki-from-homepage');
+        await page.locator('.op[data-op="add"]').click();
+        await page.locator('#train').waitFor({state:'visible',timeout:8000});
+        note('public-launch','Visitor can start a real arithmetic exercise from published homepage',true);
+        // Personal transfer URLs are passed through the public redirect intact.
+        const publicPage=await ctx.newPage();
+        await publicPage.goto('http://127.0.0.1:'+port+
+          '/kirjalik-arvutamine/?from=site#personal-link',{waitUntil:'domcontentloaded'});
+        await publicPage.waitForURL(u=>u.pathname==='/proov/stolbiki-mosaic-7q4m9k/',{timeout:12000});
+        const forwarding=await publicPage.evaluate(()=>({search:location.search,hash:location.hash}));
+        note('public-launch','Public permanent link keeps query and fragment for transfer/deep links',
+          forwarding.search==='?from=site'&&forwarding.hash==='#personal-link',
+          JSON.stringify(forwarding),'critical');
+        await publicPage.close();
+      }catch(e){
+        note('public-launch','Real public homepage -> full Stolbiki trainer',
+          false,e.stack?.slice(0,1350)||String(e),'critical');
+      }finally{await ctx.close()}
+    }
+
     // Match the owner's real Android screenshot: at normal first opening,
     // BOTH the full title and the transfer button must fit without scrolling.
     // Prior test only scrolled the transfer button into view, hiding the title.
