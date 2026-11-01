@@ -66,7 +66,7 @@
     ['kontrolltöö','контрольная работа'],
     ['tüli','ссора']
   ];
-  const esc = x => String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;':'&quot;',"'":'&#39;'}[c]));
+  const esc = x => String(x).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   // Preserve the appearance and controls of every other lesson.
   if(!document.getElementById('inimeneKontrollStyle')){
     const style=document.createElement('style');
