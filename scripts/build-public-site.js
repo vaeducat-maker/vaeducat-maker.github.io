@@ -18,6 +18,7 @@ const publicFiles = [
   'home.css',
   'index.html',
   'kirjalik-arvutamine/index.html',
+  'korruta/index.html',
   'styles.css',
 
   'assets/korrutustabel.png',
