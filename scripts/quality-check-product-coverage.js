@@ -15,6 +15,30 @@ const PUBLIC_ENTRY_APPROVAL='quality/publication-approvals/stolbiki-20261031.jso
 function isAuthorizedSharedPublication(file){
   // A scoped, owner-approved release may change only the exact approved
   // bytes of homepage/catalog. Other shared files remain BLOCKED as before.
+  // EDUKASS owner-approved, exact-blob Facebook header release.
+  // This grants access ONLY to two approved shared files. It is not a wildcard.
+  if(['index.html','styles.css'].includes(file)){
+    const recordPath=path.join(ROOT,'quality/publication-approvals/facebook-follow-20261103.json');
+    if(fs.existsSync(recordPath)){
+      let r;
+      try{r=JSON.parse(fs.readFileSync(recordPath,'utf8'))}catch{r=null}
+      const auditPath=path.join(ROOT,'scripts/facebook-follow-browser-audit.js');
+      const signed=r?.allowedChangedSharedFiles;
+      if(r?.schemaVersion===1&&r?.status==='owner-approved-publication'&&
+         r?.ownerApproval===true&&r?.changeId==='facebook-follow-header-20261103'&&
+         r?.sourceAudit==='scripts/facebook-follow-browser-audit.js'&&
+         signed&&Object.keys(signed).length===2&&
+         Object.keys(signed).every(x=>['index.html','styles.css'].includes(x))&&
+         typeof signed[file]==='string'&&/^[a-f0-9]{40}$/.test(signed[file])&&
+         fs.existsSync(auditPath)&&
+         fs.readFileSync(auditPath,'utf8').includes('FACEBOOK_FOLLOW_BROWSER_AUDIT')){
+        const body=fs.readFileSync(path.join(ROOT,file));
+        const sha=crypto.createHash('sha1').update('blob '+body.length)
+          .update(Buffer.from([0])).update(body).digest('hex');
+        if(sha===signed[file])return true;
+      }
+    }
+  }
   if(!['index.html','data/catalog.json'].includes(file))return false;
   const recordPath=path.join(ROOT,PUBLIC_ENTRY_APPROVAL);
   if(!fs.existsSync(recordPath))return false;
