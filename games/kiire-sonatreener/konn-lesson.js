@@ -16,37 +16,18 @@ const FACTS=[
   ['jalad on kujunenud kalade uimedest','ноги сформировались из плавников рыб']
 ];
 const LINES=TERMS.concat(FACTS);
-// Cards cover key words plus the forms encountered in the school text.
+// Approved vocabulary: only dictionary forms, without inflected duplicates.
 const WORDS=[
   ['konn','лягушка'],
   ['ujunahk','плавательная перепонка'],
-  ['ujunahad','плавательные перепонки'],
   ['ujumislest','ласта'],
-  ['ujumislestad','ласты'],
   ['kohastuma','приспосабливаться'],
-  ['on kohastunud','приспособилась'],
-  ['elu','жизнь'],
-  ['eluks','для жизни'],
-  ['vesi','вода'],
-  ['vees','в воде'],
   ['maismaa','суша'],
-  ['maismaal','на суше'],
   ['hingama','дышать'],
-  ['hingab','дышит'],
   ['kops','лёгкое'],
-  ['kopsudega','лёгкими'],
-  ['vee all','под водой'],
   ['nahk','кожа'],
-  ['naha kaudu','через кожу'],
-  ['jalg','нога'],
-  ['jalad','ноги'],
   ['kujunema','формироваться'],
-  ['on kujunenud','сформировались'],
-  ['kala','рыба'],
-  ['kalade','рыб'],
-  ['uim','плавник'],
-  ['uimedest','из плавников'],
-  ['nii ... kui ...','как ... так и ...']
+  ['uim','плавник']
 ];
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 if(!document.getElementById('konnLessonStyles')){
