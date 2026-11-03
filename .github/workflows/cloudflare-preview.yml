@@ -127,6 +127,9 @@ jobs:
       - name: Add swipeable adjective cards
         run: node scripts/patch-sept-adj-carousel.js
 
+      - name: Ensure identical Facebook headers after all late page copies
+        run: node scripts/sync-cloudflare-headers.js
+
       - name: Deploy edukass-preview
         uses: cloudflare/wrangler-action@v4
         with:

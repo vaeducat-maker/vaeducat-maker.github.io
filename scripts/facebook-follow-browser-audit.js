@@ -6,7 +6,20 @@ const path=require('node:path');
 const fs=require('node:fs');
 const {chromium}=require('playwright');
 const root=path.resolve(__dirname,'..');
-const pages=['index.html','materials/index.html','teemad/loodus/index.html','teemad/ajalugu-ja-kultuur/index.html','privaatsus/index.html'];
+const originalPages=['index.html','materials/index.html','teemad/loodus/index.html','teemad/ajalugu-ja-kultuur/index.html','privaatsus/index.html'];
+const legacyPages=['materials/ristsonad-sugis/index.html','materials/tunniplaanid-10/index.html','materials/matemaatika/index.html'];
+const {normalizeHtml}=require('./sync-cloudflare-headers');
+const tempPages=[];
+for(const file of legacyPages){
+ const original=fs.readFileSync(path.join(root,file),'utf8');
+ if(original.includes('class="facebook-follow"'))throw new Error('Legacy test page no longer legacy: '+file);
+ const updated=normalizeHtml(original,file);
+ if(!updated.hasHeader||!updated.inserted)throw new Error('Cloudflare header sync did not upgrade '+file);
+ const temp=path.join(path.dirname(file),'.facebook-follow-qa-'+path.basename(file));
+ fs.writeFileSync(path.join(root,temp),updated.html,'utf8');
+ tempPages.push(temp);
+}
+const pages=[...originalPages,...tempPages];
 const href='https://www.facebook.com/share/1GH4qbcNqL/';
 (async()=>{
  const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
@@ -68,6 +81,9 @@ const href='https://www.facebook.com/share/1GH4qbcNqL/';
     count++;
    }
   }
- }finally{await browser.close()}
+ }finally{
+  await browser.close();
+  for(const file of tempPages)fs.rmSync(path.join(root,file),{force:true});
+ }
  console.log('PASS Facebook follow button in real Chromium: '+count+' layouts, click tracking, navigation and viewport checks');
 })().catch(e=>{console.error(e);process.exitCode=1});
