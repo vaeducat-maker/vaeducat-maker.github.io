@@ -1877,3 +1877,28 @@ button:focus-visible { outline: 3px solid #6549a6; outline-offset: 4px; }
   .timetable-preview-card .timetable-pdf-sheet:nth-child(2){transform:translateY(-5px) scale(1.05)}
   .timetable-preview-card .timetable-pdf-sheet:nth-child(3){transform:translate(-12px,10px) rotate(5deg)}
 }
+
+
+/* v125: Facebook follow CTA in the EDUKASS main navigation. */
+.header-inner.header-with-social {gap:18px}
+.header-with-social .nav {margin-left:auto;gap:clamp(12px,2vw,24px)}
+.facebook-follow {display:inline-flex;align-items:center;justify-content:center;gap:9px;flex:0 0 auto;min-height:44px;padding:9px 16px;border-radius:999px;background:#1877f2;color:#fff!important;font-size:.89rem;font-weight:800;line-height:1.2;text-decoration:none;white-space:nowrap;box-shadow:0 5px 14px rgba(24,119,242,.24);transition:background-color .18s ease,box-shadow .18s ease,transform .18s ease}
+.facebook-follow svg {display:block;width:20px;height:20px;flex:0 0 20px;fill:currentColor}
+.facebook-follow .facebook-short {display:none}
+.facebook-follow:hover,.facebook-follow:focus-visible {background:#095fc8;color:#fff!important;transform:translateY(-1px);box-shadow:0 8px 18px rgba(24,119,242,.32)}
+.facebook-follow:focus-visible {outline:3px solid #ffb84a;outline-offset:3px}
+@media(max-width:860px){
+  .header-inner.header-with-social {display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:12px;row-gap:2px;padding-top:6px;padding-bottom:7px}
+  .header-with-social .brand {grid-column:1;grid-row:1;justify-self:start;min-width:0}
+  .header-with-social .facebook-follow {grid-column:2;grid-row:1;justify-self:end}
+  .header-with-social .nav {display:flex!important;grid-column:1/-1;grid-row:2;justify-content:center;align-items:center;flex-wrap:wrap;width:100%;margin-left:0;gap:clamp(12px,4vw,25px);font-size:.8rem}
+  .facebook-follow .facebook-long {display:none}
+  .facebook-follow .facebook-short {display:inline}
+}
+@media(max-width:520px){
+  .header-inner.header-with-social {column-gap:6px;row-gap:0}
+  .header-with-social .nav,.header-with-social .home-nav {display:flex!important;justify-content:space-evenly;gap:clamp(10px,3vw,18px);font-size:.74rem}
+  .header-with-social .facebook-follow {min-height:40px;padding:8px 12px;font-size:.82rem;gap:7px}
+  .header-with-social .facebook-follow svg {width:18px;height:18px;flex-basis:18px}
+}
+@media(prefers-reduced-motion:reduce){.facebook-follow{transition:none}}
