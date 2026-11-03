@@ -163,6 +163,7 @@ function walkHtmlFiles(directory) {
 }
 
 let socialPages = 0;
+let modernFollowPages = 0;
 let minuSuviBackLinks = 0;
 let sonatreenerInstallPages = 0;
 let korrutamineTransferPages = 0;
@@ -193,7 +194,19 @@ for (const filePath of walkHtmlFiles(output)) {
     korrutamineTransferPages += 1;
   }
 
-  if (html.includes('class="site-header"') && !html.includes(`class="${SOCIAL_MARKER}"`)) {
+  // The new labelled Facebook CTA replaces the old two-icon social row.
+  // Cloudflare used to inject Facebook + Instagram after the nav even when
+  // the CTA was already present, making a third mobile header row.
+  const siteHeader = html.match(/<header class="site-header">[\s\S]*?<\/header>/)?.[0] || '';
+  const hasModernFollow = siteHeader.includes('class="facebook-follow"');
+  if (hasModernFollow) {
+    modernFollowPages += 1;
+    if (siteHeader.includes(`class="${SOCIAL_MARKER}"`)) {
+      throw new Error(`Duplicate Facebook/social links in site header: ${relativePath}`);
+    }
+  }
+
+  if (siteHeader && !hasModernFollow && !html.includes(`class="${SOCIAL_MARKER}"`)) {
     const headerNav = /(<header class="site-header">[\s\S]*?<nav\b[^>]*>[\s\S]*?<\/nav>)/;
     if (!headerNav.test(html)) {
       throw new Error(`Unable to add social links to site header: ${relativePath}`);
@@ -217,8 +230,9 @@ for (const filePath of walkHtmlFiles(output)) {
   if (changed) fs.writeFileSync(filePath, html, 'utf8');
 }
 
+if (modernFollowPages === 0) throw new Error('No prominent Facebook follow CTA found in the built site');
 if (socialPages === 0) throw new Error('No EDUKASS site-header pages were decorated with social links');
 if (minuSuviBackLinks !== 1) throw new Error(`Expected one Minu suvi back link, got ${minuSuviBackLinks}`);
 if (sonatreenerInstallPages !== 1 || korrutamineTransferPages !== 1) throw new Error('Trainer publication contracts are incomplete');
 
-console.log(`Cloudflare chrome: social links added to ${socialPages} site pages; Minu suvi back link added; Sõnatreener installs, Korrutustabel transfers progress.`);
+console.log(`Cloudflare chrome: legacy social links on ${socialPages} pages; prominent Facebook CTA retained without duplicates on ${modernFollowPages} pages; Minu suvi back link added; Sõnatreener installs, Korrutustabel transfers progress.`);
