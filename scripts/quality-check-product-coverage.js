@@ -142,8 +142,10 @@ function git(args){
 }
 function changedFiles(){
   const eventFile=process.env.GITHUB_EVENT_PATH;
-  let base=null;
-  if(eventFile&&fs.existsSync(eventFile)){
+  // PRs must be compared against their target branch, not the previous
+  // branch-push commit (which could include a reverted experimental edit).
+  let base=process.env.GITHUB_BASE_REF?'origin/'+process.env.GITHUB_BASE_REF:null;
+  if(!base&&eventFile&&fs.existsSync(eventFile)){
     try{
       const e=JSON.parse(fs.readFileSync(eventFile,'utf8'));
       if(/^[0-9a-f]{40}$/.test(e.before||'')&&!/^0{40}$/.test(e.before))base=e.before;
