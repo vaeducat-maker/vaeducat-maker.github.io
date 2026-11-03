@@ -300,7 +300,7 @@
 <script src="./english-present-simple-3person.js?v=20261001-1"></script>
 <script src="./deutsch-lesson-2.js?v=20260926-12"></script>
 <script src="./deutsch-paula-lesson.js?v=20261003-3"></script>
-<script src="./deutsch-elias-lesson.js?v=20261103-2"></script>
+<script src="./deutsch-elias-lesson.js?v=20261103-5"></script>
 <script src="./music-lesson-1.js?v=20261003-3"></script>
 <script src="./inimene-tervis-lesson.js?v=20261003-1"></script>
 <script src="./inimene-tervisenaitajad-lesson.js?v=20261016-4"></script>
@@ -309,11 +309,16 @@
 <script src="./konn-lesson.js?v=20261103-2"></script>
 <script src="./back-nav.js?v=20260926-10"></script>
 <script>
-// Optional direct opening of the written Alice homework from a shared URL.
+// Direct access to individual written lessons from a shared URL.
 (()=>{
   const lesson=new URLSearchParams(location.search).get("lesson");
-  if(lesson!=="alice-questions")return;
-  const open=window.EDUKASS_LESSONS?.litAliceQuestionsLesson;
+  const handlers={
+    "alice-questions":"litAliceQuestionsLesson",
+    "elias":"deutschEliasLesson"
+  };
+  const handler=handlers[lesson];
+  if(!handler)return;
+  const open=window.EDUKASS_LESSONS?.[handler];
   if(typeof open==="function")open();
 })();
 </script>
