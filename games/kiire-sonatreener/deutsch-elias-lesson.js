@@ -92,13 +92,14 @@
     if(pill)pill.textContent="🇩🇪 Deutsch";
     if(sub)sub.textContent="Lektion 4 · Elias Meier · Reflexive Verben";
     card.innerHTML='<div class="elias-lesson">'+
-      '<div class="elias-head"><div class="topic-kicker">🇩🇪 Deutsch</div><h2>Lektion 4 — Elias Meier</h2><div class="tiny">15 предложений · Reflexive Verben · построчный перевод</div></div>'+
+      '<div class="elias-head"><div class="topic-kicker">🇩🇪 Deutsch</div><h2>Lektion 4 — Elias Meier</h2><div class="tiny">Сначала готовый рассказ, ниже исходный текст с переводом</div></div>'+
+      '<h3>✍️ Рассказ об Элиасе — для переписывания</h3>'+
+      '<div class="elias-note">Готовый текст от третьего лица (er — он). Только немецкий язык, без перевода.</div>'+
+      '<div class="elias-sentences" id="eliasStory">'+REPORT.map((p,i)=>sentenceRow(p,i,true)).join("")+'</div>'+
+      '<h3>📖 Исходный текст (ich — я) с переводом</h3>'+
       '<button type="button" class="secondary" id="eliasToggleTranslation"></button>'+
       '<div class="elias-note">Возвратные глаголы подчёркнуты вместе с местоимениями: <b>sich interessieren</b> — интересоваться; <b>sich treffen</b> — встречаться.</div>'+
       '<div class="elias-sentences">'+LINES.map((p,i)=>sentenceRow(p,i)).join("")+'</div>'+
-      '<h3>✍️ Рассказ об Элиасе — для переписывания</h3>'+
-      '<div class="elias-note">Готовый текст от третьего лица (er — он). Здесь только немецкий язык, без перевода.</div>'+
-      '<div class="elias-sentences">'+REPORT.map((p,i)=>sentenceRow(p,i,true)).join("")+'</div>'+
       '<button type="button" class="secondary" id="eliasBack">← К предметам</button>'+
       '</div>';
     const toggle=card.querySelector("#eliasToggleTranslation");
