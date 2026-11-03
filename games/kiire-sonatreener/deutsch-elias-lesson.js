@@ -25,14 +25,29 @@
     ["Ich habe zwei gute Freunde: Noah und Julia.","У меня есть два хороших друга: Ноа и Юлия."],
     ["Wir treffen uns oft im Park oder lernen zusammen für die Schule.","Мы часто встречаемся в парке или вместе занимаемся учёбой."]
   ];
+  // Copy-ready third-person narrative, no Russian translations.
   const REPORT=[
-    ["Er interessiert sich für Fotografie.","Он интересуется фотографией."],
-    ["Er trifft sich oft mit seinen Freunden im Park.","Он часто встречается со своими друзьями в парке."]
+    ["Er heißt Elias Meier.",""],
+    ["Sein Vorname ist Elias, sein Nachname ist Meier.",""],
+    ["Er ist 17 Jahre alt und kommt aus Österreich.",""],
+    ["Er ist in Salzburg geboren, aber er wohnt jetzt in Wien.",""],
+    ["Er spricht Deutsch und ein bisschen Englisch.",""],
+    ["In der Schule lernt er auch Spanisch.",""],
+    ["Er wohnt mit seiner Mutter und seinem kleinen Bruder.",""],
+    ["Sein Vater arbeitet in Linz.",""],
+    ["Seine Familie hat ein Haustier – eine Katze.",""],
+    ["Sie heißt Luna.",""],
+    ["In seiner Freizeit hört er gern Musik und geht mit Freunden ins Kino.",""],
+    ["Er interessiert sich für Fotografie.",""],
+    ["Er mag Pizza und Pasta, aber er isst keinen Fisch.",""],
+    ["Er hat zwei gute Freunde: Noah und Julia.",""],
+    ["Sie treffen sich oft im Park oder lernen zusammen für die Schule.",""]
   ];
   const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
   const underlineWords=html=>html
     .replace("interessiere mich",'<span class="elias-reflexive">interessiere</span> <span class="elias-reflexive">mich</span>')
     .replace("treffen uns",'<span class="elias-reflexive">treffen</span> <span class="elias-reflexive">uns</span>')
+    .replace("treffen sich",'<span class="elias-reflexive">treffen</span> <span class="elias-reflexive">sich</span>')
     .replace("interessiert sich",'<span class="elias-reflexive">interessiert</span> <span class="elias-reflexive">sich</span>')
     .replace("trifft sich",'<span class="elias-reflexive">trifft</span> <span class="elias-reflexive">sich</span>');
 
@@ -71,7 +86,7 @@
     return '<div class="elias-sentence"><div class="elias-german">'+
       '<span class="elias-german-text">'+(report?'':(i+1)+'. ')+underlineWords(esc(pair[0]))+'</span>'+
       '<button type="button" class="elias-audio" data-elias-audio="'+(report?"r":"l")+i+'" aria-label="Прослушать предложение на немецком">🔊</button>'+
-      '</div><p class="elias-ru">'+esc(pair[1])+'</p></div>';
+      '</div>'+(report?'':'<p class="elias-ru">'+esc(pair[1])+'</p>')+'</div>';
   }
   function renderLesson(){
     if(pill)pill.textContent="🇩🇪 Deutsch";
@@ -81,8 +96,8 @@
       '<button type="button" class="secondary" id="eliasToggleTranslation"></button>'+
       '<div class="elias-note">Возвратные глаголы подчёркнуты вместе с местоимениями: <b>sich interessieren</b> — интересоваться; <b>sich treffen</b> — встречаться.</div>'+
       '<div class="elias-sentences">'+LINES.map((p,i)=>sentenceRow(p,i)).join("")+'</div>'+
-      '<h3>Как рассказать об Элиасе</h3>'+
-      '<div class="elias-note">В рассказе о другом человеке используй <b>er ... sich</b> (он ... себя).</div>'+
+      '<h3>✍️ Рассказ об Элиасе — для переписывания</h3>'+
+      '<div class="elias-note">Готовый текст от третьего лица (er — он). Здесь только немецкий язык, без перевода.</div>'+
       '<div class="elias-sentences">'+REPORT.map((p,i)=>sentenceRow(p,i,true)).join("")+'</div>'+
       '<button type="button" class="secondary" id="eliasBack">← К предметам</button>'+
       '</div>';
