@@ -58,7 +58,9 @@ jobs:
           npm install --prefix "$RUNNER_TEMP/edukass-qa" --no-save --no-audit --no-fund playwright@1.56.1
           "$RUNNER_TEMP/edukass-qa/node_modules/.bin/playwright" install --with-deps chromium
       - name: Registered independent product audits in a real browser
-        run: NODE_PATH="$RUNNER_TEMP/edukass-qa/node_modules" node scripts/quality-run-product-audits.js
+        run: |
+          NODE_PATH="$RUNNER_TEMP/edukass-qa/node_modules" node scripts/facebook-follow-browser-audit.js
+          NODE_PATH="$RUNNER_TEMP/edukass-qa/node_modules" node scripts/quality-run-product-audits.js
       - name: Collect evidence, even after failure
         uses: actions/upload-artifact@v4
         if: always()

@@ -24,6 +24,9 @@ assert(!inventory.passed&&inventory.violations.some(x=>x.includes('Unregistered'
 const released=checkCoverage(['index.html','data/catalog.json'],{data});
 assert(released.passed,
  'POSITIVE CONTROL: owner-signed, exact-fingerprint homepage/catalog public launch must pass: '+released.violations);
+const facebookFollow=checkCoverage(['index.html','styles.css'],{data});
+assert(facebookFollow.passed,
+ 'POSITIVE CONTROL: owner-approved exact-fingerprint Facebook header change must pass: '+facebookFollow.violations);
 const unrelatedShared=checkCoverage(['home-refresh.js'],{data});
 assert(!unrelatedShared.passed&&unrelatedShared.violations.some(x=>x.includes('Shared')),
  'NEGATIVE CONTROL: approving public game listing must not unlock unrelated shared JS/CSS');

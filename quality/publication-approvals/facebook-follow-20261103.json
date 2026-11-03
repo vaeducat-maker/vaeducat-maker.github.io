@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "status": "owner-approved-publication",
+  "ownerApproval": true,
+  "ownerDecision": "Добавить в шапку EDUKASS более заметную синюю кнопку приглашения подписаться на Facebook; на телефонах короткая надпись, без потери меню.",
+  "changeId": "facebook-follow-header-20261103",
+  "sourceAudit": "scripts/facebook-follow-browser-audit.js",
+  "allowedChangedSharedFiles": {
+    "index.html": "6e05c0d3fb608e842c600522316eb2b1d503e655",
+    "styles.css": "e86ba7997f1c3a82fdbd31f57ce17cb124aff4de"
+  },
+  "affectedMainPages": [
+    "index.html",
+    "materials/index.html",
+    "teemad/loodus/index.html",
+    "teemad/ajalugu-ja-kultuur/index.html",
+    "privaatsus/index.html"
+  ],
+  "acceptance": [
+    "Existing game and learning material assets remain untouched",
+    "Button leads to the existing EDUKASS Facebook URL",
+    "Estonian label is descriptive on desktop and compact on phones",
+    "All three navigation links remain visible on phone widths",
+    "Real Chromium browser verifies visual placement, mobile fit, and tracking event",
+    "Shared homepage and CSS are constrained by exact Git blob fingerprints"
+  ]
+}
