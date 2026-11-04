@@ -2718,6 +2718,10 @@ function finishIntro(){
 function launchIntro(quick=false){
   if(introScreen.hidden||introScreen.classList.contains('is-launching'))return;
   trackPlausible('Korrutustabel Start');
+  // Count returns only on a new local day, and never in the QA unlock-all mode.
+  if(!TEST_UNLOCK_ALL&&window.EDUKASS_RETURN_TRACKER){
+    window.EDUKASS_RETURN_TRACKER.recordStart({storage:localStorage,track:trackPlausible});
+  }
   clearTimeout(introReadyTimer);
   introPlayButton.disabled=true;
   introScreen.classList.remove('intro-ready');
