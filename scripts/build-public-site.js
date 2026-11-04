@@ -96,6 +96,7 @@ const publicFiles = [
   'games/korrutamine-test/progress-store.js',
   'games/korrutamine-test/progress-transfer.js',
   'games/korrutamine-test/question-engine.js',
+  'games/korrutamine-test/return-tracking.js',
   'games/korrutamine-test/service-worker.js',
 
   'games/metsarada/index.html',
