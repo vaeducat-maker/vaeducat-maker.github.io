@@ -79,6 +79,14 @@ for(const handler of ['historyAjastud','deutschLesson2','litHistoryBookLesson','
   assert(customSources.includes(handler),'custom lesson handler missing: '+handler);
 }
 
+const lesson9=read('games/kiire-sonatreener/literature-tunnikontroll-alice-lewis.js');
+assert(lessonKeys.includes('custom:litTunnikontrollAliceLewis'),'literature test lesson 9 missing from catalog');
+assert(index.includes('./literature-tunnikontroll-alice-lewis.js'),'literature test lesson 9 must be loaded');
+assert(index.includes('"tunnikontroll-alice":"litTunnikontrollAliceLewis"'),'literature lesson deep link missing');
+assert(lesson9.includes('üheksateistkümnendal sajandil.'),'nineteenth century must be written as words');
+assert(lesson9.includes('data-tn-ru'),'translations must be independently revealable');
+assert(manifest.start_url.includes('v=20261104-2'),'pinned app must use the current startup version');
+
 const build=read('scripts/build-cloudflare-site.js');
 assert(build.includes('discoverTrainerRuntimeFiles'),'Cloudflare build must auto-discover trainer runtime files');
 
