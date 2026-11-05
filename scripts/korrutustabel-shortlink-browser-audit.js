@@ -52,6 +52,9 @@ const server=http.createServer((req,res)=>{
       await page.goto(origin+'/k/',{waitUntil:'domcontentloaded'});
       await page.waitForFunction(()=>location.pathname==='/'&&location.hash==='#feature-title',undefined,{timeout:10000});
       await page.waitForLoadState('load');
+      // Scroll targeting runs in requestAnimationFrame and is repeated on load;
+      // wait for the observable landing position instead of racing the frame.
+      await page.waitForFunction(() => window.scrollY > 200, undefined, {timeout:10000});
       const inspect=()=>page.evaluate(()=>{
         const title=document.getElementById('feature-title');
         const card=title?.closest('.home-feature-card');
@@ -76,6 +79,7 @@ const server=http.createServer((req,res)=>{
       assert(result.buttonTop>=0&&result.buttonBottom<=height+5,label+'play button outside viewport: '+JSON.stringify(result));
       await page.screenshot({path:path.join(evidence,'shortlink-'+width+'.png')});
       await page.reload({waitUntil:'load'});
+      await page.waitForFunction(() => window.scrollY > 200, undefined, {timeout:10000});
       result=await inspect();
       assert(result.scrollY>200&&result.url===' /#feature-title'.trim(),label+'reload lost deep link: '+JSON.stringify(result));
       await page.goto(origin+'/',{waitUntil:'load'});
