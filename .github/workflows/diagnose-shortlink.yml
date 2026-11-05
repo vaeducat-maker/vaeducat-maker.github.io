@@ -1,0 +1,23 @@
+name: Diagnose EDUKASS public shortlink
+on:
+  pull_request:
+    paths:
+      - .github/workflows/diagnose-shortlink.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Test live and preview URLs from outside
+        shell: bash
+        run: |
+          set -u
+          for url in             'https://edukass.ee/'             'https://edukass.ee/k/'             'https://edukass.ee/k/?utm_source=chatgpt.com'             'https://edukass.ee/k/index.html'             'https://edukass.ee/#feature-title'             'https://edukass-preview.va-educat.workers.dev/k/' ; do
+            printf '\nURL: %s\n' "$url"
+            curl -L -sS -o /tmp/edukass-probe-body -w 'http=%{http_code} final=%{url_effective} size=%{size_download} server_ip=%{remote_ip}\n' --max-time 12 "$url" || true
+            head -c 180 /tmp/edukass-probe-body | tr '\n' ' '
+            printf '\n'
+          done
