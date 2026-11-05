@@ -1,6 +1,10 @@
 (() => {
   const navigation = performance.getEntriesByType?.('navigation')?.[0];
   const isReload = navigation?.type === 'reload';
+  // Respect direct links to sections, including the short /k/ redirect.
+  const initialSection = location.hash
+    ? document.getElementById(decodeURIComponent(location.hash.slice(1)))
+    : null;
   const returnToTopState = '__edukassReturnToTop';
   const returnToTopBase = '__edukassReturnToTopBase';
   const returnToTopThreshold = 96;
@@ -27,8 +31,8 @@
     }, 120);
   };
 
-  if (isReload) {
-    // A manual browser refresh should reopen the homepage from the beginning.
+  if (isReload && !initialSection) {
+    // A manual refresh without a section link reopens the homepage from the beginning.
     returningToTop = true;
     if (location.hash) {
       history.replaceState(history.state, '', pageUrl());
@@ -41,13 +45,22 @@
   const armReturnToTop = () => {
     if (returningToTop || leavingPage || history.state?.[returnToTopState]) return;
     const currentState = history.state && typeof history.state === 'object' ? history.state : {};
-    history.replaceState({ ...currentState, [returnToTopBase]: true }, '', pageUrl());
-    history.pushState({ ...currentState, [returnToTopState]: true }, '', pageUrl());
+    const destination = initialSection ? `${pageUrl()}${location.hash}` : pageUrl();
+    history.replaceState({ ...currentState, [returnToTopBase]: true }, '', destination);
+    history.pushState({ ...currentState, [returnToTopState]: true }, '', destination);
   };
 
   // The guard is present before the first scroll event. Android can therefore
   // always turn the first Back press below the fold into a return to the top.
   armReturnToTop();
+
+  // Reapply the initial anchor after images and layout finish loading.
+  if (initialSection) {
+    initialSection.style.scrollMarginTop = '100px';
+    const showSection = () => initialSection.scrollIntoView({ behavior: 'auto', block: 'start' });
+    requestAnimationFrame(showSection);
+    window.addEventListener('load', showSection, { once: true });
+  }
 
   // Same-page menu links scroll without adding an extra hash-history step.
   // This keeps Android Back predictable: section -> top -> leave the site.
