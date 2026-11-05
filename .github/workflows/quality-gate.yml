@@ -51,7 +51,9 @@ jobs:
           node scripts/catalog-guard.js
           node scripts/check-sonatreener.js
       - name: Validate real browser QA syntax
-        run: node --check scripts/stolbiki-prelaunch-audit.js
+        run: |
+          node --check scripts/stolbiki-prelaunch-audit.js
+          node --check scripts/korrutustabel-shortlink-browser-audit.js
       - name: Install sandboxed Chromium for phone-size tests
         run: |
           mkdir -p "$RUNNER_TEMP/edukass-qa"
@@ -60,6 +62,7 @@ jobs:
       - name: Registered independent product audits in a real browser
         run: |
           NODE_PATH="$RUNNER_TEMP/edukass-qa/node_modules" node scripts/facebook-follow-browser-audit.js
+          NODE_PATH="$RUNNER_TEMP/edukass-qa/node_modules" node scripts/korrutustabel-shortlink-browser-audit.js
           NODE_PATH="$RUNNER_TEMP/edukass-qa/node_modules" node scripts/quality-run-product-audits.js
       - name: Collect evidence, even after failure
         uses: actions/upload-artifact@v4
