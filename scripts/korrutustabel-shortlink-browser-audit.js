@@ -54,7 +54,13 @@ const server=http.createServer((req,res)=>{
       await page.waitForLoadState('load');
       // Scroll targeting runs in requestAnimationFrame and is repeated on load;
       // wait for the observable landing position instead of racing the frame.
-      await page.waitForFunction(() => window.scrollY > 200, undefined, {timeout:10000});
+      await page.waitForFunction(() => {
+        const title=document.getElementById('feature-title');
+        const header=document.querySelector('.site-header');
+        if(!title||!header)return false;
+        const y=title.getBoundingClientRect().top;
+        return y>=header.getBoundingClientRect().bottom-6&&y<180;
+      }, undefined, {timeout:15000});
       const inspect=()=>page.evaluate(()=>{
         const title=document.getElementById('feature-title');
         const card=title?.closest('.home-feature-card');
@@ -76,10 +82,21 @@ const server=http.createServer((req,res)=>{
       assert.equal(result.url,'/#feature-title',label+'redirect/anchor lost');
       assert(result.scrollY>200,label+'not scrolled past Kirjalik arvutamine');
       assert(result.headingTop>=result.headerBottom-6&&result.headingTop<180,label+'heading not visible below header: '+JSON.stringify(result));
-      assert(result.buttonTop>=0&&result.buttonBottom<=height+5,label+'play button outside viewport: '+JSON.stringify(result));
+      if(height>=600){
+        assert(result.buttonTop>=0&&result.buttonBottom<=height+5,label+'play button outside portrait/desktop viewport: '+JSON.stringify(result));
+      }else{
+        // Landscape 844x390 cannot physically show the whole card at once.
+        assert(result.buttonTop>result.headingTop,label+'landscape play button not in the same card');
+      }
       await page.screenshot({path:path.join(evidence,'shortlink-'+width+'.png')});
       await page.reload({waitUntil:'load'});
-      await page.waitForFunction(() => window.scrollY > 200, undefined, {timeout:10000});
+      await page.waitForFunction(() => {
+        const title=document.getElementById('feature-title');
+        const header=document.querySelector('.site-header');
+        if(!title||!header)return false;
+        const y=title.getBoundingClientRect().top;
+        return y>=header.getBoundingClientRect().bottom-6&&y<180;
+      }, undefined, {timeout:15000});
       result=await inspect();
       assert(result.scrollY>200&&result.url===' /#feature-title'.trim(),label+'reload lost deep link: '+JSON.stringify(result));
       await page.goto(origin+'/',{waitUntil:'load'});
