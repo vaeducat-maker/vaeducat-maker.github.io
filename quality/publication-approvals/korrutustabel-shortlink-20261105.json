@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "status": "owner-approved-publication",
+  "ownerApproval": true,
+  "ownerDecision": "По просьбе владельца EDUKASS: короткий адрес edukass.ee/k/ должен открывать карточку Korrutustabeli treener на главной, а не блок столбиков наверху.",
+  "changeId": "korrutustabel-shortlink-20261105",
+  "sourceAudit": "scripts/korrutustabel-shortlink-browser-audit.js",
+  "allowedChangedSharedFiles": {
+    "home-refresh.js": "5e7b612db965caa53a81fb0c737dee233167aa55"
+  },
+  "additionalFiles": [
+    "k/index.html",
+    "scripts/build-public-site.js"
+  ],
+  "acceptance": [
+    "The short URL /k/ resolves to /#feature-title and shows Korrutustabeli treener, not Kirjalik arvutamine",
+    "Direct section links survive homepage initialization and refresh",
+    "Desktop and mobile view keep the game title and CTA visible below the sticky header",
+    "Homepage without deep link opens at the top",
+    "Game UI, progress and approved visuals are untouched",
+    "Only exact SHA of home-refresh.js is authorized; other shared assets remain blocked"
+  ]
+}
