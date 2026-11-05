@@ -27,9 +27,12 @@ assert(released.passed,
 const facebookFollow=checkCoverage(['index.html','styles.css'],{data});
 assert(facebookFollow.passed,
  'POSITIVE CONTROL: owner-approved exact-fingerprint Facebook header change must pass: '+facebookFollow.violations);
-const unrelatedShared=checkCoverage(['home-refresh.js'],{data});
+const shortlink=checkCoverage(['home-refresh.js'],{data});
+assert(shortlink.passed,
+ 'POSITIVE CONTROL: exact, owner-approved shortlink navigation must pass: '+shortlink.violations);
+const unrelatedShared=checkCoverage(['home.css'],{data});
 assert(!unrelatedShared.passed&&unrelatedShared.violations.some(x=>x.includes('Shared')),
- 'NEGATIVE CONTROL: approving public game listing must not unlock unrelated shared JS/CSS');
+ 'NEGATIVE CONTROL: approving shortlink must not unlock unrelated shared JS/CSS');
 const asset=checkCoverage(['downloads/unknown-poster.pdf'],{data});
 assert(!asset.passed&&asset.violations.some(x=>x.includes('Shared')),
  'NEGATIVE CONTROL: unowned printable/PDF must block release');

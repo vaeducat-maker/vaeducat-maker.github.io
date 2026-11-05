@@ -13,6 +13,29 @@ const candidateRoots=new Set(['games','materials','proov']);
 const crypto=require('node:crypto');
 const PUBLIC_ENTRY_APPROVAL='quality/publication-approvals/stolbiki-20261031.json';
 function isAuthorizedSharedPublication(file){
+  // The user approved this exact short-link/navigation change. It cannot unlock
+  // another shared file or even another revision of home-refresh.js.
+  if(file==='home-refresh.js'){
+    const recordPath=path.join(ROOT,'quality/publication-approvals/korrutustabel-shortlink-20261105.json');
+    if(fs.existsSync(recordPath)){
+      let r;
+      try{r=JSON.parse(fs.readFileSync(recordPath,'utf8'))}catch{r=null}
+      const sourceAudit='scripts/korrutustabel-shortlink-browser-audit.js';
+      const approved=r?.allowedChangedSharedFiles;
+      if(r?.schemaVersion===1&&r?.status==='owner-approved-publication'&&
+         r?.ownerApproval===true&&r?.changeId==='korrutustabel-shortlink-20261105'&&
+         r?.sourceAudit===sourceAudit&&
+         approved&&Object.keys(approved).length===1&&
+         /^[a-f0-9]{40}$/.test(approved[file]||'')&&
+         fs.existsSync(path.join(ROOT,sourceAudit))&&
+         fs.readFileSync(path.join(ROOT,sourceAudit),'utf8').includes('KORRUTUSTABEL_SHORTLINK_BROWSER_AUDIT')){
+        const body=fs.readFileSync(path.join(ROOT,file));
+        const sha=crypto.createHash('sha1').update('blob '+body.length)
+          .update(Buffer.from([0])).update(body).digest('hex');
+        if(sha===approved[file])return true;
+      }
+    }
+  }
   // A scoped, owner-approved release may change only the exact approved
   // bytes of homepage/catalog. Other shared files remain BLOCKED as before.
   // EDUKASS owner-approved, exact-blob Facebook header release.
