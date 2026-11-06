@@ -129,6 +129,71 @@ let browser;
   await literature.locator('[data-handler="litAliceQuestionsLesson"]').click();
   test('Catalog navigation opens lesson',await page.locator('#aliceqaLesson .aliceqa-item').count()===8);
   test('No uncaught runtime errors',pageErrors.length===0,pageErrors.join(' | '));
+
+  // Independent German worksheet QA. Source of truth is not imported from the lesson.
+  const deExpected=[
+    ['Лео играет в парке.','Leo spielt in dem Park.','wo','dem','in'],
+    ['Лео идёт в парк.','Leo geht in den Park.','wohin','den','in'],
+    ['Мира плавает в бассейне.','Mira schwimmt in dem Schwimmbad.','wo','dem','in'],
+    ['Анна идёт в библиотеку.','Anna geht in die Bibliothek.','wohin','die','in'],
+    ['Анна читает в библиотеке.','Anna liest in der Bibliothek.','wo','der','in'],
+    ['Лукас идёт в кино.','Lukas geht in das Kino.','wohin','das','in'],
+    ['Дженни идёт на вечеринку.','Jenny geht auf die Party.','wohin','die','auf'],
+    ['Дженни танцует на вечеринке.','Jenny tanzt auf der Party.','wo','der','auf'],
+    ['Папа и Лиза идут на игровую площадку.','Papa und Lisa gehen auf den Spielplatz.','wohin','den','auf'],
+    ['Папа и Лиза играют в прятки на игровой площадке.','Papa und Lisa spielen Verstecken auf dem Spielplatz.','wo','dem','auf']
+  ];
+  await page.goto(base+'?lesson=wo-wohin&v=acceptance',{waitUntil:'load'});
+  await page.locator('#dewPractice').waitFor({state:'visible',timeout:12000});
+  test('German lesson 5 opens from direct link',await page.locator('.dew-line').count()===10);
+  for(let i=0;i<10;i++){
+    test('German copywork pair '+(i+1),
+      await page.locator('.dew-line').nth(i).locator('.dew-ru').innerText()===(i+1)+'. '+deExpected[i][0]&&
+      await page.locator('.dew-line').nth(i).locator('.dew-de').innerText()===deExpected[i][1]);
+  }
+  await page.locator('#dewStart').click();
+  test('Eight vocabulary cards preserved',await page.locator('#dewFlip').count()===1);
+  await page.locator('#dewLesson').click();
+  await page.locator('#dewPractice').click();
+  test('Training opens at first stage',await page.locator('.dew-pr-progress').innerText()==='Этап 1 из 3 · Где или куда?');
+  const firstPrompt=await page.locator('.dew-pr-ru').innerText();
+  const firstCase=deExpected.find(r=>r[0]===firstPrompt);
+  test('Question from the approved worksheet',!!firstCase);
+  await page.locator('[data-dew-group="question"][data-dew-val="'+(firstCase[2]==='wo'?'wohin':'wo')+'"]').click();
+  test('Wrong response red',await page.locator('.dew-pr-wrong').count()===1);
+  test('Right response green after error',await page.locator('.dew-pr-correct').count()===1);
+  await page.locator('#dewPrNext').click();
+  const secondPrompt=await page.locator('.dew-pr-ru').innerText();
+  test('Missed question comes back later, not immediately',firstPrompt!==secondPrompt);
+  await page.reload({waitUntil:'load'});
+  await page.locator('#dewPractice').click();
+  test('Exercise resumes after reload',await page.locator('.dew-pr-ru').innerText()===secondPrompt);
+  test('German practice fits mobile viewport',await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth+2));
+  await page.screenshot({path:path.join(REPORT,'deutsch-wo-wohin-phone.png')});
+  for(let stage=0;stage<3;stage++){
+    let attempts=0;
+    while((await page.locator('.dew-pr-progress').count())===1&&
+      (await page.locator('.dew-pr-progress').innerText()).startsWith('Этап '+(stage+1)+' из 3')){
+      if(++attempts>25)throw Error('German lesson is stuck at stage '+(stage+1));
+      const ru=await page.locator('.dew-pr-ru').innerText();
+      const row=deExpected.find(r=>r[0]===ru);
+      test('Exercise uses existing case',!!row);
+      if(stage===0)await page.locator('[data-dew-group="question"][data-dew-val="'+row[2]+'"]').click();
+      if(stage===1)await page.locator('[data-dew-group="article"][data-dew-val="'+row[3]+'"]').click();
+      if(stage===2){
+        await page.locator('[data-dew-group="prep"][data-dew-val="'+row[4]+'"]').click();
+        await page.locator('[data-dew-group="article"][data-dew-val="'+row[3]+'"]').click();
+        await page.locator('#dewPrCheck').click();
+      }
+      test('Correct answer accepted',await page.locator('.dew-pr-success').count()===1);
+      await page.locator('#dewPrNext').click();
+    }
+  }
+  test('All three grammar stages completed',await page.locator('#dewPrAgain').count()===1);
+  await page.locator('#dewPrBack').click();
+  test('Return to copywork and flashcards',await page.locator('.dew-line').count()===10&&await page.locator('#dewStart').count()===1);
+  test('German practice has no browser script errors',pageErrors.length===0,pageErrors.join(' | '));
+
   fs.writeFileSync(path.join(REPORT,'acceptance.json'),JSON.stringify({passed:true,checks,page:CONTRACT.page},null,2)+'\n');
   console.log('PASS Independent Sõnatreener chapter-one acceptance: '+checks.length+' checks');
 })().catch(err=>{
