@@ -261,7 +261,13 @@ const DATA={
         {word:"go outside",ru:"выходить на улицу"},
         {word:"go ice skating",ru:"кататься на коньках"},
         {word:"bike",ru:"велосипед"},
-        {word:"kite",ru:"воздушный змей"}
+        {word:"kite",ru:"воздушный змей"},
+        {word:"skirt",ru:"юбка"},
+        {word:"scarf",ru:"шарф"},
+        {word:"gloves",ru:"перчатки"},
+        {word:"jeans",ru:"джинсы"},
+        {word:"boots",ru:"ботинки"},
+        {word:"shirt",ru:"рубашка"}
       ]}
     ]}
   ]}
