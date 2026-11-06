@@ -168,6 +168,16 @@ let browser;
   await page.reload({waitUntil:'load'});
   await page.locator('#dewPractice').click();
   test('Exercise resumes after reload',await page.locator('.dew-pr-ru').innerText()===secondPrompt);
+  test('Reset button is visible during practice',await page.locator('#dewPrReset').isVisible());
+  await page.locator('#dewPrReset').click();
+  test('Reset restarts the first stage',await page.locator('.dew-pr-progress').innerText()==='Этап 1 из 3 · Где или куда?');
+  test('Reset restores a fresh full first-stage queue',await page.evaluate(()=>{
+    const p=JSON.parse(localStorage.getItem('sonatreener-deutsch-wo-wohin-practice-1'));
+    return p.phase===0&&p.queue.length===8&&Object.keys(p.retries).length===0&&!p.done;
+  }));
+  await page.reload({waitUntil:'load'});
+  await page.locator('#dewPractice').click();
+  test('Reset persists after reload',await page.locator('.dew-pr-progress').innerText()==='Этап 1 из 3 · Где или куда?');
   test('German practice fits mobile viewport',await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth+2));
   await page.screenshot({path:path.join(REPORT,'deutsch-wo-wohin-phone.png')});
   for(let stage=0;stage<3;stage++){
@@ -190,6 +200,13 @@ let browser;
     }
   }
   test('All three grammar stages completed',await page.locator('#dewPrAgain').count()===1);
+  test('Reset is available after completion',await page.locator('#dewPrAgain').innerText()==='↻ Сбросить и начать заново');
+  await page.locator('#dewPrAgain').click();
+  test('Completion reset restarts stage one',await page.locator('.dew-pr-progress').innerText()==='Этап 1 из 3 · Где или куда?');
+  test('Completion reset removes the completed flag',await page.evaluate(()=>{
+    const p=JSON.parse(localStorage.getItem('sonatreener-deutsch-wo-wohin-practice-1'));
+    return p.phase===0&&p.queue.length===8&&!p.done;
+  }));
   await page.locator('#dewPrBack').click();
   test('Return to copywork and flashcards',await page.locator('.dew-line').count()===10&&await page.locator('#dewStart').count()===1);
   test('German practice has no browser script errors',pageErrors.length===0,pageErrors.join(' | '));

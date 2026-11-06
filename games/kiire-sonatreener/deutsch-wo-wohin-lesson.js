@@ -157,6 +157,12 @@
     practice={phase:0,queue:shuffled(phases[0].ids),retries:{},done:false};
     selected={};feedback=null;storagePut();renderPractice();
   }
+  function resetPractice(){
+    // Erase only this lesson's practice progress; other lessons and cards remain untouched.
+    try{localStorage.removeItem(practiceKey);}catch(e){}
+    practice=null;
+    cleanStart();
+  }
   function startPractice(){
     const previous=storageGet();
     if(previous&&!previous.done){practice=previous;selected={};feedback=null;renderPractice();}
@@ -185,9 +191,9 @@
       root.innerHTML='<div class="dew-wrap dew-pr-wrap"><header class="dew-head">'+
         '<div class="topic-kicker">🇩🇪 Deutsch · 4. November</div><h2>Тренировка завершена!</h2></header>'+
         '<p class="dew-note">Три этапа пройдены. Можно повторить ещё раз.</p>'+
-        '<div class="dew-actions"><button type="button" class="primary" id="dewPrAgain">Повторить</button>'+
+        '<div class="dew-actions"><button type="button" class="primary" id="dewPrAgain">↻ Сбросить и начать заново</button>'+
         '<button type="button" class="secondary" id="dewPrBack">← К уроку</button></div></div>';
-      root.querySelector('#dewPrAgain').onclick=cleanStart;
+      root.querySelector('#dewPrAgain').onclick=resetPractice;
       root.querySelector('#dewPrBack').onclick=lesson;
       return;
     }
@@ -225,7 +231,8 @@
       (prompt?'<div class="dew-pr-de" lang="de">'+esc(prompt)+'</div>':'')+
       '<div class="dew-pr-note">'+note+'</div></div>'+
       options+result+
-      '<div class="dew-actions"><button type="button" class="secondary" id="dewPrBack">← К уроку</button></div></div>';
+      '<div class="dew-actions"><button type="button" class="secondary" id="dewPrReset">↻ Сбросить и начать заново</button>'+ 
+      '<button type="button" class="secondary" id="dewPrBack">← К уроку</button></div></div>';
     root.querySelectorAll('[data-dew-group]').forEach(b=>b.onclick=()=>{
       if(feedback)return;
       selected[b.dataset.dewGroup]=b.dataset.dewVal;
@@ -236,6 +243,7 @@
     if(check)check.onclick=submitPractice;
     const next=root.querySelector('#dewPrNext');
     if(next)next.onclick=nextPractice;
+    root.querySelector('#dewPrReset').onclick=resetPractice;
     root.querySelector('#dewPrBack').onclick=()=>{storagePut();lesson();};
   }
   function submitPractice(){
