@@ -62,7 +62,7 @@
 (()=>{const b=document.getElementById('shortcutBtn');if(!b)return;const standalone=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;if(standalone){b.textContent='✓ Готово';b.disabled=true}else{b.onclick=()=>alert('Открой меню браузера и выбери «Добавить на главный экран».')}})();
 </script>
 <script src="./trainer.js?v=20261030-2"></script>
-<script src="./app-catalog.js?v=20261104-1"></script>
+<script src="./app-catalog.js?v=20261106-1"></script>
 <script>
 (()=>{
   const card=document.getElementById('card'),libraryBtn=document.getElementById('libraryBtn'),reviewBtn=document.getElementById('reviewBtn'),deutschBtn=document.getElementById('deutschBtn'),tabEt=document.getElementById('tabEt'),tabDe=document.getElementById('tabDe'),pill=document.getElementById('pill'),sub=document.getElementById('sub');
@@ -302,6 +302,7 @@
 <script src="./deutsch-lesson-2.js?v=20260926-12"></script>
 <script src="./deutsch-paula-lesson.js?v=20261003-3"></script>
 <script src="./deutsch-elias-lesson.js?v=20261103-5"></script>
+<script src="./deutsch-wo-wohin-lesson.js?v=20261106-1"></script>
 <script src="./music-lesson-1.js?v=20261003-3"></script>
 <script src="./inimene-tervis-lesson.js?v=20261003-1"></script>
 <script src="./inimene-tervisenaitajad-lesson.js?v=20261016-4"></script>
@@ -316,7 +317,8 @@
   const handlers={
     "alice-questions":"litAliceQuestionsLesson",
     "tunnikontroll-alice":"litTunnikontrollAliceLewis",
-    "elias":"deutschEliasLesson"
+    "elias":"deutschEliasLesson",
+    "wo-wohin":"deutschWoWohinLesson"
   };
   const handler=handlers[lesson];
   if(!handler)return;
