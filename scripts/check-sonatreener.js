@@ -85,7 +85,9 @@ assert(index.includes('./literature-tunnikontroll-alice-lewis.js'),'literature t
 assert(index.includes('"tunnikontroll-alice":"litTunnikontrollAliceLewis"'),'literature lesson deep link missing');
 assert(lesson9.includes('üheksateistkümnendal sajandil.'),'nineteenth century must be written as words');
 assert(lesson9.includes('data-tn-ru'),'translations must be independently revealable');
-assert(manifest.start_url.includes('v=20261104-2'),'pinned app must use the current startup version');
+const appBuild = index.match(/<body data-build="([^"]+)"/)?.[1];
+assert(appBuild && manifest.start_url.includes('v='+appBuild),'pinned app must use the current startup version');
+assert(index.includes('manifest.webmanifest?v='+appBuild),'page must load matching app manifest');
 
 const build=read('scripts/build-cloudflare-site.js');
 assert(build.includes('discoverTrainerRuntimeFiles'),'Cloudflare build must auto-discover trainer runtime files');
