@@ -15,7 +15,7 @@ const FACTS=[
   ['vee all hingab naha kaudu;','под водой дышит через кожу;'],
   ['jalad on kujunenud kalade uimedest','ноги сформировались из плавников рыб']
 ];
-const LINES=TERMS.concat(FACTS);
+const FROG_LINES=TERMS.concat(FACTS);
 // Approved vocabulary: only dictionary forms, without inflected duplicates.
 const WORDS=[
   ['konn','лягушка'],
@@ -29,6 +29,141 @@ const WORDS=[
   ['kujunema','формироваться'],
   ['uim','плавник']
 ];
+// Video lesson “Tunne looma: Kobras” — 06.11.2026. Each sentence has a separate hidden translation.
+const KOBRAS_LINES=[
+  [
+    "Koprad on suured närilised.",
+    "Бобры — крупные грызуны."
+  ],
+  [
+    "Nende kehapikkus võib olla kuni 1 meeter ja kaal 30 kilogrammi.",
+    "Длина их тела может достигать 1 метра, а вес — 30 килограммов."
+  ],
+  [
+    "Koprad on poolveelise eluviisiga.",
+    "Бобры ведут полуводный образ жизни."
+  ],
+  [
+    "Oma kodu rajavad nad järve või jõe kaldale.",
+    "Свои жилища они строят на берегу озера или реки."
+  ],
+  [
+    "Suvel eelistavad koprad süüa rohttaimi – vesikupp, valge vesiroos, võhumõõk, pilliroog.",
+    "Летом бобры предпочитают питаться травянистыми растениями — кубышкой, белой кувшинкой, болотным ирисом и тростником."
+  ],
+  [
+    "Sügisel langetavad nad puid ja koguvad nende oksi talvevaruks.",
+    "Осенью они валят деревья и собирают их ветки в качестве запасов на зиму."
+  ],
+  [
+    "Kui veekogu kaldad on järsud, siis kaevavad koprad endale uru.",
+    "Если берега водоёма крутые, то бобры роют себе нору."
+  ],
+  [
+    "Kui madalad ja soised kaldad seda ei võimalda, siis rajavad nad endale hoopis kuhilpesa.",
+    "Если низкие и болотистые берега не позволяют этого сделать, то они строят себе вместо норы хатку."
+  ],
+  [
+    "Kuhilpesa on mudaga kokku mätsitud savihunnik, mille kõrgus võib ulatuda kolme ja läbimõõt kümne meetrini.",
+    "Бобровая хатка — это куча глины, облепленная грязью, высота которой может достигать трёх метров, а диаметр — десяти метров."
+  ],
+  [
+    "Uruava asub veepinnast allpool.",
+    "Вход в нору находится ниже поверхности воды."
+  ],
+  [
+    "Pesas on talvel temperatuur üle nulli, vesi ei külmu ära ja koprad saavad väljuda jääalusesse vette.",
+    "Зимой в жилище температура выше нуля, вода не замерзает, и бобры могут выходить в воду подо льдом."
+  ],
+  [
+    "Koprad suudavad vee alla sukelduda kuni 20 minutiks.",
+    "Бобры способны погружаться под воду на срок до 20 минут."
+  ]
+];
+const KOBRAS_FACT=[
+  [
+    "Kas teadsid, et koprad on tuntud oma tammiehitamise oskuse poolest?",
+    "А ты знал, что бобры известны своим умением строить плотины?"
+  ]
+];
+const KOBRAS_WORDS=[
+  [
+    "kobras",
+    "бобр"
+  ],
+  [
+    "näriline",
+    "грызун"
+  ],
+  [
+    "kallas",
+    "берег"
+  ],
+  [
+    "vesiroos",
+    "кувшинка"
+  ],
+  [
+    "pilliroog",
+    "тростник"
+  ],
+  [
+    "talvevaru",
+    "запас на зиму"
+  ],
+  [
+    "urg",
+    "нора"
+  ],
+  [
+    "kuhilpesa",
+    "бобровая хатка"
+  ],
+  [
+    "muda",
+    "грязь, ил"
+  ],
+  [
+    "veepind",
+    "поверхность воды"
+  ],
+  [
+    "pesa",
+    "гнездо, жилище"
+  ],
+  [
+    "tammiehitamine",
+    "строительство плотин"
+  ],
+  [
+    "oskus",
+    "умение, навык"
+  ],
+  [
+    "rajama",
+    "строить, создавать"
+  ],
+  [
+    "koguma",
+    "собирать"
+  ],
+  [
+    "kaevama",
+    "копать, рыть"
+  ],
+  [
+    "sukelduma",
+    "нырять, погружаться"
+  ],
+  [
+    "poolveeline",
+    "полуводный"
+  ]
+];
+const ALL_WORDS=WORDS.concat(KOBRAS_WORDS);
+const LINES=FROG_LINES.concat(KOBRAS_LINES,KOBRAS_FACT);
+const DECKS={konn:WORDS,kobras:KOBRAS_WORDS,all:ALL_WORDS};
+const DECK_NAMES={konn:'Konn',kobras:'Kobras',all:'Konn ja kobras'};
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 if(!document.getElementById('konnLessonStyles')){
   const style=document.createElement('style');style.id='konnLessonStyles';
@@ -56,7 +191,7 @@ if(!document.getElementById('konnLessonStyles')){
   document.head.appendChild(style);
 }
 const visible=new Set();
-let direction='et-ru',queue=[],known=0,repeated=0,flipped=false;
+let direction='et-ru',queue=[],known=0,repeated=0,flipped=false,deckId='all',activeWords=ALL_WORDS;
 function shuffle(a){
   const b=a.slice();
   for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}
@@ -75,17 +210,21 @@ function lineHtml(pair,i){
     (shown?'🙈 Скрыть перевод':'🌐 Перевод')+'</button></div></article>';
 }
 function renderLesson(){
-  chrome('🌿 Loodusõpetus','Урок 4 · Konn · 03.11.2026');
+  chrome('🌿 Loodusõpetus','Урок 4 · Konn ja kobras');
   const all=visible.size===LINES.length;
   card.innerHTML='<div class="konn-lesson">'+
-    '<header class="topic-intro konn-head"><div class="topic-kicker">🌿 Loodusõpetus · 03.11.2026</div>'+
-    '<h2>Урок 4 — Konn</h2><div class="konn-meta">Домашнее задание · выучить наизусть</div></header>'+
+    '<header class="topic-intro konn-head"><div class="topic-kicker">🌿 Loodusõpetus · 03.11.2026 / 06.11.2026</div>'+
+    '<h2>Урок 4 — Konn ja kobras</h2><div class="konn-meta">Konn: выучить наизусть · Kobras: текст и словарь</div></header>'+
     '<div class="konn-controls"><button type="button" class="secondary" id="konnAll" aria-expanded="'+all+'">'+
     (all?'🙈 Скрыть все переводы':'🌐 Показать все переводы')+'</button></div>'+
     '<section class="konn-section"><h3>Mõisted</h3>'+TERMS.map((x,i)=>lineHtml(x,i)).join('')+'</section>'+
     '<section class="konn-section"><h3>Konn</h3>'+FACTS.map((x,i)=>lineHtml(x,i+TERMS.length)).join('')+'</section>'+
-    '<div class="konn-controls"><button type="button" class="primary" id="konnEtCards">🃏 Карточки: эстонский → русский ('+WORDS.length+')</button>'+
-    '<button type="button" class="secondary" id="konnRuCards">🃏 Карточки: русский → эстонский</button>'+
+    '<section class="konn-section"><h3>Kobras · Tunne looma</h3>'+KOBRAS_LINES.map((x,i)=>lineHtml(x,i+FROG_LINES.length)).join('')+'</section>'+
+    '<section class="konn-section"><h3>💡 Lõbus fakt!</h3>'+KOBRAS_FACT.map((x,i)=>lineHtml(x,i+FROG_LINES.length+KOBRAS_LINES.length)).join('')+'</section>'+
+    '<div class="konn-controls"><button type="button" class="primary" id="konnBeaverCards">🃏 Kobras — '+KOBRAS_WORDS.length+' карточек</button>'+
+    '<button type="button" class="secondary" id="konnFrogCards">🃏 Konn — '+WORDS.length+' карточек</button>'+
+    '<button type="button" class="secondary" id="konnEtCards">🃏 Все '+ALL_WORDS.length+' слов: эстонский → русский</button>'+
+    '<button type="button" class="secondary" id="konnRuCards">🃏 Все '+ALL_WORDS.length+' слов: русский → эстонский</button>'+
     '<button type="button" class="secondary" id="konnBack">← К предметам</button></div></div>';
   card.querySelector('#konnAll').onclick=()=>{
     if(all)visible.clear();else LINES.forEach((_,i)=>visible.add(i));renderLesson();
@@ -93,21 +232,24 @@ function renderLesson(){
   card.querySelectorAll('[data-konn-translation]').forEach(b=>b.onclick=()=>{
     const i=Number(b.dataset.konnTranslation);visible.has(i)?visible.delete(i):visible.add(i);renderLesson();
   });
-  card.querySelector('#konnEtCards').onclick=()=>startCards('et-ru');
-  card.querySelector('#konnRuCards').onclick=()=>startCards('ru-et');
+  card.querySelector('#konnBeaverCards').onclick=()=>startCards('et-ru','kobras');
+  card.querySelector('#konnFrogCards').onclick=()=>startCards('et-ru','konn');
+  card.querySelector('#konnEtCards').onclick=()=>startCards('et-ru','all');
+  card.querySelector('#konnRuCards').onclick=()=>startCards('ru-et','all');
   card.querySelector('#konnBack').onclick=()=>libraryBtn.click();
 }
-function startCards(dir){
-  direction=dir;queue=shuffle(WORDS);known=0;repeated=0;flipped=false;renderCard();
+function startCards(dir,deck='all'){
+  direction=dir;deckId=deck;activeWords=DECKS[deck]||ALL_WORDS;
+  queue=shuffle(activeWords);known=0;repeated=0;flipped=false;renderCard();
 }
 function renderCard(){
-  chrome('🃏 Konn · sõnad','Loodusõpetus · '+WORDS.length+' слов · '+(direction==='et-ru'?'эстонский → русский':'русский → эстонский'));
+  chrome('🃏 '+DECK_NAMES[deckId]+' · sõnad','Loodusõpetus · '+activeWords.length+' слов · '+(direction==='et-ru'?'эстонский → русский':'русский → эстонский'));
   if(!queue.length){renderDone();return;}
   const pair=queue[0],front=direction==='et-ru'?pair[0]:pair[1],back=direction==='et-ru'?pair[1]:pair[0],
     frontLabel=direction==='et-ru'?'Эстонский':'Русский',backLabel=direction==='et-ru'?'Русский':'Эстонский';
   card.innerHTML='<div class="konn-lesson">'+
-    '<header class="topic-intro konn-head"><div class="topic-kicker">🌿 Урок 4 — Konn</div>'+
-    '<h2>Словарные карточки</h2><div class="konn-meta">Выучено: '+known+' / '+WORDS.length+' · Осталось: '+queue.length+'</div></header>'+
+    '<header class="topic-intro konn-head"><div class="topic-kicker">🌿 Урок 4 — '+DECK_NAMES[deckId]+'</div>'+
+    '<h2>Словарные карточки</h2><div class="konn-meta">Выучено: '+known+' / '+activeWords.length+' · Осталось: '+queue.length+'</div></header>'+
     '<button type="button" class="konn-flash" id="konnFlip" aria-label="Перевернуть карточку">'+
     '<span class="konn-flash-label">'+(flipped?backLabel:frontLabel)+'</span>'+
     '<span class="konn-flash-word" lang="'+((direction==='et-ru')!==flipped?'et':'ru')+'">'+esc(flipped?back:front)+'</span>'+
@@ -115,21 +257,23 @@ function renderCard(){
     (flipped?'<div class="konn-choices"><button type="button" class="secondary" id="konnRepeat">🔁 Повторить</button>'+
     '<button type="button" class="primary" id="konnKnow">✓ Знаю</button></div>':
     '<div class="konn-meta" style="text-align:center">Сначала попробуй вспомнить ответ самостоятельно.</div>')+
-    '<div class="konn-controls"><button type="button" class="secondary" id="konnBackToText">← К тексту урока</button></div></div>';
+    '<div class="konn-controls"><button type="button" class="secondary" id="konnDirection">↔ '+(direction==='et-ru'?'Русский → эстонский':'Эстонский → русский')+'</button>'+
+    '<button type="button" class="secondary" id="konnBackToText">← К тексту урока</button></div></div>';
   card.querySelector('#konnFlip').onclick=()=>{flipped=!flipped;renderCard();};
   const yes=card.querySelector('#konnKnow'),no=card.querySelector('#konnRepeat');
   if(yes)yes.onclick=()=>{queue.shift();known++;flipped=false;renderCard();};
   if(no)no.onclick=()=>{const word=queue.shift();repeated++;queue.splice(Math.min(queue.length,3),0,word);flipped=false;renderCard();};
+  card.querySelector('#konnDirection').onclick=()=>startCards(direction==='et-ru'?'ru-et':'et-ru',deckId);
   card.querySelector('#konnBackToText').onclick=renderLesson;
 }
 function renderDone(){
   card.innerHTML='<div class="konn-lesson"><div class="konn-finish"><div style="font-size:38px">🎉</div>'+
-    '<h2>Все '+WORDS.length+' слов выучены!</h2><p>Карточек повторено: '+repeated+'</p></div>'+
+    '<h2>Все '+activeWords.length+' слов выучены!</h2><p>Карточек повторено: '+repeated+'</p></div>'+
     '<div class="konn-controls"><button type="button" class="primary" id="konnAgain">🔁 Начать заново</button>'+
     '<button type="button" class="secondary" id="konnSwitch">↔ Поменять направление</button>'+
     '<button type="button" class="secondary" id="konnReturn">← К тексту урока</button></div></div>';
-  card.querySelector('#konnAgain').onclick=()=>startCards(direction);
-  card.querySelector('#konnSwitch').onclick=()=>startCards(direction==='et-ru'?'ru-et':'et-ru');
+  card.querySelector('#konnAgain').onclick=()=>startCards(direction,deckId);
+  card.querySelector('#konnSwitch').onclick=()=>startCards(direction==='et-ru'?'ru-et':'et-ru',deckId);
   card.querySelector('#konnReturn').onclick=renderLesson;
 }
 window.EDUKASS_LESSONS.konnLesson=renderLesson;
