@@ -22,6 +22,9 @@ window.EDUKASS_CATALOG=[
     {kind:"core",lang:"en",topic:"its-hot-today",extraMeta:"🔊 озвучка · ✍️ написание"},
     {kind:"custom",handler:"englishPresentSimple3",title:"Тренировка Present Simple — он, она, оно",meta:"7 глаголов · -s / -es / -ies"}
   ]},
+  {id:"russian",label:"Русский язык",icon:"🇷🇺",lessons:[
+    {kind:"custom",handler:"russianEiSuffixLesson",title:"Урок 1 — Чередование Е–И. Суффикс -А-",meta:"234 задания · школьные знаки корня и суффикса · 2 режима"}
+  ]},
   {id:"deutsch",label:"Deutsch",icon:"🇩🇪",lessons:[
     {kind:"core",lang:"de",topic:"lektion-1",meta:"2 текста"},
     {kind:"custom",handler:"deutschLesson2",title:"Lektion 2 — Reflexive Verben",meta:"3 таблицы"},
