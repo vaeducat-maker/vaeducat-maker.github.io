@@ -26,7 +26,8 @@ window.EDUKASS_CATALOG=[
     {kind:"core",lang:"de",topic:"lektion-1",meta:"2 текста"},
     {kind:"custom",handler:"deutschLesson2",title:"Lektion 2 — Reflexive Verben",meta:"3 таблицы"},
     {kind:"custom",handler:"deutschPaulaLesson",title:"Урок 3 — Paula: проверка понимания текста · 03.10.26",meta:"39 слов · 24 предложения · 🔊 озвучка"},
-    {kind:"custom",handler:"deutschEliasLesson",title:"Урок 4 — Elias Meier · Reflexive Verben",meta:"15 предложений · построчный перевод · 🔊 озвучка"}
+    {kind:"custom",handler:"deutschEliasLesson",title:"Урок 4 — Elias Meier · Reflexive Verben",meta:"15 предложений · построчный перевод · 🔊 озвучка"},
+    {kind:"custom",handler:"deutschWoWohinLesson",title:"Урок 5 — Wo? / Wohin? · 04.11.26",meta:"10 предложений · 8 карточек · предлог + артикль"}
   ]},
   {id:"eesti-kirjandus",label:"Eesti kirjandus",icon:"📖",lessons:[
     {kind:"core",lang:"et",topic:"sonad-1"},
