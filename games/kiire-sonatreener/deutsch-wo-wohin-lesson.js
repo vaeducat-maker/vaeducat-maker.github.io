@@ -23,6 +23,27 @@
     ['где?','Wo?'],['куда?','Wohin?']
   ];
   const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  // The exact six nouns already in this lesson; gender and full preposition forms
+  // remain explicit (no im/ins contractions).
+  const places=[
+    ['der Park','in','den','dem'],
+    ['der Spielplatz','auf','den','dem'],
+    ['die Bibliothek','in','die','der'],
+    ['die Party','auf','die','der'],
+    ['das Schwimmbad','in','das','dem'],
+    ['das Kino','in','das','dem']
+  ];
+  function grammarTable(question,where){
+    return '<section class="dew-grammar-section" aria-label="'+esc(question)+'">'+
+      '<h3>'+esc(question)+'</h3>'+
+      '<table class="dew-grammar-table"><thead><tr><th scope="col">Начальная форма</th>'+
+      '<th scope="col">'+esc(question)+'</th></tr></thead><tbody>'+
+      places.map(p=>'<tr><td lang="de"><strong>'+esc(p[0].split(' ')[0])+'</strong> '+
+        esc(p[0].split(' ').slice(1).join(' '))+'</td><td lang="de">'+esc(p[1])+' <strong>'+
+        esc(p[where==='wohin'?2:3])+'</strong> '+esc(p[0].split(' ').slice(1).join(' '))+'</td></tr>').join('')+
+      '</tbody></table></section>';
+  }
+
   if(!document.getElementById('de-wo-wohin-css')){
     const style=document.createElement('style');
     style.id='de-wo-wohin-css';
@@ -39,6 +60,16 @@
       '.dew-flip:focus-visible{outline:3px solid #2f6f58;outline-offset:3px}',
       '.dew-choices{display:grid;grid-template-columns:1fr 1fr;gap:10px}',
       '.dew-count{text-align:center;color:#69796f;font-size:13px}',
+      '.dew-grammar{display:grid;gap:14px}',
+      '.dew-grammar>h3{font-size:19px;line-height:1.35;color:#2f6f58;margin:6px 0 0}',
+      '.dew-grammar-section{display:grid;gap:7px;min-width:0}',
+      '.dew-grammar-section h3{font-size:17px;color:#2f6f58;margin:0}',
+      '.dew-grammar-table{border:1px solid #dce7de;border-radius:12px;border-spacing:0;background:#fff;width:100%;table-layout:fixed;overflow:hidden}',
+      '.dew-grammar-table th,.dew-grammar-table td{padding:11px 9px;text-align:left;line-height:1.45;vertical-align:middle;overflow-wrap:anywhere}',
+      '.dew-grammar-table th{font-size:13px;color:#607367;background:#f2f8f3;font-weight:800}',
+      '.dew-grammar-table td{font-size:15px;color:#233d2e;border-top:1px solid #e2eae4}',
+      '.dew-grammar-table td strong{color:#186b41;font-weight:850}',
+      '@media(max-width:390px){.dew-grammar-table th,.dew-grammar-table td{padding:10px 6px}.dew-grammar-table td{font-size:14px}}',
       '.dew-pr-wrap{gap:12px}',
       '.dew-pr-progress{font-size:14px;color:#476957;font-weight:750;margin-top:9px}',
       '.dew-pr-track{height:7px;background:#dfece1;border-radius:50px;overflow:hidden;margin-top:8px}',
@@ -81,7 +112,9 @@
       '<h2>Урок 5 — Wo? / Wohin?</h2><div class="dew-note">1. Аккуратно перепиши предложения. Подчеркни выделенные сочетания.</div></header>'+
       sentences.map((s,i)=>'<div class="dew-line"><div class="dew-ru" lang="ru">'+(i+1)+'. '+esc(s[0])+'</div>'+
         '<div class="dew-de" lang="de">'+esc(s[1])+'<span class="dew-mark">'+esc(s[2])+'</span>'+esc(s[3])+'</div></div>').join('')+
-      '<div class="dew-actions"><div class="dew-note">2. Выучи 6 мест с артиклями и вопросы Wo? / Wohin?</div>'+
+      '<div class="dew-grammar" id="dewGrammar"><h3>2. Артикли: куда и где</h3>'+
+      grammarTable('WOHIN? — Куда?','wohin')+grammarTable('WO? — Где?','wo')+'</div>'+
+      '<div class="dew-actions"><div class="dew-note">3. Выучи 6 мест с артиклями и вопросы Wo? / Wohin?</div>'+
       '<button type="button" class="primary" id="dewStart">Карточки · 8</button><button type="button" class="primary" id="dewPractice">🎯 Тренажёр · Wo? / Wohin?</button>'+
       '<button type="button" class="secondary" id="dewBack">← К предметам</button></div></div>';
     root.querySelector('#dewStart').onclick=start;

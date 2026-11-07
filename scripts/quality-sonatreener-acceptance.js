@@ -146,6 +146,33 @@ let browser;
   await page.goto(base+'?lesson=wo-wohin&v=acceptance',{waitUntil:'load'});
   await page.locator('#dewPractice').waitFor({state:'visible',timeout:12000});
   test('German lesson 5 opens from direct link',await page.locator('.dew-line').count()===10);
+  // The two grammar tables must reproduce all six original nouns with correct
+  // directional and locative article changes. The expected forms below are independent.
+  const expectedTables=[
+    ['der Park','in den Park','in dem Park'],
+    ['der Spielplatz','auf den Spielplatz','auf dem Spielplatz'],
+    ['die Bibliothek','in die Bibliothek','in der Bibliothek'],
+    ['die Party','auf die Party','auf der Party'],
+    ['das Schwimmbad','in das Schwimmbad','in dem Schwimmbad'],
+    ['das Kino','in das Kino','in dem Kino']
+  ];
+  test('Both Wo and Wohin tables visible',await page.locator('#dewGrammar .dew-grammar-table').count()===2);
+  test('Wohin table labelled correctly',await page.locator('.dew-grammar-section').nth(0).locator('h3').innerText()==='WOHIN? — Куда?');
+  test('Wo table labelled correctly',await page.locator('.dew-grammar-section').nth(1).locator('h3').innerText()==='WO? — Где?');
+  for(let t=0;t<2;t++){
+    const table=page.locator('.dew-grammar-table').nth(t);
+    test('German grammar table '+(t+1)+' has six nouns',await table.locator('tbody tr').count()===6);
+    for(let i=0;i<6;i++){
+      const tr=table.locator('tbody tr').nth(i);
+      test('German grammar table '+(t+1)+' noun '+(i+1),
+        await tr.locator('td').nth(0).innerText()===expectedTables[i][0] &&
+        await tr.locator('td').nth(1).innerText()===expectedTables[i][t+1]);
+      test('German grammar table '+(t+1)+' articles bold '+(i+1),
+        await tr.locator('td strong').count()===2);
+    }
+  }
+  test('German tables have no mobile horizontal overflow',await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth+2));
+
   for(let i=0;i<10;i++){
     test('German copywork pair '+(i+1),
       await page.locator('.dew-line').nth(i).locator('.dew-ru').innerText()===(i+1)+'. '+deExpected[i][0]&&
