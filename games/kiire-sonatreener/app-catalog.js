@@ -40,7 +40,7 @@ window.EDUKASS_CATALOG=[
     {kind:"custom",handler:"litOmaOnnLesson",title:"Урок 5 — Igaühel oma õnn · 08.10.26",meta:"4 страницы · письменный план (A1)"},
     {kind:"custom",handler:"litAliceDiaryLesson",title:"Урок 6 — Alice imedemaal",meta:"Читательский дневник · эстонский A1 + перевод"},
     {kind:"custom",handler:"litCarrollLesson",title:"Урок 7 — Lewis Carroll – elulugu",meta:"Биография · 9 предложений · перевод по строкам"},
-    {kind:"custom",handler:"litAliceQuestionsLesson",title:"Урок 8 — Alice ja valge jänes · Ülesanded 3–7",meta:"Задания 3–7 · ответы для распечатки"},
+    {kind:"custom",handler:"litAliceQuestionsLesson",title:"Урок 8 — Alice ja valge jänes · Ümberjutustus",meta:"17 предложений учительницы для пересказа · задания 3–7"},
     {kind:"custom",handler:"litTunnikontrollAliceLewis",title:"Урок 9 — Tunnikontroll: Alice ja Lewis Carroll · 04.11.26",meta:"14 предложений · жирные ответы · перевод по кнопке"}
   ]},
   {id:"muusika",label:"Muusika",icon:"🎵",lessons:[
