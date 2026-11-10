@@ -160,6 +160,63 @@ const KOBRAS_WORDS=[
     "полуводный"
   ]
 ];
+// Nine questions provided by the teacher on 10.11.2026. Answers are based only on the Kobras video text.
+const KOBRAS_QA=[
+  [
+    "Millised loomad on koprad?",
+    "Какие животные бобры?",
+    "Koprad on suured närilised.",
+    "Бобры — крупные грызуны."
+  ],
+  [
+    "Kui pikk võib olla kopra keha?",
+    "Какой длины может быть тело бобра?",
+    "Kopra keha võib olla kuni üks meeter pikk.",
+    "Тело бобра может быть длиной до одного метра."
+  ],
+  [
+    "Kui palju võib kobras kaaluda?",
+    "Сколько может весить бобр?",
+    "Kobras võib kaaluda 30 kilogrammi.",
+    "Бобр может весить 30 килограммов."
+  ],
+  [
+    "Kuhu rajavad koprad oma kodu?",
+    "Где бобры строят своё жилище?",
+    "Koprad rajavad oma kodu järve või jõe kaldale.",
+    "Бобры строят своё жилище на берегу озера или реки."
+  ],
+  [
+    "Mida söövad koprad suvel?",
+    "Что едят бобры летом?",
+    "Suvel söövad koprad rohttaimi.",
+    "Летом бобры едят травянистые растения."
+  ],
+  [
+    "Milliseid taimi koprad suvel söövad?",
+    "Какие растения бобры едят летом?",
+    "Nad söövad vesikuppu, valget vesiroosi, võhumõõka ja pilliroogu.",
+    "Они едят кубышку, белую кувшинку, болотный ирис и тростник."
+  ],
+  [
+    "Mida teevad koprad sügisel?",
+    "Что делают бобры осенью?",
+    "Sügisel langetavad koprad puid ja koguvad oksi.",
+    "Осенью бобры валят деревья и собирают ветки."
+  ],
+  [
+    "Milleks koguvad koprad oksi?",
+    "Для чего бобры собирают ветки?",
+    "Nad koguvad oksi talvevaruks.",
+    "Они собирают ветки в запас на зиму."
+  ],
+  [
+    "Milline on temperatuur kopra pesas talvel?",
+    "Какая температура в жилище бобра зимой?",
+    "Talvel on kopra pesas temperatuur üle nulli.",
+    "Зимой в жилище бобра температура выше нуля."
+  ]
+];
 const ALL_WORDS=WORDS.concat(KOBRAS_WORDS);
 const LINES=FROG_LINES.concat(KOBRAS_LINES,KOBRAS_FACT);
 const DECKS={konn:WORDS,kobras:KOBRAS_WORDS,all:ALL_WORDS};
@@ -176,6 +233,10 @@ if(!document.getElementById('konnLessonStyles')){
     '.konn-row{background:#fff;border:1px solid #dce7de;border-radius:13px;padding:12px;display:grid;gap:7px}',
     '.konn-et{font-size:16px;font-weight:750;line-height:1.48;color:#263a30}',
     '.konn-ru{font-size:15px;line-height:1.47;color:#52675d;border-top:1px solid #e7eee8;padding-top:8px}',
+    '.konn-qa-question{font-size:16px;font-weight:800;line-height:1.45;color:#223c2d}',
+    '.konn-qa-answer{font-size:16px;line-height:1.5;color:#263a30;margin-top:3px}',
+    '.konn-qa-num{color:#2f6f58;margin-right:6px}',
+    '.konn-qa-ru{font-size:15px;line-height:1.5;color:#52675d;border-top:1px solid #e7eee8;padding-top:8px;display:grid;gap:6px}',
     '.konn-row-actions{display:flex;justify-content:flex-end}',
     '.konn-row-actions button{font-size:13px;min-height:36px;padding:6px 10px}',
     '.konn-controls{display:grid;gap:8px}',
@@ -209,9 +270,17 @@ function lineHtml(pair,i){
     '<div class="konn-row-actions"><button type="button" class="secondary" data-konn-translation="'+i+'" aria-expanded="'+shown+'">'+
     (shown?'🙈 Скрыть перевод':'🌐 Перевод')+'</button></div></article>';
 }
+function qaHtml(item,i){
+  const key=LINES.length+i,shown=visible.has(key);
+  return '<article class="konn-row"><div class="konn-qa-question" lang="et"><span class="konn-qa-num">'+(i+1)+'.</span>'+esc(item[0])+'</div>'+
+    '<div class="konn-qa-answer" lang="et">'+esc(item[2])+'</div>'+
+    '<div class="konn-qa-ru" lang="ru"'+(shown?'':' hidden')+'><div><strong>Вопрос:</strong> '+esc(item[1])+'</div><div><strong>Ответ:</strong> '+esc(item[3])+'</div></div>'+
+    '<div class="konn-row-actions"><button type="button" class="secondary" data-konn-translation="'+key+'" aria-expanded="'+shown+'">'+
+    (shown?'🙈 Скрыть перевод':'🌐 Перевод')+'</button></div></article>';
+}
 function renderLesson(){
   chrome('🌿 Loodusõpetus','Урок 4 · Konn ja kobras');
-  const all=visible.size===LINES.length;
+  const all=visible.size===LINES.length+KOBRAS_QA.length;
   card.innerHTML='<div class="konn-lesson">'+
     '<header class="topic-intro konn-head"><div class="topic-kicker">🌿 Loodusõpetus · 03.11.2026 / 06.11.2026</div>'+
     '<h2>Урок 4 — Konn ja kobras</h2><div class="konn-meta">Konn: выучить наизусть · Kobras: текст и словарь</div></header>'+
@@ -221,13 +290,16 @@ function renderLesson(){
     '<section class="konn-section"><h3>Konn</h3>'+FACTS.map((x,i)=>lineHtml(x,i+TERMS.length)).join('')+'</section>'+
     '<section class="konn-section"><h3>Kobras · Tunne looma</h3>'+KOBRAS_LINES.map((x,i)=>lineHtml(x,i+FROG_LINES.length)).join('')+'</section>'+
     '<section class="konn-section"><h3>💡 Lõbus fakt!</h3>'+KOBRAS_FACT.map((x,i)=>lineHtml(x,i+FROG_LINES.length+KOBRAS_LINES.length)).join('')+'</section>'+
+    '<section class="konn-section" id="kobras-qa"><h3>Kobras — Küsimused ja vastused (9)</h3>'+
+    '<div class="konn-meta">Вопросы учителя · 10.11.2026 · для записи в тетрадь и устного ответа</div>'+
+    KOBRAS_QA.map(qaHtml).join('')+'</section>'+
     '<div class="konn-controls"><button type="button" class="primary" id="konnBeaverCards">🃏 Kobras — '+KOBRAS_WORDS.length+' карточек</button>'+
     '<button type="button" class="secondary" id="konnFrogCards">🃏 Konn — '+WORDS.length+' карточек</button>'+
     '<button type="button" class="secondary" id="konnEtCards">🃏 Все '+ALL_WORDS.length+' слов: эстонский → русский</button>'+
     '<button type="button" class="secondary" id="konnRuCards">🃏 Все '+ALL_WORDS.length+' слов: русский → эстонский</button>'+
     '<button type="button" class="secondary" id="konnBack">← К предметам</button></div></div>';
   card.querySelector('#konnAll').onclick=()=>{
-    if(all)visible.clear();else LINES.forEach((_,i)=>visible.add(i));renderLesson();
+    if(all)visible.clear();else for(let i=0;i<LINES.length+KOBRAS_QA.length;i++)visible.add(i);renderLesson();
   };
   card.querySelectorAll('[data-konn-translation]').forEach(b=>b.onclick=()=>{
     const i=Number(b.dataset.konnTranslation);visible.has(i)?visible.delete(i):visible.add(i);renderLesson();
