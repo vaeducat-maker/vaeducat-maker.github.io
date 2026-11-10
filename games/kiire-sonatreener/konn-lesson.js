@@ -237,6 +237,7 @@ if(!document.getElementById('konnLessonStyles')){
     '.konn-qa-answer{font-size:16px;line-height:1.5;color:#263a30;margin-top:3px}',
     '.konn-qa-num{color:#2f6f58;margin-right:6px}',
     '.konn-qa-ru{font-size:15px;line-height:1.5;color:#52675d;border-top:1px solid #e7eee8;padding-top:8px;display:grid;gap:6px}',
+    '.konn-qa-ru[hidden]{display:none}',
     '.konn-row-actions{display:flex;justify-content:flex-end}',
     '.konn-row-actions button{font-size:13px;min-height:36px;padding:6px 10px}',
     '.konn-controls{display:grid;gap:8px}',
