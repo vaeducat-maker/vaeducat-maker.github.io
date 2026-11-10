@@ -3,7 +3,7 @@ window.EDUKASS_CATALOG=[
     {kind:"core",lang:"et",topic:"vesi-ja-jogi",extraMeta:"6 вопросов · 🖼"},
     {kind:"core",lang:"et",topic:"jarved",title:"Урок 2 — Järved",meta:"9 предложений · перевод · карточки"},
     {kind:"custom",handler:"kalaKehaosadLesson",title:"Урок 3 — Kala kehaosad",meta:"7 частей рыбы · плакат · карточки · Kontroll (7 заданий)"},
-    {kind:"custom",handler:"konnLesson",title:"Урок 4 — Konn ja kobras",meta:"19 строк · скрываемый перевод · 28 карточек (10 + 18)"}
+    {kind:"custom",handler:"konnLesson",title:"Урок 4 — Konn ja kobras",meta:"19 строк · 9 вопросов с ответами · перевод · 28 карточек (10 + 18)"}
   ]},
   {id:"inimene",label:"Inimeseõpetus",icon:"👤",lessons:[
     {kind:"custom",handler:"inimeneTervisLesson",title:"Урок 1 — Tervis · 03.10.26",meta:"4 карточки"},
