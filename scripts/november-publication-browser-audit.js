@@ -63,6 +63,8 @@ const server=http.createServer((req,res)=>{
 
    await page.goto(origin+'/',{waitUntil:'domcontentloaded'});
    await page.locator('.home-new-grid > article').first().waitFor();
+   const firstCard=await page.locator('.home-new-grid > article').first().evaluate(el=>({tag:el.tagName,classes:el.className,outer:el.outerHTML.slice(0,350)}));
+   console.log('NOVEMBER NEW FIRST CARD',JSON.stringify(firstCard));
    assert.equal(await page.locator('.home-new-grid > article').first().getAttribute('data-edukass-rahvakalender-november'),'','November is not newest');
    assert.equal(await page.locator('.home-new-grid > article').count(),5,'UUS must show exactly five newest materials');
    assert.equal(await page.locator('.home-new-grid > article').first().locator('img[src="/rahvakalender/november/november-plakat.webp"]').count(),1,'Homepage poster preview missing');
