@@ -65,7 +65,7 @@ function isAuthorizedSharedPublication(file){
   // NOVEMBER_POSTER_PRESENTATION_BROWSER_AUDIT: narrow owner-approved
   // publication of November in Eesti keel and homepage UUS. This is NOT a
   // wildcard release: only these two exact Git blob fingerprints pass.
-  if(['index.html','data/catalog.json'].includes(file)){
+  if(['index.html','data/catalog.json','assets/timetable-preview.js'].includes(file)){
     const recordPath=path.join(ROOT,'quality/publication-approvals/november-20261112.json');
     if(fs.existsSync(recordPath)){
       let record;
@@ -76,8 +76,8 @@ function isAuthorizedSharedPublication(file){
          record?.ownerApproval===true&&record?.changeId==='november-20261112'&&
          record?.publicEntry==='rahvakalender/november/index.html'&&
          record?.catalogId==='rahvakalender-november'&&record?.sourceAudit===auditPath&&
-         approved&&Object.keys(approved).length===2&&
-         ['index.html','data/catalog.json'].every(key=>/^[a-f0-9]{40}$/.test(approved[key]||''))&&
+         approved&&Object.keys(approved).length===3&&
+         ['index.html','data/catalog.json','assets/timetable-preview.js'].every(key=>/^[a-f0-9]{40}$/.test(approved[key]||''))&&
          fs.existsSync(path.join(ROOT,auditPath))&&
          fs.readFileSync(path.join(ROOT,auditPath),'utf8').includes('NOVEMBER_POSTER_PRESENTATION_BROWSER_AUDIT')){
         const body=fs.readFileSync(path.join(ROOT,file));
