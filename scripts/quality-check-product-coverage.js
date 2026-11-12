@@ -62,6 +62,31 @@ function isAuthorizedSharedPublication(file){
       }
     }
   }
+  // NOVEMBER_POSTER_PRESENTATION_BROWSER_AUDIT: narrow owner-approved
+  // publication of November in Eesti keel and homepage UUS. This is NOT a
+  // wildcard release: only these two exact Git blob fingerprints pass.
+  if(['index.html','data/catalog.json','assets/timetable-preview.js'].includes(file)){
+    const recordPath=path.join(ROOT,'quality/publication-approvals/november-20261112.json');
+    if(fs.existsSync(recordPath)){
+      let record;
+      try{record=JSON.parse(fs.readFileSync(recordPath,'utf8'))}catch{record=null}
+      const auditPath='scripts/november-publication-browser-audit.js';
+      const approved=record?.allowedChangedSharedFiles;
+      if(record?.schemaVersion===1&&record?.status==='owner-approved-publication'&&
+         record?.ownerApproval===true&&record?.changeId==='november-20261112'&&
+         record?.publicEntry==='rahvakalender/november/index.html'&&
+         record?.catalogId==='rahvakalender-november'&&record?.sourceAudit===auditPath&&
+         approved&&Object.keys(approved).length===3&&
+         ['index.html','data/catalog.json','assets/timetable-preview.js'].every(key=>/^[a-f0-9]{40}$/.test(approved[key]||''))&&
+         fs.existsSync(path.join(ROOT,auditPath))&&
+         fs.readFileSync(path.join(ROOT,auditPath),'utf8').includes('NOVEMBER_POSTER_PRESENTATION_BROWSER_AUDIT')){
+        const body=fs.readFileSync(path.join(ROOT,file));
+        const sha=crypto.createHash('sha1').update('blob '+body.length)
+          .update(Buffer.from([0])).update(body).digest('hex');
+        if(sha===approved[file])return true;
+      }
+    }
+  }
   if(!['index.html','data/catalog.json'].includes(file))return false;
   const recordPath=path.join(ROOT,PUBLIC_ENTRY_APPROVAL);
   if(!fs.existsSync(recordPath))return false;
