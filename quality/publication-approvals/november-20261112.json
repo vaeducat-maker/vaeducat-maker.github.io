@@ -9,7 +9,8 @@
   "sourceAudit": "scripts/november-publication-browser-audit.js",
   "allowedChangedSharedFiles": {
     "index.html": "5f537d793b342db3fec07229051ad9f5f9b66de1",
-    "data/catalog.json": "05e8016469fc0672f3333cb8354a94ac040bb36f"
+    "data/catalog.json": "05e8016469fc0672f3333cb8354a94ac040bb36f",
+    "assets/timetable-preview.js": "bd32985390556822cbc502b494ddaa025b929deb"
   },
   "protectedUnchangedFiles": [
     "rahvakalender/november/november-plakat.webp",
@@ -22,6 +23,7 @@
     "Catalog entry is in Eesti keel and can be opened from category",
     "Homepage UUS displays November first, with the poster itself as preview",
     "Existing Lõika! Kosmoserada stays published and accessible in its category",
-    "Changes to shared homepage/catalog are limited to the exact approved Git blob SHA-1 and reject all other revisions"
+    "Changes to shared homepage/catalog are limited to the exact approved Git blob SHA-1 and reject all other revisions",
+    "Legacy timetable preview script no longer prepends Kosmos to UUS; its existing catalogue card and PDF preview remain functional"
   ]
 }
