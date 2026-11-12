@@ -23,93 +23,82 @@
 <script async src="https://plausible.io/js/pa-3mkwYCn93BZZKvx5orDK8.js"></script>
 <script>window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};plausible.init()</script>
 <style>
-:root{--novy:#12326d;--noblue:#1878af;--novtext:#25445c;--novline:#dce6ee}
-body{background:#f5f9fb;color:var(--novtext)}
-.nov-wrap{max-width:1130px;margin:0 auto;padding:0 18px}
-.nov-crumb{font-size:.9rem;color:#52738c;padding:24px 0 8px}
-.nov-crumb a{color:#195a99;text-decoration:none}
-.nov-hero{position:relative;overflow:hidden;border:1px solid #dce8ee;border-radius:24px;background:linear-gradient(114deg,#fff 3%,#e9f4fa 62%,#e3eef2);padding:clamp(24px,5.2vw,68px);margin:15px auto 30px;box-shadow:0 14px 44px #31567b13}
-.nov-hero:after{content:"❄";position:absolute;font-size:clamp(170px,34vw,350px);line-height:1;right:-36px;bottom:-100px;color:#a3cde4;opacity:.30;pointer-events:none;transform:rotate(-11deg)}
-.nov-hero-content{position:relative;z-index:1;max-width:690px}
-.nov-tag{display:inline-flex;font-size:.77rem;letter-spacing:.08em;font-weight:900;color:#155c91;background:#fff;border:1px solid #cfe2ee;border-radius:30px;padding:9px 13px;margin-bottom:14px}
-.nov-hero h1{font-family:Georgia,serif;color:var(--novy);font-size:clamp(2.5rem,7.2vw,5.8rem);line-height:.98;letter-spacing:-.047em;margin:0 0 13px}
-.nov-hero h1 small{font-size:clamp(1.2rem,3vw,2rem);display:block;font-family:system-ui,sans-serif;letter-spacing:.08em;margin:0 0 10px}
-.nov-sub{font-weight:750;color:#375c82;font-size:clamp(1.06rem,2.3vw,1.38rem);margin:0 0 18px}
-.nov-hero p{line-height:1.58;font-size:1.05rem;max-width:570px}
-.nov-buttons{display:flex;gap:12px;flex-wrap:wrap;margin:22px 0 0}
-.nov-button{display:inline-flex;align-items:center;justify-content:center;text-align:center;font-weight:850;line-height:1.2;text-decoration:none;border-radius:13px;padding:13px 21px;background:var(--novy);color:white!important;min-height:49px}
-.nov-button.alt{background:white;color:var(--novy)!important;border:1px solid #cbdce7}
-.nov-button:hover{filter:brightness(1.08)}
-.nov-badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:25px}
-.nov-badges span{font-size:.84rem;font-weight:700;background:#fff9;border:1px solid #d8e4eb;border-radius:22px;padding:7px 10px}
-.nov-section{margin:32px auto}
-.nov-section h2{font-size:clamp(1.55rem,3.5vw,2.25rem);letter-spacing:-.025em;color:var(--novy);margin:0 0 12px}
-.nov-section>p{max-width:900px;line-height:1.65}
-.nov-poster{margin:20px auto 18px;padding:clamp(10px,2vw,24px);max-width:790px;background:white;border:1px solid var(--novline);border-radius:20px;box-shadow:0 12px 34px #1b426012}
-.nov-poster>a{display:block;text-align:center}
-.nov-poster img{display:block;width:100%;height:auto;max-width:740px;margin:0 auto;border-radius:10px}
-.nov-poster figcaption{text-align:center;margin-top:13px;font-size:.91rem;line-height:1.5;color:#537086}
-.nov-poster-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin:0 auto 26px}
-.nov-poster-actions a{color:#11548a;font-weight:800;text-underline-offset:4px}
-.nov-topic-subtitle{font-size:1.24rem;color:var(--novy);margin:28px 0 10px}
-.nov-topics{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:20px 0 10px}
-.nov-panel{border:1px solid var(--novline);background:#fff;border-radius:19px;padding:24px;box-shadow:0 4px 18px #1849790a}
-.nov-panel h3{color:var(--novy);font-size:1.28rem;margin:0 0 12px}
-.nov-panel p{line-height:1.6;margin:8px 0}
-.nov-panel ul{margin:6px 0 0;padding-left:19px;line-height:1.8}
-.nov-date{font-weight:850;color:#a94719}
-.nov-disclaimer{color:#42667f;background:#edf5fa;padding:13px 16px;border-radius:12px;font-size:.93rem;line-height:1.5}
-.nov-player{background:white;border:1px solid #d4e2ea;border-radius:23px;padding:12px;box-shadow:0 14px 40px #16384e15}
-.nov-player iframe{display:block;width:100%;height:650px;border:0;border-radius:13px;background:#e8eef0}
-.nov-player-link{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin:16px 9px 5px}
-.nov-player-link p{margin:0;font-size:.92rem;color:#607889}
-.nov-player-link a{font-weight:750;color:#11548a}
-.nov-footer{border-top:1px solid #d6e1e9;margin-top:48px;padding:25px 0 40px;color:#557185;font-size:.9rem}
+:root{--novy:#12326d;--novtext:#29465e;--novline:#dbe6ee}
+html{scroll-behavior:smooth}
+body{margin:0;background:#f5f9fb;color:var(--novtext)}
+.nov-wrap{max-width:1040px;margin:0 auto;padding:0 16px}
+.nov-crumb{padding:17px 0 10px;color:#55738b;font-size:.88rem}
+.nov-crumb a{color:#215d96;text-decoration:none}
+.nov-intro{padding:12px 0 17px;text-align:center}
+.nov-kicker{color:#346785;font-size:.77rem;font-weight:800;letter-spacing:.10em}
+.nov-intro h1{margin:8px 0 5px;color:var(--novy);font-size:clamp(2rem,5.2vw,3.2rem);line-height:1.1}
+.nov-sub{margin:0;color:#456d89;font-size:1.03rem;font-weight:650}
+.nov-quicklinks{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:17px 0 0}
+.nov-button{display:inline-flex;justify-content:center;align-items:center;min-height:44px;padding:10px 18px;border-radius:12px;background:var(--novy);color:#fff!important;text-align:center;text-decoration:none;font-weight:800}
+.nov-button.alt{background:#fff;color:var(--novy)!important;border:1px solid #cbdce7}
+.nov-section{margin:16px 0 35px;scroll-margin-top:15px}
+.nov-section h2{margin:0 0 13px;color:var(--novy);font-size:clamp(1.35rem,3vw,1.85rem);text-align:center}
+.nov-poster{max-width:760px;margin:0 auto;background:#fff;border:1px solid var(--novline);border-radius:15px;padding:8px;box-shadow:0 10px 24px #194e7510}
+.nov-poster a{display:block}
+.nov-poster img{display:block;width:100%;height:auto;border-radius:9px}
+.nov-actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:16px 0 0}
+.nov-actions .nov-button{min-width:170px}
+.nov-player{border:1px solid #d5e3ec;border-radius:18px;padding:10px;background:#fff;box-shadow:0 12px 28px #12326d10}
+.nov-player iframe{display:block;width:100%;height:min(70vw,650px);min-height:390px;border:0;border-radius:10px;background:#e9f2f8}
+.nov-hint{margin:0 auto 13px;text-align:center;line-height:1.5;color:#58748a;font-size:.92rem}
+.nov-back{display:block;margin:24px auto 42px;text-align:center;color:#285e90;font-weight:750}
+.nov-footer{border-top:1px solid #d8e2e9;padding:22px 0 34px;color:#58748a;font-size:.87rem}
 .nov-footer a{color:#1b5795}
-@media(max-width:720px){.nov-hero{margin-top:8px;padding:26px 20px;border-radius:18px}.nov-hero:after{opacity:.12}.nov-topics{grid-template-columns:1fr}.nov-panel{padding:19px}.nov-player{padding:5px;border-radius:15px}.nov-player iframe{height:78svh;min-height:510px;max-height:780px;border-radius:10px}.nov-buttons{flex-direction:column}.nov-button{width:100%}.nov-player-link{padding:6px}}
+@media(max-width:720px){
+.nov-wrap{padding:0 12px}
+.nov-crumb{padding:13px 0 6px}
+.nov-intro{padding:7px 0 15px}
+.nov-intro h1{font-size:clamp(1.9rem,7vw,2.5rem)}
+.nov-section{margin:11px 0 28px}
+.nov-poster{padding:3px;border-radius:10px}
+.nov-poster img{border-radius:6px}
+.nov-player{padding:4px;border-radius:12px}
+.nov-player iframe{height:72svh;min-height:480px;max-height:790px;border-radius:8px}
+.nov-actions .nov-button{min-width:unset;flex:1}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 </style>
 </head>
 <body>
 <header class="site-header"><div class="container header-inner header-with-social">
 <a class="brand" href="/" aria-label="EDUKASSi avaleht"><img src="/games/korrutamine-test/assets/edukass-cat-transparent.png" alt=""><span class="brand-name"><b>EDU</b>KASS</span></a>
-<nav class="nav" aria-label="Põhinavigatsioon"><a href="/">Avaleht</a><a href="/materials/">Materjalid</a><a href="/#mangud">Mängud</a></nav>
+<nav class="nav" aria-label="Põhinavigatsioon"><a href="/">Avaleht</a><a href="/materials/#eesti-keel">Eesti keel</a><a href="/materials/">Materjalid</a></nav>
 </div></header>
 <main class="nov-wrap">
-<div class="nov-crumb"><a href="/">Avaleht</a> / <a href="/materials/">Materjalid</a> / Rahvakalender: november</div>
-<section class="nov-hero" aria-labelledby="nov-h1"><div class="nov-hero-content">
-<span class="nov-tag">EDUKASS · RAHVAKALENDER · TASUTA</span>
-<h1 id="nov-h1"><small>RAHVAKALENDER:</small>NOVEMBER</h1>
+<div class="nov-crumb"><a href="/materials/">Materjalid</a> / <a href="/materials/#eesti-keel">Eesti keel</a> / Rahvakalender: november</div>
+<div class="nov-intro">
+<div class="nov-kicker">EDUKASS · EESTI KEEL · TASUTA</div>
+<h1>Rahvakalender: november</h1>
 <p class="nov-sub">Talvekuu ja hingekuu</p>
-<p>Milliseid tähtpäevi novembris tähistatakse? Millised olid vanad kombed ning mida märgati looduses? Uuri novembri rahvakalendrit ja vaata elavat plakatit.</p>
-<div class="nov-buttons"><a class="nov-button" href="#esitlus" onclick="if(window.plausible)plausible('November Presentation Click',{props:{placement:'hero'}})">▶ Vaata elavat plakatit</a><a class="nov-button alt" href="#plakat">Loe plakati sisu</a></div>
-<div class="nov-badges"><span>✓ Tasuta</span><span>✓ Sisselogimiseta</span><span>✓ 11 ekraani</span><span>✓ Kodu ja klass</span></div>
-</div></section>
-<section class="nov-section" id="plakat" aria-labelledby="plakati-pealkiri">
-<h2 id="plakati-pealkiri">Novembrikuu rahvakalendri plakat</h2>
-<p>Vaata novembrikuu rahvakalendrit ühel plakatil: rahvapärased kuunimed, tähtpäevad, looduse muutused ja vanarahva ilmatarkused.</p>
+<div class="nov-quicklinks">
+<a class="nov-button" href="#esitlus" onclick="if(window.plausible)plausible('November Presentation Click',{props:{placement:'top'}})">▶ Vaata esitlust</a>
+<a class="nov-button alt" href="#plakat">Vaata plakatit</a>
+</div>
+</div>
+<section class="nov-section" id="plakat" aria-labelledby="nov-poster-title">
+<h2 id="nov-poster-title">Plakat</h2>
 <figure class="nov-poster">
-<a href="./november-plakat.webp" target="_blank" rel="noopener" aria-label="Ava Rahvakalender: november plakat suurelt" onclick="if(window.plausible)plausible('November Poster Click',{props:{placement:'poster'}})"><img src="./november-plakat.webp" width="1024" height="1536" loading="eager" decoding="async" alt="EDUKASSi kinnitatud plakat Rahvakalender: November. Talvekuu ja hingekuu, hingedepäev, mardipäev, kadripäev, andresepäev, novembrikuu loodus ja ilmatarkus."></a>
-<figcaption>Klõpsa plakatil, et avada see suurelt.</figcaption>
-</figure>
-<div class="nov-poster-actions"><a href="./november-plakat.webp" target="_blank" rel="noopener">⤢ Ava plakat suurelt</a><a href="./november-plakat.webp" download="EDUKASS-Rahvakalender-November.webp" onclick="if(window.plausible)plausible('November Poster Download')">↓ Salvesta plakat</a></div>
-<h3 class="nov-topic-subtitle">Plakati sisu</h3>
-<p>Rahvakalender on pärimuslik viis aasta kulgu jälgida. Tähtpäevadega seostati töid, kombeid ning ilma- ja loodusmärke. Siit leiad plakati teemade lühikese ülevaate. Elavas esitluses avaneb sama teave samm-sammult.</p>
-<div class="nov-topics">
-<article class="nov-panel"><h3>Novembri rahvapärased nimed</h3><ul><li>talvekuu</li><li>hingekuu</li><li>mardikuu</li><li>marukuu</li></ul></article>
-<article class="nov-panel"><h3>Novembri tähtpäevad</h3><p><span class="nov-date">2. november</span> — Hingedepäev</p><p><span class="nov-date">10. november</span> — Mardipäev</p><p><span class="nov-date">25. november</span> — Kadripäev</p><p><span class="nov-date">30. november</span> — Andresepäev</p></article>
-<article class="nov-panel"><h3>Novembris: tööd ja loodus</h3><ul><li>Enamik lehtpuid on raagus.</li><li>Päevad lühenevad ja ööd pikenevad.</li><li>Sageli sajab vihma või lörtsi, vahel ka lund.</li><li>Paljud rändlinnud on lõuna poole lennanud.</li><li>Vanasti tehti pärast sügistöid rohkem tubaseid töid.</li></ul></article>
-<article class="nov-panel"><h3>Ilmatarkus pärimuses</h3><p>„Mart matab, Kadri katab” – nii kirjeldati talve järkjärgulist saabumist.</p><p>Kui mardipäeval oli lumi maas, usuti, et kevadel sulab lumi hilja.</p><h3 style="margin-top:18px">Miks talvekuu?</h3><p>Nimi talvekuu viitab sügise üleminekule talveks. Vanarahva jaoks oli see talviste tööde alguse aeg.</p></article>
+<a href="./november-plakat.webp" target="_blank" rel="noopener" aria-label="Ava novembrikuu plakat suurelt" onclick="if(window.plausible)plausible('November Poster Click',{props:{placement:'poster'}})">
+<img src="./november-plakat.webp" width="1024" height="1536" fetchpriority="high" decoding="async" alt="EDUKASSi rahvakalendri novembrikuu plakat: talvekuu ja hingekuu, tähtpäevad, loodus ning ilmatarkused.">
+</a></figure>
+<div class="nov-actions">
+<a class="nov-button alt" href="./november-plakat.webp" target="_blank" rel="noopener">⤢ Vaata suurelt</a>
+<a class="nov-button alt" href="./november-plakat.webp" download="EDUKASS-Rahvakalender-November.webp" onclick="if(window.plausible)plausible('November Poster Download')">↓ Salvesta plakat</a>
 </div>
 </section>
-<section class="nov-section" id="esitlus" aria-labelledby="esitluse-pealkiri">
-<h2 id="esitluse-pealkiri">Elav plakat — avasta samm-sammult</h2>
-<p>Esitlus koosneb 11 ekraanist. Alguses on lühike animeeritud sissejuhatus. Edasi ilmuvad tekstid ja pildid sammhaaval, et saaksid koos lapsega vaadata, lugeda ning arutada. Ekraanidel liikumiseks kasuta nuppe <strong>Edasi</strong> ja <strong>Tagasi</strong>. Esitlust saab vaadata ka täisekraanil eraldi lehel.</p>
-<div class="nov-player">
-<iframe title="EDUKASS: Rahvakalender November — interaktiivne esitlus" src="./esitlus/" loading="lazy" allow="fullscreen" allowfullscreen></iframe>
-<div class="nov-player-link"><p>Kui väikesel ekraanil on mugavam, ava esitlus eraldi.</p><a href="./esitlus/" target="_blank" rel="noopener" onclick="if(window.plausible)plausible('November Presentation Click',{props:{placement:'separate'}})">⛶ Ava esitlus suurelt →</a></div>
-</div>
+<section class="nov-section" id="esitlus" aria-labelledby="nov-present-title">
+<h2 id="nov-present-title">Elav esitlus · 11 ekraani</h2>
+<p class="nov-hint">Vaata kodus või klassis. Liigu ekraanide vahel nuppudega „Edasi” ja „Tagasi”.</p>
+<div class="nov-player"><iframe title="EDUKASS: Rahvakalender november — 11 ekraaniga esitlus" src="./esitlus/" loading="lazy" allow="fullscreen" allowfullscreen></iframe></div>
+<div class="nov-actions"><a class="nov-button" href="./esitlus/" target="_blank" rel="noopener" onclick="if(window.plausible)plausible('November Presentation Click',{props:{placement:'fullscreen'}})">⛶ Ava esitlus suurelt</a></div>
 </section>
-<section class="nov-section"><div class="nov-panel"><h3>Kellele see materjal sobib?</h3><p>Õpetaja saab esitlust kasutada klassis ühisel vaatamisel. Kodus saab laps teemat uurida koos vanema või iseseisvalt. Materjal on tasuta ega vaja kontot.</p><a class="nov-button alt" href="/materials/">← Vaata teisi õppematerjale</a></div></section>
+<a class="nov-back" href="/materials/#eesti-keel">← Eesti keele materjalid</a>
 </main>
-<footer class="nov-footer"><div class="nov-wrap">© 2026 EDUKASS · <a href="/">edukass.ee</a> · <a href="mailto:va.educat@gmail.com">va.educat@gmail.com</a> · <a href="/privaatsus/">Privaatsus</a></div></footer>
-</body></html>
+<footer class="nov-footer"><div class="nov-wrap">© 2026 EDUKASS · <a href="/">edukass.ee</a> · <a href="/privaatsus/">Privaatsus</a></div></footer>
+</body>
+</html>
