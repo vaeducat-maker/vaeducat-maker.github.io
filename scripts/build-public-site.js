@@ -10,6 +10,8 @@ const MAX_STATIC_ASSET_BYTES = 25 * 1024 * 1024;
 const MAX_FREE_PLAN_FILES = 20_000;
 
 const publicFiles = [
+  'rahvakalender/november/index.html',
+  'rahvakalender/november/esitlus/index.html',
   'apple-touch-icon.png',
   'favicon-192.png',
   'favicon-32.png',
