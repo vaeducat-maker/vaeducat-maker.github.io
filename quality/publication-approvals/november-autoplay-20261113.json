@@ -7,7 +7,7 @@
   "publicEntry": "rahvakalender/november/index.html",
   "sourceAudit": "scripts/november-publication-browser-audit.js",
   "allowedChangedSharedFiles": {
-    "index.html": "2dda39530b873c50b2391f2ab0583fd014bf529b"
+    "index.html": "76d6d79d8dc5e0351d750d891babf0c0a7551573"
   },
   "protectedUnchangedFiles": [
     "rahvakalender/november/esitlus/index.html",
