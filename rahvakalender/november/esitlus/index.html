@@ -261,12 +261,18 @@ body{margin:0;font-family:system-ui,-apple-system,'Segoe UI',Arial,sans-serif;ba
   .opening-film { display: none!important; }
 }
 
+/* Approved November MP4 replaces the old CSS prologue without affecting 11 lesson screens. */
+#openingFilm{background:#e9f5fa}
+#openingFilm video{position:absolute;inset:0;z-index:4;display:block;width:100%;height:100%;object-fit:contain;pointer-events:none}
+#openingFilm .opening-picture,#openingFilm .opening-fog,#openingFilm .opening-snow,#openingFilm .opening-words,#openingFilm .opening-brand{display:none!important}
+#openingFilm .opening-skip{z-index:5}
 </style></head>
 <body><div class="app"><main id="stage" class="stage" tabindex="0" aria-label="Rahvakalender november">
 <div class="topline"></div><div class="eyebrow">RAHVAKALENDER · NOVEMBER</div>
 <div class="imageArea"><div id="image" class="image"></div></div><img id="rowan" class="floatingRowan" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="">
 <div id="story" class="story"></div>
 <div id="openingFilm" class="opening-film" aria-label="November — sissejuhatav animatsioon">
+  <video id="openingVideo" muted autoplay playsinline preload="auto" poster="/rahvakalender/november/november-plakat.webp" aria-label="Rahvakalender: november — uuendatud sissejuhatav videoklipp"><source src="/rahvakalender/november/november-teaser.mp4" type="video/mp4"></video>
   <div id="openingWarm" class="opening-picture warm"></div>
   <div id="openingFrost" class="opening-picture frost"></div>
   <div class="opening-fog"></div>
@@ -287,6 +293,7 @@ const state={index:0,seen:chapters.map(()=>0)};
 let lastSceneKey=null;
 const el=id=>document.getElementById(id);
 const openingFilm=el('openingFilm');
+const openingVideo=el('openingVideo');
 let openingTimer=null;
 let filmPlaying=false;
 // Analytics only: no changes to the presentation or animation behavior.
@@ -316,7 +323,9 @@ for(let i=0;i<28;i++){
 }
 function stopOpening(){
   clearTimeout(openingTimer);
+  if(!filmPlaying)return;
   filmPlaying=false;
+  openingVideo.pause();
   openingFilm.classList.remove('active');
   render();
 }
@@ -328,11 +337,15 @@ function startOpening(){
     return;
   }
   filmPlaying=true;
-  openingFilm.classList.remove('active');
-  void openingFilm.offsetWidth;
   openingFilm.classList.add('active');
-  openingTimer=setTimeout(stopOpening,10000);
+  try { openingVideo.currentTime=0; } catch(e) {}
+  const playback=openingVideo.play();
+  if(playback&&typeof playback.catch==='function')playback.catch(stopOpening);
+  // Fallback only if playback stalls; the clip normally ends on its own.
+  openingTimer=setTimeout(stopOpening,45000);
 }
+openingVideo.addEventListener('ended',stopOpening);
+openingVideo.addEventListener('error',stopOpening);
 el('openingSkip').onclick=e=>{e.stopPropagation();stopOpening();};
 function render(){
  const chapter=chapters[state.index], n=state.seen[state.index];
