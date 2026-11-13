@@ -62,6 +62,7 @@ body{margin:0;background:#f5f9fb;color:var(--novtext)}
 .nov-actions .nov-button{min-width:unset;flex:1}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+.nov-player iframe{background:#ecf4f6 url("./november-plakat.webp") center 24%/cover no-repeat}
 </style>
 </head>
 <body>
@@ -80,6 +81,12 @@ body{margin:0;background:#f5f9fb;color:var(--novtext)}
 <a class="nov-button alt" href="#plakat">Vaata plakatit</a>
 </div>
 </div>
+<section class="nov-section" id="esitlus" aria-labelledby="nov-present-title">
+<h2 id="nov-present-title">Plakat ärkab ellu! · 11 elavat õppeekraani</h2>
+<p class="nov-hint">Vaata, kuidas novembrikuu plakat ellu ärkab. Multikas algab siin automaatselt; edasi saad esitlust ise juhtida.</p>
+<div class="nov-player"><iframe id="nov-live-frame" title="EDUKASS: Rahvakalender november — 11 ekraaniga esitlus" src="about:blank" data-src="./esitlus/" loading="eager" allow="fullscreen" allowfullscreen></iframe></div>
+<div class="nov-actions"><a class="nov-button" href="./esitlus/" target="_blank" rel="noopener" onclick="if(window.plausible)plausible('November Presentation Click',{props:{placement:'fullscreen'}})">⛶ Ava esitlus suurelt</a></div>
+</section>
 <section class="nov-section" id="plakat" aria-labelledby="nov-poster-title">
 <h2 id="nov-poster-title">Plakat</h2>
 <figure class="nov-poster">
@@ -91,14 +98,22 @@ body{margin:0;background:#f5f9fb;color:var(--novtext)}
 <a class="nov-button alt" href="./november-plakat.webp" download="EDUKASS-Rahvakalender-November.webp" onclick="if(window.plausible)plausible('November Poster Download')">↓ Salvesta plakat</a>
 </div>
 </section>
-<section class="nov-section" id="esitlus" aria-labelledby="nov-present-title">
-<h2 id="nov-present-title">Elav esitlus · 11 ekraani</h2>
-<p class="nov-hint">Vaata kodus või klassis. Liigu ekraanide vahel nuppudega „Edasi” ja „Tagasi”.</p>
-<div class="nov-player"><iframe title="EDUKASS: Rahvakalender november — 11 ekraaniga esitlus" src="./esitlus/" loading="lazy" allow="fullscreen" allowfullscreen></iframe></div>
-<div class="nov-actions"><a class="nov-button" href="./esitlus/" target="_blank" rel="noopener" onclick="if(window.plausible)plausible('November Presentation Click',{props:{placement:'fullscreen'}})">⛶ Ava esitlus suurelt</a></div>
-</section>
 <a class="nov-back" href="/materials/#eesti-keel">← Eesti keele materjalid</a>
 </main>
 <footer class="nov-footer"><div class="nov-wrap">© 2026 EDUKASS · <a href="/">edukass.ee</a> · <a href="/privaatsus/">Privaatsus</a></div></footer>
+<script>
+/* Start the approved opening cartoon only when the presentation actually enters the viewport. */
+(function(){
+  const frame=document.getElementById("nov-live-frame");
+  if(!frame)return;
+  let started=false;
+  const begin=()=>{if(started)return;started=true;frame.src=frame.dataset.src;};
+  if(!("IntersectionObserver" in window)){begin();return;}
+  const observer=new IntersectionObserver((entries)=>{
+    for(const entry of entries){if(entry.isIntersecting && entry.intersectionRatio>=0.20){begin();observer.disconnect();break;}}
+  },{threshold:[0,0.20,0.5]});
+  observer.observe(frame);
+})();
+</script>
 </body>
 </html>
