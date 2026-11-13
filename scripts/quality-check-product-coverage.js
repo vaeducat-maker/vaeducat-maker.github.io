@@ -13,6 +13,30 @@ const candidateRoots=new Set(['games','materials','proov']);
 const crypto=require('node:crypto');
 const PUBLIC_ENTRY_APPROVAL='quality/publication-approvals/stolbiki-20261031.json';
 function isAuthorizedSharedPublication(file){
+  // NOVEMBER_AUTOPLAY_MAGNET_BROWSER_AUDIT — only the newly approved
+  // homepage bytes are allowed; all other shared-file revisions remain blocked.
+  if(file==='index.html'){
+    const recordPath=path.join(ROOT,'quality/publication-approvals/november-autoplay-20261113.json');
+    if(fs.existsSync(recordPath)){
+      let record;
+      try{record=JSON.parse(fs.readFileSync(recordPath,'utf8'))}catch{record=null}
+      const auditPath='scripts/november-publication-browser-audit.js';
+      const exact=record?.allowedChangedSharedFiles;
+      if(record?.schemaVersion===1&&record?.status==='owner-approved-publication'&&
+         record?.ownerApproval===true&&record?.changeId==='november-autoplay-20261113'&&
+         record?.publicEntry==='rahvakalender/november/index.html'&&
+         record?.sourceAudit===auditPath&&exact&&Object.keys(exact).length===1&&
+         /^[a-f0-9]{40}$/.test(exact[file]||'')&&
+         fs.existsSync(path.join(ROOT,auditPath))&&
+         fs.readFileSync(path.join(ROOT,auditPath),'utf8').includes('NOVEMBER_AUTOPLAY_MAGNET_BROWSER_AUDIT')){
+        const body=fs.readFileSync(path.join(ROOT,file));
+        const sha=crypto.createHash('sha1').update('blob '+body.length)
+          .update(Buffer.from([0])).update(body).digest('hex');
+        if(sha===exact[file])return true;
+      }
+    }
+  }
+
   // The user approved this exact short-link/navigation change. It cannot unlock
   // another shared file or even another revision of home-refresh.js.
   if(file==='home-refresh.js'){
