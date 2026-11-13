@@ -51,6 +51,10 @@ EDUKASS — статический образовательный сайт на 
 - `docs/PEDAGOGICAL_CONSTITUTION_RU.md`;
 - `docs/WORKBOOK_VISUAL_STANDARD.md`;
 - `docs/AI_WORKFLOW.md`.
+- `docs/POSTER_PRODUCTION_STANDARD_RU.md` — утверждённый конвейер плакатов, TEXT LOCKED и MASTER.
+- `docs/LIVE_PRESENTATION_STANDARD_RU.md` — живая презентация только по MASTER-плакату.
+- `docs/POSTER_PRESENTATION_QA_CHECKLIST_RU.md` — шесть проверок, DIFF CHECK и приёмка.
+
 
 ## Проверка проекта
 
