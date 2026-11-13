@@ -69,7 +69,7 @@ const server=http.createServer((req,res)=>{
    const firstCard=await page.locator('.home-new-grid > article').first().evaluate(el=>({tag:el.tagName,classes:el.className,outer:el.outerHTML.slice(0,350)}));
    console.log('NOVEMBER NEW FIRST CARD',JSON.stringify(firstCard));
    assert.equal(await page.locator('.home-new-grid > article').first().getAttribute('data-edukass-rahvakalender-november'),'','November is not newest');
-   assert.equal(await page.locator('.home-new-grid > article').count(),6,'UUS must retain six existing materials');
+   assert.equal(await page.locator('.home-new-grid > article').count(),5,'UUS must retain five most recent materials');
    assert.equal(await page.locator('.home-new-grid [data-kosmos-material]').count(),0,'Old Kosmos cutouts must not override UUS');
    assert.equal(await page.locator('.home-new-grid > article').first().locator('img[src="/rahvakalender/november/november-plakat.webp"]').count(),1,'Homepage poster preview missing');
    assert((await page.locator('.home-new-grid > article').first().innerText()).includes('Rahvakalender: november'),'Newest card title missing');
