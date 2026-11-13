@@ -3,22 +3,22 @@
   "status": "owner-approved-publication",
   "ownerApproval": true,
   "changeId": "november-autoplay-20261113",
-  "ownerDecision": "Посетитель EDUKASS должен увидеть движение без нажатия: в UUS!!! автоматически показывается настоящее вступление презентации с прилетающей птичкой; на странице ноября мультфильм начинается, когда посетитель долистывает до презентации. Утверждённый плакат и 11 учебных экранов остаются.",
+  "ownerDecision": "13.11.2026: владелица EDUKASS поручила исправить медленный анонс: короткое, быстрое и циклическое превью на главной UUS!!! вместо iframe всей презентации. Полная утверждённая презентация и плакат без изменений.",
   "publicEntry": "rahvakalender/november/index.html",
   "sourceAudit": "scripts/november-publication-browser-audit.js",
   "allowedChangedSharedFiles": {
-    "index.html": "e7d8e026824f462e0bb9e32b6d0b0db5abe7da2e"
+    "index.html": "76d6d79d8dc5e0351d750d891babf0c0a7551573"
   },
   "protectedUnchangedFiles": [
     "rahvakalender/november/esitlus/index.html",
     "rahvakalender/november/november-plakat.webp"
   ],
   "acceptance": [
-    "UUS!!! first card runs actual opening cartoon with bird on viewport entry, with a poster fallback",
-    "Preview repeats while visible, stops when off-screen, and full presentation opens on click",
-    "On November page, animation is positioned before the poster and begins when entered viewport",
-    "Full 11-screen interaction, poster download and category links remain available",
-    "Homepage change is approved for exact SHA only; other shared files are not unlocked",
-    "390×844, 844×390 and 1440×900 browser validation"
+    "UUS!!! displays a separate silent 8-second animated teaser with November heading immediately and visible education pages",
+    "Three educational teasers: Mis on rahvakalender?, Novembri rahvapärased nimed, Mardipäev/Kadripäev",
+    "Teaser shows a bird, loops while visible and links to full November presentation page",
+    "Presentation on November detail page and the approved poster remain unchanged",
+    "Exact homepage Git blob SHA is scoped; unrelated assets remain blocked",
+    "Real-browser checks at 390x844, 844x390, 1440x900"
   ]
 }
