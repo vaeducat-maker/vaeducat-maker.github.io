@@ -111,7 +111,7 @@
         <article class="home-new-card home-new-november" data-edukass-rahvakalender-november>
           <a class="home-new-card-visual nov-magnet" href="/rahvakalender/november/" aria-label="Vaata novembrikuu elavat esitlust ja plakatit">
             <img class="nov-magnet-poster" src="/rahvakalender/november/november-plakat.webp" width="1024" height="1536" loading="lazy" decoding="async" alt="Rahvakalender: november — värviline EDUKASSi plakat">
-            <iframe id="nov-magnet-frame" title="Rahvakalender: november — automaatselt käivituv animatsiooni eelvaade" src="about:blank" data-src="/rahvakalender/november/esitlus/" tabindex="-1" aria-hidden="true"></iframe>
+            <iframe id="nov-magnet-frame" title="Rahvakalender: november — automaatselt käivituv animatsiooni eelvaade" data-src="/rahvakalender/november/esitlus/" tabindex="-1" aria-hidden="true"></iframe>
             <span class="nov-magnet-badge">✦ Plakat ärkab ellu!</span>
             <span class="nov-magnet-call">Vaata kogu esitlust ↗</span>
           </a>
@@ -337,7 +337,7 @@
  const stop=()=>{
    if(!live)return;
    live=false;window.clearInterval(loop);
-   magnet.classList.remove("is-live");frame.src="about:blank";
+   magnet.classList.remove("is-live");frame.removeAttribute("src");
  };
  frame.addEventListener("load",()=>{if(live)magnet.classList.add("is-live");});
  if(!("IntersectionObserver" in window)){start();return;}
