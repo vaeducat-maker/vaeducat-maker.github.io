@@ -13,7 +13,6 @@ const publicFiles = [
   'rahvakalender/november/index.html',
   'rahvakalender/november/november-plakat.webp',
   'rahvakalender/november/esitlus/index.html',
-  'rahvakalender/november/teaser/index.html',
   'apple-touch-icon.png',
   'favicon-192.png',
   'favicon-32.png',
