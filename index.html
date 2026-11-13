@@ -319,6 +319,29 @@
 <script id="edukass-kirjalik-arvutamine-poster">
   (function(){var v=document.querySelector('.top-math-player video');if(!v)return;if(window.matchMedia&&window.matchMedia('(max-width:640px)').matches){v.poster='/kirjalik-arvutamine-esitlus/media/kirjalik-arvutamine-promo-mobiil-39s.jpg';}})();
 </script>
-<!-- November preview is now a separate lightweight looping teaser, not the full presentation. -->
+<script id="edukass-november-teaser-visibility">
+/* Keep the tiny teaser alive only while its homepage card is onscreen. */
+(function(){
+ const frame=document.getElementById('nov-magnet-frame');
+ if(!frame)return;
+ const card=frame.closest('.nov-magnet');
+ let visible=false;
+ const signal=()=>{
+   if(!frame.contentWindow)return;
+   frame.contentWindow.postMessage({edukassNovemberTeaser:visible&&!document.hidden?'play':'pause'},location.origin);
+ };
+ if('IntersectionObserver' in window){
+   const observer=new IntersectionObserver(entries=>{
+     for(const item of entries){
+       visible=item.isIntersecting&&item.intersectionRatio>=0.12;
+       signal();
+     }
+   },{threshold:[0,0.12,0.5]});
+   observer.observe(card);
+ } else visible=true;
+ frame.addEventListener('load',signal);
+ document.addEventListener('visibilitychange',signal);
+})();
+</script>
 </body>
 </html>
