@@ -9,7 +9,7 @@ const { chromium } = require('playwright');
 
 const root = path.resolve(__dirname, '..');
 const evidence = path.join(root, 'artifacts/edukass-quality');
-const types = {'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'text/javascript; charset=utf-8','.webp':'image/webp','.png':'image/png','.jpg':'image/jpeg','.svg':'image/svg+xml'};
+const types = {'.mp4':'video/mp4','.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'text/javascript; charset=utf-8','.webp':'image/webp','.png':'image/png','.jpg':'image/jpeg','.svg':'image/svg+xml'};
 const server=http.createServer((req,res)=>{
  let pathname;
  try{pathname=decodeURIComponent(new URL(req.url,'http://localhost').pathname)}catch{res.writeHead(400).end();return}
@@ -73,9 +73,11 @@ const server=http.createServer((req,res)=>{
    assert.equal(await page.locator('.home-new-grid [data-kosmos-material]').count(),0,'Old Kosmos cutouts must not override UUS');
    assert.equal(await page.locator('.home-new-grid > article').first().locator('img[src="/rahvakalender/november/november-plakat.webp"]').count(),1,'Homepage poster preview missing');
    assert((await page.locator('.home-new-grid > article').first().innerText()).includes('Rahvakalender: november'),'Newest card title missing');
-   assert.equal(await page.locator('#nov-magnet-frame[data-src="/rahvakalender/november/esitlus/"]').count(),1,'Original cartoon preview iframe missing');
+   assert.equal(await page.locator('#nov-magnet-video source[src="/rahvakalender/november/november-teaser.mp4"]').count(),1,'Approved MP4 source missing');
+   const videoFlags=await page.locator('#nov-magnet-video').evaluate(v=>({auto:v.autoplay,muted:v.muted,loop:v.loop,inline:v.playsInline,controls:v.controls}));
+   assert(videoFlags.auto&&videoFlags.muted&&videoFlags.loop&&videoFlags.inline&&!videoFlags.controls,'Autoplay / muted / inline / loop flags incorrect: '+JSON.stringify(videoFlags));
    await page.locator('.nov-magnet').scrollIntoViewIfNeeded();
-   await page.waitForFunction(()=>document.getElementById('nov-magnet-frame')?.getAttribute('src')?.includes('?preview='),null,{timeout:15000});
+   await page.waitForFunction(()=>document.querySelector('.nov-magnet')?.classList.contains('is-live'),null,{timeout:15000});
    const teaser=await page.locator('.nov-magnet').evaluate(el=>({height:el.getBoundingClientRect().height,href:el.getAttribute('href'),badge:el.querySelector('.nov-magnet-badge')?.textContent}));
    assert(teaser.height>=290,'Novembri animatsioon on liiga väike');
    assert.equal(teaser.href,'/rahvakalender/november/','Full lesson link missing from teaser');
@@ -87,7 +89,7 @@ const server=http.createServer((req,res)=>{
    assert.equal(await page.locator('#kaelised-oskused a[href="loika-kosmoserada/"]').count()>=1,true,'Legacy cutouts must remain in their category');
    await context.close();
   }
-  console.log('PASS NOVEMBER_POSTER_PRESENTATION_BROWSER_AUDIT + NOVEMBER_AUTOPLAY_MAGNET_BROWSER_AUDIT: original animation starts on scroll, UUS automatic preview, poster and Eesti keel preserved, 390/844/1440 px');
+  console.log('PASS NOVEMBER_POSTER_PRESENTATION_BROWSER_AUDIT + NOVEMBER_AUTOPLAY_MAGNET_BROWSER_AUDIT: original full lesson intact, approved muted MP4 autoplay loops in UUS, poster and Eesti keel preserved, 390/844/1440 px');
  }finally{
   await browser.close();
   await new Promise(resolve=>server.close(resolve));

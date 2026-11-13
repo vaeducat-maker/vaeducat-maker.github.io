@@ -3,22 +3,22 @@
   "status": "owner-approved-publication",
   "ownerApproval": true,
   "changeId": "november-autoplay-20261113",
-  "ownerDecision": "Посетитель EDUKASS должен увидеть движение без нажатия: в UUS!!! автоматически показывается настоящее вступление презентации с прилетающей птичкой; на странице ноября мультфильм начинается, когда посетитель долистывает до презентации. Утверждённый плакат и 11 учебных экранов остаются.",
+  "ownerDecision": "13.11.2026: по прямому утверждению владелицы EDUKASS заменить превью UUS!!! готовым 27-секундным оригинальным MP4 (с птицей в начале, несколькими фактами и утверждённым плакатом в конце), автозапуск без звука при появлении карточки и повтор по кругу. Полная презентация с 11 экранами и плакат остаются без изменений.",
   "publicEntry": "rahvakalender/november/index.html",
   "sourceAudit": "scripts/november-publication-browser-audit.js",
   "allowedChangedSharedFiles": {
-    "index.html": "e7d8e026824f462e0bb9e32b6d0b0db5abe7da2e"
+    "index.html": "552fd9b39d0d8145212d1b02c0c609715f1f4b1f"
   },
   "protectedUnchangedFiles": [
     "rahvakalender/november/esitlus/index.html",
     "rahvakalender/november/november-plakat.webp"
   ],
   "acceptance": [
-    "UUS!!! first card runs actual opening cartoon with bird on viewport entry, with a poster fallback",
-    "Preview repeats while visible, stops when off-screen, and full presentation opens on click",
-    "On November page, animation is positioned before the poster and begins when entered viewport",
-    "Full 11-screen interaction, poster download and category links remain available",
-    "Homepage change is approved for exact SHA only; other shared files are not unlocked",
-    "390×844, 844×390 and 1440×900 browser validation"
+    "Homepage UUS first card autoplays uploaded approved 27.3-second November MP4 when scrolled into view, without requiring click",
+    "Video uses muted, playsinline and loop, pauses when hidden or out of viewport and resumes when visible",
+    "Video has full frame object-fit contain, with the approved poster as background fallback",
+    "Clicking teaser opens full unchanged November page with original 11-screen presentation and downloadable poster",
+    "Homepage shared-file approval is bound to exact blob SHA, no wildcard",
+    "Independent mobile 390x844, landscape 844x390 and desktop 1440x900 November browser audit"
   ]
 }

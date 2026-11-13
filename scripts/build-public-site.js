@@ -12,6 +12,7 @@ const MAX_FREE_PLAN_FILES = 20_000;
 const publicFiles = [
   'rahvakalender/november/index.html',
   'rahvakalender/november/november-plakat.webp',
+  'rahvakalender/november/november-teaser.mp4',
   'rahvakalender/november/esitlus/index.html',
   'apple-touch-icon.png',
   'favicon-192.png',
