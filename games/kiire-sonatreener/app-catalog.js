@@ -41,7 +41,8 @@ window.EDUKASS_CATALOG=[
     {kind:"custom",handler:"litAliceDiaryLesson",title:"Урок 6 — Alice imedemaal",meta:"Читательский дневник · эстонский A1 + перевод"},
     {kind:"custom",handler:"litCarrollLesson",title:"Урок 7 — Lewis Carroll – elulugu",meta:"Биография · 9 предложений · перевод по строкам"},
     {kind:"custom",handler:"litAliceQuestionsLesson",title:"Урок 8 — Alice ja valge jänes · Ümberjutustus",meta:"17 предложений учительницы для пересказа · задания 3–7"},
-    {kind:"custom",handler:"litTunnikontrollAliceLewis",title:"Урок 9 — Tunnikontroll: Alice ja Lewis Carroll · 04.11.26",meta:"14 предложений · жирные ответы · перевод по кнопке"}
+    {kind:"custom",handler:"litTunnikontrollAliceLewis",title:"Урок 9 — Tunnikontroll: Alice ja Lewis Carroll · 04.11.26",meta:"14 предложений · жирные ответы · перевод по кнопке"},
+    {kind:"custom",handler:"litAliceChapter2",title:"Урок 10 — Alice imedemaal · 2. peatükk",meta:"10 вопросов и коротких ответов · построчный перевод"}
   ]},
   {id:"muusika",label:"Muusika",icon:"🎵",lessons:[
     {kind:"custom",handler:"musicLesson1",title:"Урок 1 — Kontrolltöö: tämber, dünaamika · 03.10.26",meta:"19 эстонских слов · 13 музыкальных терминов"}
