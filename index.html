@@ -47,6 +47,19 @@
 @media(max-width:900px){.top-math-layout{grid-template-columns:1fr;gap:18px}.top-math-player{order:0}.top-math-copy{order:1}.top-math-promo{padding:18px 0 35px}}
 @media(max-width:640px){.top-math-player{width:100%;max-width:440px;margin:0 auto;padding:8px;border-radius:18px}.top-math-player video{aspect-ratio:4/5;border-radius:12px}.top-math-promo h1{font-size:clamp(2.2rem,9vw,3.45rem);margin:12px 0}.top-math-facts{gap:6px}.top-math-facts span{font-size:.76rem;padding:6px 9px}.top-math-actions{gap:12px;margin-top:18px}.top-math-actions .home-button{width:auto;min-width:152px}.home-new-card>.top-math-thumbnail,.home-feature-card>.top-math-thumbnail{min-height:210px}}
 </style>
+<style id="november-live-teaser">
+/* UUS!!! November: real approved presentation intro, not a replacement animation. */
+.home-new-november .nov-magnet{display:block;position:relative;min-height:350px;isolation:isolate;overflow:hidden;background:#e9f5fa;text-decoration:none}
+.home-new-november .nov-magnet-poster{position:absolute;inset:0;width:100%;height:100%;max-height:none;object-fit:cover;object-position:center 25%;filter:none}
+.home-new-november .nov-magnet iframe{position:absolute;inset:0;z-index:1;width:100%;height:100%;border:0;display:block;pointer-events:none;opacity:0;transition:opacity .35s ease;background:#edf6fa}
+.home-new-november .nov-magnet.is-live iframe{opacity:1}
+.home-new-november .nov-magnet-badge,.home-new-november .nov-magnet-call{position:absolute;z-index:2;left:15px;right:15px;text-align:center;pointer-events:none;max-width:max-content;margin:auto;border-radius:999px;box-shadow:0 5px 18px #132f5270;font-weight:850}
+.home-new-november .nov-magnet-badge{top:15px;padding:9px 15px;background:#fffef0ed;color:#173b66;font-size:clamp(.86rem,1.7vw,1.08rem)}
+.home-new-november .nov-magnet-call{bottom:16px;padding:9px 17px;background:#12326deb;color:#fff;font-size:.88rem}
+@media(max-width:980px){.home-new-november .nov-magnet{min-height:325px}}
+@media(max-width:520px){.home-new-november .nov-magnet{min-height:300px}}
+@media(prefers-reduced-motion:reduce){.home-new-november .nov-magnet iframe{transition:none}}
+</style>
 </head>
 <body class="home-page">
 <header class="site-header">
@@ -96,14 +109,17 @@
 
       <div class="home-new-grid">
         <article class="home-new-card home-new-november" data-edukass-rahvakalender-november>
-          <a class="home-new-card-visual" href="/rahvakalender/november/" aria-label="Vaata novembrikuu rahvakalendri plakatit ja elavat esitlust" style="text-decoration:none;background:linear-gradient(145deg,#eaf6ff,#f5f9ef)">
-            <img src="/rahvakalender/november/november-plakat.webp" width="1024" height="1536" loading="lazy" decoding="async" alt="Rahvakalender: november — värviline EDUKASSi plakat">
+          <a class="home-new-card-visual nov-magnet" href="/rahvakalender/november/" aria-label="Vaata novembrikuu elavat esitlust ja plakatit">
+            <img class="nov-magnet-poster" src="/rahvakalender/november/november-plakat.webp" width="1024" height="1536" loading="lazy" decoding="async" alt="Rahvakalender: november — värviline EDUKASSi plakat">
+            <iframe id="nov-magnet-frame" title="Rahvakalender: november — automaatselt käivituv animatsiooni eelvaade" data-src="/rahvakalender/november/esitlus/" tabindex="-1" aria-hidden="true"></iframe>
+            <span class="nov-magnet-badge">✦ Plakat ärkab ellu!</span>
+            <span class="nov-magnet-call">Vaata kogu esitlust ↗</span>
           </a>
           <div class="home-new-card-copy">
             <div class="home-card-meta">EESTI KEEL · PLAKAT + ESITLUS · TASUTA</div>
             <h3>Rahvakalender: november</h3>
-            <p>Novembri tähtpäevad ja kombed ühel plakatil ning 11 ekraaniga elavas esitluses.</p>
-            <a class="home-text-link" href="/rahvakalender/november/">Vaata materjali <span aria-hidden="true">→</span></a>
+            <p>Vaata, kuidas novembrikuu plakat ellu ärkab! Põnev avamultikas ja 11 interaktiivset õppeekraani.</p>
+            <a class="home-text-link" href="/rahvakalender/november/">Vaata elavat esitlust <span aria-hidden="true">→</span></a>
           </div>
         </article>
         <article class="home-new-card home-new-stolbiki">
@@ -302,6 +318,38 @@
   <script src="home-refresh.js?v=118"></script>
 <script id="edukass-kirjalik-arvutamine-poster">
   (function(){var v=document.querySelector('.top-math-player video');if(!v)return;if(window.matchMedia&&window.matchMedia('(max-width:640px)').matches){v.poster='/kirjalik-arvutamine-esitlus/media/kirjalik-arvutamine-promo-mobiil-39s.jpg';}})();
+</script>
+<script>
+/* Start and repeat the original November opening only while its preview is visible. */
+(function(){
+ const frame=document.getElementById("nov-magnet-frame");
+ if(!frame || window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+ const magnet=frame.closest(".nov-magnet");
+ let live=false, loop=null, seq=0, visible=false;
+ const play=()=>{
+   magnet.classList.remove("is-live");
+   frame.src=frame.dataset.src+"?preview="+(++seq);
+ };
+ const start=()=>{
+   if(live || document.hidden)return;
+   live=true;play();loop=window.setInterval(()=>{if(live)play();},18000);
+ };
+ const stop=()=>{
+   if(!live)return;
+   live=false;window.clearInterval(loop);
+   magnet.classList.remove("is-live");frame.removeAttribute("src");
+ };
+ frame.addEventListener("load",()=>{if(live)magnet.classList.add("is-live");});
+ if(!("IntersectionObserver" in window)){start();return;}
+ const observer=new IntersectionObserver(entries=>{
+   for(const entry of entries){
+     visible=entry.isIntersecting && entry.intersectionRatio>=0.30;
+     if(visible)start();else stop();
+   }
+ },{threshold:[0,.30,.60]});
+ observer.observe(magnet);
+ document.addEventListener("visibilitychange",()=>{if(document.hidden)stop();else if(visible)start();});
+})();
 </script>
 </body>
 </html>

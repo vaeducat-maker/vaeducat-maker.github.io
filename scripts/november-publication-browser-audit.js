@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 'use strict';
-// NOVEMBER_POSTER_PRESENTATION_BROWSER_AUDIT — owner-approved real-browser result acceptance.
+// NOVEMBER_POSTER_PRESENTATION_BROWSER_AUDIT and NOVEMBER_AUTOPLAY_MAGNET_BROWSER_AUDIT — real-browser result acceptance.
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -41,7 +41,9 @@ const server=http.createServer((req,res)=>{
    assert.equal(await page.locator('#plakat img[src="./november-plakat.webp"]').count(),1,'Approved poster missing');
    assert.equal(await page.locator('a[download="EDUKASS-Rahvakalender-November.webp"]').count(),1,'Poster save link missing');
    assert.equal(await page.locator('a[href="./esitlus/"]').count()>0,true,'Full-screen presentation link missing');
-   assert.equal(await page.locator('#esitlus iframe[src="./esitlus/"]').count(),1,'11-screen embedded presentation missing');
+   assert.equal(await page.locator('#esitlus iframe[data-src="./esitlus/"]').count(),1,'11-screen embedded presentation missing');
+   assert.equal(await page.locator('#nov-live-frame').count(),1,'Animation-trigger frame is missing');
+   assert(await page.locator('#esitlus').evaluate(el=>el.compareDocumentPosition(document.getElementById('plakat')) & Node.DOCUMENT_POSITION_FOLLOWING),'Presentation should appear before the poster');
    assert.equal(await page.locator('.nov-crumb a[href="/materials/#eesti-keel"]').count(),1,'Wrong category');
    await page.locator('#plakat img').evaluate(img=>img.decode());
    const detail=await page.evaluate(()=>{
@@ -57,8 +59,9 @@ const server=http.createServer((req,res)=>{
    if(width===390)await page.screenshot({path:path.join(evidence,'november-landing-390.png')});
 
    await page.locator('#esitlus').scrollIntoViewIfNeeded();
+   await page.waitForFunction(()=>document.getElementById('nov-live-frame')?.getAttribute('src')==='./esitlus/',null,{timeout:15000});
    const frame=page.frameLocator('#esitlus iframe');
-   await frame.locator('body').waitFor({state:'attached',timeout:15000});
+   await frame.locator('button').first().waitFor({state:'attached',timeout:15000});
    if(width===390)await page.screenshot({path:path.join(evidence,'november-presentation-390.png')});
 
    await page.goto(origin+'/',{waitUntil:'domcontentloaded'});
@@ -70,6 +73,13 @@ const server=http.createServer((req,res)=>{
    assert.equal(await page.locator('.home-new-grid [data-kosmos-material]').count(),0,'Old Kosmos cutouts must not override UUS');
    assert.equal(await page.locator('.home-new-grid > article').first().locator('img[src="/rahvakalender/november/november-plakat.webp"]').count(),1,'Homepage poster preview missing');
    assert((await page.locator('.home-new-grid > article').first().innerText()).includes('Rahvakalender: november'),'Newest card title missing');
+   assert.equal(await page.locator('#nov-magnet-frame[data-src="/rahvakalender/november/esitlus/"]').count(),1,'Original cartoon preview iframe missing');
+   await page.locator('.nov-magnet').scrollIntoViewIfNeeded();
+   await page.waitForFunction(()=>document.getElementById('nov-magnet-frame')?.getAttribute('src')?.includes('?preview='),null,{timeout:15000});
+   const teaser=await page.locator('.nov-magnet').evaluate(el=>({height:el.getBoundingClientRect().height,href:el.getAttribute('href'),badge:el.querySelector('.nov-magnet-badge')?.textContent}));
+   assert(teaser.height>=290,'Novembri animatsioon on liiga väike');
+   assert.equal(teaser.href,'/rahvakalender/november/','Full lesson link missing from teaser');
+   assert(teaser.badge.includes('Plakat ärkab ellu'),'Live poster invitation missing');
    if(width===390){await page.locator('.home-new-grid').scrollIntoViewIfNeeded();await page.screenshot({path:path.join(evidence,'november-home-new-390.png')})}
 
    await page.goto(origin+'/materials/#eesti-keel',{waitUntil:'domcontentloaded'});
@@ -77,7 +87,7 @@ const server=http.createServer((req,res)=>{
    assert.equal(await page.locator('#kaelised-oskused a[href="loika-kosmoserada/"]').count()>=1,true,'Legacy cutouts must remain in their category');
    await context.close();
   }
-  console.log('PASS NOVEMBER_POSTER_PRESENTATION_BROWSER_AUDIT: poster, presentation, Eesti keel, UUS first, cutouts preserved, 390/844/1440 px');
+  console.log('PASS NOVEMBER_POSTER_PRESENTATION_BROWSER_AUDIT + NOVEMBER_AUTOPLAY_MAGNET_BROWSER_AUDIT: original animation starts on scroll, UUS automatic preview, poster and Eesti keel preserved, 390/844/1440 px');
  }finally{
   await browser.close();
   await new Promise(resolve=>server.close(resolve));
