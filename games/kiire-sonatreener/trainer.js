@@ -267,7 +267,15 @@ const DATA={
         {word:"gloves",ru:"перчатки"},
         {word:"jeans",ru:"джинсы"},
         {word:"boots",ru:"ботинки"},
-        {word:"shirt",ru:"рубашка"}
+        {word:"shirt",ru:"рубашка"},
+        {word:"bone",ru:"кость"},
+        {word:"always",ru:"всегда"},
+        {word:"adult",ru:"взрослый"},
+        {word:"look through",ru:"смотреть сквозь"},
+        {word:"rope",ru:"верёвка"},
+        {word:"stone",ru:"камень"},
+        {word:"lots of people",ru:"много людей"},
+        {word:"count",ru:"считать"}
       ]}
     ]}
   ]}
