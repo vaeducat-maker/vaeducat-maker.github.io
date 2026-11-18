@@ -22,6 +22,18 @@
 - Перед общей работой EDUKASS читать `docs/PROJECT_PASSPORT.md`.
 - Перед созданием или изменением workbook читать
   `docs/WORKBOOK_VISUAL_STANDARD.md`.
+- **Перед созданием, аудитом или адаптацией познавательного плаката** читать
+  `docs/POSTER_PRODUCTION_STANDARD_RU.md` и
+  `docs/POSTER_PRESENTATION_QA_CHECKLIST_RU.md`.
+  Нельзя показывать владельцу сырой TEXT MASTER: сначала самостоятельная проверка 1–6,
+  затем VERIFIED TEXT MASTER, и только после решения владельца — TEXT LOCKED.
+- **Перед созданием или изменением живой интерактивной презентации** читать
+  `docs/LIVE_PRESENTATION_STANDARD_RU.md` и
+  `docs/POSTER_PRESENTATION_QA_CHECKLIST_RU.md`.
+  Презентация визуализирует LOCKED MASTER-плакат и не добавляет новых фактов.
+  Утверждённый November 2026 — reference (11 учебных экранов + отдельный пролог),
+  не обязательное количество экранов для будущих тем. Проверять браузер, телефон,
+  управление по нажатию, пропуск вступления и DIFF к плакату.
 - Перед созданием или изменением образовательной игры читать
   `docs/ONLINE_GAME_STANDARD.md`.
 - **Перед любым новым учебным тренажёром** читать `docs/LEARNING_QUALITY_STANDARD.md`;
