@@ -126,6 +126,83 @@ button:disabled{cursor:default;opacity:.7}
 .fail-score strong{color:white;margin-left:7px}
 .fail-explain{font-size:11px!important;color:#c5b1ca!important;margin-bottom:20px!important}
 @media (orientation:landscape) and (max-height:600px) and (min-width:650px){.rush-hud{top:46px;width:40%;min-width:120px}.fail-icon{width:70px;height:70px;margin:3px auto 6px;font-size:42px}.fail-explain{margin-bottom:9px!important}}
+
+
+/* Valgussaar victory ceremony: original CSS/SVG artwork, no external assets. */
+.overlay.is-celebrating{position:fixed;inset:0;overflow-y:auto;overscroll-behavior:contain;isolation:isolate;background:radial-gradient(ellipse 90% 56% at 50% 35%,#2d67b3b8,#18235fd9 54%,#060b27f4 100%);backdrop-filter:blur(8px)}
+.overlay.is-celebrating:before{content:"";pointer-events:none;position:absolute;inset:0;background:radial-gradient(circle at 50% 43%,#a1ffdb32,transparent 53%),repeating-conic-gradient(from 0deg at 50% 42%,#8ce8ff00 0deg 12deg,#82dcff12 14deg 18deg,#8ce8ff00 22deg 30deg);animation:victoryHalo 11s linear infinite;opacity:.8}
+.hero.celebrate-victory,.hero.celebrate-reward{position:relative;z-index:2;color:#f7ffff;margin:auto;max-width:100%;flex:none}
+.hero.celebrate-victory{width:min(450px,100%);justify-content:center;min-height:min(460px,85svh);gap:12px}
+.victory-kicker{font-size:clamp(12px,2.5vw,15px);font-weight:950;letter-spacing:.26em;color:#b2fff1;text-shadow:0 0 25px #9cfff4;animation:victoryRise .5s .08s both}
+.hero .victory-headline{font-size:clamp(47px,11vw,78px);line-height:1;margin:0;letter-spacing:-.08em;font-weight:1000;color:#fffde1;text-shadow:0 0 16px #fff9cbbb,0 0 50px #5cf7d999,0 0 70px #5695f588;animation:victoryPunch .75s .1s both}
+.victory-score{display:flex;flex-direction:column;gap:3px;background:linear-gradient(125deg,#c8ffed32,#0e366ebd,#ffe6a42c);border:1px solid #d3ffdf9a;padding:15px 33px;border-radius:22px;box-shadow:0 8px 40px #26ffc155,inset 0 1px #ffffffbb;animation:victoryRise .6s .3s both}
+.victory-score strong{font-size:clamp(38px,8vw,60px);font-variant-numeric:tabular-nums;line-height:1;color:#ffe8a1;text-shadow:0 0 22px #ffe291a6}
+.victory-score span{font-size:11px;letter-spacing:.16em;font-weight:900;color:#d8fffa}
+.victory-stars{font-size:40px;letter-spacing:.2em;color:#ffe4a3;text-shadow:0 0 20px #fff0b3;animation:victoryRise .65s .5s both}
+.victory-stars span{display:inline-block;transform:translateY(-8px);font-size:56px}
+.victory-halo{position:absolute;z-index:-1;top:50%;left:50%;transform:translate(-50%,-50%);width:min(390px,85vw);aspect-ratio:1;pointer-events:none}
+.victory-halo span{position:absolute;inset:0;border:2px solid #baffff7d;border-radius:50%;box-shadow:0 0 25px #4fffe98e;animation:victoryRing .9s ease-out both}
+.victory-halo span:nth-child(2){animation-delay:.18s}.victory-halo span:nth-child(3){animation-delay:.36s}
+.celebrate-particles{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:1}
+.celebrate-particles .confetti{position:absolute;top:-14%;left:var(--x);height:var(--h);width:var(--w);border-radius:2px;background:var(--col);box-shadow:0 0 9px var(--col);opacity:0;transform:rotate(var(--rot));animation:celebrateFall var(--duration) var(--delay) linear both}
+.celebrate-particles .spark{position:absolute;top:var(--y);left:var(--x);height:var(--size);width:var(--size);border-radius:50%;background:#fffbd0;box-shadow:0 0 12px #9bfff2,0 0 27px #ffe8ab;animation:celebrateSpark var(--duration) var(--delay) ease-in-out infinite alternate}
+.celebrate-particles .flare{position:absolute;top:var(--y);left:var(--x);width:7px;height:7px;border:1.5px solid #fffdd1;border-radius:50%;box-shadow:0 0 17px #97fff2;opacity:0;animation:celebrateFlare 2.1s var(--delay) ease-out infinite}
+.hero.celebrate-reward{width:min(430px,100%);gap:7px;padding:14px 7px 20px;max-height:calc(100svh - 24px);overflow-y:auto;scrollbar-width:none}
+.hero.celebrate-reward::-webkit-scrollbar{display:none}
+.reward-kicker{font-weight:950;letter-spacing:.24em;color:#b2fff0;font-size:10px;animation:rewardAppear .55s .07s both}
+.hero .reward-title{font-size:clamp(25px,6.1vw,37px);letter-spacing:-.035em;line-height:1.1;margin:1px 0;color:#fff4c0;text-shadow:0 0 22px #ffd98c9c,0 0 42px #aaffdb77;animation:rewardAppear .7s .1s both}
+.prize-theatre{height:clamp(165px,30svh,240px);width:min(280px,86vw);margin:0 auto;flex:none;position:relative;display:grid;place-items:center;isolation:isolate}
+.prize-aura{position:absolute;inset:2%;border-radius:50%;background:radial-gradient(circle,#ffffffac 0%,#c3ffe595 19%,#63cce75d 39%,#4b49d921 65%,transparent 70%);animation:prizeGlow 2.7s ease-in-out infinite;filter:blur(6px)}
+.prize-rays{position:absolute;inset:-13%;opacity:.75;background:repeating-conic-gradient(from 5deg,#ffffff00 0deg 12deg,#feffdbb0 14deg 16deg,#ffffff00 18deg 30deg);mask-image:radial-gradient(circle,transparent 6%,black 33%,transparent 65%);animation:prizeRotate 18s linear infinite}
+.prize-ring{position:absolute;border:2px solid #d3ffebbb;border-radius:50%;box-shadow:0 0 19px #7cffefaa,inset 0 0 23px #e6fff58b;animation:prizeGlow 2.5s ease-in-out infinite}
+.prize-ring-one{width:74%;aspect-ratio:1;transform:scaleY(.65);animation:prizeRingBreath 3.1s ease-in-out infinite}
+.prize-ring-two{width:97%;aspect-ratio:1;border-style:dashed;border-color:#e5d49f8c;transform:scaleY(.66);animation:prizeRingBreath 3.1s .5s ease-in-out infinite}
+.prize-crystal{position:absolute;z-index:2;top:3%;height:91%;aspect-ratio:180/218;filter:drop-shadow(0 3px 14px #abffed) drop-shadow(0 0 25px #4fefe4);animation:prizeEntrance .95s .1s cubic-bezier(.18,1.5,.4,1) both,prizeFloat 3.2s 1.2s ease-in-out infinite}
+.prize-crystal svg{width:100%;height:100%;display:block;overflow:visible}
+.prize-floor{position:absolute;bottom:-6px;width:63%;height:20px;background:radial-gradient(ellipse,#7afce9b5,transparent 68%);filter:blur(6px)}
+.prize-star{position:absolute;font-size:21px;color:#fff5b0;text-shadow:0 0 13px #fff3b3;z-index:3;animation:prizeTwinkle 1.8s ease-in-out infinite}
+.prize-star.s1{top:12%;left:6%}.prize-star.s2{top:25%;right:4%;animation-delay:.45s}.prize-star.s3{bottom:17%;left:14%;animation-delay:.8s}.prize-star.s4{bottom:11%;right:11%;animation-delay:1.2s}
+.reward-name{color:#ebfff8;text-shadow:0 0 19px #a7fff1a3;font-weight:1000;letter-spacing:.14em;font-size:clamp(11px,2.7vw,15px);animation:rewardAppear .55s .25s both}
+.crystal-collection{width:min(336px,100%);display:flex;flex-direction:column;gap:8px;padding:9px 12px 10px;border:1px solid #b3f4e86b;border-radius:14px;background:linear-gradient(120deg,#184973bb,#172d59b5);box-shadow:inset 0 1px 1px #ffffff22;animation:rewardAppear .5s .38s both}
+.collection-counter{font-weight:900;color:#d4fff5;letter-spacing:.10em;font-size:11px}
+.collection-counter strong{font-size:15px;color:#ffe3a2;padding-left:6px}
+.crystal-slots{display:flex;justify-content:center;align-items:center;gap:clamp(5px,2vw,10px)}
+.crystal-slots span{font-size:clamp(13px,3.7vw,18px);color:#8f9bbb75;filter:drop-shadow(0 0 1px #647da3)}
+.crystal-slots span.owned{color:#c0fff0;filter:drop-shadow(0 0 9px #aaffdd) drop-shadow(0 0 5px #ffd98c);transform:scale(1.2)}
+.next-world{width:min(336px,100%);border:1px solid #ffdfad72;border-radius:14px;padding:11px 13px;display:flex;align-items:center;justify-content:center;gap:10px;font-size:13px;letter-spacing:.07em;font-weight:1000;color:#fff0cb;background:linear-gradient(110deg,#6f678cbd,#353d76e3);box-shadow:inset 0 1px 1px #ffebd64f;opacity:1!important;cursor:not-allowed!important;animation:rewardAppear .55s .55s both}
+.next-world span{font-size:10px;border:1px solid #fff0bf70;border-radius:7px;padding:4px 6px;background:#101b46c4;letter-spacing:.08em;color:#ffe7ae}
+.reward-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:7px;width:min(336px,100%);animation:rewardAppear .55s .7s both}
+.reward-actions .secondary{margin:0;flex:1 1 128px;min-height:42px;padding:9px 8px;color:#e8ffff;background:#16446caa;border-color:#88ffe26a;font-size:11px;letter-spacing:.04em}
+.reward-actions .secondary:active{transform:translateY(1px);background:#215c83}
+@keyframes victoryHalo{to{transform:rotate(360deg)}}
+@keyframes victoryPunch{0%{opacity:0;transform:scale(.35);filter:blur(9px)}65%{opacity:1;transform:scale(1.15);filter:blur(0)}100%{transform:scale(1)}}
+@keyframes victoryRise{from{opacity:0;transform:translateY(28px) scale(.82)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes victoryRing{0%{opacity:1;transform:scale(.06)}100%{opacity:0;transform:scale(1.45)}}
+@keyframes celebrateFall{0%{opacity:0;transform:translate3d(0,-25px,0) rotate(var(--rot))}7%{opacity:.95}90%{opacity:.9}100%{opacity:0;transform:translate3d(var(--dx),115svh,0) rotate(calc(var(--rot) + 740deg))}}
+@keyframes celebrateSpark{from{opacity:.1;transform:scale(.45)}to{opacity:1;transform:scale(1.65)}}
+@keyframes celebrateFlare{0%{opacity:1;transform:scale(.2)}100%{opacity:0;transform:scale(9)}}
+@keyframes rewardAppear{from{opacity:0;transform:translateY(14px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes prizeGlow{50%{opacity:.62;transform:scale(1.13)}}
+@keyframes prizeRotate{to{transform:rotate(360deg)}}
+@keyframes prizeEntrance{from{opacity:0;transform:translateY(70px) scale(.2) rotate(-75deg)}to{opacity:1;transform:translateY(0) scale(1) rotate(0deg)}}
+@keyframes prizeFloat{50%{transform:translateY(-9px) rotate(4deg)}}
+@keyframes prizeTwinkle{50%{opacity:.27;transform:scale(.6) rotate(25deg)}}
+@keyframes prizeRingBreath{50%{opacity:.5;transform:scaleY(.63) scale(1.1)}}
+@media(max-height:730px){.hero.celebrate-reward{gap:4px;padding:7px 4px}.prize-theatre{height:clamp(128px,26svh,195px)}.crystal-collection{gap:4px;padding:6px 10px}.next-world{padding:8px 12px}.reward-actions .secondary{min-height:36px}.hero .reward-title{font-size:clamp(22px,5.8vw,30px)}}
+@media(orientation:landscape) and (max-height:600px) and (min-width:650px){
+ .hero.celebrate-reward{width:min(570px,100%);max-height:calc(100svh - 12px);gap:3px;padding:4px;display:grid;grid-template-columns:minmax(145px,200px) minmax(250px,1fr);grid-template-rows:auto auto auto auto auto;column-gap:14px;align-items:center}
+ .reward-kicker,.hero .reward-title{grid-column:2;text-align:center}
+ .reward-kicker{grid-row:1;align-self:end}.hero .reward-title{grid-row:2;font-size:23px}
+ .prize-theatre{grid-column:1;grid-row:1 / span 5;align-self:center;height:min(215px,66svh);width:100%}
+ .reward-name{grid-column:2;grid-row:3;font-size:11px}
+ .crystal-collection{grid-column:2;grid-row:4;padding:5px 7px;gap:3px}
+ .next-world{grid-column:2;grid-row:5;padding:6px}
+ .reward-actions{grid-column:2;grid-row:6;gap:5px}
+ .reward-actions .secondary{min-height:32px;font-size:10px}
+ .hero.celebrate-victory{min-height:88svh;gap:5px}
+ .victory-score{padding:7px 25px}.victory-stars{font-size:25px}
+}
+@media(prefers-reduced-motion:reduce){.overlay.is-celebrating:before,.victory-headline,.victory-score,.victory-kicker,.victory-stars,.victory-halo span,.celebrate-particles span,.reward-kicker,.reward-title,.prize-crystal,.prize-rays,.prize-aura,.prize-ring,.prize-star,.reward-name,.crystal-collection,.next-world,.reward-actions{animation:none!important}}
 </style>
 </head>
 <body>
@@ -166,15 +243,60 @@ button:disabled{cursor:default;opacity:.7}
   <p>Kristall kihutab ise edasi! Ümarda enne takistust: õige vastus avab hüppe, vale vastus või hilinemine tähendab kokkupõrget. Siis alustad otsast.</p>
   <button class="primary" id="begin">ALUSTA MÄNGU <span aria-hidden="true">›</span></button>
  </div>
- <div class="hero" id="finishHero" hidden>
-  <span class="finish-kicker">MAAILM 01 · VÕIDETUD</span>
-  <div class="finish-gem" aria-hidden="true"><svg viewBox="0 0 160 160"><defs><radialGradient id="prizeG"><stop stop-color="#faffdf"/><stop offset=".42" stop-color="#88f8e1"/><stop offset="1" stop-color="#4e65e3"/></radialGradient></defs><circle cx="80" cy="80" r="72" fill="none" stroke="#8cf9e6" stroke-opacity=".48" stroke-width="2" stroke-dasharray="3 13"/><circle cx="80" cy="80" r="53" fill="#70e9ec" opacity=".15"/><path d="M80 12 124 58 109 112 80 150 51 112 36 58Z" fill="url(#prizeG)" stroke="#e1fff4" stroke-width="3"/><path d="M80 12v138M36 58l44 18 44-18M51 112l29-36 29 36" fill="none" stroke="#194ca0" stroke-opacity=".5" stroke-width="3"/></svg></div>
-  <h1>Võrratu!</h1>
-  <div class="stars-score">✦ ✦ ✦ &nbsp; 8 / 8</div>
-  <p>Sa ületasid kõik kaheksa takistust ühegi veata!</p>
-  <div class="finish-note">Sinu auhind: <strong>Valgussaare kristall</strong></div>
-  <button class="primary" id="again">MÄNGI UUESTI ↻</button>
-  <button class="secondary" id="viewWorld">VAATA MAAILMA</button>
+ <div class="celebrate-particles" id="celebrateParticles" aria-hidden="true"></div>
+ <div class="hero celebrate-victory" id="victoryHero" hidden>
+  <div class="victory-halo" aria-hidden="true"><span></span><span></span><span></span></div>
+  <span class="victory-kicker">MAAILM 01 VÕIDETUD</span>
+  <h1 class="victory-headline">VÕRRATU!</h1>
+  <div class="victory-score"><strong>8 / 8</strong><span>TAKISTUST LÄBITUD</span></div>
+  <div class="victory-stars" aria-hidden="true">✦ <span>✦</span> ✦</div>
+ </div>
+ <div class="hero celebrate-reward" id="finishHero" hidden>
+  <span class="reward-kicker">MAAILM 01 · VALGUSSAAR</span>
+  <h1 class="reward-title">KRISTALL SAADUD!</h1>
+  <div class="prize-theatre" aria-label="Valgussaare kristall">
+   <div class="prize-rays" aria-hidden="true"></div>
+   <div class="prize-aura" aria-hidden="true"></div>
+   <div class="prize-ring prize-ring-one" aria-hidden="true"></div>
+   <div class="prize-ring prize-ring-two" aria-hidden="true"></div>
+   <div class="prize-star s1" aria-hidden="true">✦</div>
+   <div class="prize-star s2" aria-hidden="true">✧</div>
+   <div class="prize-star s3" aria-hidden="true">✦</div>
+   <div class="prize-star s4" aria-hidden="true">✦</div>
+   <div class="prize-crystal">
+    <svg viewBox="0 0 180 218" role="img" aria-label="Helendav Valgussaare kristall">
+     <defs>
+      <linearGradient id="awardBody" x1=".12" y1="0" x2=".86" y2="1"><stop stop-color="#fff8b7"/><stop offset=".22" stop-color="#f0fff7"/><stop offset=".48" stop-color="#8cffe3"/><stop offset=".78" stop-color="#55bcec"/><stop offset="1" stop-color="#7856e7"/></linearGradient>
+      <linearGradient id="awardLeft" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#e5ffff"/><stop offset=".6" stop-color="#66dee4"/><stop offset="1" stop-color="#3179be"/></linearGradient>
+      <linearGradient id="awardRight" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f6fff2"/><stop offset=".45" stop-color="#75f5dd"/><stop offset="1" stop-color="#6357cf"/></linearGradient>
+      <linearGradient id="awardCore" x1="0" y1="0" x2=".2" y2="1"><stop stop-color="#fffde6"/><stop offset=".5" stop-color="#b9ffe4"/><stop offset="1" stop-color="#50c8db"/></linearGradient>
+     </defs>
+     <path d="M90 4 136 43 162 99 128 160 90 212 52 160 18 99 44 43Z" fill="url(#awardBody)" stroke="#f5ffdf" stroke-width="3.5"/>
+     <path d="M90 4 44 43 18 99 90 88Z" fill="url(#awardLeft)"/>
+     <path d="M90 4 136 43 162 99 90 88Z" fill="#cefff0" opacity=".83"/>
+     <path d="M18 99 52 160 90 212 90 88Z" fill="#3d9ad3" opacity=".72"/>
+     <path d="M162 99 128 160 90 212 90 88Z" fill="url(#awardRight)" opacity=".95"/>
+     <path d="M44 43 90 4 136 43 90 88Z" fill="url(#awardCore)" stroke="#fffbd6" stroke-width="1.2"/>
+     <path d="M90 88V212M18 99l72-11 72 11M52 160l38-72 38 72M44 43l46 45 46-45" fill="none" stroke="#f7ffff" stroke-opacity=".58" stroke-width="1.8"/>
+     <path d="M90 25 101 63 91 84 78 63Z" fill="#fffddd" opacity=".76"/>
+     <path d="M37 100 59 94 83 104 58 137Z" fill="#fff" opacity=".28"/>
+     <path d="M110 104 145 102 123 139 98 172Z" fill="#d5fff3" opacity=".30"/>
+    </svg>
+   </div>
+   <div class="prize-floor" aria-hidden="true"></div>
+  </div>
+  <div class="reward-name">VALGUSSAARE KRISTALL</div>
+  <div class="crystal-collection" aria-label="Kogutud kristallid: 1 üheksast">
+   <span class="collection-counter">KOGUTUD <strong>1 / 9</strong></span>
+   <div class="crystal-slots" aria-hidden="true">
+    <span class="owned">◆</span><span>◆</span><span>◆</span><span>◆</span><span>◆</span><span>◆</span><span>◆</span><span>◆</span><span>◆</span>
+   </div>
+  </div>
+  <button class="next-world" id="nextWorld" type="button" disabled aria-label="Järgmine maailm tuleb varsti">JÄRGMINE MAAILM <span>VARSTI</span></button>
+  <div class="reward-actions">
+   <button class="secondary" id="again" type="button">MÄNGI UUESTI ↻</button>
+   <button class="secondary" id="viewWorld" type="button">VAATA MAAILMA</button>
+  </div>
  </div>
  <div class="hero" id="crashHero" hidden>
   <span class="fail-kicker">MAAILM 01 · KATSE LÄBI</span>
@@ -204,7 +326,7 @@ const templates=Array.from({length:8},(_,i)=>({
  kind:i===7?'three-hundreds':i===5?'three-tens':'two-tens'
 }));
 let tasks=[],step=0,typed='',status='intro',solved=false,crashStart=0,crashReason='',crashElapsed=0,playElapsed=0;
-let attempts=0;
+let attempts=0,ceremonyToken=0,victoryStage='hidden';
 let playerX=ORIGIN,clock=0,lastFrame=0,canvasW=0,canvasH=0,dpr=1;
 let jumping=false,jumpAge=0,jumpHeight=0,jumpStarted=false,jumpCount=0,wrongLocked=false,turboActive=false,jumpScale=1;
 let soundOn=false,audio=null,fxGlow=0,fxBurst=0,shake=0,toastUntil=0,rewardUnlocked=false;
@@ -275,9 +397,41 @@ function showTask(){
 }
 function overlay(type){
  $('overlay').classList.remove('hidden');$('overlay').setAttribute('aria-hidden','false');
- $('introHero').hidden=type!=='intro';$('finishHero').hidden=type!=='finish';$('crashHero').hidden=type!=='crash';
+ $('overlay').classList.toggle('is-celebrating',type==='victory'||type==='finish');
+ $('introHero').hidden=type!=='intro';
+ $('victoryHero').hidden=type!=='victory';
+ $('finishHero').hidden=type!=='finish';
+ $('crashHero').hidden=type!=='crash';
+ victoryStage=type;
 }
-function hideOverlay(){$('overlay').classList.add('hidden');$('overlay').setAttribute('aria-hidden','true')}
+function hideOverlay(){
+ $('overlay').classList.add('hidden');
+ $('overlay').classList.remove('is-celebrating');
+ $('overlay').setAttribute('aria-hidden','true');
+ victoryStage='hidden';
+}
+function makeConfetti(){
+ if(reduced){$('celebrateParticles').innerHTML='';return}
+ const colors=['#8effe9','#ffe99e','#c8a5ff','#ffffff','#77bcff','#ff9bcf'];
+ const list=[];
+ for(let i=0;i<56;i++){
+  const x=(i*79.7+Math.random()*11)%100;
+  const delay=(i%12)*.085;
+  const dur=2.1+(i%7)*.21;
+  const w=4+i%5,h=8+i%8;
+  const angle=30+i*13%180,dx=(i%2?-1:1)*(24+i%9*9);
+  list.push('<span class="confetti" style="--x:'+x+'%;--delay:'+delay+'s;--duration:'+dur+'s;--w:'+w+'px;--h:'+h+'px;--col:'+colors[i%colors.length]+';--rot:'+angle+'deg;--dx:'+dx+'px"></span>');
+ }
+ for(let i=0;i<20;i++){
+  const x=6+(i*31.9)%88,y=11+(i*28.7)%76;
+  list.push('<span class="spark" style="--x:'+x+'%;--y:'+y+'%;--size:'+(3+i%5)+'px;--duration:'+(1.2+(i%6)*.29)+'s;--delay:'+(i%7)*.22+'s"></span>');
+ }
+ for(let i=0;i<4;i++){
+  const x=22+i*19,y=20+(i%2)*50;
+  list.push('<span class="flare" style="--x:'+x+'%;--y:'+y+'%;--delay:'+(i*.45)+'s"></span>');
+ }
+ $('celebrateParticles').innerHTML=list.join('');
+}
 function speedForStep(){return step===7?FINAL_SPEED:SPEED}
 function jumpReferenceSpeed(){return step===7?ORIGINAL_FINAL_SPEED:ORIGINAL_SPEED}
 function obstacleKind(i){return HAZARD_TYPES[(i-1+obstacleOffset)%HAZARD_TYPES.length]}
@@ -301,14 +455,23 @@ function tone(frequency,duration,type='sine',volume=.045,delay=0){
  try{audio=audio||new(window.AudioContext||window.webkitAudioContext)();if(audio.state==='suspended')audio.resume();
  const t=audio.currentTime+delay,o=audio.createOscillator(),g=audio.createGain();o.type=type;o.frequency.setValueAtTime(frequency,t);o.frequency.exponentialRampToValueAtTime(frequency*.83,t+duration);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(Math.max(.0002,volume),t+.012);g.gain.exponentialRampToValueAtTime(.0001,t+duration);o.connect(g);g.connect(audio.destination);o.start(t);o.stop(t+duration+.012);}catch(e){}
 }
-function winSound(){tone(540,.14,'sine',.036);tone(790,.19,'triangle',.03,.07);tone(1150,.25,'sine',.019,.16)}
+function winSound(){
+ // Short original synthesized award fanfare; only plays when the user enabled audio.
+ tone(392,.18,'triangle',.045);
+ tone(523,.18,'triangle',.047,.11);
+ tone(659,.22,'triangle',.043,.23);
+ tone(784,.27,'triangle',.042,.38);
+ tone(1046,.41,'sine',.037,.56);
+ tone(1318,.46,'sine',.022,.67);
+}
 function startGame(retry=false){
+ ceremonyToken++; // cancel delayed celebration steps if the player restarts
  tasks=createTasks();validateTasks(tasks);obstacleOffset=random(HAZARD_TYPES.length);
  attempts++;step=0;typed='';solved=false;playerX=ORIGIN;camera=playerX-canvasW*.30;
  jumping=false;jumpAge=0;jumpHeight=0;jumpStarted=false;wrongLocked=false;turboActive=false;jumpScale=1;jumpCount=0;
  particleTrail=[];status='running';crashElapsed=0;playElapsed=0;rewardUnlocked=false;fxGlow=0;fxBurst=0;shake=0;
  hideOverlay();showTask();updateRushHUD();
- try{localStorage.removeItem('edukass-neon-world1-finished')}catch(e){}
+ // Earned crystal is permanent: replay must never remove the collection record.
 }
 function lose(reason){
  if(status!=='running')return;
@@ -347,12 +510,22 @@ function check(manual){
  shake=5;tone(230,.15,'sawtooth',.04);updateRushHUD();
 }
 function finish(){
- status='finished';step=TOTAL;solved=false;updateGems();updateRushHUD();
- $('answerBox').classList.remove('success');note('Kõik takistused ületatud!','ok');fxBurst=1;spawnBurst(playerX,65);winSound();
- try{localStorage.setItem('edukass-neon-world1-finished','1')}catch(e){}
- setTimeout(()=>{if(status==='finished')overlay('finish')},reduced?80:750);
+ status='finished';step=TOTAL;solved=false;rewardUnlocked=true;
+ updateGems();updateRushHUD();
+ $('answerBox').classList.remove('success');
+ note('Kristall saadud!','ok');fxBurst=1;spawnBurst(playerX,96);winSound();
+ try{
+  localStorage.setItem('edukass-neon-world1-finished','1');
+  localStorage.setItem('edukass-neon-world1-crystal-unlocked','1');
+ }catch(e){}
+ const token=++ceremonyToken;
+ makeConfetti();
+ if(reduced){overlay('finish');return}
+ // First show the in-world flash, then the victory burst, then award the crystal.
+ setTimeout(()=>{if(status==='finished'&&token===ceremonyToken)overlay('victory')},180);
+ setTimeout(()=>{if(status==='finished'&&token===ceremonyToken)overlay('finish')},1670);
 }
-function reset(){status='intro';step=0;typed='';solved=false;playerX=ORIGIN;particleTrail=[];jumping=false;jumpAge=0;jumpHeight=0;jumpStarted=false;wrongLocked=false;turboActive=false;jumpScale=1;jumpCount=0;updateGems();updateAnswer();note('Vasta enne takistust!');updateRushHUD();overlay('intro')}
+function reset(){ceremonyToken++;status='intro';step=0;typed='';solved=false;playerX=ORIGIN;particleTrail=[];jumping=false;jumpAge=0;jumpHeight=0;jumpStarted=false;wrongLocked=false;turboActive=false;jumpScale=1;jumpCount=0;updateGems();updateAnswer();note('Vasta enne takistust!');updateRushHUD();overlay('intro')}
 function viewWorld(){hideOverlay();status='showcase';$('sceneCaption').textContent='VALGUSSAARE KRISTALL · 01/09';note('Maailm läbitud · mängi uuesti ülal ↻','ok')}
 function advance(dt){
  const delta=clamp(dt,0,100);
@@ -601,7 +774,7 @@ function init(){
  stars=[];updateGems();resize();bind();updateRushHUD();overlay('intro');requestAnimationFrame(frame);
 }
 // Test interface is read-only except for simulated key input; it is not displayed to players.
-window.__EDUKASS_TEST__={get:()=>({status,step,typed,tasks:tasks.map(t=>({...t})),playerX,solved,crashReason,attempts,world:'valgussaar',rewardUnlocked:status==='finished'||status==='showcase',jumping,jumpHeight,jumpCount,wrongLocked,turboActive,runningSpeed:effectiveSpeed(),distance:distanceToObstacle(),obstacles:Array.from({length:TOTAL},(_,j)=>obstacleKind(j+1))}),press:onKey,start:()=>startGame(),retry:()=>startGame(true),tick:(ms)=>{for(let r=0;r<ms;r+=35)advance(Math.min(35,ms-r))},reset,validateTasks,generate:createTasks};
+window.__EDUKASS_TEST__={get:()=>({status,step,typed,tasks:tasks.map(t=>({...t})),playerX,solved,crashReason,attempts,world:'valgussaar',rewardUnlocked:rewardUnlocked||status==='finished'||status==='showcase',victoryStage,crystalCollected:(()=>{try{return localStorage.getItem('edukass-neon-world1-crystal-unlocked')==='1'}catch(e){return rewardUnlocked}})(),jumping,jumpHeight,jumpCount,wrongLocked,turboActive,runningSpeed:effectiveSpeed(),distance:distanceToObstacle(),obstacles:Array.from({length:TOTAL},(_,j)=>obstacleKind(j+1))}),press:onKey,start:()=>startGame(),retry:()=>startGame(true),tick:(ms)=>{for(let r=0;r<ms;r+=35)advance(Math.min(35,ms-r))},reset,validateTasks,generate:createTasks};
 init();
 })();
 </script>
