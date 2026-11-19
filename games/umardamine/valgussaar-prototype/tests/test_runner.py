@@ -80,14 +80,41 @@ def test(browser,w,h,label):
   s=result['state']
   assert s['jumpCount']==step+1,(step,s)
   if step<7:assert s['step']==step+1,(step,s)
- p.wait_for_timeout(820)
+ # Two-stage celebration: victory announcement first, then crystal reveal.
+ p.wait_for_timeout(350)
  s=p.evaluate('window.__EDUKASS_TEST__.get()')
  assert s['status']=='finished' and s['step']==8,s
+ assert s['victoryStage']=='victory' and p.locator('#victoryHero').is_visible(),s
+ assert not p.locator('#finishHero').is_visible()
+ p.screenshot(path=str(root/f'{label}_victory.png'))
+ p.wait_for_timeout(1550)
+ s=p.evaluate('window.__EDUKASS_TEST__.get()')
+ assert s['victoryStage']=='finish',s
  assert p.locator('#finishHero').is_visible()
+ assert p.locator('.prize-crystal svg').is_visible()
+ assert p.locator('#celebrateParticles .confetti').count()>=50
+ assert p.locator('.crystal-slots span').count()==9
+ assert p.locator('.crystal-slots span.owned').count()==1
+ assert p.locator('#nextWorld').is_disabled(), 'Do not navigate to a nonexistent second world'
+ assert s['crystalCollected'] and s['rewardUnlocked'],s
+ assert p.evaluate("localStorage.getItem('edukass-neon-world1-crystal-unlocked')")=='1'
+ # Reward content must stay inside each viewport without horizontal overflow.
+ viewport=p.evaluate("""() => ({
+   width:innerWidth,
+   panelRight:document.querySelector('#finishHero').getBoundingClientRect().right,
+   bodyWidth:document.documentElement.scrollWidth,
+   prizeWidth:document.querySelector('.prize-theatre').getBoundingClientRect().width
+ })""")
+ assert viewport['bodyWidth']<=viewport['width']+3,viewport
+ assert viewport['panelRight']<=viewport['width']+4,viewport
+ assert viewport['prizeWidth']>90,viewport
  p.screenshot(path=str(root/f'{label}_finished.png'))
  assert not problems,problems
- # Late correct answers must keep normal motion so turbo cannot cause an unfair crash.
+ # Replaying must NOT erase an earned crystal.
  p.locator('#again').click()
+ assert p.evaluate('window.__EDUKASS_TEST__.get().crystalCollected') is True
+ assert p.evaluate("localStorage.getItem('edukass-neon-world1-crystal-unlocked')")=='1'
+ # Late correct answers must keep normal motion so turbo cannot cause an unfair crash.
  p.evaluate('window.__EDUKASS_TEST__.tick(6800)')
  late=p.evaluate('window.__EDUKASS_TEST__.get()')
  assert late['status']=='running' and late['step']==0,late
@@ -101,7 +128,7 @@ def test(browser,w,h,label):
  if w<600:
   g=p.evaluate('''() => ({bottom:document.querySelector('.keypad').getBoundingClientRect().bottom,doc:document.documentElement.scrollHeight})''')
   assert g['bottom']<=h+15, g
- print(json.dumps({'viewport':[w,h],'runner':'PASS','wrong_crash':'PASS','timeout_crash':'PASS','restart':'PASS','8_obstacles':'PASS','real_jump':'PASS','turbo':'PASS','late_answer_safe':'PASS','five_hazards':'PASS','fresh_tasks':'PASS','25pct_slower':'PASS','physical_collision':'PASS','finish':'PASS','errors':problems},ensure_ascii=False))
+ print(json.dumps({'viewport':[w,h],'runner':'PASS','wrong_crash':'PASS','timeout_crash':'PASS','restart':'PASS','8_obstacles':'PASS','real_jump':'PASS','turbo':'PASS','late_answer_safe':'PASS','five_hazards':'PASS','fresh_tasks':'PASS','25pct_slower':'PASS','physical_collision':'PASS','victory_animation':'PASS','crystal_award':'PASS','award_persistence':'PASS','finish':'PASS','errors':problems},ensure_ascii=False))
  p.close()
 
 
