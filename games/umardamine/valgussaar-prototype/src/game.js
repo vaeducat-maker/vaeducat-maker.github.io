@@ -16,7 +16,7 @@ const templates=Array.from({length:8},(_,i)=>({
  kind:i===7?'three-hundreds':i===5?'three-tens':'two-tens'
 }));
 let tasks=[],step=0,typed='',status='intro',solved=false,crashStart=0,crashReason='',crashElapsed=0,playElapsed=0;
-let attempts=0;
+let attempts=0,ceremonyToken=0,victoryStage='hidden';
 let playerX=ORIGIN,clock=0,lastFrame=0,canvasW=0,canvasH=0,dpr=1;
 let jumping=false,jumpAge=0,jumpHeight=0,jumpStarted=false,jumpCount=0,wrongLocked=false,turboActive=false,jumpScale=1;
 let soundOn=false,audio=null,fxGlow=0,fxBurst=0,shake=0,toastUntil=0,rewardUnlocked=false;
@@ -87,9 +87,41 @@ function showTask(){
 }
 function overlay(type){
  $('overlay').classList.remove('hidden');$('overlay').setAttribute('aria-hidden','false');
- $('introHero').hidden=type!=='intro';$('finishHero').hidden=type!=='finish';$('crashHero').hidden=type!=='crash';
+ $('overlay').classList.toggle('is-celebrating',type==='victory'||type==='finish');
+ $('introHero').hidden=type!=='intro';
+ $('victoryHero').hidden=type!=='victory';
+ $('finishHero').hidden=type!=='finish';
+ $('crashHero').hidden=type!=='crash';
+ victoryStage=type;
 }
-function hideOverlay(){$('overlay').classList.add('hidden');$('overlay').setAttribute('aria-hidden','true')}
+function hideOverlay(){
+ $('overlay').classList.add('hidden');
+ $('overlay').classList.remove('is-celebrating');
+ $('overlay').setAttribute('aria-hidden','true');
+ victoryStage='hidden';
+}
+function makeConfetti(){
+ if(reduced){$('celebrateParticles').innerHTML='';return}
+ const colors=['#8effe9','#ffe99e','#c8a5ff','#ffffff','#77bcff','#ff9bcf'];
+ const list=[];
+ for(let i=0;i<56;i++){
+  const x=(i*79.7+Math.random()*11)%100;
+  const delay=(i%12)*.085;
+  const dur=2.1+(i%7)*.21;
+  const w=4+i%5,h=8+i%8;
+  const angle=30+i*13%180,dx=(i%2?-1:1)*(24+i%9*9);
+  list.push('<span class="confetti" style="--x:'+x+'%;--delay:'+delay+'s;--duration:'+dur+'s;--w:'+w+'px;--h:'+h+'px;--col:'+colors[i%colors.length]+';--rot:'+angle+'deg;--dx:'+dx+'px"></span>');
+ }
+ for(let i=0;i<20;i++){
+  const x=6+(i*31.9)%88,y=11+(i*28.7)%76;
+  list.push('<span class="spark" style="--x:'+x+'%;--y:'+y+'%;--size:'+(3+i%5)+'px;--duration:'+(1.2+(i%6)*.29)+'s;--delay:'+(i%7)*.22+'s"></span>');
+ }
+ for(let i=0;i<4;i++){
+  const x=22+i*19,y=20+(i%2)*50;
+  list.push('<span class="flare" style="--x:'+x+'%;--y:'+y+'%;--delay:'+(i*.45)+'s"></span>');
+ }
+ $('celebrateParticles').innerHTML=list.join('');
+}
 function speedForStep(){return step===7?FINAL_SPEED:SPEED}
 function jumpReferenceSpeed(){return step===7?ORIGINAL_FINAL_SPEED:ORIGINAL_SPEED}
 function obstacleKind(i){return HAZARD_TYPES[(i-1+obstacleOffset)%HAZARD_TYPES.length]}
@@ -113,14 +145,23 @@ function tone(frequency,duration,type='sine',volume=.045,delay=0){
  try{audio=audio||new(window.AudioContext||window.webkitAudioContext)();if(audio.state==='suspended')audio.resume();
  const t=audio.currentTime+delay,o=audio.createOscillator(),g=audio.createGain();o.type=type;o.frequency.setValueAtTime(frequency,t);o.frequency.exponentialRampToValueAtTime(frequency*.83,t+duration);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(Math.max(.0002,volume),t+.012);g.gain.exponentialRampToValueAtTime(.0001,t+duration);o.connect(g);g.connect(audio.destination);o.start(t);o.stop(t+duration+.012);}catch(e){}
 }
-function winSound(){tone(540,.14,'sine',.036);tone(790,.19,'triangle',.03,.07);tone(1150,.25,'sine',.019,.16)}
+function winSound(){
+ // Short original synthesized award fanfare; only plays when the user enabled audio.
+ tone(392,.18,'triangle',.045);
+ tone(523,.18,'triangle',.047,.11);
+ tone(659,.22,'triangle',.043,.23);
+ tone(784,.27,'triangle',.042,.38);
+ tone(1046,.41,'sine',.037,.56);
+ tone(1318,.46,'sine',.022,.67);
+}
 function startGame(retry=false){
+ ceremonyToken++; // cancel delayed celebration steps if the player restarts
  tasks=createTasks();validateTasks(tasks);obstacleOffset=random(HAZARD_TYPES.length);
  attempts++;step=0;typed='';solved=false;playerX=ORIGIN;camera=playerX-canvasW*.30;
  jumping=false;jumpAge=0;jumpHeight=0;jumpStarted=false;wrongLocked=false;turboActive=false;jumpScale=1;jumpCount=0;
  particleTrail=[];status='running';crashElapsed=0;playElapsed=0;rewardUnlocked=false;fxGlow=0;fxBurst=0;shake=0;
  hideOverlay();showTask();updateRushHUD();
- try{localStorage.removeItem('edukass-neon-world1-finished')}catch(e){}
+ // Earned crystal is permanent: replay must never remove the collection record.
 }
 function lose(reason){
  if(status!=='running')return;
@@ -159,12 +200,22 @@ function check(manual){
  shake=5;tone(230,.15,'sawtooth',.04);updateRushHUD();
 }
 function finish(){
- status='finished';step=TOTAL;solved=false;updateGems();updateRushHUD();
- $('answerBox').classList.remove('success');note('Kõik takistused ületatud!','ok');fxBurst=1;spawnBurst(playerX,65);winSound();
- try{localStorage.setItem('edukass-neon-world1-finished','1')}catch(e){}
- setTimeout(()=>{if(status==='finished')overlay('finish')},reduced?80:750);
+ status='finished';step=TOTAL;solved=false;rewardUnlocked=true;
+ updateGems();updateRushHUD();
+ $('answerBox').classList.remove('success');
+ note('Kristall saadud!','ok');fxBurst=1;spawnBurst(playerX,96);winSound();
+ try{
+  localStorage.setItem('edukass-neon-world1-finished','1');
+  localStorage.setItem('edukass-neon-world1-crystal-unlocked','1');
+ }catch(e){}
+ const token=++ceremonyToken;
+ makeConfetti();
+ if(reduced){overlay('finish');return}
+ // First show the in-world flash, then the victory burst, then award the crystal.
+ setTimeout(()=>{if(status==='finished'&&token===ceremonyToken)overlay('victory')},180);
+ setTimeout(()=>{if(status==='finished'&&token===ceremonyToken)overlay('finish')},1670);
 }
-function reset(){status='intro';step=0;typed='';solved=false;playerX=ORIGIN;particleTrail=[];jumping=false;jumpAge=0;jumpHeight=0;jumpStarted=false;wrongLocked=false;turboActive=false;jumpScale=1;jumpCount=0;updateGems();updateAnswer();note('Vasta enne takistust!');updateRushHUD();overlay('intro')}
+function reset(){ceremonyToken++;status='intro';step=0;typed='';solved=false;playerX=ORIGIN;particleTrail=[];jumping=false;jumpAge=0;jumpHeight=0;jumpStarted=false;wrongLocked=false;turboActive=false;jumpScale=1;jumpCount=0;updateGems();updateAnswer();note('Vasta enne takistust!');updateRushHUD();overlay('intro')}
 function viewWorld(){hideOverlay();status='showcase';$('sceneCaption').textContent='VALGUSSAARE KRISTALL · 01/09';note('Maailm läbitud · mängi uuesti ülal ↻','ok')}
 function advance(dt){
  const delta=clamp(dt,0,100);
@@ -413,6 +464,6 @@ function init(){
  stars=[];updateGems();resize();bind();updateRushHUD();overlay('intro');requestAnimationFrame(frame);
 }
 // Test interface is read-only except for simulated key input; it is not displayed to players.
-window.__EDUKASS_TEST__={get:()=>({status,step,typed,tasks:tasks.map(t=>({...t})),playerX,solved,crashReason,attempts,world:'valgussaar',rewardUnlocked:status==='finished'||status==='showcase',jumping,jumpHeight,jumpCount,wrongLocked,turboActive,runningSpeed:effectiveSpeed(),distance:distanceToObstacle(),obstacles:Array.from({length:TOTAL},(_,j)=>obstacleKind(j+1))}),press:onKey,start:()=>startGame(),retry:()=>startGame(true),tick:(ms)=>{for(let r=0;r<ms;r+=35)advance(Math.min(35,ms-r))},reset,validateTasks,generate:createTasks};
+window.__EDUKASS_TEST__={get:()=>({status,step,typed,tasks:tasks.map(t=>({...t})),playerX,solved,crashReason,attempts,world:'valgussaar',rewardUnlocked:rewardUnlocked||status==='finished'||status==='showcase',victoryStage,crystalCollected:(()=>{try{return localStorage.getItem('edukass-neon-world1-crystal-unlocked')==='1'}catch(e){return rewardUnlocked}})(),jumping,jumpHeight,jumpCount,wrongLocked,turboActive,runningSpeed:effectiveSpeed(),distance:distanceToObstacle(),obstacles:Array.from({length:TOTAL},(_,j)=>obstacleKind(j+1))}),press:onKey,start:()=>startGame(),retry:()=>startGame(true),tick:(ms)=>{for(let r=0;r<ms;r+=35)advance(Math.min(35,ms-r))},reset,validateTasks,generate:createTasks};
 init();
 })();
