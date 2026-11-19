@@ -157,6 +157,7 @@ button:disabled{cursor:default;opacity:.7}
 .prize-star{position:absolute;font-size:21px;color:#fff5b0;text-shadow:0 0 13px #fff3b3;z-index:3;animation:prizeTwinkle 1.8s ease-in-out infinite}
 .prize-star.s1{top:12%;left:6%}.prize-star.s2{top:25%;right:4%;animation-delay:.45s}.prize-star.s3{bottom:17%;left:14%;animation-delay:.8s}.prize-star.s4{bottom:11%;right:11%;animation-delay:1.2s}
 .reward-name{color:#ebfff8;text-shadow:0 0 19px #a7fff1a3;font-weight:1000;letter-spacing:.14em;font-size:clamp(11px,2.7vw,15px);animation:rewardAppear .55s .25s both}
+.reward-name small{display:block;font-size:9px;font-weight:800;letter-spacing:.06em;color:#c4fff0;margin-top:4px;text-shadow:0 0 10px #73ffe666}
 .crystal-collection{width:min(336px,100%);display:flex;flex-direction:column;gap:8px;padding:9px 12px 10px;border:1px solid #b3f4e86b;border-radius:14px;background:linear-gradient(120deg,#184973bb,#172d59b5);box-shadow:inset 0 1px 1px #ffffff22;animation:rewardAppear .5s .38s both}
 .collection-counter{font-weight:900;color:#d4fff5;letter-spacing:.10em;font-size:11px}
 .collection-counter strong{font-size:15px;color:#ffe3a2;padding-left:6px}
