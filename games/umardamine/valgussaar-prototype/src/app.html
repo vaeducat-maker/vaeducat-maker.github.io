@@ -20,7 +20,6 @@
   <section class="scene" id="scene" aria-label="Helendavate saarte mängumaailm">
     <canvas id="world" aria-hidden="true"></canvas>
     <div class="scene-heading"><small>MAAILM 01</small><strong>Valgussaar</strong></div>
-    <div class="scene-sub">8 TAKISTUST</div>
     <div class="rush-hud" id="rushHud"><div class="rush-line"><span id="rushLabel">TAKISTUSENI</span><strong id="rushClock">—</strong></div><div class="rush-track"><div id="rushFill"></div></div></div>
     <div class="scene-caption" id="sceneCaption">KIIRUSTA! TAKISTUS LÄHENEB</div>
     <div class="scene-glow" id="sceneGlow"></div>
@@ -32,7 +31,7 @@
     <button class="key" data-key="1">1</button><button class="key" data-key="2">2</button><button class="key" data-key="3">3</button>
     <button class="key" data-key="4">4</button><button class="key" data-key="5">5</button><button class="key" data-key="6">6</button>
     <button class="key" data-key="7">7</button><button class="key" data-key="8">8</button><button class="key" data-key="9">9</button>
-    <button class="key action" data-key="back" aria-label="Kustuta viimane number">⌫</button><button class="key" data-key="0">0</button><button class="key submit" data-key="check" aria-label="Kontrolli vastust">✓</button>
+    <button class="key action" data-key="back" aria-label="Kustuta viimane number">⌫</button><button class="key key-zero" data-key="0">0</button>
   </section>
   <footer class="foot">EDUKASS · ÜMARDAMINE · PROTOTÜÜP 01</footer>
 </main>
@@ -43,6 +42,7 @@
   <h1>Avasta<br>Valgussaar</h1>
   <p>Kristall kihutab ise edasi! Ümarda enne takistust: õige vastus avab hüppe, vale vastus või hilinemine tähendab kokkupõrget. Siis alustad otsast.</p>
   <button class="primary" id="begin">ALUSTA MÄNGU <span aria-hidden="true">›</span></button>
+  <button class="intro-vault-btn" id="openVaultIntro" type="button">KRISTALLIDE VARAKAMBER <span id="introCollectionCount">0 / 9</span></button>
  </div>
  <div class="celebrate-particles" id="celebrateParticles" aria-hidden="true"></div>
  <div class="hero celebrate-victory" id="victoryHero" hidden>
@@ -87,17 +87,22 @@
    <div class="prize-floor" aria-hidden="true"></div>
   </div>
   <div class="reward-name">VALGUSSAARE KRISTALL<small>SA SAID VALGUSSAARE KRISTALLI!</small></div>
-  <div class="crystal-collection" aria-label="Kogutud kristallid: 1 üheksast">
-   <span class="collection-counter">KOGUTUD <strong>1 / 9</strong></span>
-   <div class="crystal-slots" aria-hidden="true">
-    <span class="owned">◆</span><span>◆</span><span>◆</span><span>◆</span><span>◆</span><span>◆</span><span>◆</span><span>◆</span><span>◆</span>
-   </div>
-  </div>
+  <button class="vault-open-btn" id="openVaultReward" type="button"><span class="mini-crystal" aria-hidden="true"></span><span>AVA KRISTALLIDE VARAKAMBER</span><strong id="rewardCollectionCount">1 / 9</strong></button>
   <button class="next-world" id="nextWorld" type="button" disabled aria-label="Järgmine maailm tuleb varsti">JÄRGMINE MAAILM <span>VARSTI</span></button>
   <div class="reward-actions">
    <button class="secondary" id="again" type="button">MÄNGI UUESTI ↻</button>
-   <button class="secondary" id="viewWorld" type="button">VAATA MAAILMA</button>
   </div>
+ </div>
+ <div class="hero crystal-vault" id="vaultHero" hidden>
+  <span class="vault-eyebrow">EDUKASS · KRISTALLIDE KOGU</span>
+  <h1 class="vault-title">KRISTALLIDE VARAKAMBER</h1>
+  <div class="vault-progress" id="vaultProgress" aria-live="polite">KOGUTUD 0 / 9</div>
+  <div class="vault-display">
+   <div class="vault-constellation" aria-hidden="true"></div>
+   <div class="vault-grid" id="vaultGrid" aria-label="Üheksa kristalli"></div>
+  </div>
+  <p class="vault-description" id="vaultDescription">Läbi maailmad ja kogu kõik üheksa kristalli!</p>
+  <button class="vault-back" id="closeVault" type="button">TAGASI</button>
  </div>
  <div class="hero" id="crashHero" hidden>
   <span class="fail-kicker">MAAILM 01 · KATSE LÄBI</span>
