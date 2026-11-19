@@ -16,7 +16,7 @@ const templates=Array.from({length:8},(_,i)=>({
  kind:i===7?'three-hundreds':i===5?'three-tens':'two-tens'
 }));
 let tasks=[],step=0,typed='',status='intro',solved=false,crashStart=0,crashReason='',crashElapsed=0,playElapsed=0;
-let attempts=0,ceremonyToken=0,victoryStage='hidden';
+let attempts=0,ceremonyToken=0,victoryStage='hidden',vaultReturn='intro';
 let playerX=ORIGIN,clock=0,lastFrame=0,canvasW=0,canvasH=0,dpr=1;
 let jumping=false,jumpAge=0,jumpHeight=0,jumpStarted=false,jumpCount=0,wrongLocked=false,turboActive=false,jumpScale=1;
 let soundOn=false,audio=null,fxGlow=0,fxBurst=0,shake=0,toastUntil=0,rewardUnlocked=false;
@@ -27,6 +27,56 @@ function easeOut(t){return 1-Math.pow(1-t,3)}
 function easeBoth(t){return t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2}
 function random(n){return Math.floor(Math.random()*n)}
 function format(n){return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,' ')}
+
+const VAULT_STORAGE='edukass-neon-crystal-vault-v1';
+function collectedCrystals(){
+ let ids=[];try{
+  const parsed=JSON.parse(localStorage.getItem(VAULT_STORAGE)||'[]');
+  if(Array.isArray(parsed))ids=parsed.filter(n=>Number.isInteger(n)&&n>=1&&n<=9);
+  if(localStorage.getItem('edukass-neon-world1-crystal-unlocked')==='1'||localStorage.getItem('edukass-neon-world1-finished')==='1')ids.push(1);
+ }catch(e){}
+ return [...new Set(ids)].sort((a,b)=>a-b);
+}
+function awardCrystal(number){
+ const ids=collectedCrystals();
+ if(!ids.includes(number))ids.push(number);
+ try{
+  localStorage.setItem(VAULT_STORAGE,JSON.stringify(ids.sort((a,b)=>a-b)));
+  if(number===1)localStorage.setItem('edukass-neon-world1-crystal-unlocked','1');
+ }catch(e){}
+ updateCrystalVault();
+}
+function updateCrystalVault(){
+ const ids=collectedCrystals(),count=ids.length;
+ $('introCollectionCount').textContent=count+' / 9';
+ $('rewardCollectionCount').textContent=count+' / 9';
+ $('vaultProgress').textContent='KOGUTUD '+count+' / 9';
+ const views=Array.from({length:9},(_,k)=>{
+  const id=k+1,got=ids.includes(id),name=id===1?'VALGUSSAAR':'MAAILM '+String(id).padStart(2,'0');
+  const title=got?(id===1?'VALGUSSAARE KRISTALL':'KRISTALL '+id):'LUKUS';
+  const shapeId='vaultShape'+id;
+  return '<div class="vault-card '+(got?'unlocked':'locked')+'" style="--slot:'+(id-1)+'" aria-label="'+name+': '+title+'">'
+    +'<div class="vault-card-number">'+String(id).padStart(2,'0')+'</div>'
+    +'<div class="vault-card-gem"><svg viewBox="0 0 82 104" aria-hidden="true">'
+    +'<defs><linearGradient id="'+shapeId+'" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fffdd0"/><stop offset=".3" stop-color="#9ffff0"/><stop offset=".72" stop-color="#4aa5e6"/><stop offset="1" stop-color="#7858df"/></linearGradient></defs>'
+    +'<path d="M41 3 64 20 77 48 62 76 41 101 20 76 5 48 18 20Z" fill="url(#'+shapeId+')" stroke="#eafff0" stroke-width="2"/>'
+    +'<path d="M41 3 18 20 5 48 41 44Z" fill="#efffff" opacity=".48"/>'
+    +'<path d="M41 44 77 48 62 76 41 101Z" fill="#267abf" opacity=".48"/>'
+    +'<path d="M18 20 41 44 64 20M5 48l36-4 36 4M20 76l21-32 21 32M41 3v98" stroke="#ffffff" stroke-opacity=".52" fill="none" stroke-width="1.5"/>'
+    +'</svg></div>'
+    +'<div class="vault-card-name">'+name+'</div>'
+    +'<div class="vault-card-status">'+(got?'KOGUTUD':'LUKUS')+'</div></div>';
+ });
+ $('vaultGrid').innerHTML=views.join('');
+ $('vaultDescription').textContent=count===9?'Kõik üheksa kristalli on kogutud!':count===0?'Läbi maailmad ja kogu kõik üheksa kristalli!':'Sul on '+count+' kristall'+(count===1?'':'i')+'! Järgmine maailm toob uue auhinna.';
+}
+function openCrystalVault(from){
+ vaultReturn=from==='finish'?'finish':'intro';
+ updateCrystalVault();
+ overlay('vault');
+}
+function closeCrystalVault(){overlay(vaultReturn)}
+
 function numberPool(t){
  const lo=t.kind==='two-tens'?11:101,hi=t.kind==='two-tens'?99:999,nums=[];
  for(let n=lo;n<=hi;n++)if(n%t.unit!==0)nums.push(n);
@@ -87,10 +137,11 @@ function showTask(){
 }
 function overlay(type){
  $('overlay').classList.remove('hidden');$('overlay').setAttribute('aria-hidden','false');
- $('overlay').classList.toggle('is-celebrating',type==='victory'||type==='finish');
+ $('overlay').classList.toggle('is-celebrating',type==='victory'||type==='finish'||type==='vault');
  $('introHero').hidden=type!=='intro';
  $('victoryHero').hidden=type!=='victory';
  $('finishHero').hidden=type!=='finish';
+ $('vaultHero').hidden=type!=='vault';
  $('crashHero').hidden=type!=='crash';
  victoryStage=type;
 }
@@ -177,15 +228,14 @@ function lose(reason){
 function onKey(key){
  if(status!=='running'||solved||wrongLocked)return;
  if(key==='back'){typed=typed.slice(0,-1);updateAnswer();return}
- if(key==='check'){check(true);return}
  if(!/^\d$/.test(key)||typed.length>=8)return;
  if(!typed&&key==='0')return;
  typed+=key;updateAnswer();
  const answer=String(tasks[step].answer);
- if(typed===answer)check(false);
- else if(typed.length>=answer.length)check(false);
+ if(typed===answer)check();
+ else if(typed.length>=answer.length)check();
 }
-function check(manual){
+function check(){
  if(status!=='running'||solved||wrongLocked||!typed)return;
  if(Number(typed)===tasks[step].answer){
   solved=true;turboActive=distanceToObstacle()>180; // late correct answers keep the original safe jump speed
@@ -193,7 +243,7 @@ function check(manual){
   fxGlow=.6;tone(600,.14,'sine',.04);tone(810,.12,'triangle',.022,.08);
   $('sceneCaption').textContent=turboActive?'TURBO · KRISTALL KIHUTAB EDASI':'HÜPE VALMIS · HÜPPA ÜLE TAKISTUSE';updateRushHUD();return;
  }
- if(!manual&&typed.length<String(tasks[step].answer).length)return;
+ if(typed.length<String(tasks[step].answer).length)return;
  wrongLocked=true; // The obstacle remains lethal; the crystal physically runs into it.
  $('answerBox').classList.add('wrong');note('VALE VASTUS! TAKISTUS LÄHENEB!','bad');
  $('sceneCaption').textContent='VALE VASTUS · KOKKUPÕRGE LÄHENEB';
@@ -204,10 +254,8 @@ function finish(){
  updateGems();updateRushHUD();
  $('answerBox').classList.remove('success');
  note('Kristall saadud!','ok');fxBurst=1;spawnBurst(playerX,96);winSound();
- try{
-  localStorage.setItem('edukass-neon-world1-finished','1');
-  localStorage.setItem('edukass-neon-world1-crystal-unlocked','1');
- }catch(e){}
+ try{localStorage.setItem('edukass-neon-world1-finished','1')}catch(e){}
+ awardCrystal(1);
  const token=++ceremonyToken;
  makeConfetti();
  if(reduced){overlay('finish');return}
@@ -216,7 +264,6 @@ function finish(){
  setTimeout(()=>{if(status==='finished'&&token===ceremonyToken)overlay('finish')},1670);
 }
 function reset(){ceremonyToken++;status='intro';step=0;typed='';solved=false;playerX=ORIGIN;particleTrail=[];jumping=false;jumpAge=0;jumpHeight=0;jumpStarted=false;wrongLocked=false;turboActive=false;jumpScale=1;jumpCount=0;updateGems();updateAnswer();note('Vasta enne takistust!');updateRushHUD();overlay('intro')}
-function viewWorld(){hideOverlay();status='showcase';$('sceneCaption').textContent='VALGUSSAARE KRISTALL · 01/09';note('Maailm läbitud · mängi uuesti ülal ↻','ok')}
 function advance(dt){
  const delta=clamp(dt,0,100);
  if(status==='running'){
@@ -454,16 +501,19 @@ function frame(t){
 function bind(){
  $('keypad').addEventListener('click',e=>{const b=e.target.closest('[data-key]');if(!b)return;onKey(b.dataset.key)});
  document.addEventListener('keydown',e=>{
-  const key=e.key;if(key==='Backspace'){e.preventDefault();onKey('back')}else if(key==='Enter'){e.preventDefault();if(status==='intro')startGame();else if(status==='finished')startGame();else if(status==='crashed')startGame(true);else onKey('check')}else if(/^\d$/.test(key))onKey(key);
+  const key=e.key;if(key==='Backspace'){e.preventDefault();onKey('back')}else if(key==='Enter'){e.preventDefault();if(victoryStage==='vault')closeCrystalVault();else if(status==='intro')startGame();else if(status==='finished'&&victoryStage==='finish')startGame();else if(status==='crashed')startGame(true)}else if(/^\d$/.test(key))onKey(key);
  });
- $('begin').addEventListener('click',()=>startGame());$('again').addEventListener('click',()=>startGame());$('retry').addEventListener('click',()=>startGame(true));$('restart').addEventListener('click',reset);$('viewWorld').addEventListener('click',viewWorld);$('sound').addEventListener('click',setSound);
+ $('begin').addEventListener('click',()=>startGame());$('again').addEventListener('click',()=>startGame());$('retry').addEventListener('click',()=>startGame(true));$('restart').addEventListener('click',reset);$('sound').addEventListener('click',setSound);
+ $('openVaultIntro').addEventListener('click',()=>openCrystalVault('intro'));
+ $('openVaultReward').addEventListener('click',()=>openCrystalVault('finish'));
+ $('closeVault').addEventListener('click',closeCrystalVault);
  window.addEventListener('resize',resize);
  document.addEventListener('visibilitychange',()=>{lastFrame=0});
 }
 function init(){
- stars=[];updateGems();resize();bind();updateRushHUD();overlay('intro');requestAnimationFrame(frame);
+ stars=[];updateGems();resize();bind();updateCrystalVault();updateRushHUD();overlay('intro');requestAnimationFrame(frame);
 }
 // Test interface is read-only except for simulated key input; it is not displayed to players.
-window.__EDUKASS_TEST__={get:()=>({status,step,typed,tasks:tasks.map(t=>({...t})),playerX,solved,crashReason,attempts,world:'valgussaar',rewardUnlocked:rewardUnlocked||status==='finished'||status==='showcase',victoryStage,crystalCollected:(()=>{try{return localStorage.getItem('edukass-neon-world1-crystal-unlocked')==='1'}catch(e){return rewardUnlocked}})(),jumping,jumpHeight,jumpCount,wrongLocked,turboActive,runningSpeed:effectiveSpeed(),distance:distanceToObstacle(),obstacles:Array.from({length:TOTAL},(_,j)=>obstacleKind(j+1))}),press:onKey,start:()=>startGame(),retry:()=>startGame(true),tick:(ms)=>{for(let r=0;r<ms;r+=35)advance(Math.min(35,ms-r))},reset,validateTasks,generate:createTasks};
+window.__EDUKASS_TEST__={get:()=>({status,step,typed,tasks:tasks.map(t=>({...t})),playerX,solved,crashReason,attempts,world:'valgussaar',rewardUnlocked:rewardUnlocked||status==='finished',victoryStage,crystalCollected:collectedCrystals().includes(1),vaultCount:collectedCrystals().length,jumping,jumpHeight,jumpCount,wrongLocked,turboActive,runningSpeed:effectiveSpeed(),distance:distanceToObstacle(),obstacles:Array.from({length:TOTAL},(_,j)=>obstacleKind(j+1))}),press:onKey,start:()=>startGame(),retry:()=>startGame(true),tick:(ms)=>{for(let r=0;r<ms;r+=35)advance(Math.min(35,ms-r))},reset,validateTasks,generate:createTasks};
 init();
 })();
