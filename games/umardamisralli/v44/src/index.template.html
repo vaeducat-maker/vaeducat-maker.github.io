@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="et">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#56b9ef"><meta name="color-scheme" content="light">
+<title>EDUKASS · Ümardamisralli · 9 peatust</title>
+<style>{{STYLE}}</style>
+</head>
+<body>
+<div id="app">
+  <header class="top">
+    <div class="brand">EDU<b>KASS</b></div>
+    <div class="place"><span class="pin" aria-hidden="true">📍</span> MAJAKAS</div>
+    <div class="topright"><button class="tiny" id="mute" aria-label="Lülita heli sisse või välja" title="Heli sisse või välja">🔇</button><button class="tiny" id="home" aria-label="Alusta uuesti" title="Alusta uuesti">↶</button></div>
+  </header>
+  <div class="route" id="route" aria-label="Teekonna edenemine"></div>
+  <section class="layout">
+    <div class="stage" id="stage" aria-label="Rannikutee ja lähenev takistus">
+      <div class="scene scene-start active" id="sceneStart"></div><div class="scene scene-cliff" id="sceneCliff"></div><div class="scene scene-harbor" id="sceneHarbor"></div><div class="scene scene-extra" id="sceneExtra"></div><div id="landmark" class="stage-landmark phase-0" aria-hidden="true"><img id="landmarkImg" alt=""></div><div class="camera-wash" aria-hidden="true"></div><canvas id="roadLines" aria-hidden="true"></canvas>
+      <div class="hazard" id="hazard" aria-hidden="true"></div>
+      <img class="car" src="assets/asset-050.png" alt="" id="car">
+      <div class="effects"><div class="speedfx"></div><div class="road-sparkles" id="sparks"></div><div id="toast" class="toast" aria-live="polite"></div></div>
+      <div class="overlay open" id="overlay"><div class="modal" id="modal"></div></div>
+    </div>
+    <div class="panel">
+      <div class="exercise"><div class="instruction" id="instruction" data-unit="10"><span class="instruction-verb">ÜMARDA</span><span class="round-target" id="roundTarget">KÜMNELISTENI</span></div><div class="number" id="number">23</div></div>
+      <div class="answer" id="answer"><span id="typed"></span><span class="caret" id="caret"></span></div>
+      <div class="feedback" id="feedback" role="status" aria-live="polite">Sisesta vastus</div>
+      <div class="keyboard" id="keyboard">
+        <button data-key="1">1</button><button data-key="2">2</button><button data-key="3">3</button>
+        <button data-key="4">4</button><button data-key="5">5</button><button data-key="6">6</button>
+        <button data-key="7">7</button><button data-key="8">8</button><button data-key="9">9</button>
+        <button class="special" data-key="back" aria-label="Kustuta viimane number">⌫</button><button data-key="0">0</button><button class="special" data-key="clear" aria-label="Kustuta kõik">×</button>
+      </div>
+    </div>
+    <div id="rewardShell" class="reward-shell" aria-label="Majaka avastamine" hidden>
+      <div id="rewardArt" class="reward-art arrival">
+        <div id="cinemaDeck" class="cinema-deck" aria-hidden="true">
+          <div class="cinema-shot panorama"><div class="film-img"></div></div>
+          <div class="cinema-shot postcard"><div class="film-img"></div></div>
+          <div class="cinema-shot map"><div class="film-img"></div></div><div class="cinema-shot teaser"><div class="forest-scene"><div class="forest-sky"></div><div class="forest-hills"></div><div class="forest-ground"></div><div class="forest-path"></div><div class="forest-cabin"><div class="roof"></div><div class="wall"><i class="window"></i><i class="door"></i></div><div class="chimney"><i></i><i></i><i></i></div></div><div class="forest-pines"><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="forest-fog"></div></div></div>
+        </div>
+
+        <div class="cinema-shot forest-front" aria-hidden="true"><div class="film-grain"></div><div class="film-vignette"></div><div class="film-img"></div></div>
+        <div class="cinema-shot forest-side" aria-hidden="true"><div class="film-grain"></div><div class="film-vignette"></div><div class="film-img"></div></div>
+        <div class="cinema-shot forest-reveal" aria-hidden="true"><div class="film-grain"></div><div class="film-vignette"></div><div class="film-img"></div></div>
+
+        <!-- Integrated scenic forest station: all buttons are real touch controls. -->
+        <div class="forest-explorer" id="forestExplorer" aria-label="Vaata Metsajaama kahest küljest">
+          <div class="forest-progress" id="forestProgress" aria-live="polite"><span id="forestSeenFront">○ EEST</span><span>·</span><span id="forestSeenSide">○ KÕRVALT</span></div>
+          <div class="forest-options">
+            <button class="forest-view-btn" id="forestLookFront" type="button" aria-pressed="true">‹ VAATA EEST <small>Maja esikülg</small></button>
+            <button class="forest-view-btn" id="forestLookSide" type="button" aria-pressed="false">VAATA KÕRVALT › <small>Maja teine külg</small></button>
+          </div>
+          <button class="forest-discover" id="forestDiscover" type="button"><strong>🔭 LEIA KOLMAS SIHT!</strong><small>Vaata, mis paistab metsa tagant</small></button>
+        </div>
+
+        <!-- v18: Continuous scenic exploration using the existing high-quality paintings. -->
+        <div id="forestWorld" class="fw-world" aria-label="Metsajaama avastusretk">
+          <div id="fwAmbient" class="fw-ambient" aria-hidden="true"></div>
+          <div class="fw-glow" aria-hidden="true"></div>
+          <div class="fw-heading"><div class="fw-eyebrow"></div><div class="fw-headline" id="fwHeadline"></div></div>
+          <div class="fw-photo" id="fwPhoto" aria-label="Liiguta pilti vasakule või paremale">
+            <img id="fwFrontImg" draggable="false" alt="Metsajaama eesvaade">
+            <img id="fwSideImg" draggable="false" alt="Metsajaama külgvaade">
+            <img id="fwBridgeImg" draggable="false" alt="Jõesild">
+            <div class="fw-photo-shade" aria-hidden="true"></div>
+            <button class="fw-hotspot" id="fwHotspot" type="button" aria-label="Vaata läbi binokli"></button>
+            <span class="fw-photo-tag" id="fwPhotoTag">METSAJAAM</span>
+          </div>
+          <button class="fw-arrow fw-prev" id="fwPrev" type="button" aria-label="Vaata vasakule">‹</button>
+          <button class="fw-arrow fw-next" id="fwNext" type="button" aria-label="Vaata paremale">›</button>
+          <div class="fw-dashboard">
+            <div class="fw-trail"><span class="fw-leaf" aria-hidden="true"></span><span id="fwTrailTitle"></span><span class="fw-leaf" aria-hidden="true"></span></div>
+            <div class="fw-narration" id="fwNarration" aria-live="polite"></div>
+            <div class="fw-timeline" id="fwTimeline" aria-label="Vaadete edenemine"><span></span><span></span><span></span><span></span></div>
+            <button id="fwTelescope" class="fw-telescope" type="button" hidden aria-label="Ava binokkel"><span class="fw-scope-icon" aria-hidden="true">🔭</span><span></span></button>
+            <span class="fw-soft-hint" id="fwSoftHint"></span>
+          </div>
+          <div id="fwScope" class="fw-scope" aria-label="Vaata läbi binokli" hidden>
+            <div class="fw-scope-heading"></div>
+            <button id="fwCloseScope" class="fw-close-scope" type="button" aria-label="Tagasi maja juurde">✕</button>
+            <div class="fw-lens" id="fwLens"><img id="fwLensImage" alt="Vaade metsa ja jõe poole" draggable="false"><span class="fw-lens-cross"></span><span class="fw-lens-shine"></span></div>
+            <div class="fw-scope-label" id="fwScopeLabel" aria-live="polite"></div>
+            <div class="fw-scope-controls" id="fwScopeControls"><button type="button" id="fwScopeLeft" aria-label="Vaata vasakule">‹</button><span></span><button type="button" id="fwScopeRight" aria-label="Vaata paremale">›</button></div>
+            <button id="fwFound" type="button" class="fw-found" hidden aria-label="Ava järgmine siht">🌉</button>
+          </div>
+          <div class="fw-finish" id="fwFinish" hidden>
+            <div class="fw-finish-title"></div>
+            <div class="fw-finish-place">JÕESILD</div>
+            <div class="fw-finish-subtitle"></div>
+            <button type="button" id="fwSave" class="fw-save" aria-label="Edasi">✓</button>
+            <button type="button" id="fwExploreAgain" class="fw-again" aria-label="Vaata uuesti">↺</button>
+          </div>
+        </div>
+        
+        <!-- v22. Jõesild interactive station, identical reward protocol to the lighthouse. -->
+        <div id="bridgeWorld" class="bw-world" aria-label="Jõesild: vaata ringi">
+          <div id="bwPhoto" class="bw-photo" aria-label="Jõesilla panoraam"><img id="bwVista" class="bw-image" alt="Kivisild üle jõe" draggable="false"></div>
+          <button id="bwPrev" class="bw-arrow bw-prev" type="button" aria-label="Vasakule">‹</button>
+          <button id="bwNext" class="bw-arrow bw-next" type="button" aria-label="Paremale">›</button>
+          <button id="bwLook" class="bw-telescope" type="button" aria-label="Vaata binokliga"><img id="bwBinocular" alt="" draggable="false"></button>
+          <div id="bwProgress" class="bw-progress" aria-label="Panoraami edenemine"><span></span><span></span><span></span><span></span></div>
+          <div id="bwScope" class="bw-scope" hidden>
+            <button id="bwClose" type="button" class="bw-close" aria-label="Sulge">✕</button>
+            <div id="bwLens" class="bw-lens"><img id="bwScopeImage" draggable="false" alt="Mäekuru kauguses"></div>
+            <div id="bwScopeActions" class="bw-scope-actions"><button id="bwLeft" type="button" aria-label="Vasakule">‹</button><button id="bwRight" type="button" aria-label="Paremale">›</button></div>
+            <button type="button" id="bwDiscovered" class="bw-discovered" aria-label="Mäekuru avastatud">🏔️</button>
+          </div>
+          <div id="bwReveal" class="bw-reveal" hidden><strong>MÄEKURU</strong><button type="button" id="bwSave" aria-label="Võta postkaart">✓</button></div>
+        </div>
+
+        <div id="mountainWorld" class="mw-world" aria-label="Mäekuru" hidden>
+          <div class="mw-backdrop" id="mwBackdrop"></div>
+          <div class="mw-glow"></div>
+          <div class="mw-title" id="mwTitle">MÄEKURU</div>
+          <div class="mw-photo" id="mwPhoto">
+            <img id="mwScreen" class="mw-screen" alt="Mäekuru vaatepunkt" draggable="false">
+          </div>
+          <button id="mwPrev" class="mw-nav mw-left" type="button" aria-label="Vaata vasakule">‹</button>
+          <button id="mwNext" class="mw-nav mw-right" type="button" aria-label="Vaata paremale">›</button>
+          <div id="mwProgress" class="mw-progress" aria-label="Vaadete edenemine"><span></span><span></span><span></span></div>
+          <button id="mwScopeBtn" class="mw-binocular" type="button" aria-label="Vaata läbi binokli" hidden>🔭</button>
+          <button id="mwRevealBtn" class="mw-continue" type="button" aria-label="Ava Järveäär" hidden>🏞️ <span>›</span></button>
+          <button id="mwSaveBtn" class="mw-continue" type="button" aria-label="Võta postkaart" hidden>✉️ <span>›</span></button>
+        </div>
+
+        <!-- v33: Complete stages 5–9, using the same inspection > binocular > postcard > map mechanic. -->
+        <div id="advWorld" class="adv-world" aria-label="Uue jaama avastamine">
+          <div class="adv-atmosphere" id="advAtmosphere"></div>
+          <div class="adv-sign" id="advSign">JÄRVEÄÄR</div>
+          <div class="adv-gallery" id="advGallery" aria-label="Vaata jaama">
+            <img id="advScene" alt="Jaama vaade" draggable="false">
+            <button id="advLeft" class="adv-nav adv-left" type="button" aria-label="Eelmine vaade">‹</button>
+            <button id="advRight" class="adv-nav adv-right" type="button" aria-label="Järgmine vaade">›</button>
+          </div>
+          <div id="advDots" class="adv-dots" aria-label="Vaated"></div>
+          <button id="advSpy" class="adv-spy" type="button" hidden aria-label="Vaata binokliga"><img id="advSpyImage" alt="" draggable="false"></button>
+          <div id="advReveal" class="adv-reveal" hidden>
+            <div class="adv-reveal-title" id="advRevealTitle"></div>
+            <div class="adv-reveal-photo"><img id="advNextImage" alt="Järgmine siht" draggable="false"></div>
+            <button id="advTakeCard" type="button" class="adv-take" aria-label="Võta postkaart">✓</button>
+          </div>
+        </div>
+        <div class="fw-map" id="fwMap" aria-label="Ümardamisralli teekond">
+          <div class="fw-map-head">🗺️ TEEKONNA KAART</div><div class="fw-map-count">2 / 9</div>
+          <div class="fw-map-track">
+            <div class="fw-map-stop done"><span class="pic">🌊</span><b>MAJAKAS ✓</b></div><div class="fw-map-arrow">›</div>
+            <div class="fw-map-stop done"><span class="pic">🌲</span><b>METSAJAAM ✓</b></div><div class="fw-map-arrow">›</div>
+            <div class="fw-map-stop next"><span class="pic">🌉</span><b>JÕESILD</b></div>
+          </div>
+          <div class="fw-album"><div class="fw-album-head">✉️ POSTKAARDID · 2 / 9</div>
+            <div class="fw-stamps" id="fwStamps"><div class="fw-stamp done">🌊</div><div class="fw-stamp done">🌲</div><div class="fw-stamp">🔒</div><div class="fw-stamp">🔒</div><div class="fw-stamp">🔒</div><div class="fw-stamp">🔒</div><div class="fw-stamp">🔒</div><div class="fw-stamp">🔒</div><div class="fw-stamp">🔒</div></div>
+          </div><div class="fw-map-lock">3. JÕESILD · järgmine peatus</div>
+        </div>
+        <div class="forest-wood-corner" aria-hidden="true">JÕESILD<small>3. SIHTKOHT</small></div>
+        <div class="cinema-shine" aria-hidden="true"></div>
+        <div class="cinema-gulls" aria-hidden="true">⌣ ⌣</div>
+        
+        <img id="cinemaPan" class="cinema-pan" src="assets/asset-007.webp" alt="Vaade majaka rõdult merele" draggable="false">
+        <button id="cinemaNext" class="cinema-next" type="button">🌲 METSAJAAM <small>Vaata lähemalt</small></button>
+        <button id="cinemaTelescope" class="cinema-telescope" type="button" aria-label="Vaata läbi pikksilma">🔭</button>
+        <img id="panImg" class="reward-pan-img" src="assets/asset-051.webp" alt="Merevaade majaka tipust" draggable="false">
+        <img class="reward-map-img" src="assets/asset-052.webp" alt="Teekonnakaart: Majakas ja Metsajaam">
+        <div class="reward-info" id="rewardTitle"></div>
+        <div class="reward-desc" id="rewardDesc"></div>
+        <button id="rewardNext" class="reward-next-glow" type="button" aria-label="Vajuta Metsajaamale"><span>🌲</span><small>VAJUTA SIIN!<br>METSAJAAM</small></button>
+        <div class="panorama-controllers"><button type="button" id="lookLeft" aria-label="Vaata vasakule">‹</button><span>VAATA RINGI</span><button type="button" id="lookRight" aria-label="Vaata paremale">›</button></div>
+        <div class="reward-postcard-frame"><img src="assets/asset-053.webp" alt="Majaka postkaart"><div class="postcard-name">MAJAKAS</div></div>
+        <div class="reward-card-note" id="nextDestination">🌲 Järgmine sihtkoht: Metsajaam</div>
+        <button type="button" id="rewardMapGo" class="reward-map-go">🌲 METSAJAAM <small>☝ VAJUTA JA ALUSTA SÕITU!</small></button>
+        <div class="forest-map-board"><h2>🗺️ MEIE TEEKOND</h2><div class="forest-map-stops"><b>✅ MAJAKAS</b><span>➜</span><b>✅ METSAJAAM</b><span>➜</span><b class="locked">🔒 JÕESILD</b></div><p>Uus tee avaneb peagi!</p></div>
+      </div>
+      <div class="reward-footer"><button id="rewardPrimary" type="button" class="reward-main-button">ASTU SISSE!</button><button id="rewardSecondary" type="button" class="reward-alt-button" hidden>SÕIDA UUESTI</button></div>
+      <button id="rewardSkip" type="button" class="reward-skip">JÄTA ANIMATSIOON VAHELE ›</button>
+    </div>
+  </section>
+</div>
+<script>{{SCRIPT}}</script>
+</body></html>
