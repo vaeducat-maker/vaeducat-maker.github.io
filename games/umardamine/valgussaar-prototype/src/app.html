@@ -44,15 +44,60 @@
   <p>Kristall kihutab ise edasi! Ümarda enne takistust: õige vastus avab hüppe, vale vastus või hilinemine tähendab kokkupõrget. Siis alustad otsast.</p>
   <button class="primary" id="begin">ALUSTA MÄNGU <span aria-hidden="true">›</span></button>
  </div>
- <div class="hero" id="finishHero" hidden>
-  <span class="finish-kicker">MAAILM 01 · VÕIDETUD</span>
-  <div class="finish-gem" aria-hidden="true"><svg viewBox="0 0 160 160"><defs><radialGradient id="prizeG"><stop stop-color="#faffdf"/><stop offset=".42" stop-color="#88f8e1"/><stop offset="1" stop-color="#4e65e3"/></radialGradient></defs><circle cx="80" cy="80" r="72" fill="none" stroke="#8cf9e6" stroke-opacity=".48" stroke-width="2" stroke-dasharray="3 13"/><circle cx="80" cy="80" r="53" fill="#70e9ec" opacity=".15"/><path d="M80 12 124 58 109 112 80 150 51 112 36 58Z" fill="url(#prizeG)" stroke="#e1fff4" stroke-width="3"/><path d="M80 12v138M36 58l44 18 44-18M51 112l29-36 29 36" fill="none" stroke="#194ca0" stroke-opacity=".5" stroke-width="3"/></svg></div>
-  <h1>Võrratu!</h1>
-  <div class="stars-score">✦ ✦ ✦ &nbsp; 8 / 8</div>
-  <p>Sa ületasid kõik kaheksa takistust ühegi veata!</p>
-  <div class="finish-note">Sinu auhind: <strong>Valgussaare kristall</strong></div>
-  <button class="primary" id="again">MÄNGI UUESTI ↻</button>
-  <button class="secondary" id="viewWorld">VAATA MAAILMA</button>
+ <div class="celebrate-particles" id="celebrateParticles" aria-hidden="true"></div>
+ <div class="hero celebrate-victory" id="victoryHero" hidden>
+  <div class="victory-halo" aria-hidden="true"><span></span><span></span><span></span></div>
+  <span class="victory-kicker">MAAILM 01 VÕIDETUD</span>
+  <h1 class="victory-headline">VÕRRATU!</h1>
+  <div class="victory-score"><strong>8 / 8</strong><span>TAKISTUST LÄBITUD</span></div>
+  <div class="victory-stars" aria-hidden="true">✦ <span>✦</span> ✦</div>
+ </div>
+ <div class="hero celebrate-reward" id="finishHero" hidden>
+  <span class="reward-kicker">MAAILM 01 · VALGUSSAAR</span>
+  <h1 class="reward-title">KRISTALL SAADUD!</h1>
+  <div class="prize-theatre" aria-label="Valgussaare kristall">
+   <div class="prize-rays" aria-hidden="true"></div>
+   <div class="prize-aura" aria-hidden="true"></div>
+   <div class="prize-ring prize-ring-one" aria-hidden="true"></div>
+   <div class="prize-ring prize-ring-two" aria-hidden="true"></div>
+   <div class="prize-star s1" aria-hidden="true">✦</div>
+   <div class="prize-star s2" aria-hidden="true">✧</div>
+   <div class="prize-star s3" aria-hidden="true">✦</div>
+   <div class="prize-star s4" aria-hidden="true">✦</div>
+   <div class="prize-crystal">
+    <svg viewBox="0 0 180 218" role="img" aria-label="Helendav Valgussaare kristall">
+     <defs>
+      <linearGradient id="awardBody" x1=".12" y1="0" x2=".86" y2="1"><stop stop-color="#fff8b7"/><stop offset=".22" stop-color="#f0fff7"/><stop offset=".48" stop-color="#8cffe3"/><stop offset=".78" stop-color="#55bcec"/><stop offset="1" stop-color="#7856e7"/></linearGradient>
+      <linearGradient id="awardLeft" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#e5ffff"/><stop offset=".6" stop-color="#66dee4"/><stop offset="1" stop-color="#3179be"/></linearGradient>
+      <linearGradient id="awardRight" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f6fff2"/><stop offset=".45" stop-color="#75f5dd"/><stop offset="1" stop-color="#6357cf"/></linearGradient>
+      <linearGradient id="awardCore" x1="0" y1="0" x2=".2" y2="1"><stop stop-color="#fffde6"/><stop offset=".5" stop-color="#b9ffe4"/><stop offset="1" stop-color="#50c8db"/></linearGradient>
+     </defs>
+     <path d="M90 4 136 43 162 99 128 160 90 212 52 160 18 99 44 43Z" fill="url(#awardBody)" stroke="#f5ffdf" stroke-width="3.5"/>
+     <path d="M90 4 44 43 18 99 90 88Z" fill="url(#awardLeft)"/>
+     <path d="M90 4 136 43 162 99 90 88Z" fill="#cefff0" opacity=".83"/>
+     <path d="M18 99 52 160 90 212 90 88Z" fill="#3d9ad3" opacity=".72"/>
+     <path d="M162 99 128 160 90 212 90 88Z" fill="url(#awardRight)" opacity=".95"/>
+     <path d="M44 43 90 4 136 43 90 88Z" fill="url(#awardCore)" stroke="#fffbd6" stroke-width="1.2"/>
+     <path d="M90 88V212M18 99l72-11 72 11M52 160l38-72 38 72M44 43l46 45 46-45" fill="none" stroke="#f7ffff" stroke-opacity=".58" stroke-width="1.8"/>
+     <path d="M90 25 101 63 91 84 78 63Z" fill="#fffddd" opacity=".76"/>
+     <path d="M37 100 59 94 83 104 58 137Z" fill="#fff" opacity=".28"/>
+     <path d="M110 104 145 102 123 139 98 172Z" fill="#d5fff3" opacity=".30"/>
+    </svg>
+   </div>
+   <div class="prize-floor" aria-hidden="true"></div>
+  </div>
+  <div class="reward-name">VALGUSSAARE KRISTALL</div>
+  <div class="crystal-collection" aria-label="Kogutud kristallid: 1 üheksast">
+   <span class="collection-counter">KOGUTUD <strong>1 / 9</strong></span>
+   <div class="crystal-slots" aria-hidden="true">
+    <span class="owned">◆</span><span>◆</span><span>◆</span><span>◆</span><span>◆</span><span>◆</span><span>◆</span><span>◆</span><span>◆</span>
+   </div>
+  </div>
+  <button class="next-world" id="nextWorld" type="button" disabled aria-label="Järgmine maailm tuleb varsti">JÄRGMINE MAAILM <span>VARSTI</span></button>
+  <div class="reward-actions">
+   <button class="secondary" id="again" type="button">MÄNGI UUESTI ↻</button>
+   <button class="secondary" id="viewWorld" type="button">VAATA MAAILMA</button>
+  </div>
  </div>
  <div class="hero" id="crashHero" hidden>
   <span class="fail-kicker">MAAILM 01 · KATSE LÄBI</span>
