@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><title>Ümardamisralli journey check</title>
+<style>body{font:15px system-ui;background:#edf3f8;color:#152b49}button{padding:9px}pre{white-space:pre-wrap}iframe{display:block;border:1px solid #bacada}</style>
+<button id="run">Start full journey</button><pre id="report">Ready</pre>
+<iframe id="game" title="Ümardamisralli" src="../index.html?qa&amp;v=44.2" width="390" height="844"></iframe>
+<script>
+const frame=document.getElementById('game');
+const report=document.getElementById('report');
+const pause=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+const routes=['majakas','forest','bridge','mountain','lake','mill','town','observatory','castle'];
+async function waitFor(test,description) {
+  const deadline=Date.now()+20000;
+  while(!test()){
+    if(Date.now()>deadline)throw Error('Timed out waiting for '+description);
+    await pause(65);
+  }
+}
+async function play(){
+  const log=[];
+  const doc=frame.contentDocument;
+  const win=frame.contentWindow;
+  const read=()=>win.__ADVENTURE_TEST__.get();
+  const byId=id=>doc.getElementById(id);
+  const click=id=>{
+    const button=byId(id);
+    if(!button||button.hidden||button.disabled||!button.getClientRects().length)throw Error('Unavailable button '+id+' at '+read().step);
+    button.click();
+  };
+  win.sessionStorage.clear();
+  let solved=0;
+  for(const [level,route] of routes.entries()){
+    const count=level===0?8:12;
+    frame.width=level%2?844:390; frame.height=level%2?390:844;
+    if(read().currentRoute!==route||read().state!=='intro')throw Error('Wrong route after map '+route);
+    if(!byId('modal').textContent.includes(count+' ümardamisülesannet'))throw Error('Intro count '+route);
+    click('begin');
+    const phases=new Set();
+    for(let i=0;i<count;i++){
+      await waitFor(()=>read().state==='driving'&&read().index===i,route+' '+(i+1));
+      if(byId('route').getAttribute('aria-label')!==(i+1)+' / '+count)throw Error('Progress indicator '+route);
+      const number=BigInt(byId('number').textContent.replace(/\s/g,''));
+      const unit=BigInt(byId('instruction').dataset.unit);
+      const answer=number/unit*unit+(number%unit*2n>=unit?unit:0n);
+      phases.add(byId('stage').dataset.phase);
+      if(win.__ADVENTURE_TEST__.earnedCards().length!==level)throw Error('Early postcard '+route);
+      for(const digit of String(answer))doc.querySelector('[data-key="'+digit+'"]').click();
+      if(read().state!=='dodging')throw Error('Keypad rejected '+answer);
+      solved++;report.textContent=log.join('\n')+'\nDriving '+route+' '+(i+1)+' / '+count;
+    }
+    await waitFor(()=>read().state==='reward','arrival at '+route);
+    const expectedPhases=level<4?'012':'0123';
+    if([...phases].join('')!==expectedPhases)throw Error('Missing road scene '+route);
+    if(route==='majakas'){
+      click('cinemaTelescope');
+      await waitFor(()=>read().step==='postcard','lighthouse postcard');
+    }else{
+      const steps={
+        forest:['fwNext','fwNext','fwNext','fwHotspot','fwScopeRight','fwScopeRight','fwScopeRight','fwFound','fwSave'],
+        bridge:['bwNext','bwNext','bwNext','bwLook','bwRight','bwRight','bwRight','bwRight','bwDiscovered','bwSave'],
+        mountain:['mwNext','mwNext','mwScopeBtn','mwRevealBtn','mwSaveBtn']
+      };
+      const sequence=steps[route]||['advRight','advRight','advSpy','advTakeCard'];
+      for(const id of sequence)click(id);
+    }
+    if(win.__ADVENTURE_TEST__.earnedCards().length!==level+1)throw Error('Missing postcard '+route);
+    click('rewardPrimary');
+    if(level===8){
+      if(read().step!=='adventure-finale'||doc.querySelector('.fw-map-count').textContent!=='9 / 9')throw Error('Incomplete finale');
+    } else {
+      click(level===0?'rewardMapGo':'rewardPrimary');
+    }
+    log.push(route+' — '+count+' answers, '+(level+1)+'/9 postcards');
+  }
+  return 'PASS · '+solved+' answers · 9/9 postcards\n'+log.join('\n');
+}
+document.getElementById('run').onclick=async function(){
+  this.disabled=true;
+  try{report.textContent=await play()}catch(error){report.textContent+='\nFAIL · '+error.message}
+};
+</script></html>
