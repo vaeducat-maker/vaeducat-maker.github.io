@@ -1,0 +1,124 @@
+{
+  "status": "PASS",
+  "exercises": 104000,
+  "results": {
+    "majakas": {
+      "count": 8000,
+      "max": 989,
+      "units": [
+        10,
+        100
+      ],
+      "unitCounts": {
+        "10": 7000,
+        "100": 1000
+      }
+    },
+    "forest": {
+      "count": 12000,
+      "max": 2999,
+      "units": [
+        10,
+        100
+      ],
+      "unitCounts": {
+        "10": 4000,
+        "100": 8000
+      }
+    },
+    "bridge": {
+      "count": 12000,
+      "max": 9498,
+      "units": [
+        10,
+        100,
+        1000
+      ],
+      "unitCounts": {
+        "10": 2000,
+        "100": 7000,
+        "1000": 3000
+      }
+    },
+    "mountain": {
+      "count": 12000,
+      "max": 39996,
+      "units": [
+        100,
+        1000
+      ],
+      "unitCounts": {
+        "100": 4000,
+        "1000": 8000
+      }
+    },
+    "lake": {
+      "count": 12000,
+      "max": 99999,
+      "units": [
+        100,
+        1000,
+        10000
+      ],
+      "unitCounts": {
+        "100": 2000,
+        "1000": 8000,
+        "10000": 2000
+      }
+    },
+    "mill": {
+      "count": 12000,
+      "max": 399848,
+      "units": [
+        1000,
+        10000
+      ],
+      "unitCounts": {
+        "1000": 4000,
+        "10000": 8000
+      }
+    },
+    "town": {
+      "count": 12000,
+      "max": 999995,
+      "units": [
+        1000,
+        10000,
+        100000
+      ],
+      "unitCounts": {
+        "1000": 2000,
+        "10000": 8000,
+        "100000": 2000
+      }
+    },
+    "observatory": {
+      "count": 12000,
+      "max": 3999982,
+      "units": [
+        10000,
+        100000
+      ],
+      "unitCounts": {
+        "10000": 4000,
+        "100000": 8000
+      }
+    },
+    "castle": {
+      "count": 12000,
+      "max": 9999881,
+      "units": [
+        10000,
+        100000,
+        1000000
+      ],
+      "unitCounts": {
+        "10000": 2000,
+        "100000": 7000,
+        "1000000": 3000
+      }
+    }
+  },
+  "persistence": "legacy aliases, individual cards, map counts, resume, complete collection",
+  "input": "long prefixes, zero, wrong-answer recovery"
+}
