@@ -85,7 +85,7 @@ function overlay(type){
 function hideOverlay(){$('overlay').classList.add('hidden');$('overlay').setAttribute('aria-hidden','true')}
 function speedForStep(){return step===7?75:SPEED}
 function distanceToObstacle(){return ORIGIN+NODE*(step+1)-playerX}
-function hazardScale(){return clamp(canvasH/250,.5,1)}
+function hazardScale(){return clamp(canvasH/310,.42,1)}
 function effectiveSpeed(){return wrongLocked?Math.max(speedForStep()*1.65,distanceToObstacle()/1.12):speedForStep()}
 function updateRushHUD(){
  const secs=Math.max(0,distanceToObstacle()/effectiveSpeed());
