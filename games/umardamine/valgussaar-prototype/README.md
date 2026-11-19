@@ -4,7 +4,7 @@ Experimental first world: automatic side-scrolling crystal runner. The art direc
 
 - The crystal moves continuously along a neon track.
 - Eight rounding exercises, with tens and an introductory hundreds task, preserve the previous first-world mathematical progression.
-- A correct answer arms a real, automatic ballistic jump with gravity and a full rotation. The crystal must physically clear the fixed spike hitbox; the movement never pauses while typing.
+- A correct answer arms a real, automatic ballistic jump with gravity and a full rotation. If the child answers early (more than 180 world pixels before the hazard), the crystal automatically enters a fast 340-pixel/s turbo run, takes a longer ballistic leap, and immediately continues to the next rounding task after clearing the spikes. No waiting and no teleporting. Late correct answers retain the original 86-pixel/s timing to avoid unfair collisions (75 at the final obstacle).
 - A fully incorrect answer or manual confirmation locks the answer; the crystal visibly rushes into the next obstacle and crashes. Reaching an obstacle without a correct answer also crashes. The spikes never teleport or open simply because the answer is correct.
 - Retrying restarts at obstacle 1 with the same generated round; all eight obstacles must be cleared in one attempt.
 - The finished crystal reward is awarded only after passing 8/8 obstacles.
@@ -22,3 +22,11 @@ This is a **single-world prototype**, not the complete nine-world game. It is sa
 ## Physics revision (19 November 2026)
 
 The first-world visuals, typography, task order, colors, and reward are preserved. The running crystal now follows a real timed jump arc, rotates in air, and clears each persistent spike only when high enough. Hazards have position-based collision tests. The standalone HTML is rebuilt from `src/` and stays separate from the public website. This prototype borrows the continuous-platformer gameplay principle; it does not use any Geometry Dash game assets.
+
+## Fast-answer handling (19 November 2026)
+
+- Before a correct answer: original relaxed running speed; pupils keep the same thinking time.
+- After an early correct answer: auto turbo (~4× faster) until the obstacle is cleared, with real position-based obstacle checks and a properly scaled jump arc.
+- After a late correct answer: no sudden speed boost, so the answer remains safe.
+- Progression is immediate after the collision box is cleared; maths sequence and visuals are unchanged.
+- Synthetic game-loop checks: 27 combinations of viewport height, initial answer delay, and tick interval passed; Playwright integration test updated, but not executed in this chat environment.
