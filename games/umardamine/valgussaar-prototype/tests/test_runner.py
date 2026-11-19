@@ -28,7 +28,7 @@ def test(browser,w,h,label):
  p.locator(f'[data-key="{answer[0]}"]').click()
  assert p.evaluate('window.__EDUKASS_TEST__.get().status')=='running'
  p.locator('[data-key="back"]').click()
- wrong='79' if answer!='79' else '89'
+ wrong=('8' if answer[0]!='8' else '7') + '0'*(len(answer)-1)
  for k in wrong:p.locator(f'[data-key="{k}"]').click()
  assert p.evaluate('window.__EDUKASS_TEST__.get().wrongLocked') is True, 'Wrong answer must prevent another attempt'
  assert p.evaluate('window.__EDUKASS_TEST__.get().status')=='running', 'Crystal must physically approach obstacle'
