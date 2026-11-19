@@ -204,6 +204,93 @@ button:disabled{cursor:default;opacity:.7}
  .victory-score{padding:7px 25px}.victory-stars{font-size:25px}
 }
 @media(prefers-reduced-motion:reduce){.overlay.is-celebrating:before,.victory-headline,.victory-score,.victory-kicker,.victory-stars,.victory-halo span,.celebrate-particles span,.reward-kicker,.reward-title,.prize-crystal,.prize-rays,.prize-aura,.prize-ring,.prize-star,.reward-name,.crystal-collection,.next-world,.reward-actions{animation:none!important}}
+
+
+/* Fit the full keypad inside Android dynamic browser viewport, without hiding a row. */
+.key-zero{grid-column:span 2}
+.intro-vault-btn{font-size:11px;letter-spacing:.08em;color:#c7fff0;background:#163b64bf;border:1px solid #77f9e27d;border-radius:12px;padding:11px 14px;cursor:pointer;margin-top:11px;font-weight:900;display:flex;justify-content:center;gap:10px;align-items:center}
+.intro-vault-btn span{color:#ffdc9e;font-variant-numeric:tabular-nums}
+.vault-open-btn{width:min(336px,100%);min-height:46px;display:flex;align-items:center;justify-content:center;gap:10px;padding:8px 12px;background:linear-gradient(115deg,#0a6779cf,#18376ccc);color:#effff6;border:1px solid #c1ffe5b8;border-radius:14px;cursor:pointer;box-shadow:inset 0 1px 1px #fff9,0 0 20px #4effba28;font-size:11px;letter-spacing:.035em;font-weight:950}
+.vault-open-btn strong{font-size:12px;white-space:nowrap;color:#ffe6a5}
+.mini-crystal{width:17px;height:25px;background:linear-gradient(140deg,#f9ffc6,#57f3e5,#576ddf);clip-path:polygon(50% 0,90% 28%,82% 68%,50% 100%,18% 68%,10% 28%);filter:drop-shadow(0 0 10px #80fff4)}
+.crystal-vault{width:min(530px,100%);max-height:calc(100dvh - 24px);overflow-y:auto;scrollbar-width:thin;gap:8px;margin:auto;padding:13px 2px 14px;flex:none}
+.crystal-vault[hidden]{display:none!important}
+.vault-eyebrow{font-size:10px;font-weight:950;letter-spacing:.18em;color:#b4fff3}
+.crystal-vault .vault-title{font-size:clamp(24px,5.1vw,34px);line-height:1.06;margin:0;color:#ffecb9;text-shadow:0 0 19px #ffed9c88;letter-spacing:-.035em}
+.vault-progress{font-size:13px;font-weight:950;letter-spacing:.12em;color:#d4ffee;background:#183b6585;border:1px solid #9efde66e;padding:6px 15px;border-radius:50px}
+.vault-display{position:relative;isolation:isolate;width:min(490px,100%);background:radial-gradient(ellipse at 50% 46%,#2963a3ba,#0e1c49ec 76%),repeating-linear-gradient(60deg,#d4ffff10 0 1px,transparent 1px 33px);border:1px solid #c5fbe75a;border-radius:24px;padding:14px;box-shadow:0 11px 38px #0009,inset 0 0 45px #99e9ff12}
+.vault-constellation{position:absolute;inset:5%;pointer-events:none;background:radial-gradient(circle at 50% 50%,#b3fff450 0 1px,transparent 3px),radial-gradient(circle at 24% 25%,#ffe4aa66 0 1.5px,transparent 3px),radial-gradient(circle at 77% 30%,#a4eaff6a 0 1.5px,transparent 3px),repeating-conic-gradient(from 0deg at 50% 50%,transparent 0deg 38deg,#8ee5f31a 39deg 40deg,transparent 42deg 45deg)}
+.vault-grid{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.vault-card{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-width:0;min-height:112px;padding:7px 3px 5px;border:1px solid #749ab65c;border-radius:15px;background:linear-gradient(150deg,#25355dc9,#101c39d9);box-shadow:inset 0 1px 1px #ffffff22,0 3px 13px #020b23a8;overflow:hidden}
+.vault-card:before{content:"";position:absolute;inset:-22%;background:radial-gradient(circle,#78fff119 0%,transparent 57%);pointer-events:none}
+.vault-card.unlocked{border:1px solid #c4ffe2;box-shadow:0 0 18px #4ffff581,inset 0 0 22px #a3fff424;background:radial-gradient(circle at 50% 39%,#4daab66b,#123968e8 75%)}
+.vault-card-number{font-size:11px;letter-spacing:.1em;color:#a7b9d6;font-weight:950}
+.vault-card.unlocked .vault-card-number{color:#fff2b2}
+.vault-card-gem{width:clamp(32px,9vw,49px);height:clamp(45px,11vw,59px);display:flex;align-items:center;justify-content:center}
+.vault-card-gem svg{width:100%;height:100%;filter:grayscale(1) brightness(.34) saturate(.3);opacity:.52;transform:scale(.9) rotate(calc((var(--slot) - 4)*3deg))}
+.vault-card.unlocked .vault-card-gem svg{filter:drop-shadow(0 0 9px #c3ffdb) drop-shadow(0 0 20px #68fff9);opacity:1;transform:scale(1.04);animation:prizeFloat 3.4s ease-in-out infinite}
+.vault-card-name{font-size:10px;color:#cedef8;font-weight:900;letter-spacing:.02em;white-space:nowrap}
+.vault-card.unlocked .vault-card-name{color:#e7fff9}
+.vault-card-status{font-size:9px;font-weight:900;letter-spacing:.075em;color:#8396b2}
+.vault-card.unlocked .vault-card-status{color:#ffe9a7}
+.vault-description{font-size:12px!important;line-height:1.36!important;color:#bce9fa!important;margin:2px 0 5px!important;text-align:center;max-width:340px!important}
+.vault-back{min-width:178px;min-height:42px;border-radius:12px;border:1px solid #8bfce396;background:linear-gradient(125deg,#82fff0,#43ccdd);font-size:13px;font-weight:950;letter-spacing:.08em;color:#132b43;cursor:pointer;box-shadow:0 3px 10px #6cffed3c}
+@media (max-width:739px) and (orientation:portrait){
+ html,body{height:100%;min-height:0;overflow:hidden}
+ body{height:100dvh}
+ #shell{width:100%;height:100dvh;min-height:0;overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:39px 18px minmax(125px,1fr) minmax(60px,76px) 47px 15px minmax(164px,1.03fr);gap:4px;padding:max(4px,env(safe-area-inset-top)) clamp(8px,2.6vw,13px) max(4px,env(safe-area-inset-bottom));margin:0;border:0;border-radius:0}
+ .top{grid-row:1;grid-column:1;height:39px;min-height:0;gap:5px}
+ .logo{font-size:clamp(14px,4.2vw,17px)}
+ .world-pill{font-size:clamp(9px,2.7vw,11px);letter-spacing:.01em;padding:5px 8px;gap:5px}
+ .world-pill b{font-size:10px}
+ .top-actions{gap:4px}
+ .icon-btn{width:34px;height:34px;border-radius:10px}
+ .progress{grid-row:2;grid-column:1;min-height:0;gap:5px}
+ .progress-label{font-size:9px}
+ .gem{height:7px}
+ .scene{grid-row:3;grid-column:1;height:100%;min-height:0;border-radius:17px}
+ .scene:before{border-radius:16px}
+ .scene-heading{top:9px;left:11px}
+ .scene-heading strong{font-size:16px}
+ .scene-heading small{font-size:8px}
+ .scene-caption{left:11px;bottom:8px;font-size:9px}
+ .rush-hud{top:45px;right:9px;min-width:118px;padding:5px 7px}
+ .rush-line{font-size:8px}
+ .problem{grid-row:4;grid-column:1;min-height:0;padding:5px 10px;display:flex;flex-direction:column;justify-content:center;gap:0;border-radius:15px}
+ .problem-top{min-height:19px;gap:6px}
+ .problem-top .verb{font-size:10px}
+ .unit{font-size:9px;padding:4px 7px}
+ .number{font-size:clamp(31px,5.5dvh,42px);line-height:1.0}
+ .answer-wrap{grid-row:5;grid-column:1;min-height:0;gap:6px}
+ .answer-display{height:100%;min-height:0;border-radius:13px}
+ .answer-value{font-size:27px}
+ .answer-info{width:70px;border-radius:12px}
+ .note{grid-row:6;grid-column:1;height:15px;min-height:0;flex:none;font-size:11px;line-height:1}
+ .keypad{grid-row:7;grid-column:1;height:100%;min-height:0;max-height:none;grid-template-rows:repeat(4,minmax(0,1fr));gap:5px}
+ .key{min-height:0;border-radius:11px;font-size:clamp(20px,4.9dvh,27px)}
+ .key.action{font-size:21px}
+ .foot{display:none}
+ .overlay{position:fixed;inset:0;height:100dvh;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+ .hero.celebrate-reward{max-height:calc(100dvh - 12px)}
+}
+@media (max-width:739px) and (orientation:portrait) and (max-height:560px){
+ #shell{grid-template-rows:34px 15px minmax(102px,1fr) minmax(53px,63px) 42px 12px minmax(142px,.97fr);gap:3px}
+ .top{height:34px}
+ .scene-heading strong{font-size:14px}
+ .key{font-size:20px}
+ .note{height:12px;font-size:10px}
+}
+@media(orientation:landscape) and (max-height:600px) and (min-width:650px){
+ .vault-display{width:min(680px,100%);padding:6px 9px}
+ .crystal-vault{width:min(700px,98%);max-height:calc(100dvh - 12px);padding:5px 3px;gap:3px}
+ .crystal-vault .vault-title{font-size:22px}
+ .vault-grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+ .vault-card{min-height:93px;padding:4px}
+ .vault-card-gem{height:44px;width:35px}
+ .vault-description{margin:0!important;font-size:10px!important}
+ .vault-back{min-height:32px}
+}
+@media(prefers-reduced-motion:reduce){.vault-card.unlocked .vault-card-gem svg{animation:none!important}}
 </style>
 </head>
 <body>
@@ -220,7 +307,6 @@ button:disabled{cursor:default;opacity:.7}
   <section class="scene" id="scene" aria-label="Helendavate saarte mängumaailm">
     <canvas id="world" aria-hidden="true"></canvas>
     <div class="scene-heading"><small>MAAILM 01</small><strong>Valgussaar</strong></div>
-    <div class="scene-sub">8 TAKISTUST</div>
     <div class="rush-hud" id="rushHud"><div class="rush-line"><span id="rushLabel">TAKISTUSENI</span><strong id="rushClock">—</strong></div><div class="rush-track"><div id="rushFill"></div></div></div>
     <div class="scene-caption" id="sceneCaption">KIIRUSTA! TAKISTUS LÄHENEB</div>
     <div class="scene-glow" id="sceneGlow"></div>
@@ -232,7 +318,7 @@ button:disabled{cursor:default;opacity:.7}
     <button class="key" data-key="1">1</button><button class="key" data-key="2">2</button><button class="key" data-key="3">3</button>
     <button class="key" data-key="4">4</button><button class="key" data-key="5">5</button><button class="key" data-key="6">6</button>
     <button class="key" data-key="7">7</button><button class="key" data-key="8">8</button><button class="key" data-key="9">9</button>
-    <button class="key action" data-key="back" aria-label="Kustuta viimane number">⌫</button><button class="key" data-key="0">0</button><button class="key submit" data-key="check" aria-label="Kontrolli vastust">✓</button>
+    <button class="key action" data-key="back" aria-label="Kustuta viimane number">⌫</button><button class="key key-zero" data-key="0">0</button>
   </section>
   <footer class="foot">EDUKASS · ÜMARDAMINE · PROTOTÜÜP 01</footer>
 </main>
@@ -243,6 +329,7 @@ button:disabled{cursor:default;opacity:.7}
   <h1>Avasta<br>Valgussaar</h1>
   <p>Kristall kihutab ise edasi! Ümarda enne takistust: õige vastus avab hüppe, vale vastus või hilinemine tähendab kokkupõrget. Siis alustad otsast.</p>
   <button class="primary" id="begin">ALUSTA MÄNGU <span aria-hidden="true">›</span></button>
+  <button class="intro-vault-btn" id="openVaultIntro" type="button">KRISTALLIDE VARAKAMBER <span id="introCollectionCount">0 / 9</span></button>
  </div>
  <div class="celebrate-particles" id="celebrateParticles" aria-hidden="true"></div>
  <div class="hero celebrate-victory" id="victoryHero" hidden>
@@ -287,17 +374,22 @@ button:disabled{cursor:default;opacity:.7}
    <div class="prize-floor" aria-hidden="true"></div>
   </div>
   <div class="reward-name">VALGUSSAARE KRISTALL<small>SA SAID VALGUSSAARE KRISTALLI!</small></div>
-  <div class="crystal-collection" aria-label="Kogutud kristallid: 1 üheksast">
-   <span class="collection-counter">KOGUTUD <strong>1 / 9</strong></span>
-   <div class="crystal-slots" aria-hidden="true">
-    <span class="owned">◆</span><span>◆</span><span>◆</span><span>◆</span><span>◆</span><span>◆</span><span>◆</span><span>◆</span><span>◆</span>
-   </div>
-  </div>
+  <button class="vault-open-btn" id="openVaultReward" type="button"><span class="mini-crystal" aria-hidden="true"></span><span>AVA KRISTALLIDE VARAKAMBER</span><strong id="rewardCollectionCount">1 / 9</strong></button>
   <button class="next-world" id="nextWorld" type="button" disabled aria-label="Järgmine maailm tuleb varsti">JÄRGMINE MAAILM <span>VARSTI</span></button>
   <div class="reward-actions">
    <button class="secondary" id="again" type="button">MÄNGI UUESTI ↻</button>
-   <button class="secondary" id="viewWorld" type="button">VAATA MAAILMA</button>
   </div>
+ </div>
+ <div class="hero crystal-vault" id="vaultHero" hidden>
+  <span class="vault-eyebrow">EDUKASS · KRISTALLIDE KOGU</span>
+  <h1 class="vault-title">KRISTALLIDE VARAKAMBER</h1>
+  <div class="vault-progress" id="vaultProgress" aria-live="polite">KOGUTUD 0 / 9</div>
+  <div class="vault-display">
+   <div class="vault-constellation" aria-hidden="true"></div>
+   <div class="vault-grid" id="vaultGrid" aria-label="Üheksa kristalli"></div>
+  </div>
+  <p class="vault-description" id="vaultDescription">Läbi maailmad ja kogu kõik üheksa kristalli!</p>
+  <button class="vault-back" id="closeVault" type="button">TAGASI</button>
  </div>
  <div class="hero" id="crashHero" hidden>
   <span class="fail-kicker">MAAILM 01 · KATSE LÄBI</span>
@@ -327,7 +419,7 @@ const templates=Array.from({length:8},(_,i)=>({
  kind:i===7?'three-hundreds':i===5?'three-tens':'two-tens'
 }));
 let tasks=[],step=0,typed='',status='intro',solved=false,crashStart=0,crashReason='',crashElapsed=0,playElapsed=0;
-let attempts=0,ceremonyToken=0,victoryStage='hidden';
+let attempts=0,ceremonyToken=0,victoryStage='hidden',vaultReturn='intro';
 let playerX=ORIGIN,clock=0,lastFrame=0,canvasW=0,canvasH=0,dpr=1;
 let jumping=false,jumpAge=0,jumpHeight=0,jumpStarted=false,jumpCount=0,wrongLocked=false,turboActive=false,jumpScale=1;
 let soundOn=false,audio=null,fxGlow=0,fxBurst=0,shake=0,toastUntil=0,rewardUnlocked=false;
@@ -338,6 +430,56 @@ function easeOut(t){return 1-Math.pow(1-t,3)}
 function easeBoth(t){return t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2}
 function random(n){return Math.floor(Math.random()*n)}
 function format(n){return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,' ')}
+
+const VAULT_STORAGE='edukass-neon-crystal-vault-v1';
+function collectedCrystals(){
+ let ids=[];try{
+  const parsed=JSON.parse(localStorage.getItem(VAULT_STORAGE)||'[]');
+  if(Array.isArray(parsed))ids=parsed.filter(n=>Number.isInteger(n)&&n>=1&&n<=9);
+  if(localStorage.getItem('edukass-neon-world1-crystal-unlocked')==='1'||localStorage.getItem('edukass-neon-world1-finished')==='1')ids.push(1);
+ }catch(e){}
+ return [...new Set(ids)].sort((a,b)=>a-b);
+}
+function awardCrystal(number){
+ const ids=collectedCrystals();
+ if(!ids.includes(number))ids.push(number);
+ try{
+  localStorage.setItem(VAULT_STORAGE,JSON.stringify(ids.sort((a,b)=>a-b)));
+  if(number===1)localStorage.setItem('edukass-neon-world1-crystal-unlocked','1');
+ }catch(e){}
+ updateCrystalVault();
+}
+function updateCrystalVault(){
+ const ids=collectedCrystals(),count=ids.length;
+ $('introCollectionCount').textContent=count+' / 9';
+ $('rewardCollectionCount').textContent=count+' / 9';
+ $('vaultProgress').textContent='KOGUTUD '+count+' / 9';
+ const views=Array.from({length:9},(_,k)=>{
+  const id=k+1,got=ids.includes(id),name=id===1?'VALGUSSAAR':'MAAILM '+String(id).padStart(2,'0');
+  const title=got?(id===1?'VALGUSSAARE KRISTALL':'KRISTALL '+id):'LUKUS';
+  const shapeId='vaultShape'+id;
+  return '<div class="vault-card '+(got?'unlocked':'locked')+'" style="--slot:'+(id-1)+'" aria-label="'+name+': '+title+'">'
+    +'<div class="vault-card-number">'+String(id).padStart(2,'0')+'</div>'
+    +'<div class="vault-card-gem"><svg viewBox="0 0 82 104" aria-hidden="true">'
+    +'<defs><linearGradient id="'+shapeId+'" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fffdd0"/><stop offset=".3" stop-color="#9ffff0"/><stop offset=".72" stop-color="#4aa5e6"/><stop offset="1" stop-color="#7858df"/></linearGradient></defs>'
+    +'<path d="M41 3 64 20 77 48 62 76 41 101 20 76 5 48 18 20Z" fill="url(#'+shapeId+')" stroke="#eafff0" stroke-width="2"/>'
+    +'<path d="M41 3 18 20 5 48 41 44Z" fill="#efffff" opacity=".48"/>'
+    +'<path d="M41 44 77 48 62 76 41 101Z" fill="#267abf" opacity=".48"/>'
+    +'<path d="M18 20 41 44 64 20M5 48l36-4 36 4M20 76l21-32 21 32M41 3v98" stroke="#ffffff" stroke-opacity=".52" fill="none" stroke-width="1.5"/>'
+    +'</svg></div>'
+    +'<div class="vault-card-name">'+name+'</div>'
+    +'<div class="vault-card-status">'+(got?'KOGUTUD':'LUKUS')+'</div></div>';
+ });
+ $('vaultGrid').innerHTML=views.join('');
+ $('vaultDescription').textContent=count===9?'Kõik üheksa kristalli on kogutud!':count===0?'Läbi maailmad ja kogu kõik üheksa kristalli!':'Sul on '+count+' kristall'+(count===1?'':'i')+'! Järgmine maailm toob uue auhinna.';
+}
+function openCrystalVault(from){
+ vaultReturn=from==='finish'?'finish':'intro';
+ updateCrystalVault();
+ overlay('vault');
+}
+function closeCrystalVault(){overlay(vaultReturn)}
+
 function numberPool(t){
  const lo=t.kind==='two-tens'?11:101,hi=t.kind==='two-tens'?99:999,nums=[];
  for(let n=lo;n<=hi;n++)if(n%t.unit!==0)nums.push(n);
@@ -398,10 +540,11 @@ function showTask(){
 }
 function overlay(type){
  $('overlay').classList.remove('hidden');$('overlay').setAttribute('aria-hidden','false');
- $('overlay').classList.toggle('is-celebrating',type==='victory'||type==='finish');
+ $('overlay').classList.toggle('is-celebrating',type==='victory'||type==='finish'||type==='vault');
  $('introHero').hidden=type!=='intro';
  $('victoryHero').hidden=type!=='victory';
  $('finishHero').hidden=type!=='finish';
+ $('vaultHero').hidden=type!=='vault';
  $('crashHero').hidden=type!=='crash';
  victoryStage=type;
 }
@@ -488,15 +631,14 @@ function lose(reason){
 function onKey(key){
  if(status!=='running'||solved||wrongLocked)return;
  if(key==='back'){typed=typed.slice(0,-1);updateAnswer();return}
- if(key==='check'){check(true);return}
  if(!/^\d$/.test(key)||typed.length>=8)return;
  if(!typed&&key==='0')return;
  typed+=key;updateAnswer();
  const answer=String(tasks[step].answer);
- if(typed===answer)check(false);
- else if(typed.length>=answer.length)check(false);
+ if(typed===answer)check();
+ else if(typed.length>=answer.length)check();
 }
-function check(manual){
+function check(){
  if(status!=='running'||solved||wrongLocked||!typed)return;
  if(Number(typed)===tasks[step].answer){
   solved=true;turboActive=distanceToObstacle()>180; // late correct answers keep the original safe jump speed
@@ -504,7 +646,7 @@ function check(manual){
   fxGlow=.6;tone(600,.14,'sine',.04);tone(810,.12,'triangle',.022,.08);
   $('sceneCaption').textContent=turboActive?'TURBO · KRISTALL KIHUTAB EDASI':'HÜPE VALMIS · HÜPPA ÜLE TAKISTUSE';updateRushHUD();return;
  }
- if(!manual&&typed.length<String(tasks[step].answer).length)return;
+ if(typed.length<String(tasks[step].answer).length)return;
  wrongLocked=true; // The obstacle remains lethal; the crystal physically runs into it.
  $('answerBox').classList.add('wrong');note('VALE VASTUS! TAKISTUS LÄHENEB!','bad');
  $('sceneCaption').textContent='VALE VASTUS · KOKKUPÕRGE LÄHENEB';
@@ -515,10 +657,8 @@ function finish(){
  updateGems();updateRushHUD();
  $('answerBox').classList.remove('success');
  note('Kristall saadud!','ok');fxBurst=1;spawnBurst(playerX,96);winSound();
- try{
-  localStorage.setItem('edukass-neon-world1-finished','1');
-  localStorage.setItem('edukass-neon-world1-crystal-unlocked','1');
- }catch(e){}
+ try{localStorage.setItem('edukass-neon-world1-finished','1')}catch(e){}
+ awardCrystal(1);
  const token=++ceremonyToken;
  makeConfetti();
  if(reduced){overlay('finish');return}
@@ -527,7 +667,6 @@ function finish(){
  setTimeout(()=>{if(status==='finished'&&token===ceremonyToken)overlay('finish')},1670);
 }
 function reset(){ceremonyToken++;status='intro';step=0;typed='';solved=false;playerX=ORIGIN;particleTrail=[];jumping=false;jumpAge=0;jumpHeight=0;jumpStarted=false;wrongLocked=false;turboActive=false;jumpScale=1;jumpCount=0;updateGems();updateAnswer();note('Vasta enne takistust!');updateRushHUD();overlay('intro')}
-function viewWorld(){hideOverlay();status='showcase';$('sceneCaption').textContent='VALGUSSAARE KRISTALL · 01/09';note('Maailm läbitud · mängi uuesti ülal ↻','ok')}
 function advance(dt){
  const delta=clamp(dt,0,100);
  if(status==='running'){
@@ -765,17 +904,20 @@ function frame(t){
 function bind(){
  $('keypad').addEventListener('click',e=>{const b=e.target.closest('[data-key]');if(!b)return;onKey(b.dataset.key)});
  document.addEventListener('keydown',e=>{
-  const key=e.key;if(key==='Backspace'){e.preventDefault();onKey('back')}else if(key==='Enter'){e.preventDefault();if(status==='intro')startGame();else if(status==='finished')startGame();else if(status==='crashed')startGame(true);else onKey('check')}else if(/^\d$/.test(key))onKey(key);
+  const key=e.key;if(key==='Backspace'){e.preventDefault();onKey('back')}else if(key==='Enter'){e.preventDefault();if(victoryStage==='vault')closeCrystalVault();else if(status==='intro')startGame();else if(status==='finished'&&victoryStage==='finish')startGame();else if(status==='crashed')startGame(true)}else if(/^\d$/.test(key))onKey(key);
  });
- $('begin').addEventListener('click',()=>startGame());$('again').addEventListener('click',()=>startGame());$('retry').addEventListener('click',()=>startGame(true));$('restart').addEventListener('click',reset);$('viewWorld').addEventListener('click',viewWorld);$('sound').addEventListener('click',setSound);
+ $('begin').addEventListener('click',()=>startGame());$('again').addEventListener('click',()=>startGame());$('retry').addEventListener('click',()=>startGame(true));$('restart').addEventListener('click',reset);$('sound').addEventListener('click',setSound);
+ $('openVaultIntro').addEventListener('click',()=>openCrystalVault('intro'));
+ $('openVaultReward').addEventListener('click',()=>openCrystalVault('finish'));
+ $('closeVault').addEventListener('click',closeCrystalVault);
  window.addEventListener('resize',resize);
  document.addEventListener('visibilitychange',()=>{lastFrame=0});
 }
 function init(){
- stars=[];updateGems();resize();bind();updateRushHUD();overlay('intro');requestAnimationFrame(frame);
+ stars=[];updateGems();resize();bind();updateCrystalVault();updateRushHUD();overlay('intro');requestAnimationFrame(frame);
 }
 // Test interface is read-only except for simulated key input; it is not displayed to players.
-window.__EDUKASS_TEST__={get:()=>({status,step,typed,tasks:tasks.map(t=>({...t})),playerX,solved,crashReason,attempts,world:'valgussaar',rewardUnlocked:rewardUnlocked||status==='finished'||status==='showcase',victoryStage,crystalCollected:(()=>{try{return localStorage.getItem('edukass-neon-world1-crystal-unlocked')==='1'}catch(e){return rewardUnlocked}})(),jumping,jumpHeight,jumpCount,wrongLocked,turboActive,runningSpeed:effectiveSpeed(),distance:distanceToObstacle(),obstacles:Array.from({length:TOTAL},(_,j)=>obstacleKind(j+1))}),press:onKey,start:()=>startGame(),retry:()=>startGame(true),tick:(ms)=>{for(let r=0;r<ms;r+=35)advance(Math.min(35,ms-r))},reset,validateTasks,generate:createTasks};
+window.__EDUKASS_TEST__={get:()=>({status,step,typed,tasks:tasks.map(t=>({...t})),playerX,solved,crashReason,attempts,world:'valgussaar',rewardUnlocked:rewardUnlocked||status==='finished',victoryStage,crystalCollected:collectedCrystals().includes(1),vaultCount:collectedCrystals().length,jumping,jumpHeight,jumpCount,wrongLocked,turboActive,runningSpeed:effectiveSpeed(),distance:distanceToObstacle(),obstacles:Array.from({length:TOTAL},(_,j)=>obstacleKind(j+1))}),press:onKey,start:()=>startGame(),retry:()=>startGame(true),tick:(ms)=>{for(let r=0;r<ms;r+=35)advance(Math.min(35,ms-r))},reset,validateTasks,generate:createTasks};
 init();
 })();
 </script>
