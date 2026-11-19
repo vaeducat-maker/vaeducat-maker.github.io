@@ -4,24 +4,23 @@ const $=id=>document.getElementById(id);
 const canvas=$('world'),ctx=canvas.getContext('2d',{alpha:false});
 const reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const NODE=580, ORIGIN=108, TOTAL=8;
-const SPEED=86, TURBO_SPEED=340, TURBO_ARC_STRETCH=1.4; // fast traversal after early answers
+const SPEED=64.5, FINAL_SPEED=56.25, TURBO_SPEED=255, TURBO_ARC_STRETCH=1.4; // 25% slower
+const ORIGINAL_SPEED=86, ORIGINAL_FINAL_SPEED=75; // maintain original physical jump curves
 const JUMP_V=240, JUMP_G=200, JUMP_TOTAL=2*JUMP_V/JUMP_G;
 const HAZARD_HALF_WIDTH=58, CLEARANCE=76; // consistent with the rendered spike and crystal hitboxes
 const COLORS={cyan:'#67fce9',cyanB:'#37e9dd',violet:'#ae8afe',pink:'#f482ef',gold:'#ffe29b',white:'#f1fff9'};
 const names={10:'KÜMNELISTENI',100:'SAJALISTENI'};
-const poolDown=[21,22,23,24,31,32,33,34,41,42,43,44,51,52,53,54,61,62,63,64,71,72,73,74,81,82,83,84,91,92,93,94];
-const poolUp=[16,17,18,19,26,27,28,29,36,37,38,39,46,47,48,49,56,57,58,59,66,67,68,69,76,77,78,79,86,87,88,89];
-const templates=[
- {unit:10,kind:'down'}, {unit:10,kind:'up'}, {unit:10,kind:'down'},
- {unit:10,kind:'half'}, {unit:10,kind:'down'}, {unit:10,kind:'three-tens'},
- {unit:10,kind:'carry'}, {unit:100,kind:'three-hundreds'}
-];
+const HAZARD_TYPES=['fangs','rotor','tri-spikes','lightning','prism'];
+const templates=Array.from({length:8},(_,i)=>({
+ unit:i===7?100:10,
+ kind:i===7?'three-hundreds':i===5?'three-tens':'two-tens'
+}));
 let tasks=[],step=0,typed='',status='intro',solved=false,crashStart=0,crashReason='',crashElapsed=0,playElapsed=0;
 let attempts=0;
 let playerX=ORIGIN,clock=0,lastFrame=0,canvasW=0,canvasH=0,dpr=1;
 let jumping=false,jumpAge=0,jumpHeight=0,jumpStarted=false,jumpCount=0,wrongLocked=false,turboActive=false,jumpScale=1;
 let soundOn=false,audio=null,fxGlow=0,fxBurst=0,shake=0,toastUntil=0,rewardUnlocked=false;
-let camera=ORIGIN-110,particleTrail=[],specks=[],stars=[],ambient=[],latestAnswer='';
+let camera=ORIGIN-110,particleTrail=[],specks=[],stars=[],ambient=[],latestAnswer='',obstacleOffset=0;
 function clamp(v,lo,hi){return Math.max(lo,Math.min(hi,v))}
 function lerp(a,b,t){return a+(b-a)*t}
 function easeOut(t){return 1-Math.pow(1-t,3)}
@@ -29,24 +28,32 @@ function easeBoth(t){return t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2}
 function random(n){return Math.floor(Math.random()*n)}
 function format(n){return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,' ')}
 function numberPool(t){
- if(t.kind==='carry')return [95,96,97,98,99];
- if(t.kind==='half')return [15,25,35,45,55,65,75,85];
- if(t.kind==='three-tens'){let a=[];for(let n=111;n<=989;n++)if(n%10>=5)a.push(n);return a}
- if(t.kind==='three-hundreds'){let a=[];for(let n=121;n<=949;n++)if(n%100>0&&n%100<50)a.push(n);return a}
- return (t.kind==='up'?poolUp:poolDown).filter(n=>n<95);
+ const lo=t.kind==='two-tens'?11:101,hi=t.kind==='two-tens'?99:999,nums=[];
+ for(let n=lo;n<=hi;n++)if(n%t.unit!==0)nums.push(n);
+ return nums;
 }
 function createTasks(){
- let prior=[];try{prior=JSON.parse(localStorage.getItem('edukass-neon-world1-previous')||'[]')}catch(e){}
- const used=new Set();
- const result=templates.map(t=>{
-  const pool=numberPool(t);
-  let opts=pool.filter(n=>!used.has(n)&&!prior.includes(n));
-  if(!opts.length)opts=pool.filter(n=>!used.has(n));
-  const n=opts[random(opts.length)];
-  used.add(n);
-  return {v:n,unit:t.unit,answer:Math.floor((n+t.unit/2)/t.unit)*t.unit,kind:t.kind};
- });
- try{localStorage.setItem('edukass-neon-world1-previous',JSON.stringify(result.map(x=>x.v)))}catch(e){}
+ let history=[];
+ try{const old=JSON.parse(localStorage.getItem('edukass-neon-world1-history-v2')||'[]');if(Array.isArray(old))history=old.filter(Array.isArray).slice(-8)}catch(e){}
+ const recentlyUsed=new Set(history.slice(-3).flat());
+ const usedSignatures=new Set(history.map(h=>h.join('/')));
+ let result=[];
+ for(let attempt=0;attempt<100;attempt++){
+  const used=new Set(),answers=new Set();
+  result=templates.map(t=>{
+   const pool=numberPool(t);
+   let options=pool.filter(n=>!used.has(n)&&!recentlyUsed.has(n)&&!answers.has(Math.floor((n+t.unit/2)/t.unit)*t.unit));
+   if(!options.length)options=pool.filter(n=>!used.has(n)&&!recentlyUsed.has(n));
+   if(!options.length)options=pool.filter(n=>!used.has(n));
+   const v=options[random(options.length)];
+   if(v===undefined)throw Error('Empty rounding pool');
+   const answer=Math.floor((v+t.unit/2)/t.unit)*t.unit;
+   used.add(v);answers.add(answer);
+   return {v,unit:t.unit,answer,kind:t.kind};
+  });
+  if(!usedSignatures.has(result.map(t=>t.v).join('/')))break;
+ }
+ try{history.push(result.map(t=>t.v));localStorage.setItem('edukass-neon-world1-history-v2',JSON.stringify(history.slice(-8)))}catch(e){}
  return result;
 }
 function validateTasks(ts){
@@ -83,7 +90,9 @@ function overlay(type){
  $('introHero').hidden=type!=='intro';$('finishHero').hidden=type!=='finish';$('crashHero').hidden=type!=='crash';
 }
 function hideOverlay(){$('overlay').classList.add('hidden');$('overlay').setAttribute('aria-hidden','true')}
-function speedForStep(){return step===7?75:SPEED}
+function speedForStep(){return step===7?FINAL_SPEED:SPEED}
+function jumpReferenceSpeed(){return step===7?ORIGINAL_FINAL_SPEED:ORIGINAL_SPEED}
+function obstacleKind(i){return HAZARD_TYPES[(i-1+obstacleOffset)%HAZARD_TYPES.length]}
 function distanceToObstacle(){return ORIGIN+NODE*(step+1)-playerX}
 function hazardScale(){return clamp(canvasH/310,.42,1)}
 function effectiveSpeed(){
@@ -106,7 +115,7 @@ function tone(frequency,duration,type='sine',volume=.045,delay=0){
 }
 function winSound(){tone(540,.14,'sine',.036);tone(790,.19,'triangle',.03,.07);tone(1150,.25,'sine',.019,.16)}
 function startGame(retry=false){
- if(!retry||!tasks.length){tasks=createTasks();validateTasks(tasks)}
+ tasks=createTasks();validateTasks(tasks);obstacleOffset=random(HAZARD_TYPES.length);
  attempts++;step=0;typed='';solved=false;playerX=ORIGIN;camera=playerX-canvasW*.30;
  jumping=false;jumpAge=0;jumpHeight=0;jumpStarted=false;wrongLocked=false;turboActive=false;jumpScale=1;jumpCount=0;
  particleTrail=[];status='running';crashElapsed=0;playElapsed=0;rewardUnlocked=false;fxGlow=0;fxBurst=0;shake=0;
@@ -165,12 +174,12 @@ function advance(dt){
   const approach=gate-playerX;
   // A correct answer arms one automatic jump. It starts at the same point relative
   // to the obstacle at every pace, then follows a genuine ballistic arc.
-  const takeoffDistance=speedForStep()*JUMP_TOTAL/2*(turboActive?TURBO_ARC_STRETCH:1);
+  const takeoffDistance=jumpReferenceSpeed()*JUMP_TOTAL/2*(turboActive?TURBO_ARC_STRETCH:1);
   if(solved&&!jumpStarted&&!jumping&&approach<=takeoffDistance){
    jumping=true;jumpStarted=true;jumpAge=0;jumpHeight=0;jumpCount++;
    // Longer world-space flight during turbo keeps both ends of the solid hazard
    // within a visible, physical arc instead of skipping the collision hitbox.
-   jumpScale=(effectiveSpeed()/speedForStep())/(turboActive?TURBO_ARC_STRETCH:1);
+   jumpScale=(effectiveSpeed()/jumpReferenceSpeed())/(turboActive?TURBO_ARC_STRETCH:1);
    tone(420,.10,'triangle',.035);
   }
   if(jumping){
@@ -311,7 +320,7 @@ function drawPlayer(t){
  const scale=hazardScale();
  const hover=jumping?0:1.3*Math.sin(t*.010);
  // Position and rotation are driven by physical jump state, not proximity animation.
- const spin=jumping?Math.PI*2*jumpAge/JUMP_TOTAL:0;
+ const spin=jumping?Math.PI*2*jumpAge*jumpScale/JUMP_TOTAL:0;
  const y=canvasH*.76-43*scale-jumpHeight*scale+hover;
  if(status==='crashing'&&crashElapsed>190)return;
  // Soft particle trail follows movement.
@@ -382,6 +391,6 @@ function init(){
  stars=[];updateGems();resize();bind();updateRushHUD();overlay('intro');requestAnimationFrame(frame);
 }
 // Test interface is read-only except for simulated key input; it is not displayed to players.
-window.__EDUKASS_TEST__={get:()=>({status,step,typed,tasks:tasks.map(t=>({...t})),playerX,solved,crashReason,attempts,world:'valgussaar',rewardUnlocked:status==='finished'||status==='showcase',jumping,jumpHeight,jumpCount,wrongLocked,turboActive,runningSpeed:effectiveSpeed(),distance:distanceToObstacle()}),press:onKey,start:()=>startGame(),retry:()=>startGame(true),tick:(ms)=>{for(let r=0;r<ms;r+=35)advance(Math.min(35,ms-r))},reset,validateTasks,generate:createTasks};
+window.__EDUKASS_TEST__={get:()=>({status,step,typed,tasks:tasks.map(t=>({...t})),playerX,solved,crashReason,attempts,world:'valgussaar',rewardUnlocked:status==='finished'||status==='showcase',jumping,jumpHeight,jumpCount,wrongLocked,turboActive,runningSpeed:effectiveSpeed(),distance:distanceToObstacle(),obstacles:Array.from({length:TOTAL},(_,j)=>obstacleKind(j+1))}),press:onKey,start:()=>startGame(),retry:()=>startGame(true),tick:(ms)=>{for(let r=0;r<ms;r+=35)advance(Math.min(35,ms-r))},reset,validateTasks,generate:createTasks};
 init();
 })();
