@@ -4,7 +4,7 @@ const $=id=>document.getElementById(id);
 const canvas=$('world'),ctx=canvas.getContext('2d',{alpha:false});
 const reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const NODE=580, ORIGIN=108, TOTAL=8;
-const SPEED=86; // preserves time to solve 8 rounding problems
+const SPEED=86, TURBO_SPEED=340, TURBO_ARC_STRETCH=1.4; // fast traversal after early answers
 const JUMP_V=240, JUMP_G=200, JUMP_TOTAL=2*JUMP_V/JUMP_G;
 const HAZARD_HALF_WIDTH=58, CLEARANCE=76; // consistent with the rendered spike and crystal hitboxes
 const COLORS={cyan:'#67fce9',cyanB:'#37e9dd',violet:'#ae8afe',pink:'#f482ef',gold:'#ffe29b',white:'#f1fff9'};
@@ -19,7 +19,7 @@ const templates=[
 let tasks=[],step=0,typed='',status='intro',solved=false,crashStart=0,crashReason='',crashElapsed=0,playElapsed=0;
 let attempts=0;
 let playerX=ORIGIN,clock=0,lastFrame=0,canvasW=0,canvasH=0,dpr=1;
-let jumping=false,jumpAge=0,jumpHeight=0,jumpStarted=false,jumpCount=0,wrongLocked=false;
+let jumping=false,jumpAge=0,jumpHeight=0,jumpStarted=false,jumpCount=0,wrongLocked=false,turboActive=false,jumpScale=1;
 let soundOn=false,audio=null,fxGlow=0,fxBurst=0,shake=0,toastUntil=0,rewardUnlocked=false;
 let camera=ORIGIN-110,particleTrail=[],specks=[],stars=[],ambient=[],latestAnswer='';
 function clamp(v,lo,hi){return Math.max(lo,Math.min(hi,v))}
@@ -74,7 +74,7 @@ function showTask(){
  const t=tasks[step];
  $('unit').textContent=names[t.unit];$('number').textContent=format(t.v);
  $('number').classList.remove('bump');void $('number').offsetWidth;$('number').classList.add('bump');
- typed='';solved=false;jumpStarted=false;wrongLocked=false;updateAnswer();$('answerBox').classList.remove('wrong','success');
+ typed='';solved=false;jumpStarted=false;wrongLocked=false;turboActive=false;updateAnswer();$('answerBox').classList.remove('wrong','success');
  note('Vasta enne takistust!');updateGems();
  $('sceneCaption').textContent=step===TOTAL-1?'VIIMANE TAKISTUS · ÄRA PEATU':'KIIRUSTA! TAKISTUS LÄHENEB';
 }
@@ -86,14 +86,17 @@ function hideOverlay(){$('overlay').classList.add('hidden');$('overlay').setAttr
 function speedForStep(){return step===7?75:SPEED}
 function distanceToObstacle(){return ORIGIN+NODE*(step+1)-playerX}
 function hazardScale(){return clamp(canvasH/310,.42,1)}
-function effectiveSpeed(){return wrongLocked?Math.max(speedForStep()*1.65,distanceToObstacle()/1.12):speedForStep()}
+function effectiveSpeed(){
+ if(wrongLocked)return Math.max(speedForStep()*1.65,distanceToObstacle()/1.12);
+ return solved&&turboActive?TURBO_SPEED:speedForStep();
+}
 function updateRushHUD(){
  const secs=Math.max(0,distanceToObstacle()/effectiveSpeed());
  $('rushClock').textContent=status==='running' ? `${secs.toFixed(1)} s` : status==='crashing'||status==='crashed'?'0.0 s':'—';
  $('rushFill').style.width= `${clamp(distanceToObstacle()/NODE,0,1)*100}%`;
  $('rushHud').classList.toggle('danger',secs<2&&!solved&&status==='running');
  $('rushHud').classList.toggle('safe',solved&&status==='running');
- $('rushLabel').textContent=wrongLocked?'VALE VASTUS':solved?'HÜPE VALMIS':status==='crashing'||status==='crashed'?'KOKKUPÕRGE!':'TAKISTUSENI';
+ $('rushLabel').textContent=wrongLocked?'VALE VASTUS':solved?(turboActive?'TURBO · HÜPE VALMIS':'HÜPE VALMIS'):status==='crashing'||status==='crashed'?'KOKKUPÕRGE!':'TAKISTUSENI';
 }
 function setSound(){soundOn=!soundOn;$('sound').classList.toggle('enabled',soundOn);$('sound').setAttribute('aria-label',soundOn?'Lülita heli välja':'Lülita heli sisse');if(soundOn)tone(510,.07,'triangle',.035)}
 function tone(frequency,duration,type='sine',volume=.045,delay=0){
@@ -105,7 +108,7 @@ function winSound(){tone(540,.14,'sine',.036);tone(790,.19,'triangle',.03,.07);t
 function startGame(retry=false){
  if(!retry||!tasks.length){tasks=createTasks();validateTasks(tasks)}
  attempts++;step=0;typed='';solved=false;playerX=ORIGIN;camera=playerX-canvasW*.30;
- jumping=false;jumpAge=0;jumpHeight=0;jumpStarted=false;wrongLocked=false;jumpCount=0;
+ jumping=false;jumpAge=0;jumpHeight=0;jumpStarted=false;wrongLocked=false;turboActive=false;jumpScale=1;jumpCount=0;
  particleTrail=[];status='running';crashElapsed=0;playElapsed=0;rewardUnlocked=false;fxGlow=0;fxBurst=0;shake=0;
  hideOverlay();showTask();updateRushHUD();
  try{localStorage.removeItem('edukass-neon-world1-finished')}catch(e){}
@@ -135,9 +138,10 @@ function onKey(key){
 function check(manual){
  if(status!=='running'||solved||wrongLocked||!typed)return;
  if(Number(typed)===tasks[step].answer){
-  solved=true;$('answerBox').classList.add('success');note('ÕIGE! HÜPE VALMIS','ok');
+  solved=true;turboActive=distanceToObstacle()>180; // late correct answers keep the original safe jump speed
+  $('answerBox').classList.add('success');note(turboActive?'ÕIGE! TURBO!':'ÕIGE! HÜPE VALMIS','ok');
   fxGlow=.6;tone(600,.14,'sine',.04);tone(810,.12,'triangle',.022,.08);
-  $('sceneCaption').textContent='HÜPE VALMIS · HÜPPA ÜLE TAKISTUSE';updateRushHUD();return;
+  $('sceneCaption').textContent=turboActive?'TURBO · KRISTALL KIHUTAB EDASI':'HÜPE VALMIS · HÜPPA ÜLE TAKISTUSE';updateRushHUD();return;
  }
  if(!manual&&typed.length<String(tasks[step].answer).length)return;
  wrongLocked=true; // The obstacle remains lethal; the crystal physically runs into it.
@@ -151,7 +155,7 @@ function finish(){
  try{localStorage.setItem('edukass-neon-world1-finished','1')}catch(e){}
  setTimeout(()=>{if(status==='finished')overlay('finish')},reduced?80:750);
 }
-function reset(){status='intro';step=0;typed='';solved=false;playerX=ORIGIN;particleTrail=[];jumping=false;jumpAge=0;jumpHeight=0;jumpStarted=false;wrongLocked=false;jumpCount=0;updateGems();updateAnswer();note('Vasta enne takistust!');updateRushHUD();overlay('intro')}
+function reset(){status='intro';step=0;typed='';solved=false;playerX=ORIGIN;particleTrail=[];jumping=false;jumpAge=0;jumpHeight=0;jumpStarted=false;wrongLocked=false;turboActive=false;jumpScale=1;jumpCount=0;updateGems();updateAnswer();note('Vasta enne takistust!');updateRushHUD();overlay('intro')}
 function viewWorld(){hideOverlay();status='showcase';$('sceneCaption').textContent='VALGUSSAARE KRISTALL · 01/09';note('Maailm läbitud · mängi uuesti ülal ↻','ok')}
 function advance(dt){
  const delta=clamp(dt,0,100);
@@ -161,14 +165,18 @@ function advance(dt){
   const approach=gate-playerX;
   // A correct answer arms one automatic jump. It starts at the same point relative
   // to the obstacle at every pace, then follows a genuine ballistic arc.
-  if(solved&&!jumpStarted&&!jumping&&approach<=speedForStep()*JUMP_TOTAL/2){
+  const takeoffDistance=speedForStep()*JUMP_TOTAL/2*(turboActive?TURBO_ARC_STRETCH:1);
+  if(solved&&!jumpStarted&&!jumping&&approach<=takeoffDistance){
    jumping=true;jumpStarted=true;jumpAge=0;jumpHeight=0;jumpCount++;
+   // Longer world-space flight during turbo keeps both ends of the solid hazard
+   // within a visible, physical arc instead of skipping the collision hitbox.
+   jumpScale=(effectiveSpeed()/speedForStep())/(turboActive?TURBO_ARC_STRETCH:1);
    tone(420,.10,'triangle',.035);
   }
   if(jumping){
    jumpAge+=dtSeconds;
-   jumpHeight=Math.max(0,JUMP_V*jumpAge-.5*JUMP_G*jumpAge*jumpAge);
-   if(jumpAge>=JUMP_TOTAL){jumping=false;jumpAge=0;jumpHeight=0}
+   jumpHeight=Math.max(0,JUMP_V*jumpScale*jumpAge-.5*JUMP_G*jumpScale*jumpScale*jumpAge*jumpAge);
+   if(jumpAge>=JUMP_TOTAL/jumpScale){jumping=false;jumpAge=0;jumpHeight=0}
   }
   playerX+=effectiveSpeed()*dtSeconds;
   playElapsed+=delta;
@@ -374,6 +382,6 @@ function init(){
  stars=[];updateGems();resize();bind();updateRushHUD();overlay('intro');requestAnimationFrame(frame);
 }
 // Test interface is read-only except for simulated key input; it is not displayed to players.
-window.__EDUKASS_TEST__={get:()=>({status,step,typed,tasks:tasks.map(t=>({...t})),playerX,solved,crashReason,attempts,world:'valgussaar',rewardUnlocked:status==='finished'||status==='showcase',jumping,jumpHeight,jumpCount,wrongLocked,distance:distanceToObstacle()}),press:onKey,start:()=>startGame(),retry:()=>startGame(true),tick:(ms)=>{for(let r=0;r<ms;r+=35)advance(Math.min(35,ms-r))},reset,validateTasks,generate:createTasks};
+window.__EDUKASS_TEST__={get:()=>({status,step,typed,tasks:tasks.map(t=>({...t})),playerX,solved,crashReason,attempts,world:'valgussaar',rewardUnlocked:status==='finished'||status==='showcase',jumping,jumpHeight,jumpCount,wrongLocked,turboActive,runningSpeed:effectiveSpeed(),distance:distanceToObstacle()}),press:onKey,start:()=>startGame(),retry:()=>startGame(true),tick:(ms)=>{for(let r=0;r<ms;r+=35)advance(Math.min(35,ms-r))},reset,validateTasks,generate:createTasks};
 init();
 })();
