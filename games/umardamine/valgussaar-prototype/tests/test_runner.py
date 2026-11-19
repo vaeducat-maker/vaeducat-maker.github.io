@@ -55,17 +55,23 @@ def test(browser,w,h,label):
    assert p.evaluate('window.__EDUKASS_TEST__.get().status')=='running'
   p.locator(f'[data-key="{answer[-1]}"]').click()
   assert p.evaluate('window.__EDUKASS_TEST__.get().solved') is True,'correct answer did not open jump'
-  speed=75 if step==7 else 86
-  # First reach the physical jumping arc and prove that the crystal is airborne.
   current=p.evaluate('window.__EDUKASS_TEST__.get()')
-  launch_until=max(0,int((current['distance']-65)/speed*1000))
-  if launch_until:p.evaluate(f'window.__EDUKASS_TEST__.tick({launch_until})')
-  airborne=p.evaluate('window.__EDUKASS_TEST__.get()')
-  assert airborne['jumpHeight']>0 and airborne['jumpCount']==step+1,(step,airborne)
-  # Now cross the real hitbox; the next question appears only after clearing it.
-  remaining=max(100,int((airborne['distance']+80)/speed*1000)+150)
-  p.evaluate(f'window.__EDUKASS_TEST__.tick({remaining})')
-  s=p.evaluate('window.__EDUKASS_TEST__.get()')
+  # An early correct answer must immediately switch to a fast real-world sprint.
+  assert current['turboActive'] and current['runningSpeed']==340,(step,current)
+  result=p.evaluate("""() => {
+    const api=window.__EDUKASS_TEST__, start=api.get().step;
+    let inAir=false, samples=0, maxHeight=0, state;
+    do {
+      api.tick(35); state=api.get();
+      if(state.jumpHeight>30)inAir=true;
+      maxHeight=Math.max(maxHeight,state.jumpHeight);
+      samples++;
+    } while(state.step===start && state.status==='running' && samples<500);
+    return {inAir,maxHeight,samples,state};
+  }""")
+  assert result['inAir'] and result['maxHeight']>100,(step,result)
+  s=result['state']
+  assert s['jumpCount']==step+1,(step,s)
   if step<7:assert s['step']==step+1,(step,s)
  p.wait_for_timeout(820)
  s=p.evaluate('window.__EDUKASS_TEST__.get()')
@@ -73,11 +79,22 @@ def test(browser,w,h,label):
  assert p.locator('#finishHero').is_visible()
  p.screenshot(path=str(root/f'{label}_finished.png'))
  assert not problems,problems
+ # Late correct answers must keep normal motion so turbo cannot cause an unfair crash.
+ p.locator('#again').click()
+ p.evaluate('window.__EDUKASS_TEST__.tick(5100)')
+ late=p.evaluate('window.__EDUKASS_TEST__.get()')
+ assert late['status']=='running' and late['step']==0,late
+ for c in str(late['tasks'][0]['answer']):
+  p.evaluate('(k) => window.__EDUKASS_TEST__.press(k)',c)
+ safe=p.evaluate('window.__EDUKASS_TEST__.get()')
+ assert safe['solved'] and not safe['turboActive'] and safe['runningSpeed']==86,safe
+ p.evaluate('window.__EDUKASS_TEST__.tick(3500)')
+ assert p.evaluate('window.__EDUKASS_TEST__.get().step')==1,'Late correct answer was unfairly punished'
  # mobile keyboard in viewport (except landscape where layout dedicated)
  if w<600:
   g=p.evaluate('''() => ({bottom:document.querySelector('.keypad').getBoundingClientRect().bottom,doc:document.documentElement.scrollHeight})''')
   assert g['bottom']<=h+15, g
- print(json.dumps({'viewport':[w,h],'runner':'PASS','wrong_crash':'PASS','timeout_crash':'PASS','restart':'PASS','8_obstacles':'PASS','real_jump':'PASS','physical_collision':'PASS','finish':'PASS','errors':problems},ensure_ascii=False))
+ print(json.dumps({'viewport':[w,h],'runner':'PASS','wrong_crash':'PASS','timeout_crash':'PASS','restart':'PASS','8_obstacles':'PASS','real_jump':'PASS','turbo':'PASS','late_answer_safe':'PASS','physical_collision':'PASS','finish':'PASS','errors':problems},ensure_ascii=False))
  p.close()
 
 with sync_playwright() as pw:
