@@ -25,7 +25,10 @@ def test(browser,w,h,label):
  p.locator('[data-key="back"]').click()
  wrong='79' if answer!='79' else '89'
  for k in wrong:p.locator(f'[data-key="{k}"]').click()
- assert p.evaluate('window.__EDUKASS_TEST__.get().status')=='crashing', 'Incorrect full answer did not collide'
+ assert p.evaluate('window.__EDUKASS_TEST__.get().wrongLocked') is True, 'Wrong answer must prevent another attempt'
+ assert p.evaluate('window.__EDUKASS_TEST__.get().status')=='running', 'Crystal must physically approach obstacle'
+ p.evaluate('window.__EDUKASS_TEST__.tick(8000)')
+ assert p.evaluate('window.__EDUKASS_TEST__.get().status') in ('crashing','crashed'), 'Wrong answer did not cause an actual obstacle collision'
  p.evaluate('window.__EDUKASS_TEST__.tick(850)')
  p.wait_for_timeout(120)
  assert p.locator('#crashHero').is_visible(), 'Crash overlay absent'
@@ -35,7 +38,7 @@ def test(browser,w,h,label):
  s=p.evaluate('window.__EDUKASS_TEST__.get()')
  assert s['status']=='running' and s['step']==0 and s['attempts']==2
  # Timeout if nothing entered - retry again
- p.evaluate('window.__EDUKASS_TEST__.tick(8000)')
+ p.evaluate('window.__EDUKASS_TEST__.tick(9000)')
  s=p.evaluate('window.__EDUKASS_TEST__.get()')
  assert s['status'] in ('crashing','crashed') and s['crashReason']=='timeout',s
  p.evaluate('window.__EDUKASS_TEST__.tick(800)')
@@ -52,13 +55,18 @@ def test(browser,w,h,label):
    assert p.evaluate('window.__EDUKASS_TEST__.get().status')=='running'
   p.locator(f'[data-key="{answer[-1]}"]').click()
   assert p.evaluate('window.__EDUKASS_TEST__.get().solved') is True,'correct answer did not open jump'
-  p.evaluate('window.__EDUKASS_TEST__.tick(7000)')
+  speed=75 if step==7 else 86
+  # First reach the physical jumping arc and prove that the crystal is airborne.
+  current=p.evaluate('window.__EDUKASS_TEST__.get()')
+  launch_until=max(0,int((current['distance']-65)/speed*1000))
+  if launch_until:p.evaluate(f'window.__EDUKASS_TEST__.tick({launch_until})')
+  airborne=p.evaluate('window.__EDUKASS_TEST__.get()')
+  assert airborne['jumpHeight']>0 and airborne['jumpCount']==step+1,(step,airborne)
+  # Now cross the real hitbox; the next question appears only after clearing it.
+  remaining=max(100,int((airborne['distance']+80)/speed*1000)+150)
+  p.evaluate(f'window.__EDUKASS_TEST__.tick({remaining})')
   s=p.evaluate('window.__EDUKASS_TEST__.get()')
-  if step==7:
-   # final task has slower approach; may need extra time
-   if s['status']=='running':p.evaluate('window.__EDUKASS_TEST__.tick(2200)')
-  else:
-   assert s['step']==step+1,(step,s)
+  if step<7:assert s['step']==step+1,(step,s)
  p.wait_for_timeout(820)
  s=p.evaluate('window.__EDUKASS_TEST__.get()')
  assert s['status']=='finished' and s['step']==8,s
@@ -69,7 +77,7 @@ def test(browser,w,h,label):
  if w<600:
   g=p.evaluate('''() => ({bottom:document.querySelector('.keypad').getBoundingClientRect().bottom,doc:document.documentElement.scrollHeight})''')
   assert g['bottom']<=h+15, g
- print(json.dumps({'viewport':[w,h],'runner':'PASS','wrong_crash':'PASS','timeout_crash':'PASS','restart':'PASS','8_obstacles':'PASS','finish':'PASS','errors':problems},ensure_ascii=False))
+ print(json.dumps({'viewport':[w,h],'runner':'PASS','wrong_crash':'PASS','timeout_crash':'PASS','restart':'PASS','8_obstacles':'PASS','real_jump':'PASS','physical_collision':'PASS','finish':'PASS','errors':problems},ensure_ascii=False))
  p.close()
 
 with sync_playwright() as pw:
