@@ -1,0 +1,902 @@
+:root{font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;color:#12325c;color-scheme:light;--navy:#143865;--teal:#0f9b9a;--cream:#fffaf0;--orange:#ff9c3e;--green:#167f4f;--red:#c92132}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden}body{background:linear-gradient(180deg,#58bbf3 0%,#e8f8fa 40%,#f8f3e8 100%)}button{font:inherit;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}button:focus-visible{outline:3px solid #00a4cb;outline-offset:3px}
+#app{max-width:1130px;width:100%;height:100dvh;margin:auto;padding:max(6px,env(safe-area-inset-top)) max(8px,env(safe-area-inset-right)) max(7px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left));display:flex;flex-direction:column;gap:5px;overflow:hidden}
+.top{min-height:44px;flex:0 0 auto;display:grid;grid-template-columns:1fr auto 1fr;gap:6px;align-items:center}
+.brand{font-size:clamp(16px,3vw,23px);font-weight:1000;letter-spacing:-.05em;white-space:nowrap;color:#109ba1;text-shadow:0 2px 0 #fff,1px 0 #fff,-1px 0 #fff}.brand b{color:#123769}
+.place{font-weight:1000;font-size:clamp(13px,2vw,19px);padding:7px 13px;border:2px solid #fff;border-radius:22px;box-shadow:0 3px 8px #0a427624;background:linear-gradient(#fff,#e7f3fc);white-space:nowrap}.place .pin{font-size:19px;margin-right:3px}.topright{justify-self:end;display:flex;gap:5px}.tiny{width:39px;height:39px;border:2px solid #fff;border-radius:13px;color:#18416c;background:linear-gradient(#fff,#e9f3f9);box-shadow:0 3px 7px #13385b1d;font-size:18px;font-weight:900}
+.route{display:flex;align-items:center;justify-content:center;gap:7px;height:17px;flex:0 0 auto}.dot{height:9px;width:clamp(14px,3.4vw,25px);border-radius:8px;background:#b9d4e4;border:1px solid #9cc7dc}.dot.done{background:#18b987;border-color:#078a64}.dot.current{background:#f4a546;border-color:#e68b22;box-shadow:0 0 0 2px #ffe7b8}
+.layout{display:grid;grid-template-columns:minmax(0,1.34fr) minmax(320px,.75fr);gap:12px;flex:1;min-height:0}.stage{position:relative;isolation:isolate;overflow:hidden;border-radius:22px;border:3px solid #fff;box-shadow:0 14px 35px #13548d35;background:#82cded}
+.scene{position:absolute;inset:-2%;background-image:url('assets/asset-000.jpeg');background-position:center center;background-size:cover;transform:scale(1.045);transform-origin:center;will-change:transform;filter:saturate(1.09)}
+#roadLines{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;mix-blend-mode:screen;opacity:.72}
+.hazard{position:absolute;left:50%;top:42%;width:15%;min-width:38px;transform:translate(-50%,-45%);z-index:3;filter:drop-shadow(0 6px 4px #19364b5c);will-change:top,width,left;pointer-events:none}
+.car{position:absolute;left:50%;bottom:2.5%;width:clamp(98px,32%,220px);height:auto;z-index:4;transform:translateX(-50%);filter:drop-shadow(0 6px 5px #0c273f66);will-change:transform;pointer-events:none}
+.stage.crashing .car{animation:shake .22s linear 3}.stage.crashing:after{content:"";position:absolute;inset:0;background:#fc364b50;z-index:5;pointer-events:none;animation:warning .25s ease-in-out 4}.stage.alert .scene{filter:saturate(1.16) contrast(1.04)}
+@keyframes shake{0%{transform:translateX(-50%) rotate(-6deg)}50%{transform:translateX(-43%) rotate(6deg)}100%{transform:translateX(-50%) rotate(-5deg)}}
+@keyframes warning{0%,100%{opacity:.1}50%{opacity:1}}
+.effects{position:absolute;inset:0;pointer-events:none;z-index:6;overflow:hidden}.speedfx{position:absolute;inset:0;opacity:0;background:repeating-linear-gradient(115deg,transparent 0 44px,#fff4 48px 49px,transparent 51px 98px);mask-image:linear-gradient(to bottom,transparent 15%,black 90%);animation:speedRush .13s linear infinite;transition:opacity .3s}.stage.fast .speedfx{opacity:.47}.stage.alert .speedfx{opacity:.76;animation-duration:.075s}@keyframes speedRush{to{background-position:0 120px}}
+.toast{position:absolute;top:17px;left:50%;transform:translateX(-50%);border-radius:16px;border:2px solid #fff8;padding:7px 14px;max-width:92%;text-align:center;color:#fff;font-weight:1000;font-size:clamp(14px,2.3vw,21px);text-shadow:0 2px 3px #3337;box-shadow:0 5px 16px #061e3c80;opacity:0;transition:opacity .15s;white-space:nowrap}.toast.warn{background:linear-gradient(#fa5863,#bd1232);opacity:1}.toast.ok{background:linear-gradient(#51ce87,#118955);opacity:1}.toast.neutral{background:linear-gradient(#3aabdf,#276ab2);opacity:1}
+.panel{display:flex;flex-direction:column;min-height:0;gap:8px;padding:13px;border-radius:23px;border:3px solid #fff;box-shadow:0 14px 35px #12365e25;background:linear-gradient(180deg,#fffdf6,#fff3e4)}
+.exercise{min-height:110px;flex:0 0 auto;border-radius:19px;border:2px solid #e2d1b9;background:linear-gradient(#fffefb,#fff5e7);text-align:center;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:5px 10px;box-shadow:inset 0 2px 4px #fff,0 3px 0 #f0e5d3}
+.instruction{font-size:clamp(12px,1.6vw,17px);font-weight:950;letter-spacing:.04em;color:#204e76}.number{line-height:1.1;font-size:clamp(52px,6vw,78px);font-variant-numeric:tabular-nums;font-weight:1000;letter-spacing:-.045em;color:#123b75}
+.answer{flex:0 0 auto;min-height:64px;border:4px solid #55cfa9;border-radius:18px;box-shadow:inset 0 2px 4px #fff9,0 5px 0 #b2e4cb;background:linear-gradient(#f6fffa,#ddf8eb);display:flex;align-items:center;justify-content:center;gap:2px;font-size:clamp(30px,4.5vw,48px);font-weight:1000;font-variant-numeric:tabular-nums;color:#075c42;transition:background .12s,border-color .12s,box-shadow .12s}.answer.iswrong{border-color:#ed3c51;background:linear-gradient(#ffeded,#ffced4);box-shadow:inset 0 2px 4px #fff,0 5px 0 #f3a4ad;color:#b3162b;animation:inputShake .22s ease-out}.answer.isright{border-color:#28bd70;background:linear-gradient(#edfff3,#c9f9df);box-shadow:0 0 0 4px #45d68555,0 5px 0 #70cf9a;color:#036c39}
+@keyframes inputShake{25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
+.caret{display:inline-block;width:3px;height:30px;margin-left:2px;background:currentColor;border-radius:4px;animation:blink .85s step-start infinite}@keyframes blink{50%{opacity:0}}
+.feedback{min-height:17px;text-align:center;color:#507b87;font-size:12px;font-weight:850}.feedback.red{color:#bd1e39}.feedback.green{color:#157a54}
+.keyboard{flex:1;min-height:0;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(4,minmax(0,1fr));gap:7px}.keyboard button{min-height:35px;border-radius:17px;border:2px solid #e9dccc;border-bottom:5px solid #ccbaa7;background:linear-gradient(#fffefc,#f7ebde);color:#183e72;font-size:clamp(25px,3.6vw,39px);font-weight:1000;line-height:1;box-shadow:0 3px 7px #4d321121;user-select:none}.keyboard button:active{transform:translateY(3px);border-bottom-width:2px}.keyboard button.special{background:linear-gradient(#effffd,#c9f8ec);border-color:#9bdacb;border-bottom-color:#67c0aa;color:#077d76}
+.overlay{position:absolute;inset:0;background:#0b2947a1;backdrop-filter:blur(3px);z-index:10;display:none;align-items:center;justify-content:center;padding:14px}.overlay.open{display:flex}.modal{max-width:400px;width:100%;background:linear-gradient(#fffffb,#fdf3e7);border:3px solid #fff;border-radius:26px;text-align:center;padding:23px 18px;box-shadow:0 22px 52px #0a203c91;max-height:95%;overflow-y:auto}.modal .small{font-weight:950;font-size:12px;letter-spacing:.16em;color:#278c8f}.modal h1{font-size:clamp(32px,7vw,47px);line-height:1.02;margin:9px 0;color:#123b70}.modal p{color:#457082;font-size:14px;line-height:1.35;margin:10px auto}.modal .bigemoji{font-size:52px;line-height:1}.modal button{padding:13px 22px;font-weight:1000;font-size:19px;color:#17365f;background:linear-gradient(#ffc66a,#ff9b3e);border:2px solid #fff;border-bottom:5px solid #cd7630;border-radius:17px;min-height:56px;margin:13px auto 0;width:min(280px,100%)}.modal button:active{transform:translateY(3px);border-bottom-width:2px}.modal .answerReveal{font-size:36px;font-weight:1000;color:#078452}.modal .tip{font-size:12px;color:#7b8891}.modal .routeIcon{font-size:36px}
+@media(max-width:760px){#app{gap:4px}.top{min-height:42px}.place{padding:5px 8px}.place .pin{font-size:15px}.topright .tiny{height:34px;width:34px;font-size:16px}.layout{display:flex;flex-direction:column;gap:5px}.stage{flex:1 1 41%;min-height:130px;border-radius:18px;border-width:2px}.panel{flex:0 0 auto;min-height:0;gap:4px;padding:8px;border-radius:19px;border-width:2px;box-shadow:none}.exercise{min-height:66px;border-radius:15px}.instruction{font-size:13px}.number{font-size:45px}.answer{min-height:47px;font-size:34px;border-width:3px;border-radius:14px}.feedback{min-height:15px;font-size:11px}.keyboard{flex:none;height:208px;gap:5px}.keyboard button{font-size:29px;border-bottom-width:4px;border-radius:13px}.car{width:clamp(100px,32%,165px)}.toast{font-size:14px}}
+@media(max-width:360px){.top{min-height:36px}.brand{font-size:16px}.place{font-size:12px}.place .pin{font-size:12px}.route{height:12px}.panel{padding:5px;gap:3px}.exercise{min-height:56px}.number{font-size:39px}.instruction{font-size:11px}.answer{min-height:42px;font-size:28px}.caret{height:24px}.feedback{min-height:12px}.keyboard{height:172px;gap:4px}.keyboard button{border-radius:10px;font-size:25px}.stage{min-height:117px}}
+@media(max-height:690px) and (orientation:portrait){#app{padding-top:3px;padding-bottom:3px;gap:2px}.top{min-height:34px}.route{height:12px}.panel{padding:5px;gap:2px}.exercise{min-height:53px}.number{font-size:38px}.answer{min-height:38px;font-size:27px}.feedback{min-height:12px;font-size:10px}.keyboard{height:154px}.keyboard button{font-size:24px}.stage{min-height:110px}}
+@media(max-height:500px) and (orientation:landscape){#app{padding:3px 7px;gap:3px}.top{min-height:32px}.route{height:10px}.layout{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(260px,.8fr);gap:6px}.stage{min-height:0}.panel{padding:5px;gap:3px}.exercise{min-height:49px}.number{font-size:36px}.answer{min-height:34px;font-size:25px}.feedback{min-height:12px;font-size:9px}.keyboard{height:auto;flex:1;gap:3px}.keyboard button{min-height:25px;font-size:20px;border-bottom-width:2px;border-radius:10px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important} .speedfx{display:none}}
+
+/* Route v3 – approved 3D visual language, dynamic three-part journey */
+.scene{inset:-1.5%;opacity:0;transition:opacity .6s ease;transform:scale(1.045);background-position:center center;background-size:cover}
+.scene.active{opacity:1;transform-origin:73% 27%}
+.scene-start{background-image:url('assets/asset-000.jpeg')}
+.scene-cliff{background-image:url('assets/asset-001.jpeg')}
+.scene-harbor{background-image:url('assets/asset-002.jpeg')}
+.scene-cliff,.scene-harbor{background-size:100% 100%;background-position:center center}
+/* The illustrated road occupies the whole stage; soft near-road wash blends the car into varying scenes. */
+.camera-wash{position:absolute;inset:58% 0 0;background:linear-gradient(180deg,transparent,rgba(28,51,79,.04) 32%,rgba(22,42,72,.17));z-index:1;pointer-events:none}
+.hazard{height:auto;min-width:36px;aspect-ratio:1.6 / 1;display:grid;place-items:center;transform:translate(-50%,-45%);filter:drop-shadow(0 5px 4px #112c4855)}
+.hazard img,.hazard svg{display:block;width:100%;height:100%;object-fit:contain;overflow:visible}
+.stage.turning .car{transition:filter .3s;filter:drop-shadow(0 7px 6px #0c273f88)}
+.stage.arriving .car{animation:driveToLighthouse 2s ease-in forwards}
+#app:not(.forest-route):not(.river-route) .stage[data-phase="2"] .car{display:none!important}
+.stage.arriving .hazard{opacity:0!important}
+.stage.arriving .scene-harbor{animation:approachLighthouse 2s ease-out forwards}
+@keyframes driveToLighthouse{from{transform:translateX(-50%) scale(1)}to{transform:translateX(-25%) translateY(-30%) scale(.48)}}
+@keyframes approachLighthouse{from{transform:scale(1.05) translateX(0)}to{transform:scale(1.38) translateX(-6%)}}
+.stage.alert .camera-wash{background:linear-gradient(180deg,transparent,rgba(240,29,54,.1),rgba(250,60,70,.2))}
+.stage.dodging .camera-wash{background:linear-gradient(180deg,transparent,rgba(45,216,113,.1),rgba(45,216,113,.11))}
+@media (prefers-reduced-motion:reduce){.scene{transition:none!important}.stage.arriving .car,.stage.arriving .scene-harbor{animation:none!important}}
+
+/* MAJAKAS reward journey — separate scene, preserves approved driving game */
+.layout.reward-mode{display:block;position:relative;overflow:hidden;min-height:0}
+.layout.reward-mode>.stage,.layout.reward-mode>.panel{display:none!important}
+.reward-shell{display:none;position:absolute;inset:0;overflow:hidden;border:3px solid #fff;border-radius:22px;background:linear-gradient(180deg,#6bc9f5,#effcfb);box-shadow:0 12px 35px #13548d35}
+.layout.reward-mode .reward-shell{display:flex;flex-direction:column}
+.reward-art{position:relative;flex:1 1 auto;min-height:0;overflow:clip;background:#4c9cca center center/cover no-repeat;isolation:isolate}
+.reward-art:before{content:'';pointer-events:none;position:absolute;z-index:1;inset:0;background:linear-gradient(180deg,#051e3f88 0%,transparent 25%,transparent 65%,#071d3c77 100%)}
+.reward-art.arrival{background-image:url('assets/asset-003.webp');background-position:center 49%}
+.reward-art.door{background-image:url('assets/asset-004.webp');background-position:center 53%}
+.reward-art.stairs{background-image:url('assets/asset-005.webp');background-position:center 52%}
+.reward-art.lantern{background-image:url('assets/asset-006.webp');background-position:center 50%}
+.reward-art.postcard{background:radial-gradient(ellipse at center,#fff6b7,#6ccce7 65%,#258fc3)}
+.reward-art.map{background-image:url('assets/asset-000.jpeg');background-position:center center}
+.reward-map-img{display:none;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(94%,850px);height:auto;max-height:67%;object-fit:contain;z-index:3;border:5px solid #fff;border-radius:17px;box-shadow:0 11px 22px #063b5477}
+.reward-art.map .reward-map-img{display:block}
+.reward-art.panorama{background:#48bbee}
+.reward-pan-img{display:none;position:absolute;z-index:0;max-width:none;height:100%;width:auto;left:0;top:0;will-change:transform;pointer-events:none;user-select:none}
+.reward-art.panorama .reward-pan-img{display:block}
+.reward-art.panorama{touch-action:pan-y;cursor:grab}
+.reward-art.panorama:active{cursor:grabbing}
+.reward-info{position:absolute;top:13px;left:50%;max-width:calc(100% - 22px);white-space:normal;transform:translateX(-50%);max-width:94%;width:max-content;z-index:3;padding:9px 16px;text-align:center;border:2px solid #fff9;border-radius:20px;box-shadow:0 6px 15px #092e6170;background:linear-gradient(180deg,#1161aede,#12396fdf);color:#fff;font-size:clamp(17px,2.9vw,26px);font-weight:1000;text-shadow:0 2px 2px #073b5a55}
+.reward-footer{flex:0 0 auto;min-height:93px;display:flex;justify-content:center;align-items:center;gap:9px;padding:9px 13px;background:linear-gradient(180deg,#fffcf5,#f5e9d6);border-top:3px solid #fff;box-shadow:0 -3px 17px #063b5d31}
+.reward-footer .reward-main-button{font-weight:1000;min-height:56px;padding:11px 19px;border:2px solid #fff;border-bottom:5px solid #c37c31;border-radius:17px;box-shadow:0 6px 15px #0e4f7840;color:#153d6d;background:linear-gradient(180deg,#ffd37d,#ffa43d);font-size:clamp(15px,2.3vw,22px);touch-action:manipulation}
+.reward-footer .reward-alt-button{background:#ffffff;border:2px solid #b5d9eb;color:#1b4f73;padding:10px 13px;border-radius:14px;font-weight:900;min-height:48px;max-width:145px}
+.reward-footer .reward-main-button[disabled]{opacity:.55;cursor:default}
+.reward-desc{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);width:max-content;max-width:94%;z-index:3;font-size:clamp(12px,2.2vw,18px);color:#fff;text-align:center;text-shadow:0 2px 5px #002e56;font-weight:900}
+.reward-next-glow{position:absolute;z-index:4;right:7%;top:27%;width:100px;height:100px;border-radius:50%;border:3px solid #fff;display:none;align-items:center;justify-content:center;flex-direction:column;background:radial-gradient(circle,#ffec8588,#13864b99);color:white;text-shadow:0 2px 3px #17393d;box-shadow:0 0 30px #ffdc55aa;transform:scale(.9);pointer-events:none}
+.reward-next-glow span{font-size:32px}.reward-next-glow small{font-weight:950;font-size:12px}
+.reward-art.panorama .reward-next-glow{display:flex;opacity:0;transition:opacity .3s,transform .3s}
+.reward-art.panorama.found .reward-next-glow{opacity:1;transform:scale(1)}
+.reward-art .panorama-controllers{display:none;position:absolute;z-index:5;left:50%;bottom:17px;transform:translateX(-50%);gap:13px;align-items:center;justify-content:center}
+.reward-art.panorama .panorama-controllers{display:flex}
+.panorama-controllers button{width:49px;height:49px;border:2px solid white;border-radius:50%;background:#194f8cda;color:white;font-size:28px;font-weight:900;box-shadow:0 4px 14px #06152c99}
+.panorama-controllers span{border-radius:30px;padding:9px 14px;background:#0c326cbd;color:white;font-size:13px;font-weight:900;white-space:nowrap}
+.reward-postcard-frame{display:none;position:absolute;z-index:4;left:50%;top:51%;transform:translate(-50%,-50%) rotate(-3deg);width:min(84%,630px);max-height:73%;aspect-ratio:1.63;overflow:hidden;border:12px solid #fffef2;outline:3px dashed #efd68b;outline-offset:-8px;box-shadow:0 10px 28px #053a5d88;background:#fffaf4}
+.reward-postcard-frame img{width:100%;height:100%;object-fit:cover;display:block}
+.reward-postcard-frame .postcard-name{position:absolute;bottom:6%;right:5%;background:#fff9eccc;border-radius:10px;padding:6px 12px;color:#174174;font-size:clamp(18px,3.2vw,27px);font-weight:1000}
+.reward-art.postcard .reward-postcard-frame{display:block;animation:cardAppear .55s cubic-bezier(.16,1.4,.65,1) both}
+@keyframes cardAppear{from{opacity:0;transform:translate(-50%,-42%) scale(.8) rotate(-9deg)}to{opacity:1;transform:translate(-50%,-50%) scale(1) rotate(-3deg)}}
+.reward-art.stairs{animation:climb 3.1s ease-in-out both}.reward-art.lantern{animation:lightUp 2s ease-out both}
+@keyframes climb{from{background-size:100% 100%;background-position:center 60%}to{background-size:132% 132%;background-position:center 36%}}
+@keyframes lightUp{from{filter:brightness(.85)}to{filter:brightness(1.1)}}
+.reward-finish-car{display:none;position:absolute;z-index:3;left:50%;bottom:3%;width:20%;max-width:180px;transform:translateX(-50%);filter:drop-shadow(0 7px 6px #0c233c88)}
+.reward-art.arrival .reward-finish-car{display:block}
+.reward-skip{position:absolute;bottom:112px;right:12px;z-index:9;border:2px solid white;border-radius:15px;padding:6px 12px;background:#1d568abe;color:white;font-size:13px;font-weight:850}
+.reward-art.map:after{content:'';position:absolute;inset:0;background:linear-gradient(0deg,#052a6f4a,transparent 60%);pointer-events:none}
+.reward-card-note{display:none;position:absolute;z-index:4;bottom:15px;left:50%;transform:translateX(-50%);background:#fffdf0ed;border:2px solid #f5d588;border-radius:15px;color:#114e67;padding:9px 16px;font-weight:1000;max-width:92%;text-align:center}
+.reward-art.map .reward-card-note{display:block}
+/* Do not fly through the air at the finish. Transition to a grounded arrival/parking illustration. */
+.stage.arriving .car,.stage.arriving .scene-harbor{animation:none!important}
+.stage.arriving .car{transform:translateX(-50%) scale(.88)!important;transition:transform 1.2s ease-out,bottom 1.2s ease-out!important;bottom:8%!important}
+@media(max-width:760px){.reward-shell{border-radius:17px;border-width:2px}.reward-footer{min-height:77px;padding:7px}.reward-footer .reward-main-button{min-height:52px}.reward-skip{bottom:90px}.reward-info{font-size:18px}}
+@media(max-width:360px), (max-height:650px){.reward-footer{min-height:59px;padding:5px}.reward-footer .reward-main-button{font-size:15px;min-height:46px;padding:6px 12px}.reward-footer .reward-alt-button{min-height:45px;font-size:12px}.reward-skip{bottom:67px}.reward-info{top:5px;font-size:15px;padding:6px 9px}.reward-desc{bottom:5px}.reward-postcard-frame{border-width:7px}}
+@media (prefers-reduced-motion:reduce){.reward-art.stairs,.reward-art.lantern,.reward-postcard-frame{animation:none!important}*{scroll-behavior:auto!important}}
+
+
+/* Lighthouse interior journey: cinematic presentation only. Racing CSS untouched. */
+.reward-shell{background:#0b366c!important;border:2px solid #faffff!important;isolation:isolate}
+.reward-art{background:#1769a3!important;overflow:hidden;isolation:isolate}
+.reward-art:before{background:linear-gradient(180deg,rgba(7,25,52,.30),transparent 26%,transparent 70%,rgba(2,22,54,.29))!important;z-index:4!important;pointer-events:none}
+.reward-art.arrival,.reward-art.door,.reward-art.stairs,.reward-art.lantern,.reward-art.panorama,.reward-art.postcard,.reward-art.map{background-image:none!important;animation:none!important}
+.cinema-deck{position:absolute;inset:0;z-index:0;overflow:hidden;perspective:980px;background:#1366ac}
+.cinema-shot{position:absolute;inset:-1%;opacity:0;overflow:hidden;transform:scale(1.055);filter:blur(7px) brightness(.85);transition:opacity 1.15s ease,transform 3.9s cubic-bezier(.1,.46,.12,1),filter 1.1s ease;will-change:opacity,transform}
+.cinema-shot.on{opacity:1;transform:scale(1);filter:blur(0) brightness(1);z-index:2}
+.cinema-shot.out{opacity:0;z-index:3;transition:opacity .94s ease,filter .95s ease;filter:blur(10px) brightness(1.45)}
+.cinema-shot .film-img{position:absolute;inset:-6%;background-position:center center;background-size:cover;transform:scale(1.13);will-change:transform;transition:transform 7s cubic-bezier(.13,.22,.2,1),background-position 6s ease}
+.cinema-shot.on .film-img{transform:scale(1.025)}
+.cinema-shot.arrival .film-img{background-image:url('assets/asset-003.webp');background-position:57% 49%}
+.cinema-shot.arrival.on .film-img{animation:cinemaPark 2.5s cubic-bezier(.16,.41,.35,1) both}
+.cinema-shot.door .film-img{background-image:url('assets/asset-004.webp');background-position:52% 49%}
+.cinema-shot.door.on .film-img{animation:cinemaNearDoor 6.8s ease-out both}
+.cinema-shot.stairs .film-img{background-image:url('assets/asset-005.webp');background-position:59% 66%}
+.cinema-shot.stairs.on .film-img{animation:cinemaStairs 5.4s cubic-bezier(.1,.18,.26,1) both}
+.cinema-shot.lantern .film-img{background-image:url('assets/asset-006.webp');background-position:53% 49%}
+.cinema-shot.lantern.on .film-img{animation:cinemaLens 5.5s ease-out both}
+.cinema-shot.panorama .film-img{background:#1b94db}
+.cinema-shot.panorama.on .film-img{transform:none}
+.cinema-shot.postcard .film-img{background-image:url('assets/asset-007.webp');background-position:60% 50%;filter:blur(4px) brightness(1.12)}
+.cinema-shot.map .film-img{background-image:url('assets/asset-007.webp');background-position:78% 45%;filter:blur(3px) brightness(.84)}
+@keyframes cinemaPark{0%{transform:scale(1.22) translate3d(2%,4%,0);filter:blur(2px)}100%{transform:scale(1.045) translate3d(0,0,0);filter:blur(0)}}
+@keyframes cinemaNearDoor{0%{transform:scale(1.09) translate3d(0,2%,0)}100%{transform:scale(1.27) translate3d(-2%,-3%,0)}}
+@keyframes cinemaStairs{0%{transform:scale(1.05) translate3d(4%,9%,0) rotate(0deg)}52%{transform:scale(1.32) translate3d(-4%,1%,0) rotate(1.5deg)}100%{transform:scale(1.7) translate3d(-9%,-15%,0) rotate(2.8deg)}}
+@keyframes cinemaLens{0%{transform:scale(1.02) translate3d(4%,1%,0)}100%{transform:scale(1.26) translate3d(-2%,-1%,0)}}
+.cinema-door-glow{position:absolute;inset:0;z-index:5;pointer-events:none;opacity:0;background:radial-gradient(circle at 50% 48%,#fff7b9b9,transparent 47%);mix-blend-mode:screen}
+.reward-art.door.entering .cinema-door-glow{animation:enterLight 1.5s ease-in both}
+@keyframes enterLight{0%{opacity:0;transform:scale(.45)}58%{opacity:.92;transform:scale(1.45)}100%{opacity:1;background:#fff6c9;transform:scale(2)}}
+.cinema-rail{display:none;position:absolute;inset:-5% -15%;z-index:3;pointer-events:none;opacity:.52;background:repeating-linear-gradient(115deg,transparent 0 90px,#d9b66a62 92px 100px,transparent 105px 165px);transform:skewY(-10deg)}
+.reward-art.stairs .cinema-rail{display:block;animation:railPass 2.9s linear infinite}
+@keyframes railPass{to{transform:translate3d(-100px,240px,0) skewY(-10deg)}}
+.cinema-lamp-beam{position:absolute;inset:-50%;z-index:3;opacity:0;pointer-events:none;background:conic-gradient(from 0deg at 50% 47%,transparent 0 80deg,#fff1b833 88deg,#fff6b177 91deg,transparent 103deg 190deg,#ffda5b22 199deg,transparent 213deg 360deg);mix-blend-mode:screen;animation:lampSweep 8s linear infinite}
+.reward-art.lantern .cinema-lamp-beam{opacity:1}
+@keyframes lampSweep{to{transform:rotate(360deg)}}
+.cinema-lamp-core{position:absolute;left:50%;top:50%;z-index:3;width:25%;aspect-ratio:1;border-radius:50%;transform:translate(-50%,-50%);pointer-events:none;background:radial-gradient(circle,#fff8c7bb,#ffe4624a,transparent 75%);filter:blur(20px);display:none;animation:lampPulse 2s ease-in-out infinite alternate}
+.reward-art.lantern .cinema-lamp-core{display:block}
+@keyframes lampPulse{to{opacity:.5;transform:translate(-50%,-50%) scale(1.45)}}
+.cinema-particles{position:absolute;z-index:4;inset:0;pointer-events:none;opacity:0;overflow:hidden}
+.reward-art.door .cinema-particles,.reward-art.stairs .cinema-particles,.reward-art.lantern .cinema-particles,.reward-art.postcard .cinema-particles{opacity:1}
+.cinema-particles i{position:absolute;left:var(--x);top:var(--y);height:5px;width:5px;border-radius:50%;background:#ffeb8a;box-shadow:0 0 9px 3px #fff6a5ad;opacity:.7;animation:floatDust var(--d) linear infinite;animation-delay:var(--delay)}
+@keyframes floatDust{from{transform:translate3d(-7px,45px,0) scale(.6);opacity:0}35%{opacity:.86}to{transform:translate3d(20px,-55px,0) scale(1.4);opacity:0}}
+.cinema-pan{position:absolute;z-index:1;top:0;left:0;height:100%;max-width:none;width:auto;object-fit:cover;will-change:transform;user-select:none;pointer-events:none;display:none}
+.reward-art.panorama .cinema-pan{display:block}
+.cinema-shine{position:absolute;inset:0;z-index:2;pointer-events:none;display:none;background:linear-gradient(113deg,transparent 0 45%,#fff6b10c 48%,transparent 51%);background-size:200% 100%;mix-blend-mode:screen;animation:seaShimmer 8s ease-in-out infinite alternate}
+.reward-art.panorama .cinema-shine{display:block}
+@keyframes seaShimmer{to{background-position:100% 0}}
+.cinema-gulls{position:absolute;top:18%;right:-13%;z-index:3;display:none;pointer-events:none;color:#fff;font-size:38px;letter-spacing:55px;text-shadow:0 2px 4px #06446d;animation:gullsFly 16s linear infinite}
+.reward-art.panorama .cinema-gulls{display:block}
+@keyframes gullsFly{to{transform:translateX(-650px) translateY(-40px)}}
+.cinema-next{position:absolute;z-index:8;right:8%;top:33%;width:132px;min-height:58px;border:3px solid #fff;background:linear-gradient(180deg,#ffe68d,#ef9a40);box-shadow:0 0 26px #ffe983a8,0 5px 12px #1737528a;border-radius:17px;color:#183c65;font-size:16px;font-weight:1000;opacity:0;transform:translateY(12px) scale(.85);transition:transform .45s,opacity .45s;pointer-events:none;display:none;align-items:center;justify-content:center;gap:3px;flex-direction:column}
+.reward-art.panorama.found .cinema-next{display:flex;opacity:1;transform:translateY(0) scale(1);pointer-events:auto}
+.cinema-next small{font-size:11px}
+.cinema-next:focus-visible{outline:4px solid #fff}
+.reward-art.panorama{touch-action:pan-y}
+.reward-art .reward-pan-img{display:none!important}
+.reward-art .reward-next-glow{display:none!important}
+.reward-info{z-index:10!important;background:linear-gradient(180deg,#1c5798e8,#153e74d9)!important;box-shadow:0 5px 18px #052e53ab!important;backdrop-filter:blur(5px)}
+.reward-desc{z-index:10!important;font-size:clamp(14px,2.4vw,20px)!important;color:#fff!important;background:#07325b99;border:1px solid #ffffff6b;padding:6px 12px;border-radius:16px;text-shadow:none!important;backdrop-filter:blur(5px)}
+.reward-art .panorama-controllers{z-index:10!important;bottom:60px!important}
+.cinema-telescope{position:absolute;z-index:10;bottom:17px;right:20px;width:58px;height:58px;border-radius:50%;border:3px solid white;box-shadow:0 4px 14px #07466c77;background:linear-gradient(130deg,#ffe69b,#e6a443);font-size:28px;display:none;cursor:pointer}
+.reward-art.panorama .cinema-telescope{display:grid;place-items:center}
+.reward-finish-car{display:none!important}
+.reward-art.postcard .reward-postcard-frame{animation:cinemaPostcard 1.25s cubic-bezier(.14,1.3,.38,1) both}
+@keyframes cinemaPostcard{0%{opacity:0;transform:translate(-50%,-40%) rotate(-12deg) scale(.25);filter:blur(12px)}72%{opacity:1;filter:blur(0)}100%{transform:translate(-50%,-50%) rotate(-3deg) scale(1)}}
+.reward-postcard-frame{z-index:8!important;width:min(84%,570px);aspect-ratio:1.45!important;max-height:65%!important;background:#fff;border:12px solid #fffbed;box-shadow:0 14px 30px #0a2c5077,0 0 60px #ffe17c85}
+.reward-postcard-frame img{object-position:70% 48%!important}
+.reward-art.map .reward-map-img{z-index:9!important;max-height:65%!important;box-shadow:0 16px 32px #032b49b3}
+.reward-art.map .reward-card-note{z-index:10!important}
+.reward-footer{z-index:11!important;background:linear-gradient(180deg,#f7fbfa,#f2e7d7)!important}
+.reward-footer .reward-main-button{background:linear-gradient(180deg,#ffda92,#ff9b3e)!important;color:#123e6c!important;box-shadow:0 6px 0 #c78636,0 8px 14px #0e4f7840!important}
+.reward-footer .reward-main-button:active{transform:translateY(3px);box-shadow:0 3px 0 #c78636!important}
+.reward-skip{z-index:12!important;bottom:auto!important;top:55px!important;right:12px!important;background:#1d568ab8!important}
+@media(max-width:480px){.reward-info{font-size:16px!important;padding:6px 11px!important}.reward-skip{top:45px!important;font-size:11px!important;padding:5px 8px!important}.reward-art .panorama-controllers{bottom:72px!important}.panorama-controllers span{font-size:11px!important}.cinema-telescope{width:47px;height:47px;font-size:24px;right:9px}.reward-desc{font-size:12px!important;bottom:9px!important}.reward-footer{min-height:75px!important}}
+@media(max-height:580px){.reward-skip{top:5px!important;right:8px!important}.reward-art .panorama-controllers{bottom:42px!important}.cinema-telescope{bottom:7px}.reward-desc{display:none!important}}
+@media(prefers-reduced-motion:reduce){.cinema-shot,.cinema-shot .film-img,.cinema-rail,.cinema-lamp-beam,.cinema-particles i,.cinema-gulls,.cinema-shine{animation:none!important;transition:none!important}.cinema-shot{filter:none!important}}
+
+
+/* Majakas v7: high-clarity opening, no scrolling in any active state */
+.overlay{position:fixed!important;inset:0!important;padding:max(12px,env(safe-area-inset-top)) 12px max(12px,env(safe-area-inset-bottom));z-index:200!important;background:#0d3865a6!important;backdrop-filter:blur(2px)!important}
+.modal{overflow:visible!important;max-height:calc(100dvh - 28px)!important;width:min(90vw,410px)!important;padding:clamp(14px,3vh,24px)!important;border-radius:26px!important;display:flex;flex-direction:column;gap:6px;align-items:center;justify-content:center}
+.modal h1{font-size:clamp(27px,7vw,40px)!important;margin:2px 0!important}
+.modal .small{font-size:11px!important}
+.modal p{margin:1px 0 5px!important;font-size:clamp(14px,3.8vw,17px)!important}
+.modal .intro-icon{font-size:clamp(29px,7vw,42px);line-height:1.1;white-space:nowrap;display:flex;gap:10px}
+.modal button{margin:5px auto 0!important;flex:0 0 auto}
+.modal .intro-begin{width:100%!important;max-width:320px!important;min-height:56px!important;background:linear-gradient(#ffe28a,#ffad4b)!important}
+.modal .intro-prize{background:linear-gradient(#e2fff4,#a2ebd8)!important;font-size:14px!important;min-height:43px!important;margin-top:0!important;width:100%!important;max-width:320px!important}
+@media(max-height:550px){.modal{padding:9px!important;gap:2px!important}.modal h1{font-size:25px!important}.modal .intro-icon{font-size:24px!important}.modal .intro-begin{min-height:43px!important}.modal .intro-prize{min-height:36px!important}}
+/* Cinematic transitions: maintain depth and remove slideshow blur. */
+.cinema-shot{filter:none!important;transform:scale(1.08);transition:opacity .9s ease,transform 2.3s cubic-bezier(.16,.43,.24,1)!important}
+.cinema-shot.on{transform:scale(1)!important;filter:none!important}
+.cinema-shot.out{filter:none!important;opacity:0!important}
+.cinema-shot .film-img{inset:-2%;transition:transform 5s ease,background-position 5s ease}
+.cinema-shot.arrival .film-img{background-image:url('assets/asset-008.webp')!important;background-position:49% 63%}
+.cinema-shot.arrival.on .film-img{animation:cinemaArriveBG 2.8s ease-out both!important}
+@keyframes cinemaArriveBG{from{transform:scale(1.18) translateY(2%)}to{transform:scale(1.035) translateY(0)}}
+.cinema-arrival-car{position:absolute;bottom:-19%;left:45%;z-index:4;width:min(41%,240px);height:auto;filter:drop-shadow(0 7px 5px #0d294b99);transform:translate(-50%,0) scale(1.22);opacity:0}
+.cinema-shot.arrival.on .cinema-arrival-car{animation:parkCar 2.8s cubic-bezier(.3,.16,.16,1) both}
+@keyframes parkCar{0%{opacity:1;transform:translate(-50%,10%) scale(1.3)}45%{opacity:1}100%{opacity:1;transform:translate(-92%,-75%) scale(.55)}}
+.parking-sign{position:absolute;right:8%;top:65%;background:#225e9ddd;color:white;border-radius:12px;padding:3px 10px;border:2px solid #fff;box-shadow:0 4px 7px #123c54aa;opacity:0;font-weight:900;z-index:4}
+.cinema-shot.arrival.on .parking-sign{animation:parkingSign 1.8s ease .65s both}
+@keyframes parkingSign{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.cinema-shot.door .film-img{background-image:url('assets/asset-008.webp')!important;background-position:center}
+.cinema-shot.door.on .film-img{animation:cameraToDoor 3.3s ease-in-out both!important}
+@keyframes cameraToDoor{0%{transform:scale(1.03) translateY(2%)}100%{transform:scale(1.20) translate(-1%,-2%)}}
+.door-light{position:absolute;inset:0;z-index:4;opacity:0;background:radial-gradient(ellipse 24% 35% at 52% 49%,#ffe39caa,transparent 75%);mix-blend-mode:screen}
+.cinema-shot.door.on .door-light{animation:doorLight 3.5s ease-in-out both}
+@keyframes doorLight{0%,30%{opacity:.05}75%{opacity:.9}100%{opacity:.25}}
+/* A real hinged door plane moves in perspective in front of the illuminated arch. */
+.animated-door{position:absolute;z-index:5;width:20%;height:54%;left:43%;top:24%;border-radius:45% 45% 8px 8px/19% 19% 8px 8px;background:repeating-linear-gradient(90deg,#8b401d 0 12%,#bf783e 14% 20%,#7e381a 22% 24%);border:5px solid #734023;box-shadow:inset 0 0 15px #ffc58e99,0 5px 18px #3f211d88;transform-origin:7% 50%;transform:perspective(800px) rotateY(0deg);opacity:0;backface-visibility:hidden}
+.animated-door:before,.animated-door:after{content:'';position:absolute;left:7%;right:7%;height:5px;background:#582b19;box-shadow:0 2px 2px #ffc67f55}
+.animated-door:before{top:26%}.animated-door:after{top:68%}
+.door-knob{position:absolute;right:8%;top:54%;width:10px;height:10px;border:3px solid #ffe3a1;background:#af7130;border-radius:50%;box-shadow:0 0 8px #ffcf72}
+.cinema-shot.door.on .animated-door{animation:hingeDoor 3.3s ease-out both}
+@keyframes hingeDoor{0%{opacity:1;transform:perspective(700px) rotateY(0deg)}25%{opacity:1;transform:perspective(700px) rotateY(-6deg)}65%{opacity:1;transform:perspective(700px) rotateY(-72deg)}90%,100%{opacity:0;transform:perspective(700px) rotateY(-103deg)}}
+.cinema-shot.stairs .film-img{background-image:url('assets/asset-009.webp')!important;background-position:46% 58%}
+.cinema-shot.stairs.on .film-img{animation:cameraClimb 4.3s cubic-bezier(.26,.25,.2,1) both!important}
+@keyframes cameraClimb{0%{transform:scale(1.04) translate(4%,9%) rotate(-2deg)}37%{transform:scale(1.23) translate(-2%,0) rotate(.9deg)}73%{transform:scale(1.47) translate(-6%,-9%) rotate(2deg)}100%{transform:scale(1.48) translate(-8%,-12%) rotate(3deg)}}
+.stair-lights{position:absolute;inset:0;z-index:4;overflow:hidden;pointer-events:none}
+.stair-lights i{position:absolute;bottom:-20%;left:calc(25% + var(--n,0)*8%);width:34%;height:8%;transform:rotate(-12deg);opacity:0;background:linear-gradient(transparent,#ffe28b9c,transparent);filter:blur(11px)}
+.stair-lights i:nth-child(1){--n:0}.stair-lights i:nth-child(2){--n:1}.stair-lights i:nth-child(3){--n:2}.stair-lights i:nth-child(4){--n:3}.stair-lights i:nth-child(5){--n:4}.stair-lights i:nth-child(6){--n:5}
+.cinema-shot.stairs.on .stair-lights i{animation:climbLight 2s linear infinite;animation-delay:calc(var(--n)*-.33s)}
+@keyframes climbLight{0%{bottom:-20%;opacity:0;transform:rotate(-12deg) scale(.4)}40%{opacity:.55}95%,100%{bottom:98%;opacity:0;transform:rotate(-12deg) scale(1.8)}}
+.cinema-shot.lantern .film-img{background-image:url('assets/asset-010.webp')!important;background-position:50% 50%}
+.cinema-shot.lantern.on .film-img{animation:cameraLens 3.6s ease-in-out both!important}
+@keyframes cameraLens{from{transform:scale(1.01) translateX(5%)}to{transform:scale(1.32) translateX(-4%)}}
+.lens-rotation{position:absolute;inset:0;z-index:3;pointer-events:none;overflow:hidden;mix-blend-mode:screen}
+.lens-rotation i{position:absolute;top:43%;left:50%;width:75%;height:120%;transform-origin:center 5%;background:linear-gradient(90deg,transparent 36%,#fff5af05 42%,#fff8bd75 48%,#fffccf06 54%,transparent 70%);filter:blur(14px);opacity:0}
+.cinema-shot.lantern.on .lens-rotation i{animation:lensBeam 3.5s linear infinite}
+.lens-rotation i:nth-child(2){animation-delay:-1.2s!important;transform:rotate(120deg)}.lens-rotation i:nth-child(3){animation-delay:-2.4s!important}
+@keyframes lensBeam{0%{opacity:0;transform:rotate(0)}25%{opacity:.8}65%{opacity:.5}100%{opacity:0;transform:rotate(360deg)}}
+/* Real pan with moving gulls and a sailing ship silhouette. */
+.cinema-pan{transition:transform .85s cubic-bezier(.2,.65,.2,1)}
+.reward-art.panorama .cinema-shine{display:block}
+.reward-art.panorama .cinema-gulls{display:block}
+.cinema-next{animation:glowNext 2.4s ease-in-out infinite}
+@keyframes glowNext{50%{box-shadow:0 0 38px #ffe875,0 6px 20px #153957}}
+.reward-art.teaser .cinema-next,.reward-art.teaser .panorama-controllers{display:none!important}
+.forest-scene{position:absolute;inset:0;overflow:hidden;background:#73bfa7 url('assets/asset-007.webp') 93% 22%/auto 135% no-repeat;filter:saturate(1.14)}
+.forest-sky{position:absolute;inset:0;background:radial-gradient(circle at 75% 12%,#fffcc4,transparent 25%),linear-gradient(#3ca8e8,#c7e9d1 66%)}
+.forest-hills{position:absolute;inset:30% -20% 25%;background:linear-gradient(170deg,#6ab9a7,#2c786c);clip-path:polygon(0 76%,13% 49%,26% 68%,40% 26%,56% 59%,69% 35%,85% 66%,100% 32%,100% 100%,0 100%)}
+.forest-ground{position:absolute;inset:58% -10% -12%;background:linear-gradient(#458a54,#286344)}
+.forest-path{position:absolute;bottom:-24%;left:27%;height:70%;width:43%;background:linear-gradient(90deg,#8b734b,#dfc797 50%,#8d734f);clip-path:polygon(40% 0,57% 0,100% 100%,0 100%);filter:drop-shadow(0 8px 12px #253e2355)}
+.forest-cabin{position:absolute;left:43%;bottom:22%;width:23%;height:26%;z-index:3;transform:scale(.5);opacity:0}
+.cinema-shot.teaser.on .forest-cabin{animation:cabinReveal 3.1s ease-out both}
+@keyframes cabinReveal{0%{transform:scale(.5) translateY(30%);opacity:0}40%{opacity:1}100%{transform:scale(1.2) translateY(0);opacity:1}}
+.forest-cabin .roof{position:absolute;top:0;left:-15%;width:130%;height:40%;background:linear-gradient(145deg,#c15c30,#7a3521);clip-path:polygon(50% 0,100% 100%,0 100%);filter:drop-shadow(0 3px 4px #44251155)}
+.forest-cabin .wall{position:absolute;top:37%;left:0;width:100%;height:63%;background:repeating-linear-gradient(0deg,#a96633 0 13%,#e4a75d 14% 19%);border:4px solid #734521;border-radius:2px}
+.forest-cabin .window{position:absolute;left:13%;top:22%;height:31%;width:24%;background:#ffe691;border:3px solid #76411e;box-shadow:0 0 18px #ffe78a}
+.forest-cabin .door{position:absolute;right:13%;bottom:0;width:26%;height:65%;background:#634128;border:3px solid #c99456}
+.forest-cabin .chimney{position:absolute;right:12%;top:-4%;height:35%;width:12%;background:#7d4735;z-index:-1}
+.forest-cabin .chimney i{position:absolute;left:-15%;top:0;width:16px;height:16px;border-radius:50%;background:#f8f8ed9c;animation:smoke 3.3s ease-out infinite}
+.forest-cabin .chimney i:nth-child(2){animation-delay:1.1s}.forest-cabin .chimney i:nth-child(3){animation-delay:2.2s}
+@keyframes smoke{0%{opacity:0;transform:translate(0,0) scale(.5)}30%{opacity:.65}100%{opacity:0;transform:translate(20px,-65px) scale(2.2)}}
+.forest-pines i{position:absolute;bottom:18%;width:22%;height:69%;background:linear-gradient(110deg,#15563d,#2f8962);clip-path:polygon(50% 0,80% 31%,66% 31%,94% 58%,73% 58%,100% 88%,0 88%,26% 58%,5% 58%,34% 31%,19% 31%);filter:drop-shadow(0 10px 9px #17332377);animation:pineSway 6s ease-in-out infinite}
+.forest-pines i:nth-child(1){left:-4%;bottom:1%;transform:scale(1.4)}.forest-pines i:nth-child(2){left:18%;bottom:6%;transform:scale(.8)}.forest-pines i:nth-child(3){right:0;bottom:2%;transform:scale(1.45)}.forest-pines i:nth-child(4){right:22%;bottom:9%;transform:scale(.66)}.forest-pines i:nth-child(5){right:39%;bottom:13%;transform:scale(.43)}.forest-pines i:nth-child(6){left:31%;bottom:13%;transform:scale(.5)}
+@keyframes pineSway{50%{filter:brightness(1.2) drop-shadow(0 8px 9px #17332377)}}
+.forest-fog{position:absolute;inset:0;background:linear-gradient(0deg,#163b4b65,transparent 65%);pointer-events:none}
+.forest-sky,.forest-hills,.forest-ground,.forest-path,.forest-cabin,.forest-pines{display:none!important}
+.cinema-shot.teaser.on .forest-scene{animation:forestZoom 3.5s ease-out both}
+@keyframes forestZoom{from{transform:scale(1)}to{transform:scale(1.12)}}
+.reward-art.teaser .cinema-shot.teaser.on{opacity:1}
+.reward-art.teaser-map .cinema-shot.teaser.on{opacity:1}
+/* Clean reward UI: no hidden-step controls, no accidental scrolling. */
+.reward-footer{flex:0 0 auto!important;min-height:62px!important;padding:5px!important}
+.reward-main-button,.reward-alt-button{min-height:45px!important}
+.reward-info{font-size:clamp(14px,4.7vw,24px)!important;max-width:85%!important}
+.reward-desc{font-size:clamp(11px,3.2vw,18px)!important}
+.reward-skip{position:absolute!important;z-index:30!important;top:auto!important;bottom:clamp(66px,10vh,88px)!important;right:10px!important;max-width:50%!important}
+#rewardPrimary[hidden],#rewardSecondary[hidden],#rewardSkip[hidden]{display:none!important}
+.reward-footer:has(#rewardPrimary[hidden]):has(#rewardSecondary[hidden]){min-height:0!important;height:0!important;padding:0!important;border:0!important}
+.reward-art.panorama{touch-action:none}
+@media (prefers-reduced-motion:reduce){.cinema-arrival-car,.animated-door,.stair-lights i,.lens-rotation i,.forest-cabin,.forest-pines i{animation:none!important}.cinema-arrival-car{opacity:1;transform:translate(-85%,-70%) scale(.55)}.animated-door{display:none}}
+
+
+/* Simplified Majakas reward: arrive on the approved road, cut directly to the view. */
+.cinema-shot.arrival,.cinema-shot.door,.cinema-shot.stairs,.cinema-shot.lantern,
+.cinema-door-glow,.cinema-rail,.cinema-lamp-beam,.cinema-lamp-core,
+.animated-door,.stair-lights,.lens-rotation,.cinema-particles{display:none!important}
+.reward-art.panorama .cinema-pan {animation: panoramaSoftReveal 1.1s ease-out both}
+@keyframes panoramaSoftReveal {0%{opacity:0;filter:brightness(1.65)}100%{opacity:1;filter:brightness(1)}}
+@media(prefers-reduced-motion:reduce){.reward-art.panorama .cinema-pan{animation:none!important}}
+
+/* Recovery hotfix: the input caret must not intercept modal buttons. */
+.caret { pointer-events: none !important; }
+
+/* v11 pedagogical focus: make the rounding place unmistakable at a glance. */
+.instruction{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;column-gap:7px;row-gap:2px;line-height:1.18}
+.instruction-verb{white-space:nowrap;color:#204e76}
+.round-target{display:inline-block;white-space:nowrap;padding:4px 9px 5px;border:2px solid #f29b2f;border-radius:11px;background:#fff0a4;color:#7a3400;font-weight:1000;letter-spacing:.025em;box-shadow:0 2px 0 #e7af51,0 0 0 2px #fff9e6;font-size:1.08em}
+.instruction[data-unit="100"] .round-target{background:#c4f8e8;border-color:#21ae93;color:#005c52;box-shadow:0 2px 0 #61c8a8,0 0 0 2px #eafff9}
+@media(max-width:760px){.instruction{font-size:14px;column-gap:6px}.round-target{padding:4px 8px;border-radius:10px}}
+@media(max-width:360px), (max-height:690px) and (orientation:portrait){.instruction{font-size:12px}.round-target{padding:3px 7px;border-radius:9px}}
+@media(max-height:500px) and (orientation:landscape){.instruction{font-size:12px}.round-target{padding:2px 6px}}
+
+/* v12 — Metsajaam journey: separate visual skin, approved Majakas art untouched */
+#app.forest-route .scene-start{background-image:url('assets/asset-011.jpeg')!important}
+#app.forest-route .scene-cliff{background-image:url('assets/asset-012.jpeg')!important}
+#app.forest-route .scene-harbor{background-image:url('assets/asset-013.jpeg')!important}
+#app.forest-route .stage{background:#346e63}
+#app.forest-route .place{background:linear-gradient(#ebffde,#b8e5bd);border-color:#fff;color:#20543d}
+#app.forest-route .panel{background:linear-gradient(#fafff5,#e7f5dd)}
+#app.forest-route .dot{width:clamp(8px,2.1vw,20px);min-width:0;gap:0}
+#app.forest-route .route{gap:3px}
+#app.forest-route .speedfx{opacity:.10;background:repeating-linear-gradient(115deg,transparent 0 52px,#fff3 54px 56px,transparent 58px 105px)}
+.instruction[data-unit="1000"] .round-target{background:#e2d5ff;border-color:#8c64cb;color:#4a2584;box-shadow:0 2px 0 #bfa3f4,0 0 0 2px #f4ecff}
+#app.forest-route .number{font-size:clamp(35px,5vw,69px);letter-spacing:-.055em}
+#app.forest-route .instruction{font-size:clamp(11px,1.6vw,17px)}
+@media(max-width:760px){#app.forest-route .number{font-size:clamp(35px,9vw,52px)}#app.forest-route .instruction{font-size:clamp(11px,3.45vw,15px)}}
+@media(max-height:500px) and (orientation:landscape){#app.forest-route .number{font-size:33px}#app.forest-route .instruction{font-size:12px}}
+/* Make the next stage visually unmistakably a button */
+.reward-next-glow{pointer-events:auto!important;cursor:pointer!important;touch-action:manipulation;z-index:15!important;min-width:122px;min-height:110px;box-shadow:0 0 0 6px #fff3,0 0 34px #ffe878!important}
+.reward-next-glow small{background:#fff3a3;color:#184b28;border-radius:12px;padding:4px 7px;margin-top:4px;font-size:11px}
+.reward-art.panorama.found .reward-next-glow{display:flex!important;animation:nextPulse 1.5s ease-in-out infinite}
+@keyframes nextPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.11)}}
+.reward-next-glow:focus-visible,.reward-map-go:focus-visible{outline:5px solid #ffd54c;outline-offset:5px}
+.reward-map-go{display:none;position:absolute;z-index:17;right:5%;bottom:13%;max-width:90%;min-width:215px;min-height:72px;border-radius:19px;border:3px solid #fff;background:linear-gradient(#fff491,#f8b537);color:#174b29;box-shadow:0 0 0 4px #ffbd4980,0 8px 22px #122c3f77;font-weight:1000;font-size:clamp(17px,2.5vw,24px);line-height:1.15;text-align:center;cursor:pointer;padding:12px 16px;animation:nextPulse 1.8s ease-in-out infinite}
+.reward-map-go small{display:block;font-size:clamp(13px,1.7vw,16px);color:#374f2c;margin-top:3px}
+.reward-art.map .reward-map-go,.reward-art.teaser-map .reward-map-go{display:block}
+.reward-art.map .reward-card-note{bottom:auto;top:18%;max-width:83%}
+/* Scenic success for second road */
+.reward-art.forest-finish,.reward-art.forest-map{background:#458c67 url('assets/asset-014.jpeg') center/cover no-repeat!important}
+.reward-art.forest-finish .cinema-deck,.reward-art.forest-map .cinema-deck,.reward-art.forest-finish .cinema-shot,.reward-art.forest-map .cinema-shot,.reward-art.forest-finish .cinema-pan,.reward-art.forest-map .cinema-pan{display:none!important}
+.reward-art.forest-finish .reward-postcard-frame{display:block;animation:cardAppear .55s cubic-bezier(.16,1.4,.65,1) both}
+
+.reward-art.forest-front .reward-postcard-frame,.reward-art.forest-side .reward-postcard-frame,.reward-art.forest-reveal .reward-postcard-frame{display:none!important}
+.reward-art.forest-front .cinema-shine,.reward-art.forest-side .cinema-shine,.reward-art.forest-reveal .cinema-shine{display:block;z-index:5}
+.reward-art.forest-front .panorama-controllers,.reward-art.forest-side .panorama-controllers,.reward-art.forest-reveal .panorama-controllers{display:none!important}
+.cinema-shot.forest-front .film-img{background-image:url("assets/asset-014.jpeg")!important;background-size:cover;background-position:center center;filter:saturate(1.05) contrast(1.04)}
+.cinema-shot.forest-side .film-img{background-image:url("assets/asset-015.jpeg")!important;background-size:cover;background-position:center center;filter:saturate(1.05) contrast(1.02)}
+.cinema-shot.forest-reveal .film-img{background-image:url("assets/asset-016.jpeg")!important;background-size:cover;background-position:center center;filter:saturate(1.06) contrast(1.03)}
+.cinema-shot.forest-front::after,.cinema-shot.forest-side::after,.cinema-shot.forest-reveal::after{content:"";position:absolute;inset:0;border-radius:26px;background:linear-gradient(180deg,rgba(4,25,48,.08),rgba(4,25,48,.0) 35%,rgba(2,17,33,.1) 62%,rgba(2,17,33,.44));z-index:2;pointer-events:none}
+.reward-art.forest-front .reward-info,.reward-art.forest-side .reward-info,.reward-art.forest-reveal .reward-info{z-index:12;background:linear-gradient(180deg,#0f4477ee,#0a2c50dd);box-shadow:0 8px 18px #042a4d55}
+.reward-art.forest-front .reward-desc,.reward-art.forest-side .reward-desc,.reward-art.forest-reveal .reward-desc{z-index:12;background:linear-gradient(180deg,#fffefbcc,#fff6d9ec);box-shadow:0 10px 22px #0a2c5040}
+
+.reward-art.forest-finish:before,.reward-art.forest-map:before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#12382d40,transparent 34%,#092d2b9c)!important;pointer-events:none}
+.forest-map-board{display:none;position:absolute;z-index:8;top:26%;left:50%;width:min(90%,560px);transform:translateX(-50%);padding:clamp(10px,3vw,25px);border:5px solid #f4d497;border-radius:24px;background:linear-gradient(#f7f2daed,#e3e9b7ed);color:#234e3a;box-shadow:0 12px 35px #102c2399;text-align:center}
+.reward-art.forest-map .forest-map-board{display:block}
+.forest-map-board h2{font-size:clamp(19px,5vw,30px);margin:0 0 10px}
+.forest-map-stops{display:flex;align-items:center;justify-content:center;gap:clamp(3px,2vw,14px);font-size:clamp(12px,3vw,18px);font-weight:950;flex-wrap:wrap}
+.forest-map-stops b{background:#fff9e8;padding:7px;border:2px solid #cae7b8;border-radius:14px}
+.forest-map-stops .locked{opacity:.6}
+@media(max-width:760px){.reward-map-go{right:50%;transform:translateX(50%);bottom:9%;min-height:64px;max-width:86%}.reward-art.map .reward-map-go{animation:none;transform:translateX(50%)}.reward-map-go{font-size:17px}.reward-next-glow{width:88px;height:88px;min-width:88px;min-height:88px;right:6%;top:32%}.reward-next-glow span{font-size:25px}.reward-next-glow small{font-size:9px;padding:3px}.forest-map-board{top:25%}}
+@media(max-height:500px) and (orientation:landscape){.reward-map-go{right:4%;bottom:8%;min-width:165px;min-height:45px;padding:5px 10px}.forest-map-board{top:18%;padding:9px}.reward-next-glow{top:24%}}
+
+/* v16 — Metsajaam: genuinely interactive two-sided visit, unmodified race and Majakas. */
+.reward-art.forest-front,.reward-art.forest-side,.reward-art.forest-reveal{background:#2d6b59!important}
+/* The original photos include a printed banner and instruction around the perimeter.
+   Frame the scenic middle so these cannot be cut into unintelligible fragments on mobile. */
+.cinema-shot.forest-front .film-img{
+  background-size:auto 148%!important;background-position:50% 50%!important;
+  filter:saturate(1.11) contrast(1.035)!important; transition:background-position .22s ease-out!important
+}
+.cinema-shot.forest-side .film-img{
+  background-size:auto 106%!important;background-position:50% 51%!important;
+  filter:saturate(1.1) contrast(1.025)!important;transition:background-position .22s ease-out!important
+}
+.cinema-shot.forest-reveal .film-img{
+  background-size:auto 120%!important;background-position:50% 49%!important;
+  filter:saturate(1.11) contrast(1.035)!important
+}
+.cinema-shot.forest-reveal.on .film-img{animation:forestBridgeZoom 3.4s cubic-bezier(.16,.55,.24,1) both}
+@keyframes forestBridgeZoom{from{transform:scale(1.17) translateY(2%)}to{transform:scale(1.015) translateY(0)}}
+/* Make both images occupy the exact same view and cross-fade, rather than flash. */
+.reward-art.forest-front .cinema-shot.forest-front,.reward-art.forest-side .cinema-shot.forest-side,.reward-art.forest-reveal .cinema-shot.forest-reveal{z-index:2}
+.reward-art:is(.forest-front,.forest-side) .cinema-shot.on .film-img{cursor:grab}
+.reward-art:is(.forest-front,.forest-side) .cinema-shot.on .film-img:active{cursor:grabbing}
+.reward-art:is(.forest-front,.forest-side){touch-action:none}
+.reward-art:is(.forest-front,.forest-side,.forest-reveal) .reward-info{top:12px!important;max-width:91%!important;font-size:clamp(14px,3.9vw,22px)!important;padding:7px 13px!important;white-space:normal!important}
+.reward-art:is(.forest-front,.forest-side,.forest-reveal) .reward-desc{
+  top:64px!important;bottom:auto!important;max-width:91%!important;width:max-content!important;
+  font-size:clamp(11px,3.1vw,16px)!important;line-height:1.3!important;
+  padding:7px 12px!important;border-radius:14px!important;background:#123d54be!important;
+  color:white!important;box-shadow:0 4px 13px #15364755!important;text-shadow:0 1px 2px #002d4e!important
+}
+.forest-explorer{display:none;position:absolute;z-index:35;left:50%;bottom:12px;transform:translateX(-50%);width:min(94%,650px);flex-direction:column;align-items:stretch;gap:7px;pointer-events:none}
+.reward-art.forest-front .forest-explorer,.reward-art.forest-side .forest-explorer{display:flex}
+.forest-progress{align-self:center;display:flex;align-items:center;gap:8px;border:1px solid #ffefbfba;border-radius:22px;background:#173b30c9;color:#fff7d9;box-shadow:0 3px 15px #0a211f8f;padding:6px 12px;font-size:clamp(11px,2.6vw,14px);font-weight:950;letter-spacing:.02em;text-align:center}
+.forest-progress span{opacity:.78}
+.forest-progress span.visited{opacity:1;color:#b5ffbf}
+.forest-options{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.forest-view-btn,.forest-discover{border:2px solid #fff4cf;border-bottom:5px solid #745023;border-radius:15px;box-shadow:0 4px 16px #092622aa,inset 0 1px 0 #fff9;background:linear-gradient(180deg,#ffe7aa,#cf9453);color:#3d2611;min-height:54px;padding:8px 9px;font-weight:1000;font-size:clamp(13px,3.2vw,17px);line-height:1.12;pointer-events:auto;white-space:normal}
+.forest-view-btn small{display:block;font-size:clamp(10px,2.5vw,13px);margin-top:4px;opacity:.8}
+.forest-view-btn[aria-pressed="true"]{background:linear-gradient(180deg,#c7f8dd,#77bc9c);border-color:#e7ffe8;border-bottom-color:#3f7764;color:#154435}
+.forest-view-btn:active,.forest-discover:active{transform:translateY(3px);border-bottom-width:2px}
+.forest-discover{display:none;width:100%;min-height:58px;background:linear-gradient(180deg,#fffaa5,#ffbc45);color:#264d32;border-color:#ffffe9;border-bottom-color:#b47722;animation:forestPulse 1.9s ease-in-out infinite}
+.forest-discover.unlocked{display:block}
+.forest-discover strong{display:block;font-size:clamp(15px,3.4vw,19px)}
+.forest-discover small{display:block;font-size:clamp(10px,2.3vw,13px);margin-top:2px}
+@keyframes forestPulse{50%{box-shadow:0 0 29px #ffe669cc,0 4px 16px #092622aa}}
+.forest-wood-corner{display:none;position:absolute;z-index:13;bottom:19%;right:7%;transform:rotate(2deg);width:clamp(125px,28%,210px);height:clamp(58px,14%,93px);border:4px solid #efd09a;border-radius:15px;background:linear-gradient(150deg,#774521eb,#b87438ed);box-shadow:0 5px 17px #1a312988;color:#fff2bc;text-shadow:0 2px 3px #302216;align-items:center;justify-content:center;flex-direction:column;font-weight:1000;font-size:clamp(14px,3.5vw,21px);pointer-events:none;text-align:center}
+.reward-art.forest-reveal .forest-wood-corner{display:flex}
+.forest-wood-corner small{font-size:clamp(10px,2.5vw,14px)}
+.reward-art.forest-reveal .reward-postcard-frame{display:none!important}
+/* Keep progress and buttons on screen on Samsung-size portrait devices. */
+@media(max-width:760px){
+  .reward-art:is(.forest-front,.forest-side,.forest-reveal) .reward-info{top:10px!important}
+  .reward-art:is(.forest-front,.forest-side,.forest-reveal) .reward-desc{top:54px!important}
+  .forest-explorer{bottom:10px;gap:6px;width:95%}
+  .forest-options{gap:6px}
+  .forest-view-btn{min-height:51px;padding:7px 4px;font-size:clamp(12px,3.2vw,16px)}
+  .forest-progress{padding:5px 10px}
+  .forest-discover{min-height:53px;padding:6px}
+  .reward-art.forest-reveal .forest-wood-corner{bottom:19%;right:4%}
+}
+@media(max-height:500px) and (orientation:landscape){
+  .forest-explorer{bottom:5px;gap:3px;width:min(90%,520px)}
+  .forest-progress{font-size:10px;padding:2px 7px}
+  .forest-view-btn{min-height:39px;padding:4px;font-size:12px;border-bottom-width:3px}
+  .forest-view-btn small{font-size:10px;margin-top:1px}
+  .forest-discover{min-height:38px;padding:3px;border-bottom-width:3px}
+  .forest-discover strong{font-size:13px}
+  .forest-discover small{font-size:10px;margin-top:0}
+  .reward-art:is(.forest-front,.forest-side,.forest-reveal) .reward-info{top:4px!important;padding:4px 8px!important;font-size:14px!important}
+  .reward-art:is(.forest-front,.forest-side,.forest-reveal) .reward-desc{top:40px!important;padding:3px 8px!important;font-size:11px!important}
+}
+@media(prefers-reduced-motion:reduce){.forest-discover{animation:none!important}.cinema-shot.forest-reveal.on .film-img{animation:none!important}}
+
+
+/* Scenic postcard and map, using the same textured forest photography as the trip. */
+.reward-art.forest-finish,.reward-art.forest-map{background-size:auto 177%!important;background-position:50% 50%!important}
+.reward-art.forest-finish .reward-postcard-frame img{object-fit:cover!important;object-position:center center!important}
+.reward-art.forest-finish .reward-postcard-frame .postcard-name{font-size:clamp(15px,3.3vw,24px)!important}
+
+/* v18: A real swipable camera route, not 2-3 enlarged static cards. */
+.fw-world{display:none;position:absolute;inset:0;overflow:hidden;isolation:isolate;z-index:60;color:#fff7df;font-family:inherit;border-radius:24px;background:#214d3d}
+.reward-art:is(.forest-front,.forest-side,.forest-reveal) .fw-world{display:block}
+.reward-art:is(.forest-front,.forest-side,.forest-reveal) .forest-explorer,
+.reward-art:is(.forest-front,.forest-side,.forest-reveal) .reward-info,
+.reward-art:is(.forest-front,.forest-side,.forest-reveal) .reward-desc,
+.reward-art:is(.forest-front,.forest-side,.forest-reveal) .forest-wood-corner{display:none!important}
+#rewardShell:has(.fw-world:not([hidden])):has(.reward-art.forest-front,.reward-art.forest-side,.reward-art.forest-reveal) .reward-footer{display:none!important}
+.fw-world button{font-family:inherit;touch-action:manipulation}
+.fw-ambient{position:absolute;inset:-30px;background:#32683e center/cover no-repeat;filter:blur(19px) brightness(.58) saturate(1.16);transform:scale(1.12);z-index:0}
+.fw-glow{position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(circle at 18% 17%,#e9c47d55,transparent 30%),linear-gradient(180deg,#0a283824,transparent 40%,#08231dde 89%)}
+.fw-world:before{content:'';position:absolute;z-index:3;inset:0;pointer-events:none;opacity:.21;background-image:radial-gradient(circle at 22% 28%,#ffe8a7 0 1.5px,transparent 2.5px),radial-gradient(circle at 82% 60%,#e9f9a7 0 1px,transparent 2.5px);background-size:97px 123px,141px 151px;animation:fwDrift 8s ease-in-out infinite alternate}
+@keyframes fwDrift{to{transform:translate(7px,-12px);opacity:.36}}
+.fw-heading{position:absolute;z-index:5;top:2.6%;left:0;right:0;text-align:center;text-shadow:0 3px 8px #031912bb;pointer-events:none}
+.fw-eyebrow{font-size:clamp(9px,2.5vw,14px);font-weight:800;letter-spacing:.22em;color:#ffe2a0}
+.fw-headline{font-size:clamp(20px,5.3vw,30px);font-weight:1000;letter-spacing:.09em;line-height:1.18;margin-top:2px}
+.fw-photo{position:absolute;z-index:4;top:13%;left:3.3%;width:93.4%;height:60.5%;overflow:hidden;border:3px solid #f7e4b0;border-radius:16px;box-shadow:0 18px 33px #05190fac,0 0 0 3px #316c61a8,inset 0 0 30px #03150bcc;touch-action:pan-y;cursor:grab;background:#214831}
+.fw-photo:active{cursor:grabbing}
+.fw-photo img{position:absolute;max-width:none;width:auto;height:155%;top:-29%;left:0;object-fit:initial;pointer-events:none;user-select:none;transition:transform 900ms cubic-bezier(.2,.76,.15,1),opacity 850ms ease;will-change:transform,opacity}
+#fwFrontImg{z-index:1;opacity:1}#fwSideImg{z-index:2;opacity:0}#fwBridgeImg{z-index:3;opacity:0}
+.fw-photo-shade{position:absolute;z-index:4;inset:0;pointer-events:none;background:linear-gradient(90deg,#062c2538,transparent 18%,transparent 82%,#062c2538),linear-gradient(0deg,#032d2745,transparent 25%)}
+.fw-photo-tag{position:absolute;z-index:5;left:50%;transform:translateX(-50%);bottom:8px;border:1px solid #e4dabd87;border-radius:20px;padding:5px 13px;background:#153e37b8;box-shadow:0 5px 14px #00130c61;font-size:clamp(10px,2.6vw,14px);font-weight:900;letter-spacing:.09em;white-space:nowrap;pointer-events:none}
+.fw-arrow{position:absolute;z-index:7;top:40%;transform:translateY(-50%);width:clamp(38px,10vw,52px);height:clamp(49px,14vw,66px);border:2px solid #fbdfa8aa;background:linear-gradient(125deg,#68513dbc,#2c483ccc);color:#fff4cd;box-shadow:0 4px 15px #082b2599;font-size:clamp(32px,10vw,49px);line-height:1;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.fw-prev{left:0;border-radius:0 20px 20px 0}.fw-next{right:0;border-radius:20px 0 0 20px}
+.fw-arrow:disabled{opacity:.32;filter:saturate(.2)}.fw-arrow:active{transform:translateY(-50%) scale(.91)}
+.fw-dashboard{position:absolute;z-index:6;left:3.3%;right:3.3%;bottom:2%;height:23%;display:flex;flex-direction:column;align-items:center;gap:clamp(4px,1vh,10px);justify-content:center;text-align:center;background:linear-gradient(160deg,#234e3ca0,#0a2b23c9);box-shadow:inset 0 1px #e6dab05b,0 8px 22px #02150f77;border:1px solid #dbcc976b;border-radius:19px;padding:8px 6px}
+.fw-trail{font-size:clamp(16px,4.6vw,23px);font-weight:1000;color:#ffedbd;text-shadow:0 2px 5px #13221a;white-space:nowrap}.fw-leaf{font-size:.65em;color:#f8be71;margin:0 12px}
+.fw-narration{font-size:clamp(12px,3.4vw,15px);font-weight:700;line-height:1.26;min-height:1.2em;max-width:94%;color:#fffae9}
+.fw-timeline{display:flex;gap:9px;justify-content:center;align-items:center;height:13px}.fw-timeline span{width:10px;height:10px;border:1px solid #ffe5a3ad;border-radius:50%;background:#f7f2db6a;transition:.4s}.fw-timeline span.seen{background:#8fe6aa;box-shadow:0 0 9px #55dd8fc0;border-color:#d7ffe7}.fw-timeline span.active{background:#ffce6e;box-shadow:0 0 0 3px #ecc78058,0 0 13px #edbb59}
+.fw-soft-hint[hidden]{display:none!important}.fw-soft-hint{color:#fae6b8;font-size:clamp(10px,2.6vw,13px);font-weight:800;letter-spacing:.07em;animation:fwHint 1.8s ease-in-out infinite alternate}@keyframes fwHint{to{opacity:.52;transform:translateX(4px)}}
+.fw-telescope,.fw-found,.fw-save{background:linear-gradient(180deg,#ffe9a2,#e3aa49);color:#2c3428;border:2px solid #fff6d5;border-bottom:5px solid #936c37;border-radius:16px;box-shadow:0 7px 15px #02130a94,inset 0 1px #fff9e3;font-weight:1000;line-height:1.1;padding:8px 17px;min-height:48px;display:flex;gap:11px;align-items:center;justify-content:center}
+.fw-telescope[hidden],.fw-found[hidden],.fw-save[hidden]{display:none!important}.fw-telescope small,.fw-found small{display:block;font-size:clamp(10px,2.4vw,13px);margin-top:3px;opacity:.83}.fw-scope-icon{font-size:29px;text-shadow:0 2px 4px #fff7cc}
+.fw-scope{position:absolute;z-index:20;inset:0;background:radial-gradient(circle at 50% 45%,#254839ed,#081f1df7 82%);display:flex;align-items:center;flex-direction:column;justify-content:flex-start;padding:5.5% 4% 5%;gap:2%;animation:fwFade .5s ease both}
+.fw-scope[hidden],.fw-finish[hidden]{display:none!important}
+@keyframes fwFade{from{opacity:0}to{opacity:1}}
+.fw-scope-heading{font-size:clamp(18px,4.9vw,26px);font-weight:1000;letter-spacing:.12em;color:#ffdfa0;text-shadow:0 2px 5px #031c11}
+.fw-close-scope{position:absolute;right:3%;top:2%;border:1px solid #edcf94b3;border-radius:50%;width:37px;height:37px;color:#ffeac3;background:#27473f;font-size:18px}
+.fw-lens{position:relative;flex-shrink:0;width:min(84%,38vh,435px);height:auto;aspect-ratio:1;border-radius:50%;overflow:hidden;border:clamp(9px,2vw,17px) ridge #be9b5e;box-shadow:0 0 0 5px #3e2514,0 0 0 9px #e5c27d,0 13px 35px #000a;touch-action:none;background:#314e3e;cursor:grab}
+.fw-lens img{position:absolute;height:154%;width:auto;max-width:none;top:-23%;left:0;pointer-events:none;user-select:none;transition:transform .55s ease-out,filter .55s ease-out}
+.fw-lens-cross{position:absolute;inset:0;background:linear-gradient(to right,transparent calc(50% - .5px),#fff5cc88 50%,transparent calc(50% + .5px)),linear-gradient(to bottom,transparent calc(50% - .5px),#fff5cc66 50%,transparent calc(50% + .5px));pointer-events:none}
+.fw-lens-shine{position:absolute;inset:0;background:radial-gradient(ellipse at 28% 18%,#fffbd254,transparent 40%),radial-gradient(circle,transparent 48%,#00131287 100%);pointer-events:none}
+.fw-scope-label{font-size:clamp(13px,3.8vw,20px);font-weight:950;color:#fce3ab;text-align:center;min-height:1.5em}
+.fw-scope-controls{display:flex;align-items:center;justify-content:center;gap:20px;color:#e9dbb2;font-size:clamp(11px,2.8vw,14px);letter-spacing:.1em;font-weight:850}
+.fw-scope-controls button{border:2px solid #f4dbaa;border-radius:50%;background:#3f604f;color:#fff4ca;font-size:28px;width:48px;height:43px}
+.fw-found{width:92%;max-width:355px;flex-direction:column;font-size:clamp(15px,4vw,21px);animation:fwFindPulse 1.8s ease-in-out infinite alternate}@keyframes fwFindPulse{to{box-shadow:0 0 24px #f5c966c4,0 8px 15px #051a14}}
+.fw-finish{position:absolute;z-index:14;inset:0;background:linear-gradient(180deg,#092f2a33,#073025c5 72%);display:flex;flex-direction:column;justify-content:flex-end;align-items:center;text-align:center;gap:11px;padding:20px 7% 6%}
+.fw-finish-title{font-size:clamp(18px,5vw,29px);font-weight:1000;text-shadow:0 3px 7px #011a14}.fw-finish-place{font-size:clamp(27px,7vw,49px);font-weight:1000;letter-spacing:.1em;color:#ffdf91;text-shadow:0 4px 9px #06251b}.fw-finish-subtitle{font-size:clamp(12px,3vw,18px);font-weight:750}
+.fw-save{width:96%;font-size:clamp(14px,3.7vw,20px)}.fw-again{color:#fff4d0;background:#153d33c9;border:1px solid #e0c996;border-radius:30px;padding:8px 19px;font-weight:800}
+@media(max-height:500px) and (orientation:landscape){
+.fw-heading{top:1%;left:3%;right:auto;text-align:left}.fw-eyebrow{font-size:8px}.fw-headline{font-size:19px}
+.fw-photo{top:5%;left:2%;width:67%;height:88%}.fw-prev{left:0}.fw-next{left:calc(67% - 30px);right:auto}.fw-arrow{top:48%;width:32px;height:43px;font-size:28px}
+.fw-dashboard{left:71%;right:1%;top:13%;height:80%;bottom:auto;gap:7px;padding:7px 5px}.fw-leaf{margin:0 4px}.fw-trail{font-size:14px;white-space:normal}.fw-narration{font-size:11px}.fw-soft-hint{font-size:10px}.fw-timeline{gap:5px}.fw-timeline span{width:8px;height:8px}.fw-telescope{padding:4px 7px;font-size:10px;min-height:34px}.fw-scope-icon{font-size:18px}.fw-scope-heading{font-size:15px}.fw-lens{width:min(32%,60vh)}.fw-scope{justify-content:center;padding:5px;gap:4px}.fw-scope-controls{gap:8px}.fw-scope-controls button{width:32px;height:30px;font-size:20px}.fw-finish{padding:6px 3% 2%;gap:4px;justify-content:flex-end}.fw-finish-title{font-size:14px}.fw-finish-place{font-size:20px}.fw-save{width:55%;min-height:33px;padding:3px}.fw-again{padding:4px 8px}}
+
+.fw-scope-controls[hidden]{display:none!important}
+.fw-world:has(.fw-finish:not([hidden])) .fw-dashboard,.fw-world:has(.fw-finish:not([hidden])) .fw-arrow{display:none!important}
+.fw-world:has(.fw-finish:not([hidden])) .fw-photo-tag{opacity:0}
+.fw-finish{background:linear-gradient(180deg,#061e1810 9%,#0e3b3155 53%,#09251ff0 83%);gap:9px;padding-bottom:5%}
+.fw-finish-title,.fw-finish-place,.fw-finish-subtitle{position:relative;z-index:2;text-shadow:0 3px 9px #021e18,0 0 14px #00190fbf}
+.fw-finish .fw-save,.fw-finish .fw-again{position:relative;z-index:2}
+
+/* v19: simplify Metsajaam UI — intuitive exploration, almost no instructional text */
+.fw-heading .fw-eyebrow,.fw-heading .fw-headline{display:none!important}
+.fw-dashboard{height:13%!important;background:linear-gradient(180deg,rgba(10,33,26,.18),rgba(5,20,16,.56))!important;backdrop-filter:blur(4px);padding:8px 8px 10px!important;justify-content:flex-end!important;gap:10px!important}
+.fw-trail,.fw-narration,.fw-soft-hint,.fw-scope-heading,.fw-scope-label,.fw-scope-controls span,.fw-finish-title,.fw-finish-subtitle{display:none!important}
+.fw-photo-tag{bottom:10px!important;font-size:clamp(10px,2.8vw,13px)!important;padding:5px 12px!important}
+.fw-timeline{display:flex;gap:10px;align-items:center;justify-content:center}
+.fw-timeline span{width:12px!important;height:12px!important;border-radius:999px;background:rgba(239,240,220,.48)!important;border:2px solid rgba(255,255,255,.28)!important;box-shadow:none!important}
+.fw-timeline span.seen{background:#aef2b9!important;border-color:#ddffe2!important}
+.fw-timeline span.active{background:#ffd479!important;border-color:#fff4cc!important;transform:scale(1.14)}
+.fw-telescope{min-width:74px!important;min-height:74px!important;width:74px!important;height:74px!important;border-radius:50%!important;padding:0!important;display:flex!important;align-items:center!important;justify-content:center!important;box-shadow:0 10px 24px #08140fcc,0 0 0 4px #e9d8a56e,inset 0 1px #fff6d2cc!important;animation:fwPulse 1.35s ease-in-out infinite alternate}
+.fw-telescope > span:last-child{display:none!important}
+.fw-scope-icon{font-size:36px!important;filter:drop-shadow(0 2px 4px rgba(0,0,0,.35))}
+.fw-scope{justify-content:center!important;padding:4% 3%!important}
+.fw-close-scope{top:10px;right:10px}
+.fw-scope-controls{position:absolute;left:0;right:0;bottom:18px;display:flex;justify-content:space-between;padding:0 18px;pointer-events:none}
+.fw-scope-controls button{pointer-events:auto;width:52px!important;height:52px!important;border-radius:50%!important;font-size:30px!important;background:#2f4b3ddb!important}
+.fw-found{min-width:88px!important;min-height:88px!important;width:88px!important;height:88px!important;border-radius:50%!important;padding:0!important;font-size:38px!important;line-height:1!important;display:flex!important;align-items:center!important;justify-content:center!important;box-shadow:0 12px 28px #03140ee0,0 0 0 4px #ffe29a88!important}
+.fw-found small{display:none!important}
+.fw-finish{background:linear-gradient(180deg,rgba(6,30,24,.02) 6%,rgba(9,37,31,.70) 78%,rgba(9,37,31,.94) 100%)!important;gap:12px!important}
+.fw-finish-place{font-size:clamp(26px,7vw,42px)!important}
+.fw-save,.fw-again{min-width:64px;min-height:64px;border-radius:50%!important;padding:0!important;display:flex!important;align-items:center!important;justify-content:center!important;font-size:30px!important}
+@keyframes fwPulse{from{transform:translateY(0) scale(1)}to{transform:translateY(-2px) scale(1.04)}}
+@media (min-aspect-ratio: 1/1){
+  .fw-dashboard{height:15%!important;justify-content:center!important}
+}
+
+/* v20: lighthouse-like forest flow: only good frames from the main front scene, binocular button placed on the image */
+.fw-dashboard{height:8.5%!important;bottom:2.2%!important;background:transparent!important;box-shadow:none!important;border:none!important;padding:0 0 2px!important;justify-content:flex-end!important}
+.fw-timeline{position:relative;z-index:3;background:rgba(8,35,28,.55);border:1px solid rgba(233,221,170,.25);border-radius:999px;padding:8px 14px;backdrop-filter:blur(3px)}
+.fw-photo{top:8%!important;height:78%!important}
+.fw-photo::after{content:'';position:absolute;left:0;right:0;bottom:0;height:24%;pointer-events:none;background:linear-gradient(180deg,rgba(2,18,14,0),rgba(2,18,14,.45) 58%,rgba(2,18,14,.72));z-index:4}
+.fw-telescope{position:absolute!important;left:50%;bottom:34px;transform:translateX(-50%);z-index:8;min-width:92px!important;min-height:92px!important;width:92px!important;height:92px!important;background:linear-gradient(180deg,#ffeaaa,#e5bb58)!important;border:4px solid rgba(255,248,220,.9)!important}
+.fw-telescope::after{content:'';position:absolute;inset:-10px;border-radius:50%;border:3px dashed rgba(255,226,140,.55);animation:fwSpin 4.6s linear infinite}
+@keyframes fwSpin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.fw-found{background:linear-gradient(180deg,#ffe9ac,#edc96a)!important;color:#173426!important}
+.fw-arrow{z-index:9}
+.fw-world:has(#fwScope:not([hidden])) .fw-arrow,.fw-world:has(#fwScope:not([hidden])) .fw-dashboard,.fw-world:has(#fwScope:not([hidden])) .fw-photo-tag{display:none!important}
+.fw-world:has(#fwScope:not([hidden])) .fw-photo::after{display:none}
+@media (max-width:480px){
+  .fw-photo{height:76%!important}
+  .fw-telescope{bottom:26px;min-width:86px!important;min-height:86px!important;width:86px!important;height:86px!important}
+}
+
+
+
+/* V21 — canonical mobile forest scene; one high-quality panoramic painting. */
+.fw-world{background:radial-gradient(ellipse at 50% 28%,#b28138,#2a523b 56%,#102d28 100%)!important}
+.fw-ambient{filter:brightness(.64) saturate(.7)!important;opacity:.4!important}
+.fw-heading{display:none!important}
+.fw-photo{top:4%!important;left:3%!important;width:94%!important;height:83%!important;border:5px solid #ead4a1!important;border-radius:24px!important;box-shadow:0 16px 35px #061d13a3,0 0 0 4px #23503c86!important;background:#163e2e!important}
+.fw-photo img{top:0!important;object-fit:initial!important;filter:none!important}
+.fw-arrow{top:46%!important;z-index:11!important;border:2px solid #f8e6b6!important;background:linear-gradient(180deg,#204938db,#0d3027f2)!important;color:#fff0b9!important;box-shadow:0 7px 18px #072219b0!important}
+.fw-arrow:disabled{opacity:.18!important;pointer-events:none!important}
+.fw-dashboard{bottom:3.0%!important;height:7.5%!important;left:15%!important;right:15%!important;z-index:8!important}
+.fw-photo-tag{display:none!important}
+.fw-telescope{display:none!important}
+.fw-timeline{gap:13px!important;background:rgba(8,43,29,.78)!important;padding:10px 19px!important;border:2px solid #d5bc82!important;box-shadow:0 7px 22px #051b16b8!important}
+.fw-timeline span{width:14px!important;height:14px!important}
+.fw-hotspot{display:none;position:absolute;z-index:12;left:50%;top:50%;transform:translate(-50%,-50%);border-radius:48%;width:115px;height:79px;min-height:65px;background:radial-gradient(ellipse at center,#ffe98933,transparent 70%);border:3px solid #fff3ab;box-shadow:0 0 0 6px #ffdb7e44,0 0 21px #fff4abcb,inset 0 0 18px #ffdd6980;cursor:pointer;touch-action:manipulation;animation:fwHotPulse 1.7s ease-in-out infinite alternate}
+.fw-hotspot::after{content:'☝';position:absolute;right:-24px;top:-26px;transform:rotate(-27deg);font-size:39px;color:#ffe7a1;filter:drop-shadow(0 2px 4px #051c19);animation:fwPoint 1.2s ease-in-out infinite alternate;pointer-events:none}
+.fw-world.scope-ready .fw-hotspot{display:block}
+@keyframes fwHotPulse{from{box-shadow:0 0 0 4px #ffe8aa42,0 0 12px #ffe69c88,inset 0 0 9px #ffdd6980}to{box-shadow:0 0 0 11px #ffdb7e24,0 0 24px #fff4abcc,inset 0 0 18px #ffdd69ad}}
+@keyframes fwPoint{from{transform:translate(0,0) rotate(-27deg)}to{transform:translate(-4px,7px) rotate(-17deg)}}
+.fw-scope{background:radial-gradient(circle at 50% 38%,#153d35,#071d19 80%)!important;z-index:25!important}
+.fw-lens{box-shadow:0 0 0 8px #6b4e2b,0 0 0 14px #ddbf79,0 16px 32px #010d0bd1!important}
+.fw-scope-controls{position:absolute!important;bottom:7%!important;left:4%!important;right:4%!important}
+.fw-scope-controls button{height:59px!important;width:59px!important;background:#285242eb!important;border:3px solid #e9d19c!important;color:#ffecaf!important;pointer-events:auto!important}
+.fw-found{z-index:27!important;bottom:8%!important}
+.fw-found[hidden]{display:none!important}
+.fw-world:has(.fw-scope:not([hidden])) .fw-photo,.fw-world:has(.fw-scope:not([hidden])) .fw-arrow{pointer-events:none!important}
+.fw-finish{z-index:23!important}
+.reward-art.forest-finish{background:radial-gradient(circle at 55% 32%,#f3d392,#315d48 65%,#102d26)!important}
+.reward-art.forest-finish .reward-postcard-frame{width:min(91%,770px)!important;aspect-ratio:1.372!important;max-height:69%!important;outline:0!important;border:5px solid #fff6d9!important;box-shadow:0 17px 35px #072819bc,0 0 0 4px #dbc18b!important;transform:translate(-50%,-50%) rotate(-1.5deg)!important}
+.reward-art.forest-finish .reward-postcard-frame img{object-fit:contain!important;background:#f8eccc!important}
+.reward-art.forest-finish .postcard-name,.reward-art.forest-finish .reward-info,.reward-art.forest-finish .reward-desc{display:none!important}
+.reward-art.forest-map{background:radial-gradient(ellipse at 50% 25%,#d2dfa5,#55794e 53%,#23483f)!important}
+.reward-art.forest-map .forest-map-board,.reward-art.forest-map .reward-info,.reward-art.forest-map .reward-desc{display:none!important}
+.fw-map{display:none;position:absolute;inset:3%;z-index:15;overflow-y:auto;border:5px solid #f1dfb8;border-radius:22px;box-shadow:0 9px 24px #1a3b32a1;background:linear-gradient(150deg,#fdf3d8,#ebddb0);color:#2f5641;padding:clamp(14px,3.7vw,25px);text-align:center}
+.reward-art.forest-map .fw-map{display:block}
+.fw-map-head{font-size:clamp(23px,5.5vw,37px);letter-spacing:.08em;font-weight:1000;margin-bottom:5px}
+.fw-map-count{font-weight:800;font-size:clamp(12px,2.9vw,15px);color:#64775a;letter-spacing:.2em}
+.fw-map-track{display:flex;gap:5px;align-items:center;justify-content:center;margin:16px 0;flex-wrap:wrap}
+.fw-map-stop{flex:1 1 92px;max-width:135px;min-height:104px;background:#fefce9;border:2px solid #b9cba2;box-shadow:0 5px 12px #1c4c3824;border-radius:17px;padding:10px 4px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
+.fw-map-stop b{font-size:clamp(10px,2.65vw,14px)}
+.fw-map-stop .pic{font-size:33px;display:block;width:70px;height:54px;overflow:hidden;border-radius:9px;border:2px solid #e6d2a0;background:#e9edd5}
+.fw-map-stop .pic img{width:100%;height:100%;object-fit:cover;display:block}
+.fw-map-stop.done{background:#e1f3d8;border-color:#72a879}.fw-map-stop.next{background:#fff0b1;border-color:#cca258}
+.fw-map-arrow{font-size:20px;color:#6c8c65}
+.fw-album{margin-top:11px;padding:14px;border:2px dashed #9aa77b;border-radius:15px;background:#fffaf0}
+.fw-album-head{font-weight:950;font-size:clamp(13px,3.5vw,19px);letter-spacing:.06em}
+.fw-stamps{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:4px;margin-top:12px}
+.fw-stamp{min-height:40px;border-radius:7px;display:flex;align-items:center;justify-content:center;border:1px solid #d0c7ad;background:#e0dfd2;filter:grayscale(1);opacity:.6;font-size:clamp(13px,3vw,22px)}
+.fw-stamp.done{filter:none;opacity:1;border-color:#78ab81;background:#d6edc7}
+.fw-map-lock{color:#547455;font-size:clamp(11px,2.8vw,14px);margin-top:12px}
+@media (max-width:410px){
+.fw-map{padding:9px}.fw-map-stop{flex-basis:78px;min-height:92px}.fw-stamp{min-height:31px}
+.fw-photo{top:3%!important;height:85%!important}
+.fw-hotspot{width:93px;height:64px}
+.fw-hotspot::after{right:-16px;top:-24px;font-size:34px}
+.reward-art.forest-finish .reward-postcard-frame{max-height:57%!important}
+}
+@media(max-height:500px) and (orientation:landscape){
+.fw-photo{top:3%!important;left:2%!important;height:94%!important;width:69%!important}
+.fw-dashboard{left:74%!important;right:1%!important;top:42%!important;bottom:auto!important;height:auto!important}
+.fw-arrow.fw-next{left:calc(69% - 30px)!important}
+.fw-map{padding:8px!important}.fw-map-track{margin:7px 0!important}.fw-map-stop{min-height:70px;flex-basis:72px}.fw-album{margin-top:5px;padding:6px}.fw-stamps{margin-top:5px}
+.reward-art.forest-finish .reward-postcard-frame{max-height:78%!important;width:58%!important}
+}
+
+
+/* v22 — 3rd stage Jõesild. The first two routes and their reward artwork remain unchanged. */
+.fw-map-arrow.bw-down{flex:0 0 100%;width:100%;text-align:center;line-height:14px;margin:-7px 0 -1px;font-size:19px}.fw-map-stop.next:last-child{margin-left:auto;margin-right:auto}
+#app.river-route .scene-start{background-image:url("assets/asset-017.jpeg")!important}
+#app.river-route .scene-cliff{background-image:url("assets/asset-018.jpeg")!important}
+#app.river-route .scene-harbor{background-image:url("assets/asset-019.jpeg")!important}
+#app.river-route .stage{background:#307f85}
+#app.river-route .place{background:linear-gradient(#e8fbfd,#b1e5e8);color:#175765;border-color:#fff}
+#app.river-route .panel{background:linear-gradient(#fbfffe,#dff5f0)}
+#app.river-route .number{font-size:clamp(32px,4.6vw,67px);letter-spacing:-.055em}
+#app.river-route .route{gap:3px}
+#app.river-route .dot{width:clamp(8px,2vw,20px);min-width:0}
+#app.river-route .instruction{font-size:clamp(11px,1.6vw,17px)}
+@media(max-width:760px){#app.river-route .number{font-size:clamp(30px,9vw,49px)}#app.river-route .instruction{font-size:clamp(11px,3.45vw,15px)}}
+@media(max-height:500px) and (orientation:landscape){#app.river-route .number{font-size:32px}}
+/* Bridge discovery: postcard/map follows the very same station protocol as Majakas and Metsajaam. */
+.bw-world{display:none;position:absolute;inset:0;z-index:65;isolation:isolate;overflow:hidden;border-radius:23px;background:radial-gradient(ellipse at 55% 15%,#b2cdd0,#47717a 62%,#163f3b);color:#fdf3dd}
+.reward-art:is(.bridge-visit,.bridge-reveal) .bw-world{display:block}
+.reward-art:is(.bridge-visit,.bridge-reveal) .reward-info,.reward-art:is(.bridge-visit,.bridge-reveal) .reward-desc,.reward-art:is(.bridge-visit,.bridge-reveal) .reward-postcard-frame{display:none!important}
+.reward-art:is(.bridge-visit,.bridge-reveal) .cinema-deck{display:none!important}
+.reward-shell:has(.reward-art:is(.bridge-visit,.bridge-reveal)) .reward-footer{display:none!important}
+.bw-world button{touch-action:manipulation;font-family:inherit}
+.bw-world:before{content:'';position:absolute;inset:0;z-index:1;pointer-events:none;opacity:.28;background-image:radial-gradient(circle at 25% 20%,#fff1b1 0 1px,transparent 2px),radial-gradient(circle at 74% 68%,#fff3c7 0 1.5px,transparent 3px);background-size:111px 139px,153px 175px}
+.bw-photo{position:absolute;inset:3.1% 2.8% 12%;border:5px solid #e9d4a5;border-radius:23px;overflow:hidden;box-shadow:0 15px 30px #09231cb5;touch-action:pan-y;background:#164b52}
+.bw-photo img.bw-image{position:absolute;top:0;left:0;max-width:none;height:100%;width:auto;user-select:none;pointer-events:none;transition:transform 880ms cubic-bezier(.17,.72,.23,1);will-change:transform}
+.bw-photo:after{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,transparent 70%,#062b2b69);z-index:2}
+.bw-arrow{position:absolute;z-index:10;top:46%;transform:translateY(-50%);height:66px;min-width:48px;border:3px solid #fff2c7;background:linear-gradient(180deg,#3b6659eb,#173e38ed);color:#fff1c7;font-size:45px;border-radius:19px;box-shadow:0 7px 16px #09241d9c}
+.bw-prev{left:0}.bw-next{right:0}.bw-arrow:disabled{opacity:.18;pointer-events:none}
+.bw-progress{position:absolute;z-index:9;bottom:3.6%;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:14px;background:#173c35e3;border:2px solid #e9d09a;border-radius:999px;padding:10px 22px;box-shadow:0 5px 16px #09271b99}
+.bw-progress span{height:13px;width:13px;border-radius:50%;background:#adc8b9;border:2px solid #e5e0c388}
+.bw-progress span.done{background:#89e8b5;border-color:#edffe0}.bw-progress span.active{background:#ffd56f;border-color:#fff3c7;transform:scale(1.15)}
+.bw-telescope{display:none;position:absolute;z-index:14;right:12%;bottom:12%;width:min(43%,210px);height:auto;aspect-ratio:240/220;border:none;background:transparent;padding:0;filter:drop-shadow(0 8px 7px #08251bbd);animation:bwSpy 1.55s ease-in-out infinite alternate}
+.bw-telescope img{width:100%;height:100%;object-fit:contain;display:block;pointer-events:none}
+.bw-telescope:before{content:'';position:absolute;inset:4% -4%;border:3px dashed #ffe59ba9;border-radius:50%;pointer-events:none;animation:bwOrbit 5s linear infinite}
+.bw-telescope:after{content:'☝';font-size:38px;position:absolute;left:7%;top:-8%;color:#ffedaa;text-shadow:0 2px 7px #14332a;transform:rotate(-28deg)}
+.bw-world.scope-ready .bw-telescope{display:block}
+@keyframes bwSpy{from{transform:translateY(0) scale(1)}to{transform:translateY(-5px) scale(1.05)}}
+@keyframes bwOrbit{to{transform:rotate(360deg)}}
+.bw-scope{display:flex;position:absolute;inset:0;z-index:30;background:radial-gradient(circle at 50% 38%,#28635a,#081f1dfa 80%);align-items:center;justify-content:center;flex-direction:column;gap:5%;padding:5%}
+.bw-scope[hidden],.bw-reveal[hidden]{display:none!important}
+.bw-lens{width:min(75%,360px);aspect-ratio:1;position:relative;border:10px solid #e3c78c;border-radius:50%;box-shadow:0 0 0 7px #6d5433,0 18px 27px #0009;overflow:hidden;touch-action:none;cursor:grab;background:#7cab9b}
+.bw-lens:active{cursor:grabbing}.bw-lens img{position:absolute;top:0;left:0;height:100%;width:auto;max-width:none;pointer-events:none;user-select:none}
+.bw-lens:after{content:'';position:absolute;inset:0;pointer-events:none;border-radius:50%;background:linear-gradient(0deg,transparent 49.6%,#f7e8a18a 50%,transparent 50.4%),linear-gradient(90deg,transparent 49.6%,#f7e8a18a 50%,transparent 50.4%);box-shadow:inset 0 0 43px #081e1ec4}
+.bw-close{position:absolute;top:4%;right:5%;z-index:33;border:2px solid #f2e0b3;border-radius:50%;height:46px;width:46px;background:#244a42e8;color:#fff5d8;font-size:24px}
+.bw-scope-actions{position:absolute;bottom:7%;left:5%;right:5%;display:flex;align-items:center;justify-content:space-between}
+.bw-scope-actions button{height:60px;width:60px;border:3px solid #e9d6aa;border-radius:50%;background:#28544adb;color:#ffeac2;font-size:31px}
+.bw-discovered{display:none;position:absolute;bottom:7%;left:50%;transform:translateX(-50%);height:82px;min-width:82px;border-radius:50%;border:4px solid #fff7d7;background:linear-gradient(#ffeda2,#e0b361);font-size:39px;box-shadow:0 0 25px #ffe6a0ad,0 7px 19px #040d0b8a;animation:bwFoundPulse 1.2s ease-in-out infinite alternate}
+.bw-scope.found .bw-scope-actions{display:none}.bw-scope.found .bw-discovered{display:block}
+@keyframes bwFoundPulse{to{filter:brightness(1.22);transform:translateX(-50%) scale(1.06)}}
+.bw-reveal{display:flex;position:absolute;inset:0;z-index:21;align-items:center;justify-content:flex-end;flex-direction:column;gap:11px;padding:5%;background:linear-gradient(0deg,#102f2aeb,transparent 54%)}
+.bw-reveal strong{font-size:clamp(24px,6.6vw,42px);color:#fff1bd;letter-spacing:.1em;text-shadow:0 3px 8px #14352a}
+.bw-reveal button{min-width:90px;height:65px;border:3px solid #ffefc4;border-radius:22px;color:#1b4636;background:linear-gradient(#fff0ac,#e9b85d);font-size:34px;font-weight:1000;box-shadow:0 7px 18px #071b19}
+.reward-art.bridge-postcard{background:radial-gradient(circle at 55% 32%,#e3dfb6,#4c7780 62%,#183d40)!important}
+.reward-art.bridge-postcard .reward-postcard-frame{display:block!important;animation:cardAppear .55s cubic-bezier(.16,1.4,.65,1) both;width:min(91%,770px)!important;aspect-ratio:1.372!important;max-height:69%!important;outline:0!important;border:5px solid #fff6d9!important;box-shadow:0 17px 35px #072819bc,0 0 0 4px #dbc18b!important;transform:translate(-50%,-50%) rotate(-1.5deg)!important}
+.reward-art.bridge-postcard .reward-postcard-frame img{object-fit:contain!important;background:#f8eccc!important}
+.reward-art.bridge-postcard .postcard-name,.reward-art.bridge-postcard .reward-info,.reward-art.bridge-postcard .reward-desc{display:none!important}
+.reward-art.bridge-map{background:radial-gradient(ellipse at 50% 25%,#d8e2c5,#4c797c 53%,#21474a)!important}
+.reward-art.bridge-map .fw-map{display:block!important}
+.reward-art.bridge-map .reward-info,.reward-art.bridge-map .reward-desc{display:none!important}
+
+.reward-art:is(.mountain-visit,.mountain-scope,.mountain-reveal) .mw-world{display:block}
+.reward-art:is(.mountain-visit,.mountain-scope,.mountain-reveal) .reward-info,.reward-art:is(.mountain-visit,.mountain-scope,.mountain-reveal) .reward-desc,.reward-art:is(.mountain-visit,.mountain-scope,.mountain-reveal) .reward-postcard-frame,.reward-art:is(.mountain-visit,.mountain-scope,.mountain-reveal) .cinema-deck,.reward-art:is(.mountain-visit,.mountain-scope,.mountain-reveal) .fw-map{display:none!important}
+.reward-shell:has(.reward-art:is(.mountain-visit,.mountain-scope,.mountain-reveal)) .reward-footer{display:none!important}
+.mw-world{position:absolute;inset:0;z-index:23;display:none}
+.mw-screen{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center center;user-select:none;-webkit-user-drag:none}
+.mw-click{position:absolute;border:none;background:transparent;cursor:pointer;outline:none;-webkit-tap-highlight-color:transparent}
+.mw-click:after{content:'';position:absolute;inset:-6px;border-radius:18px;box-shadow:0 0 0 3px #ffe26a,0 0 18px #ffde6fb0;opacity:0;transition:opacity .18s ease}
+.mw-click:active:after,.mw-click:focus-visible:after{opacity:1}
+#mWPlaceholder{}
+#mwScopeBtn{left:66%;top:47%;width:14%;height:24%;border-radius:20px}
+#mwRevealBtn{left:36%;top:36%;width:31%;height:28%;border-radius:20px}
+#mwSaveBtn{left:79%;top:59%;width:19%;height:28%;border-radius:26px}
+.reward-art.mountain-postcard{background:radial-gradient(circle at 55% 32%,#ecddb7,#4b6c85 62%,#173845)!important}
+.reward-art.mountain-postcard .reward-postcard-frame{display:block!important;animation:cardAppear .55s cubic-bezier(.16,1.4,.65,1) both;width:min(91%,770px)!important;aspect-ratio:1.372!important;max-height:69%!important;outline:0!important;border:5px solid #fff6d9!important;box-shadow:0 17px 35px #072819bc,0 0 0 4px #dbc18b!important;transform:translate(-50%,-50%) rotate(-1.5deg)!important}
+.reward-art.mountain-postcard .reward-postcard-frame img{object-fit:contain!important;background:#f8eccc!important}
+.reward-art.mountain-postcard .postcard-name,.reward-art.mountain-postcard .reward-info,.reward-art.mountain-postcard .reward-desc{display:none!important}
+.reward-art.mountain-map{background:radial-gradient(ellipse at 50% 25%,#dbe2c4,#536d8a 53%,#23384b)!important}
+.reward-art.mountain-map .fw-map{display:block!important}
+.reward-art.mountain-map .reward-info,.reward-art.mountain-map .reward-desc{display:none!important}
+@media(max-width:420px){.bw-photo{inset:2% 2% 13%}.bw-telescope{width:48%;right:7%;bottom:13%}.bw-progress{padding:8px 15px;gap:12px}.bw-lens{width:min(81%,330px)}}
+@media(max-height:500px) and (orientation:landscape){.bw-photo{inset:2% 31% 2% 2%}.bw-prev{left:0}.bw-next{right:31%}.bw-telescope{right:35%;bottom:8%;width:min(28%,150px)}.bw-progress{left:84%;top:45%;bottom:auto;transform:translateX(-50%);gap:7px;padding:5px 8px}.bw-progress span{width:9px;height:9px}.bw-lens{width:min(29%,65vh)}.bw-scope{gap:3px}.bw-scope-actions{left:8%;right:8%;bottom:6%}.bw-scope-actions button{width:48px;height:48px;font-size:27px}.bw-reveal strong{font-size:19px}.bw-reveal button{min-width:80px;height:43px;font-size:25px}.reward-art.bridge-postcard .reward-postcard-frame{max-height:78%!important;width:58%!important}}
+
+/* v28: working Mäekuru reward, image framing that does not crop the panoramic view */
+.mw-world{position:absolute;inset:0;z-index:32;isolation:isolate;overflow:hidden!important;color:#fffdf0}
+.reward-art:is(.mountain-visit,.mountain-scope,.mountain-reveal) .mw-world{display:flex!important;flex-direction:column;align-items:center;justify-content:center;gap:16px}
+.reward-art:not(:is(.mountain-visit,.mountain-scope,.mountain-reveal)) .mw-world{display:none!important}
+.mw-backdrop{position:absolute;inset:-35px;background:#10456f center center/cover no-repeat;filter:blur(27px) brightness(.45) saturate(1.2);transform:scale(1.1);z-index:-2}
+.mw-glow{position:absolute;inset:0;background:linear-gradient(180deg,#061e37a1 0%,transparent 20%,transparent 64%,#062727ce 100%);z-index:-1;pointer-events:none}
+.mw-title{position:relative;font-family:Arial,sans-serif;text-shadow:0 4px 12px #041e34ad;font-size:clamp(24px,5vw,37px);font-weight:900;letter-spacing:.12em;margin:0 auto 0;z-index:5}
+.mw-photo{position:relative;width:94%;max-width:970px;aspect-ratio:2/1;border:5px solid #f6e8b8;border-radius:20px;background:#123c54;box-shadow:0 15px 50px #081d34aa,0 0 0 4px #ffffff24;overflow:hidden;z-index:3;touch-action:pan-y}
+.mw-photo .mw-screen{display:block;width:100%;height:100%;position:absolute;inset:0;object-fit:contain!important;object-position:center center!important;user-select:none;-webkit-user-drag:none}
+.mw-nav{position:absolute;top:51%;transform:translateY(-50%);z-index:7;width:66px;height:75px;border-radius:16px;border:2px solid #ffe9bbad;background:#203d44dd;color:#fff7d5;font-size:59px;font-weight:800;cursor:pointer;box-shadow:0 7px 20px #071a27aa;touch-action:manipulation}
+.mw-left{left:0}.mw-right{right:0}.mw-nav:disabled{opacity:.34}
+.mw-progress{display:flex;gap:12px;position:relative;z-index:4;padding:10px 20px;background:#103d33af;border-radius:99px;box-shadow:0 3px 16px #031e32a3}
+.mw-progress span{width:15px;height:15px;background:#b1c7be;border-radius:100%;border:2px solid #f7f0d8a2}
+.mw-progress span.seen{background:#80ecb8}.mw-progress span.active{background:#fdd66d;transform:scale(1.13)}
+.mw-binocular{position:relative;z-index:8;display:flex;align-items:center;justify-content:center;width:100px;height:100px;border-radius:100%;border:5px solid #fff7d8;background:linear-gradient(160deg,#fff6b4,#e7b853);font-size:55px;box-shadow:0 0 0 8px #ffed9c50,0 9px 27px #112e3cbb;animation:mwBreathe 1.55s ease-in-out infinite alternate;cursor:pointer}
+.mw-binocular[hidden],.mw-continue[hidden]{display:none!important}
+.mw-continue{position:relative;z-index:8;display:flex;align-items:center;justify-content:center;gap:14px;min-width:135px;height:74px;padding:0 25px;border:3px solid #fff7d5;border-radius:25px;background:linear-gradient(180deg,#ffdd65,#e7a232);font-weight:900;color:#1e3e2b;font-size:33px;box-shadow:0 8px 25px #0b2b34ae;cursor:pointer}
+.mw-continue span{font-size:42px}
+@keyframes mwBreathe{from{box-shadow:0 0 0 5px #ffed9c20,0 9px 27px #112e3cbb;transform:scale(1)}to{box-shadow:0 0 0 16px #ffed9c7c,0 9px 27px #112e3cbb;transform:scale(1.045)}}
+@media(max-width:620px){.mw-world{gap:10px!important}.mw-photo{width:95%;border-width:3px;border-radius:15px;aspect-ratio:2/1}.mw-title{font-size:23px}.mw-nav{width:48px;height:60px;font-size:42px;top:51%}.mw-progress{padding:8px 16px;gap:9px}.mw-progress span{width:13px;height:13px}.mw-binocular{width:91px;height:91px;font-size:50px}.mw-continue{min-width:116px;height:72px}}
+@media (max-height:510px) and (orientation:landscape){.mw-world{gap:5px!important}.mw-title{font-size:16px!important}.mw-photo{height:68%!important;width:auto!important;max-width:78%!important;aspect-ratio:2.06}.mw-nav{top:54%;height:53px}.mw-progress{position:absolute;right:5%;bottom:10%;padding:6px}.mw-binocular,.mw-continue{position:absolute;right:5%;bottom:27%;width:74px;height:74px;font-size:37px}.mw-continue{min-width:70px;max-width:100px;padding:0 8px}}
+
+
+/* Position overrides: legacy v25 ID rules incorrectly offset the new flex controls. */
+#mwScopeBtn.mw-binocular,#mwRevealBtn.mw-continue,#mwSaveBtn.mw-continue{left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;position:relative!important;transform:none!important}
+#mwScopeBtn.mw-binocular{width:100px!important;height:100px!important;min-width:100px!important;min-height:100px!important;border-radius:50%!important}
+#mwRevealBtn.mw-continue,#mwSaveBtn.mw-continue{min-width:135px!important;width:auto!important;height:74px!important;border-radius:25px!important}
+@media(max-width:620px){#mwScopeBtn.mw-binocular{width:91px!important;height:91px!important;min-width:91px!important;min-height:91px!important}}
+@media(max-height:510px) and (orientation:landscape){#mwScopeBtn.mw-binocular,#mwRevealBtn.mw-continue,#mwSaveBtn.mw-continue{position:absolute!important;left:auto!important;right:5%!important;top:auto!important;bottom:27%!important;width:76px!important;height:76px!important;min-width:76px!important;min-height:76px!important}}
+
+
+/* Prize display and compact 4/9 collection */
+.reward-art.mountain-postcard .cinema-deck,.reward-art.mountain-map .cinema-deck{display:none!important}
+.reward-art.mountain-postcard:before,.reward-art.mountain-map:before{display:none!important}
+.reward-art.mountain-postcard{background:radial-gradient(ellipse at 48% 37%,#ffedc0 0%,#d6c297 45%,#315f5a 100%)!important}
+.reward-art.mountain-postcard .reward-postcard-frame{z-index:15!important}
+.fw-card-strip{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;margin-top:9px;width:100%;max-width:100%;overflow:hidden}
+.fw-mini-card{min-width:0;background:#fffdf1;border:2px solid #d5bc83;border-radius:9px;padding:3px 3px 6px;display:flex;flex-direction:column;align-items:center;gap:3px;box-shadow:0 4px 7px #5b6b5930;transform:rotate(-1deg)}
+.fw-mini-card:nth-child(2n){transform:rotate(2deg)}
+.fw-mini-card img{width:100%;height:auto;aspect-ratio:1.08;object-fit:cover;object-position:center;display:block;border-radius:4px}
+.fw-mini-card span{font-size:clamp(8px,1.9vw,12px);color:#305448;letter-spacing:.04em;font-weight:900}
+.fw-mini-card.locked{opacity:.62;background:#d1d9bd;border-style:dashed}
+.fw-card-locked{display:flex;align-items:center;justify-content:center;flex:1;width:100%;font-size:clamp(15px,5vw,27px);min-height:54px}
+.reward-art.mountain-map .fw-map{padding:10px!important;overflow-y:auto!important}
+.reward-art.mountain-map .fw-map-track{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:6px!important}
+.reward-art.mountain-map .fw-map-stop{flex:0 1 78px!important;min-width:70px!important;min-height:88px!important}
+.reward-art.mountain-map .fw-album{margin-top:11px!important;padding:10px!important}
+@media(max-width:430px){.fw-card-strip{gap:4px}.fw-mini-card{padding:2px 2px 4px}.fw-card-locked{min-height:45px}.reward-art.mountain-map .fw-map-stop{min-width:65px!important;flex-basis:72px!important}.reward-art.mountain-map .fw-album{padding:6px!important}}
+
+
+
+/* v31 -- four original route scenes for each destination; no reused hut/fields. */
+#app.forest-route .stage-landmark,#app.route-bridge .stage-landmark,#app.route-mountain .stage-landmark{display:none!important}
+#app.forest-route .car,#app.route-bridge .car,#app.route-mountain .car{display:none!important}
+#app.forest-route .scene,#app.route-bridge .scene,#app.route-mountain .scene{background-size:cover!important;background-position:center center!important;filter:saturate(1.09) contrast(1.04)!important;transition:opacity 1.05s ease!important}
+#app.forest-route .scene.active,#app.route-bridge .scene.active,#app.route-mountain .scene.active{animation:v31Approach 10s cubic-bezier(.33,.01,.67,.99) alternate infinite;transform-origin:50% 62%}
+#app.forest-route .stage.crashing .scene.active,#app.route-bridge .stage.crashing .scene.active,#app.route-mountain .stage.crashing .scene.active{animation:v31Crash .18s linear 3!important}
+@keyframes v31Crash{0%,100%{transform:translateX(0) scale(1.04)}25%{transform:translateX(-7px) scale(1.04)}75%{transform:translateX(7px) scale(1.04)}}
+@keyframes v31Approach{from{transform:scale(1.035) translateY(0)}to{transform:scale(1.105) translateY(1.4%)}}
+@keyframes lakeGentleApproach{from{transform:scale(1.008)}to{transform:scale(1.038)}}
+#app.forest-route .scene-start{background-image:url("assets/asset-020.jpeg")!important;}
+#app.forest-route .scene-cliff{background-image:url("assets/asset-021.jpeg")!important;}
+#app.forest-route .scene-harbor{background-image:url("assets/asset-022.jpeg")!important;}
+#app.forest-route .scene-extra{background-image:url("assets/asset-023.jpeg")!important;}
+#app.route-bridge .scene-start{background-image:url("assets/asset-024.jpeg")!important;}
+#app.route-bridge .scene-cliff{background-image:url("assets/asset-025.jpeg")!important;}
+#app.route-bridge .scene-harbor{background-image:url("assets/asset-026.jpeg")!important;}
+#app.route-bridge .scene-extra{background-image:url("assets/asset-027.jpeg")!important;}
+#app.route-mountain .scene-start{background-image:url("assets/asset-028.jpeg")!important;}
+#app.route-mountain .scene-cliff{background-image:url("assets/asset-029.jpeg")!important;}
+#app.route-mountain .scene-harbor{background-image:url("assets/asset-030.jpeg")!important;}
+#app.route-mountain .scene-extra{background-image:url("assets/asset-031.jpeg")!important;}
+
+/* v32 physical continuity: the forest stream is BESIDE the road, never under the car. */
+#app.forest-route .scene-cliff{background-image:url("assets/asset-025.jpeg")!important;background-position:center center!important;}
+/* The approach to a station is a reward after all questions, not a prolonged exercise background. */
+
+/* v33 — stages 5–9. Four real environment transitions per road; no generic hut. */
+#app.route-lake .car,#app.route-mill .car,#app.route-town .car,#app.route-observatory .car,#app.route-castle .car{display:block!important}
+#app.route-lake .stage-landmark,#app.route-mill .stage-landmark,#app.route-town .stage-landmark,#app.route-observatory .stage-landmark,#app.route-castle .stage-landmark{display:none!important}
+#app:is(.route-lake,.route-mill,.route-town,.route-observatory,.route-castle) .scene{background-size:cover!important;background-position:center!important;filter:saturate(1.04) contrast(1.03)!important;transition:opacity 1.05s ease!important}
+#app:is(.route-lake,.route-mill,.route-town,.route-observatory,.route-castle) .scene.active{animation:v31Approach 10s ease-in-out alternate infinite;transform-origin:center 58%}
+#app:is(.route-lake,.route-mill,.route-town,.route-observatory,.route-castle) .scene.active{animation:none!important;transform:scale(1)!important}
+#app.route-lake .scene.active{animation:lakeGentleApproach 16s ease-in-out alternate infinite!important;transform-origin:center 55%!important}
+#app:is(.route-lake,.route-mill,.route-town,.route-observatory,.route-castle) .stage.crashing .scene.active{animation:v31Crash .18s linear 3!important}
+#app:is(.route-lake,.route-mill,.route-town,.route-observatory,.route-castle) .place{background:linear-gradient(#fff4d8,#d4eddb);border:2px solid #fff;color:#214c49}
+#app:is(.route-lake,.route-mill,.route-town,.route-observatory,.route-castle) .panel{background:linear-gradient(#fffffc,#e1f3e9)}
+#app:is(.route-lake,.route-mill,.route-town,.route-observatory,.route-castle) .number{font-size:clamp(30px,4.6vw,65px)}
+@media(max-width:760px){#app:is(.route-lake,.route-mill,.route-town,.route-observatory,.route-castle) .number{font-size:clamp(30px,9vw,49px)} }
+#app.route-lake .scene-start{background-image:url('assets/original-14.webp')!important}
+#app.route-lake .scene-cliff{background-image:url('assets/original-17.webp')!important}
+#app.route-lake .scene-harbor{background-image:url('assets/original-15.webp')!important}
+#app.route-lake .scene-extra{background-image:url('assets/original-16.webp')!important}
+#app.route-mill .scene-start{background-image:url('assets/original-07.webp')!important}
+#app.route-mill .scene-cliff{background-image:url('assets/original-20.webp')!important}
+#app.route-mill .scene-harbor{background-image:url('assets/original-24.webp')!important}
+#app.route-mill .scene-extra{background-image:url('assets/original-00.webp')!important}
+#app.route-town .scene-start{background-image:url('assets/original-05.webp')!important}
+#app.route-town .scene-cliff{background-image:url('assets/original-02.webp')!important}
+#app.route-town .scene-harbor{background-image:url('assets/original-03.webp')!important}
+#app.route-town .scene-extra{background-image:url('assets/original-04.webp')!important}
+#app.route-observatory .scene-start{background-image:url('assets/original-25.webp')!important}
+#app.route-observatory .scene-cliff{background-image:url('assets/original-36.webp')!important}
+#app.route-observatory .scene-harbor{background-image:url('assets/original-35.webp')!important}
+#app.route-observatory .scene-extra{background-image:url('assets/original-34.webp')!important}
+#app.route-castle .scene-start{background-image:url('assets/original-12.webp')!important}
+#app.route-castle .scene-cliff{background-image:url('assets/original-22.webp')!important}
+#app.route-castle .scene-harbor{background-image:url('assets/original-11.webp')!important}
+#app.route-castle .scene-extra{background-image:url('assets/original-09.webp')!important}
+
+.adv-world{display:none;position:absolute;inset:0;z-index:70;isolation:isolate;overflow:hidden;align-items:center;flex-direction:column;justify-content:flex-start;background:radial-gradient(circle at 50% 22%,#556f68,#23463e 65%,#102f31);color:#fff3d4}
+.reward-art.adventure-visit .adv-world,.reward-art.adventure-reveal .adv-world{display:flex}
+.reward-art:is(.adventure-visit,.adventure-reveal) .reward-info,.reward-art:is(.adventure-visit,.adventure-reveal) .reward-desc,.reward-art:is(.adventure-visit,.adventure-reveal) .reward-postcard-frame,.reward-art:is(.adventure-visit,.adventure-reveal) .cinema-deck,.reward-art:is(.adventure-visit,.adventure-reveal) .fw-map{display:none!important}
+.reward-shell:has(.reward-art:is(.adventure-visit,.adventure-reveal)) .reward-footer{display:none!important}
+.adv-atmosphere{position:absolute;inset:-10%;background-position:center;background-size:cover;filter:blur(22px) brightness(.46) saturate(1.12);transform:scale(1.14);opacity:.7;pointer-events:none}
+.adv-world:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,#f9db8c24,transparent 22%,#051f2699);z-index:1}
+.adv-sign{z-index:4;position:relative;margin-top:4.7%;border:2px solid #e8d6a2;border-radius:999px;padding:10px 29px;background:linear-gradient(#24574cdd,#103a36df);font-size:clamp(22px,5.5vw,42px);font-weight:1000;letter-spacing:.12em;text-shadow:0 2px 4px #0006;box-shadow:0 6px 13px #0004}
+.adv-gallery{position:relative;z-index:4;width:91%;height:66%;margin-top:3%;border-radius:24px;border:5px solid #eddab0;box-shadow:0 18px 28px #0009;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#344e49;touch-action:pan-y}
+.adv-gallery:before{content:'';position:absolute;inset:-20px;background-image:var(--adv-photo);background-position:center;background-size:cover;filter:blur(14px) brightness(.60);pointer-events:none}
+.adv-gallery img{position:relative;width:100%;height:100%;object-fit:contain;object-position:center;user-select:none;pointer-events:none;filter:saturate(1.1)}
+.adv-nav{position:absolute;z-index:8;top:50%;transform:translateY(-50%);width:56px;height:84px;border:3px solid #eed49e;border-radius:18px;background:#163c35df;color:#f8e4a9;font-size:52px;font-family:inherit;cursor:pointer;box-shadow:0 4px 12px #001a}
+.adv-left{left:-6px}.adv-right{right:-6px}.adv-nav:disabled{opacity:.24;pointer-events:none}
+.adv-dots{display:flex;position:relative;z-index:5;gap:12px;align-items:center;justify-content:center;margin-top:15px}
+.adv-dots span{display:block;width:16px;height:16px;border-radius:50%;border:2px solid #eddea1;background:#607c71}
+.adv-dots span.seen{background:#80e3ac}.adv-dots span.active{background:#ffd467;box-shadow:0 0 15px #ffe89c;transform:scale(1.14)}
+.adv-spy{position:relative;z-index:9;display:flex;align-items:center;justify-content:center;width:140px;height:110px;margin-top:11px;border:4px solid #ffd989;border-radius:40px;background:linear-gradient(135deg,#e8d8a2,#f6a744);box-shadow:0 7px 21px #021b1bbb,0 0 24px #fadb7ac2;animation:bwSpy 1.2s alternate infinite;cursor:pointer}
+.adv-spy[hidden],.adv-reveal[hidden]{display:none!important}
+.adv-spy img{width:100%;height:100%;object-fit:contain;pointer-events:none}
+.adv-reveal{position:absolute;inset:0;z-index:15;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:linear-gradient(#0b293ae9,#235d54e8);padding:5%}
+.adv-reveal-title{font-size:clamp(29px,6vw,51px);font-weight:1000;letter-spacing:.12em;text-shadow:0 4px 14px #011}
+.adv-reveal-photo{border:7px solid #f5e1ae;border-radius:25px;overflow:hidden;width:90%;max-width:720px;max-height:65%;aspect-ratio:1.5;box-shadow:0 12px 24px #001a}
+.adv-reveal-photo img{width:100%;height:100%;object-fit:cover;object-position:center}
+.adv-take{border:4px solid #fff9dc;border-radius:50%;width:90px;height:90px;background:linear-gradient(#fff2af,#e9b75a);color:#26544a;font-size:62px;font-weight:1000;box-shadow:0 7px 22px #0008;cursor:pointer}
+.reward-art.adventure-postcard{background:radial-gradient(circle at 50% 28%,#ffedc8,#a8b79c 55%,#2a574b)!important}
+.reward-art.adventure-postcard .reward-postcard-frame{display:block!important;width:min(92%,770px)!important;aspect-ratio:1.538!important;max-height:71%!important;border:5px solid #fbeecd!important;box-shadow:0 18px 36px #05251b9c,0 0 0 4px #e8c78a!important;transform:translate(-50%,-50%) rotate(-1.5deg)!important;z-index:16!important}
+.reward-art.adventure-postcard .reward-postcard-frame img{object-fit:contain!important;background:#f9e7c5!important}
+.reward-art.adventure-postcard .reward-info,.reward-art.adventure-postcard .reward-desc,.reward-art.adventure-postcard .postcard-name,.reward-art.adventure-postcard .cinema-deck{display:none!important}
+.reward-art.adventure-map,.reward-art.adventure-finale{background:radial-gradient(ellipse at 50% 24%,#d9e9d2,#6b9279 62%,#264841)!important}
+.reward-art:is(.adventure-map,.adventure-finale) .fw-map{display:block!important}
+.reward-art:is(.adventure-map,.adventure-finale) .reward-info,.reward-art:is(.adventure-map,.adventure-finale) .reward-desc,.reward-art:is(.adventure-map,.adventure-finale) .cinema-deck{display:none!important}
+/* Nine illustrated stops and nine matching postcards. Small screens scroll rather than overflowing. */
+.reward-art:is(.forest-map,.bridge-map,.mountain-map,.adventure-map,.adventure-finale) .fw-map{position:absolute!important;inset:3% 3% 2%!important;width:auto!important;height:auto!important;max-height:95%!important;overflow-y:auto!important;overscroll-behavior:contain;padding:16px!important;background:linear-gradient(#fbf1ce,#f4e5b9)!important;border:4px solid #fff1ce;border-radius:24px!important}
+.reward-art:is(.forest-map,.bridge-map,.mountain-map,.adventure-map,.adventure-finale) .fw-map-track{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;align-items:stretch!important;gap:8px!important;margin:9px 0!important}
+.reward-art:is(.forest-map,.bridge-map,.mountain-map,.adventure-map,.adventure-finale) .fw-map-stop{width:100%!important;min-width:0!important;max-width:none!important;min-height:0!important;padding:4px!important;display:flex!important;flex-direction:column;align-items:center;gap:5px;flex-basis:auto!important;margin:0!important}
+.fw-map-stop .pic img{width:100%;height:100%;object-fit:cover;object-position:center;border-radius:10px}
+.reward-art:is(.forest-map,.bridge-map,.mountain-map,.adventure-map,.adventure-finale) .fw-map-stop .pic{display:block!important;width:100%!important;min-height:46px!important;height:clamp(52px,10vw,105px)!important;background:transparent!important;font-size:0!important;overflow:hidden;border-radius:10px}
+.reward-art:is(.forest-map,.bridge-map,.mountain-map,.adventure-map,.adventure-finale) .fw-map-stop b{font-size:clamp(9px,2vw,16px)!important;white-space:normal;word-break:break-word;line-height:1.2;text-align:center}
+.reward-art:is(.forest-map,.bridge-map,.mountain-map,.adventure-map,.adventure-finale) .fw-album{margin-top:10px!important;padding:9px!important}
+.reward-art:is(.forest-map,.bridge-map,.mountain-map,.adventure-map,.adventure-finale) .fw-card-strip{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important}
+.reward-art:is(.forest-map,.bridge-map,.mountain-map,.adventure-map,.adventure-finale) .fw-mini-card{min-width:0;max-width:100%;padding:3px!important}
+.reward-art:is(.forest-map,.bridge-map,.mountain-map,.adventure-map,.adventure-finale) .fw-mini-card img{aspect-ratio:1.6!important}
+.reward-art:is(.forest-map,.bridge-map,.mountain-map,.adventure-map,.adventure-finale) .fw-map-arrow{display:none!important}
+.reward-art:is(.forest-map,.bridge-map,.mountain-map,.adventure-map,.adventure-finale) .fw-map-count{font-size:clamp(17px,5vw,30px)!important}
+.reward-art:is(.forest-map,.bridge-map,.mountain-map,.adventure-map,.adventure-finale) .fw-map-lock{font-size:clamp(12px,3.7vw,20px)!important}
+.dev-shortcuts{border:1px dashed #bbba98;border-radius:13px;padding:6px;margin-top:10px;color:#436a5c;font-size:12px}
+.dev-shortcuts summary{cursor:pointer;font-size:12px;font-weight:900;list-style:none}
+.dev-shortcuts button{display:inline-block!important;width:auto!important;min-width:41%!important;max-width:48%!important;font-size:12px!important;padding:4px 7px!important;min-height:34px!important;margin:4px 2px!important;border-width:2px!important}
+@media(max-width:620px){.adv-gallery{height:61%}.adv-spy{width:115px;height:90px}.adv-nav{width:47px;height:75px}.adv-sign{font-size:clamp(20px,6vw,27px)}.adv-reveal-photo{aspect-ratio:1.25}.reward-art:is(.forest-map,.bridge-map,.mountain-map,.adventure-map,.adventure-finale) .fw-map-head{font-size:clamp(18px,5vw,30px)!important}.reward-art:is(.forest-map,.bridge-map,.mountain-map,.adventure-map,.adventure-finale) .fw-album-head{font-size:clamp(11px,3vw,16px)!important}}
+@media(max-height:500px) and (orientation:landscape){.adv-sign{position:absolute;top:2%;left:2%;font-size:17px;margin:0;padding:5px 16px}.adv-gallery{position:absolute;left:2%;top:13%;width:73%;height:80%;margin:0}.adv-dots{position:absolute;right:3%;top:15%;margin:0;flex-wrap:wrap;max-width:20%}.adv-spy{position:absolute;right:5%;top:44%;margin:0;height:80px;width:100px}.adv-reveal{flex-direction:row;gap:10px}.adv-reveal-title{position:absolute;top:3%;font-size:26px}.adv-reveal-photo{width:69%;height:81%}.adv-take{height:70px;width:70px}.reward-art:is(.forest-map,.bridge-map,.mountain-map,.adventure-map,.adventure-finale) .fw-map{padding:8px!important}}
+
+/* v33 QA: make the explored scenery a full-size interactive illustration. */
+.adv-gallery{height:53%!important}
+.adv-gallery img{object-fit:cover!important;object-position:center 57%!important}
+.adv-gallery:before{filter:blur(8px) brightness(.7)!important}
+.adv-dots{margin-top:18px!important}
+.adv-spy{margin-top:18px!important}
+@media(max-width:620px){.adv-gallery{height:50%!important}.adv-gallery img{object-position:center 56%!important}}
+@media(max-height:500px) and (orientation:landscape){.adv-gallery{height:80%!important}.adv-dots{margin:0!important}.adv-spy{margin:0!important}}
+
+/* v43: preserve whole artwork; touch panning in the binocular view. */
+.adv-gallery img{object-fit:contain!important;object-position:center!important}
+.adv-reveal-photo{border:10px solid #162422;border-radius:48%;box-shadow:0 0 0 8px #a3976b,0 12px 24px #001a;touch-action:none}
+.adv-reveal-photo img{width:145%;max-width:none;object-fit:cover;transform:translateX(var(--scope-x,-16%));transition:transform .08s linear}
+.adv-reveal-photo:after{content:'';position:absolute;pointer-events:none}
+.fw-mini-card.done{cursor:pointer}
+#savedCardDialog{max-width:95vw;max-height:94vh;border:5px solid #ebd89d;border-radius:20px;background:#fff3d7;padding:14px;text-align:center}
+#savedCardDialog img{display:block;max-width:85vw;max-height:70vh;object-fit:contain}
+#savedCardDialog button{padding:10px 28px;border-radius:10px;margin:10px}
+
+#app.route-lake .scene{background-position:72% center!important}
+.reward-art.adventure-postcard .reward-postcard-frame img{object-position:center!important}
+.adv-reveal{background:#123b3d!important}
+@media(max-height:500px) and (orientation:landscape){
+.reward-art.adventure-postcard .reward-postcard-frame{height:75%!important;width:auto!important;max-height:none!important;max-width:90%!important;aspect-ratio:1.5!important}
+.adv-reveal-photo{width:auto!important;height:72%!important;max-height:none!important;aspect-ratio:1.5!important;flex:none}
+.adv-take{flex:none;width:64px;height:64px;font-size:42px}
+}
+
+/* v45: one postcard collection (no duplicate gallery) */
+.fw-map-stop{font-family:inherit;color:inherit;text-align:center;cursor:pointer;touch-action:manipulation}
+.fw-map-stop.done:active{transform:scale(.97)}
+.fw-map-stop:disabled{cursor:default;opacity:.77}
+.fw-map-stop:focus-visible{outline:3px solid #047ca0;outline-offset:2px}
+.fw-map-stop .pic{pointer-events:none}
+.fw-map-stop b{pointer-events:none}
+/* v45: tangible tap target for Mäekuru → Järveäär postcard on Android. */
+.mw-photo.mw-clickable{cursor:pointer;touch-action:manipulation}
+.reward-shell:has(.reward-art.mountain-reveal) .reward-footer{display:flex!important}
+.reward-art.mountain-reveal .mw-continue{font-size:27px}
+/* v45: readable foreground car; the existing lighthouse road artwork remains unmodified. */
+#app:not(.forest-route):not(.river-route) .stage[data-phase="2"] .car{display:block!important}
+#app:not(.forest-route):not(.river-route) .car{bottom:10%;width:clamp(105px,30%,165px)}
+/* v45: faster scenic movement; answer countdown remains untouched. */
+#app.forest-route .scene.active,#app.route-bridge .scene.active,#app.route-mountain .scene.active{animation-duration:8.333s!important}
+#app.route-lake .scene.active{animation-duration:13.333s!important}
+.speedfx{animation-duration:.1083s}
+/* Align the full foreground car over the partial baked-in hood at the lighthouse's third road image.
+   This keeps a single visible car instead of adding a second one. */
+#app:not(.forest-route):not(.river-route) .stage[data-phase="2"] .car{left:35%;bottom:0%}
+#app:not(.forest-route):not(.river-route) .stage[data-phase="1"] .car{bottom:0%}
+/* Faster crossfades match v45's 1.2x pacing without touching the response clock. */
+#app.forest-route .scene,#app.route-bridge .scene,#app.route-mountain .scene,
+#app.route-lake .scene,#app.route-mill .scene,#app.route-town .scene,
+#app.route-observatory .scene,#app.route-castle .scene{transition-duration:.875s!important}
+.cinema-shot{transition-duration:.75s,1.92s,.75s!important}
