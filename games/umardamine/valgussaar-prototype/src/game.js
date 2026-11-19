@@ -277,30 +277,52 @@ function drawTrack(t){
 }
 function drawGate(worldX,i,t){
  const x=worldX-camera,ground=canvasH*.76;
- if(x<-100||x>canvasW+125)return;
- const open=i<=step; // spikes stay solid even when the rounding answer is correct
- const danger=i===step+1&&!solved&&status==='running';
+ if(x<-130||x>canvasW+130)return;
+ const past=i<=step,danger=i===step+1&&!solved&&status==='running',type=obstacleKind(i);
  ctx.save();ctx.translate(x,ground);
- const active=1+Math.sin(t*.008+i)*.035;
- ctx.scale(active*hazardScale(),active*hazardScale());
- glowCircle(0,-35,77,open?'#35fbe13d':'#ff5aaf42');
- // Original neon hazard: sharply legible double crystalline fangs with laser crossbar.
- const left=[[-43,0],[-36,-41],[-20,-79],[-3,-40],[-9,0]];
- const right=[[9,0],[3,-40],[20,-79],[36,-41],[43,0]];
- const col=open?'#225b70':'#b2429c',rim=open?'#93ffe8':'#ff92d0';
- polygon(left,col,rim,2);polygon(right,col,rim,2);
- polygon([[-24,-73],[-20,-86],[-13,-66],[-20,-73]],open?'#c8fff1':'#ffd1ee');
- polygon([[13,-66],[20,-86],[26,-73],[20,-73]],open?'#c8fff1':'#ffd1ee');
- if(!open){
-  const hot=.74+.26*Math.sin(t*.014+i);
-  ctx.strokeStyle='#ff8bbd';ctx.lineWidth=5;ctx.globalAlpha=hot;ctx.shadowColor='#ff4da1';ctx.shadowBlur=18;
-  line([[-24,-35],[24,-35]],'#ffc0df',4,hot);ctx.shadowBlur=0;ctx.globalAlpha=1;
-  polygon([[-10,-35],[0,-62],[10,-35],[0,-11]],'#ff6aab','#ffd4ee',1.6);
- }else{
-  // Solved obstacle remains in the scene as two opened neon halves.
-  ctx.strokeStyle='#80ffe6';ctx.lineWidth=2;
-  line([[-32,-31],[-48,-50]],'#a2ffe5',2,.7);line([[32,-31],[48,-50]],'#a2ffe5',2,.7);
-  ctx.save();ctx.globalCompositeOperation='lighter';glowCircle(0,-43,25,'#54ffe733');ctx.restore();
+ ctx.scale((1+Math.sin(t*.008+i)*.012)*hazardScale(),(1+Math.sin(t*.008+i)*.012)*hazardScale());
+ ctx.globalAlpha=past?.57:1;
+ glowCircle(0,-36,77,past?'#35fbe121':'#ff5aaf35');
+ const col=past?'#225b70':'#963d9d',rim=past?'#93ffe8':'#ff9cdb';
+ if(type==='fangs'){
+  polygon([[-43,0],[-36,-41],[-20,-79],[-3,-40],[-9,0]],col,rim,2);
+  polygon([[9,0],[3,-40],[20,-79],[36,-41],[43,0]],col,rim,2);
+  polygon([[-26,-71],[-20,-86],[-13,-66],[-20,-71]],past?'#adf3e4':'#ffd1ee');
+  polygon([[13,-66],[20,-86],[26,-71],[20,-71]],past?'#adf3e4':'#ffd1ee');
+  polygon([[-10,-36],[0,-60],[10,-36],[0,-13]],past?'#64c5bd':'#ff6aab',rim,1.4);
+ }else if(type==='rotor'){
+  // Rotating crystalline saw mounted on a low pivot.
+  ctx.save();ctx.translate(0,-38);ctx.rotate(t*.0012+(i*.7));
+  const teeth=[];
+  for(let n=0;n<24;n++){const a=n*Math.PI/12-Math.PI/2,rad=n%2===0?39:29;teeth.push([Math.cos(a)*rad,Math.sin(a)*rad]);}
+  polygon(teeth,col,rim,2);
+  circle(0,0,19,past?'#7fdccf':'#ffb1da');
+  polygon([[0,-15],[14,0],[0,15],[-14,0]],past?'#245977':'#473974','#ecfffa',1.5);
+  circle(0,0,5,'#ebfff9');ctx.restore();
+  line([[-6,0],[-6,-5]],rim,2);
+ }else if(type==='tri-spikes'){
+  // Three separate jagged spears, staggered in height.
+  polygon([[-49,0],[-35,-63],[-16,0]],col,rim,2);
+  polygon([[-25,0],[0,-77],[25,0]],past?'#376b79':'#a64bba',rim,2);
+  polygon([[16,0],[35,-63],[49,0]],col,rim,2);
+  polygon([[-35,-63],[-31,-50],[-40,-41]],past?'#bdf9e6':'#ffd1e9');
+  polygon([[0,-77],[7,-53],[-7,-53]],past?'#c3f5e6':'#ffeff9');
+  polygon([[35,-63],[40,-41],[30,-50]],past?'#bdf9e6':'#ffd1e9');
+ }else if(type==='lightning'){
+  // Electric pylons with a zig-zag voltage beam between them.
+  polygon([[-46,0],[-42,-70],[-22,-70],[-18,0]],col,rim,2);
+  polygon([[18,0],[22,-70],[42,-70],[46,0]],col,rim,2);
+  polygon([[-45,-71],[-32,-83],[-19,-71]],past?'#94e4d1':'#ffcfdf',rim,1.1);
+  polygon([[19,-71],[32,-83],[45,-71]],past?'#94e4d1':'#ffcfdf',rim,1.1);
+  line([[-28,-49],[-5,-32],[-11,-48],[14,-34],[29,-50]],past?'#8fe8ce':'#ffe1a6',past?2:4);
+  glowCircle(0,-43,24,past?'#56ffe322':'#ffd7683e');
+ }else if(type==='prism'){
+  // Thick angular prism wall and its internal glowing facet.
+  polygon([[-42,0],[-40,-47],[-22,-76],[20,-76],[41,-48],[43,0]],col,rim,2);
+  polygon([[-22,-76],[0,-62],[20,-76],[7,-43],[-7,-43]],past?'#58989d':'#e78aca',rim,1);
+  polygon([[-31,-21],[0,-45],[31,-21],[0,-9]],past?'#2a6577':'#59377e',rim,1);
+  line([[0,-62],[0,-44]],past?'#b2f9e8':'#fff3dc',2);
+  circle(0,-28,7,past?'#b3fff0':'#ffd6f4');
  }
  ctx.restore();
  if(danger&&x<canvasW*.62){glowCircle(x,ground-52,92,'#ff577e15')}
