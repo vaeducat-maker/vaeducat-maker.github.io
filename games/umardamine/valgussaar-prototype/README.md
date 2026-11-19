@@ -39,3 +39,15 @@ The first-world visuals, typography, task order, colors, and reward are preserve
 - Speed changed from 86 to 64.5 pixels/s, from 75 to 56.25 on the final obstacle, and from 340 to 255 in turbo. The jump physics have been rescaled so clearing the collision hitbox remains possible at all speeds.
 - Completing this first-world prototype currently grants the Valgussaar crystal and offers replay or looking at the world. It does **not** yet load the next world. The intended full game will unlock world 2 (12 rounds) after a successful 8/8 world 1.
 - 36 deterministic simulation combinations of view size, answer delay and timestep passed; 100 regenerations produced distinct entire rounds. Integration browser tests were updated, not yet executed here.
+
+## Victory and crystal reward ceremony
+
+The first world now ends with two consecutive celebration stages rather than the old static modal. The world flashes, then **VÕRRATU! / 8 / 8 TAKISTUST LÄBITUD / MAAILM 01 VÕIDETUD** appears for ~1.5 seconds, followed by **KRISTALL SAADUD! / VALGUSSAARE KRISTALL**.
+
+- The full-screen ceremony uses original SVG crystal art, rotating luminous rings, light rays, 56 confetti pieces, sparks and starbursts, plus a short synthetic victory fanfare only if sound is switched on.
+- The award screen displays a nine-crystal collection with slot 1 illuminated. Winning writes persistent `edukass-neon-world1-crystal-unlocked=1`; replay and retry never delete this earned award.
+- Controls: `MÄNGI UUESTI`, `VAATA MAAILMA`; `JÄRGMINE MAAILM · VARSTI` is deliberately disabled until world 2 actually exists.
+- Reduced-motion mode skips timed effects and reveals the award immediately.
+- The artwork is responsive for portrait phones and compact landscape phone screens, with internal award-panel scrolling as a fallback.
+- 27 deterministic game-loop simulations checked victory sequence, stage timers, stored award, return to gameplay, and timer cancellation. Browser acceptance tests were updated for victory/reward, but real browser screenshots still need to be inspected before calling this release production-ready.
+- This branch remains private to prototype development in the **public GitHub repository**, and is not merged to the public site. 
