@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="et">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#080d24"><meta name="color-scheme" content="dark">
+<title>EDUKASS · Ümardamine · Valgussaar</title>
+<style>/*__CSS__*/</style>
+</head>
+<body>
+<main id="shell">
+  <header class="top">
+    <div class="logo">EDU<span>KASS</span></div>
+    <div class="world-pill"><span class="world-dot"></span> <b>01</b> / 09 · VALGUSSAAR</div>
+    <div class="top-actions">
+      <button type="button" class="icon-btn" id="sound" aria-label="Lülita heli sisse või välja" title="Heli"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path class="sound-lines" d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/><path class="sound-muted" d="m16 9 5 6m0-6-5 6"/></svg></button>
+      <button type="button" class="icon-btn" id="restart" aria-label="Alusta uuesti" title="Alusta uuesti"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></button>
+    </div>
+  </header>
+  <div class="progress" aria-label="Edenemine"><span class="progress-label">VÄRAVAD</span><div class="gems" id="gems"></div><span class="progress-count" id="step">0/8</span></div>
+  <section class="scene" id="scene" aria-label="Helendavate saarte mängumaailm">
+    <canvas id="world" aria-hidden="true"></canvas>
+    <div class="scene-heading"><small>MAAILM 01</small><strong>Valgussaar</strong></div>
+    <div class="scene-sub">8 VÄRAVAT</div>
+    <div class="scene-caption" id="sceneCaption">Iga õige vastus avab uue värava</div>
+    <div class="scene-glow" id="sceneGlow"></div>
+  </section>
+  <section class="problem" aria-live="polite"><div class="problem-top"><span class="verb">ÜMARDA</span><span class="unit" id="unit">KÜMNELISTENI</span></div><div class="number" id="number">—</div></section>
+  <div class="answer-wrap"><div class="answer-display" id="answerBox"><span class="answer-value empty" id="answerValue"></span></div><div class="answer-info"><small>ETAPP</small><strong id="answerStep">01 / 08</strong></div></div>
+  <div class="note" id="note" aria-live="polite">Sisesta vastus</div>
+  <section class="keypad" id="keypad" aria-label="Numbriklahvistik">
+    <button class="key" data-key="1">1</button><button class="key" data-key="2">2</button><button class="key" data-key="3">3</button>
+    <button class="key" data-key="4">4</button><button class="key" data-key="5">5</button><button class="key" data-key="6">6</button>
+    <button class="key" data-key="7">7</button><button class="key" data-key="8">8</button><button class="key" data-key="9">9</button>
+    <button class="key action" data-key="back" aria-label="Kustuta viimane number">⌫</button><button class="key" data-key="0">0</button><button class="key submit" data-key="check" aria-label="Kontrolli vastust">✓</button>
+  </section>
+  <footer class="foot">EDUKASS · ÜMARDAMINE · PROTOTÜÜP 01</footer>
+</main>
+<div class="overlay" id="overlay" role="dialog" aria-modal="true">
+ <div class="hero" id="introHero">
+  <span class="eyebrow">EDUKASS · ÜMARDAMINE</span>
+  <div class="hero-mark" aria-hidden="true"><svg viewBox="0 0 128 128"><defs><linearGradient id="introG" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#fdffcf"/><stop offset=".48" stop-color="#83ffe9"/><stop offset="1" stop-color="#587af4"/></linearGradient></defs><circle cx="64" cy="64" r="56" stroke="#a1ffe6" stroke-opacity=".42" stroke-width="2" fill="none" stroke-dasharray="2 9"/><path d="M64 12 92 49 90 82 64 116 38 82 36 49Z" fill="url(#introG)" stroke="#e8fff9" stroke-width="3"/><path d="m64 12 0 104m-28-67 28 13 28-13M38 82l26-20 26 20" stroke="#147baf" stroke-opacity=".52" stroke-width="2" fill="none"/><path d="M64 12 36 49 64 62 92 49Z" fill="#f9ffe4" fill-opacity=".32"/><path d="M14 55h15M99 55h15M64 0v10M64 118v10" stroke="#a5fff1" stroke-width="2"/></svg></div>
+  <h1>Avasta<br>Valgussaar</h1>
+  <p>Kaheksa ümardamisülesannet. Iga õige vastus viib sind läbi helendava värava.</p>
+  <button class="primary" id="begin">ALUSTA MÄNGU <span aria-hidden="true">›</span></button>
+ </div>
+ <div class="hero" id="finishHero" hidden>
+  <span class="finish-kicker">MAAILM 01 · LÄBITUD</span>
+  <div class="finish-gem" aria-hidden="true"><svg viewBox="0 0 160 160"><defs><radialGradient id="prizeG"><stop stop-color="#faffdf"/><stop offset=".42" stop-color="#88f8e1"/><stop offset="1" stop-color="#4e65e3"/></radialGradient></defs><circle cx="80" cy="80" r="72" fill="none" stroke="#8cf9e6" stroke-opacity=".48" stroke-width="2" stroke-dasharray="3 13"/><circle cx="80" cy="80" r="53" fill="#70e9ec" opacity=".15"/><path d="M80 12 124 58 109 112 80 150 51 112 36 58Z" fill="url(#prizeG)" stroke="#e1fff4" stroke-width="3"/><path d="M80 12v138M36 58l44 18 44-18M51 112l29-36 29 36" fill="none" stroke="#194ca0" stroke-opacity=".5" stroke-width="3"/></svg></div>
+  <h1>Võrratu!</h1>
+  <div class="stars-score">✦ ✦ ✦ &nbsp; 8 / 8</div>
+  <p>Sa avasid kõik kaheksa valgusväravat!</p>
+  <div class="finish-note">Sinu auhind: <strong>Valgussaare kristall</strong></div>
+  <button class="primary" id="again">MÄNGI UUESTI ↻</button>
+  <button class="secondary" id="viewWorld">VAATA MAAILMA</button>
+ </div>
+</div>
+<script>/*__JS__*/</script>
+</body>
+</html>
