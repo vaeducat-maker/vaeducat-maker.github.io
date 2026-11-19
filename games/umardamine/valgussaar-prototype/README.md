@@ -4,8 +4,8 @@ Experimental first world: automatic side-scrolling crystal runner. The art direc
 
 - The crystal moves continuously along a neon track.
 - Eight rounding exercises, with tens and an introductory hundreds task, preserve the previous first-world mathematical progression.
-- A correct answer arms an automatic jump through the next crystal obstacle; the movement never pauses while typing.
-- A fully incorrect answer, manual confirmation of an incorrect answer, or reaching an obstacle without a correct answer causes a collision and **fails the level**.
+- A correct answer arms a real, automatic ballistic jump with gravity and a full rotation. The crystal must physically clear the fixed spike hitbox; the movement never pauses while typing.
+- A fully incorrect answer or manual confirmation locks the answer; the crystal visibly rushes into the next obstacle and crashes. Reaching an obstacle without a correct answer also crashes. The spikes never teleport or open simply because the answer is correct.
 - Retrying restarts at obstacle 1 with the same generated round; all eight obstacles must be cleared in one attempt.
 - The finished crystal reward is awarded only after passing 8/8 obstacles.
 
@@ -15,6 +15,10 @@ Experimental first world: automatic side-scrolling crystal runner. The art direc
 
 `python tests/test_runner.py`
 
-Tested in headless Chromium on 390×844, 360×740, and 844×390 viewports. The test uses a deterministic simulation clock to verify collision, retry, timeouts and all eight correct answers; visual screenshots are produced in the project directory.
+Browser test targets 390×844, 360×740, and 844×390 viewports. The deterministic clock checks wrong-answer collisions, timeouts, retry, eight ballistic jumps, and the finish reward; screenshots are written to the project directory. Re-run the test after these physics changes before calling them browser-verified.
 
 This is a **single-world prototype**, not the complete nine-world game. It is saved in a separate branch and does not change public EDUKASS pages.
+
+## Physics revision (19 November 2026)
+
+The first-world visuals, typography, task order, colors, and reward are preserved. The running crystal now follows a real timed jump arc, rotates in air, and clears each persistent spike only when high enough. Hazards have position-based collision tests. The standalone HTML is rebuilt from `src/` and stays separate from the public website. This prototype borrows the continuous-platformer gameplay principle; it does not use any Geometry Dash game assets.
