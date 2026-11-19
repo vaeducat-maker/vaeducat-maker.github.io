@@ -198,3 +198,90 @@ button:disabled{cursor:default;opacity:.7}
  .victory-score{padding:7px 25px}.victory-stars{font-size:25px}
 }
 @media(prefers-reduced-motion:reduce){.overlay.is-celebrating:before,.victory-headline,.victory-score,.victory-kicker,.victory-stars,.victory-halo span,.celebrate-particles span,.reward-kicker,.reward-title,.prize-crystal,.prize-rays,.prize-aura,.prize-ring,.prize-star,.reward-name,.crystal-collection,.next-world,.reward-actions{animation:none!important}}
+
+
+/* Fit the full keypad inside Android dynamic browser viewport, without hiding a row. */
+.key-zero{grid-column:span 2}
+.intro-vault-btn{font-size:11px;letter-spacing:.08em;color:#c7fff0;background:#163b64bf;border:1px solid #77f9e27d;border-radius:12px;padding:11px 14px;cursor:pointer;margin-top:11px;font-weight:900;display:flex;justify-content:center;gap:10px;align-items:center}
+.intro-vault-btn span{color:#ffdc9e;font-variant-numeric:tabular-nums}
+.vault-open-btn{width:min(336px,100%);min-height:46px;display:flex;align-items:center;justify-content:center;gap:10px;padding:8px 12px;background:linear-gradient(115deg,#0a6779cf,#18376ccc);color:#effff6;border:1px solid #c1ffe5b8;border-radius:14px;cursor:pointer;box-shadow:inset 0 1px 1px #fff9,0 0 20px #4effba28;font-size:11px;letter-spacing:.035em;font-weight:950}
+.vault-open-btn strong{font-size:12px;white-space:nowrap;color:#ffe6a5}
+.mini-crystal{width:17px;height:25px;background:linear-gradient(140deg,#f9ffc6,#57f3e5,#576ddf);clip-path:polygon(50% 0,90% 28%,82% 68%,50% 100%,18% 68%,10% 28%);filter:drop-shadow(0 0 10px #80fff4)}
+.crystal-vault{width:min(530px,100%);max-height:calc(100dvh - 24px);overflow-y:auto;scrollbar-width:thin;gap:8px;margin:auto;padding:13px 2px 14px;flex:none}
+.crystal-vault[hidden]{display:none!important}
+.vault-eyebrow{font-size:10px;font-weight:950;letter-spacing:.18em;color:#b4fff3}
+.crystal-vault .vault-title{font-size:clamp(24px,5.1vw,34px);line-height:1.06;margin:0;color:#ffecb9;text-shadow:0 0 19px #ffed9c88;letter-spacing:-.035em}
+.vault-progress{font-size:13px;font-weight:950;letter-spacing:.12em;color:#d4ffee;background:#183b6585;border:1px solid #9efde66e;padding:6px 15px;border-radius:50px}
+.vault-display{position:relative;isolation:isolate;width:min(490px,100%);background:radial-gradient(ellipse at 50% 46%,#2963a3ba,#0e1c49ec 76%),repeating-linear-gradient(60deg,#d4ffff10 0 1px,transparent 1px 33px);border:1px solid #c5fbe75a;border-radius:24px;padding:14px;box-shadow:0 11px 38px #0009,inset 0 0 45px #99e9ff12}
+.vault-constellation{position:absolute;inset:5%;pointer-events:none;background:radial-gradient(circle at 50% 50%,#b3fff450 0 1px,transparent 3px),radial-gradient(circle at 24% 25%,#ffe4aa66 0 1.5px,transparent 3px),radial-gradient(circle at 77% 30%,#a4eaff6a 0 1.5px,transparent 3px),repeating-conic-gradient(from 0deg at 50% 50%,transparent 0deg 38deg,#8ee5f31a 39deg 40deg,transparent 42deg 45deg)}
+.vault-grid{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.vault-card{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-width:0;min-height:112px;padding:7px 3px 5px;border:1px solid #749ab65c;border-radius:15px;background:linear-gradient(150deg,#25355dc9,#101c39d9);box-shadow:inset 0 1px 1px #ffffff22,0 3px 13px #020b23a8;overflow:hidden}
+.vault-card:before{content:"";position:absolute;inset:-22%;background:radial-gradient(circle,#78fff119 0%,transparent 57%);pointer-events:none}
+.vault-card.unlocked{border:1px solid #c4ffe2;box-shadow:0 0 18px #4ffff581,inset 0 0 22px #a3fff424;background:radial-gradient(circle at 50% 39%,#4daab66b,#123968e8 75%)}
+.vault-card-number{font-size:11px;letter-spacing:.1em;color:#a7b9d6;font-weight:950}
+.vault-card.unlocked .vault-card-number{color:#fff2b2}
+.vault-card-gem{width:clamp(32px,9vw,49px);height:clamp(45px,11vw,59px);display:flex;align-items:center;justify-content:center}
+.vault-card-gem svg{width:100%;height:100%;filter:grayscale(1) brightness(.34) saturate(.3);opacity:.52;transform:scale(.9) rotate(calc((var(--slot) - 4)*3deg))}
+.vault-card.unlocked .vault-card-gem svg{filter:drop-shadow(0 0 9px #c3ffdb) drop-shadow(0 0 20px #68fff9);opacity:1;transform:scale(1.04);animation:prizeFloat 3.4s ease-in-out infinite}
+.vault-card-name{font-size:10px;color:#cedef8;font-weight:900;letter-spacing:.02em;white-space:nowrap}
+.vault-card.unlocked .vault-card-name{color:#e7fff9}
+.vault-card-status{font-size:9px;font-weight:900;letter-spacing:.075em;color:#8396b2}
+.vault-card.unlocked .vault-card-status{color:#ffe9a7}
+.vault-description{font-size:12px!important;line-height:1.36!important;color:#bce9fa!important;margin:2px 0 5px!important;text-align:center;max-width:340px!important}
+.vault-back{min-width:178px;min-height:42px;border-radius:12px;border:1px solid #8bfce396;background:linear-gradient(125deg,#82fff0,#43ccdd);font-size:13px;font-weight:950;letter-spacing:.08em;color:#132b43;cursor:pointer;box-shadow:0 3px 10px #6cffed3c}
+@media (max-width:739px) and (orientation:portrait){
+ html,body{height:100%;min-height:0;overflow:hidden}
+ body{height:100dvh}
+ #shell{width:100%;height:100dvh;min-height:0;overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:39px 18px minmax(125px,1fr) minmax(60px,76px) 47px 15px minmax(164px,1.03fr);gap:4px;padding:max(4px,env(safe-area-inset-top)) clamp(8px,2.6vw,13px) max(4px,env(safe-area-inset-bottom));margin:0;border:0;border-radius:0}
+ .top{grid-row:1;grid-column:1;height:39px;min-height:0;gap:5px}
+ .logo{font-size:clamp(14px,4.2vw,17px)}
+ .world-pill{font-size:clamp(9px,2.7vw,11px);letter-spacing:.01em;padding:5px 8px;gap:5px}
+ .world-pill b{font-size:10px}
+ .top-actions{gap:4px}
+ .icon-btn{width:34px;height:34px;border-radius:10px}
+ .progress{grid-row:2;grid-column:1;min-height:0;gap:5px}
+ .progress-label{font-size:9px}
+ .gem{height:7px}
+ .scene{grid-row:3;grid-column:1;height:100%;min-height:0;border-radius:17px}
+ .scene:before{border-radius:16px}
+ .scene-heading{top:9px;left:11px}
+ .scene-heading strong{font-size:16px}
+ .scene-heading small{font-size:8px}
+ .scene-caption{left:11px;bottom:8px;font-size:9px}
+ .rush-hud{top:45px;right:9px;min-width:118px;padding:5px 7px}
+ .rush-line{font-size:8px}
+ .problem{grid-row:4;grid-column:1;min-height:0;padding:5px 10px;display:flex;flex-direction:column;justify-content:center;gap:0;border-radius:15px}
+ .problem-top{min-height:19px;gap:6px}
+ .problem-top .verb{font-size:10px}
+ .unit{font-size:9px;padding:4px 7px}
+ .number{font-size:clamp(31px,5.5dvh,42px);line-height:1.0}
+ .answer-wrap{grid-row:5;grid-column:1;min-height:0;gap:6px}
+ .answer-display{height:100%;min-height:0;border-radius:13px}
+ .answer-value{font-size:27px}
+ .answer-info{width:70px;border-radius:12px}
+ .note{grid-row:6;grid-column:1;height:15px;min-height:0;flex:none;font-size:11px;line-height:1}
+ .keypad{grid-row:7;grid-column:1;height:100%;min-height:0;max-height:none;grid-template-rows:repeat(4,minmax(0,1fr));gap:5px}
+ .key{min-height:0;border-radius:11px;font-size:clamp(20px,4.9dvh,27px)}
+ .key.action{font-size:21px}
+ .foot{display:none}
+ .overlay{position:fixed;inset:0;height:100dvh;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+ .hero.celebrate-reward{max-height:calc(100dvh - 12px)}
+}
+@media (max-width:739px) and (orientation:portrait) and (max-height:560px){
+ #shell{grid-template-rows:34px 15px minmax(102px,1fr) minmax(53px,63px) 42px 12px minmax(142px,.97fr);gap:3px}
+ .top{height:34px}
+ .scene-heading strong{font-size:14px}
+ .key{font-size:20px}
+ .note{height:12px;font-size:10px}
+}
+@media(orientation:landscape) and (max-height:600px) and (min-width:650px){
+ .vault-display{width:min(680px,100%);padding:6px 9px}
+ .crystal-vault{width:min(700px,98%);max-height:calc(100dvh - 12px);padding:5px 3px;gap:3px}
+ .crystal-vault .vault-title{font-size:22px}
+ .vault-grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+ .vault-card{min-height:93px;padding:4px}
+ .vault-card-gem{height:44px;width:35px}
+ .vault-description{margin:0!important;font-size:10px!important}
+ .vault-back{min-height:32px}
+}
+@media(prefers-reduced-motion:reduce){.vault-card.unlocked .vault-card-gem svg{animation:none!important}}
