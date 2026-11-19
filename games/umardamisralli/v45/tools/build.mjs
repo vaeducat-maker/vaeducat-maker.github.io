@@ -67,4 +67,3 @@ await mkdir(resolve(dist, 'tests'), { recursive: true });
 await copyFile(resolve(root, 'tests/journey.html'), resolve(dist, 'tests/journey.html'));
 await writeFile(resolve(release, 'asset-count.txt'), `${refs.length}\n`);
 
-
