@@ -192,7 +192,9 @@ const $=id=>document.getElementById(id);
 const canvas=$('world'),ctx=canvas.getContext('2d',{alpha:false});
 const reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const NODE=580, ORIGIN=108, TOTAL=8;
-const SPEED=86; // world pixels per second; visual speed stays high while answers remain feasible
+const SPEED=86; // preserves time to solve 8 rounding problems
+const JUMP_V=240, JUMP_G=200, JUMP_TOTAL=2*JUMP_V/JUMP_G;
+const HAZARD_HALF_WIDTH=58, CLEARANCE=76; // consistent with the rendered spike and crystal hitboxes
 const COLORS={cyan:'#67fce9',cyanB:'#37e9dd',violet:'#ae8afe',pink:'#f482ef',gold:'#ffe29b',white:'#f1fff9'};
 const names={10:'KÜMNELISTENI',100:'SAJALISTENI'};
 const poolDown=[21,22,23,24,31,32,33,34,41,42,43,44,51,52,53,54,61,62,63,64,71,72,73,74,81,82,83,84,91,92,93,94];
@@ -205,6 +207,7 @@ const templates=[
 let tasks=[],step=0,typed='',status='intro',solved=false,crashStart=0,crashReason='',crashElapsed=0,playElapsed=0;
 let attempts=0;
 let playerX=ORIGIN,clock=0,lastFrame=0,canvasW=0,canvasH=0,dpr=1;
+let jumping=false,jumpAge=0,jumpHeight=0,jumpStarted=false,jumpCount=0,wrongLocked=false;
 let soundOn=false,audio=null,fxGlow=0,fxBurst=0,shake=0,toastUntil=0,rewardUnlocked=false;
 let camera=ORIGIN-110,particleTrail=[],specks=[],stars=[],ambient=[],latestAnswer='';
 function clamp(v,lo,hi){return Math.max(lo,Math.min(hi,v))}
@@ -259,7 +262,7 @@ function showTask(){
  const t=tasks[step];
  $('unit').textContent=names[t.unit];$('number').textContent=format(t.v);
  $('number').classList.remove('bump');void $('number').offsetWidth;$('number').classList.add('bump');
- typed='';solved=false;updateAnswer();$('answerBox').classList.remove('wrong','success');
+ typed='';solved=false;jumpStarted=false;wrongLocked=false;updateAnswer();$('answerBox').classList.remove('wrong','success');
  note('Vasta enne takistust!');updateGems();
  $('sceneCaption').textContent=step===TOTAL-1?'VIIMANE TAKISTUS · ÄRA PEATU':'KIIRUSTA! TAKISTUS LÄHENEB';
 }
@@ -270,13 +273,15 @@ function overlay(type){
 function hideOverlay(){$('overlay').classList.add('hidden');$('overlay').setAttribute('aria-hidden','true')}
 function speedForStep(){return step===7?75:SPEED}
 function distanceToObstacle(){return ORIGIN+NODE*(step+1)-playerX}
+function hazardScale(){return clamp(canvasH/250,.5,1)}
+function effectiveSpeed(){return wrongLocked?Math.max(speedForStep()*1.65,distanceToObstacle()/1.12):speedForStep()}
 function updateRushHUD(){
- const secs=Math.max(0,distanceToObstacle()/speedForStep());
+ const secs=Math.max(0,distanceToObstacle()/effectiveSpeed());
  $('rushClock').textContent=status==='running' ? `${secs.toFixed(1)} s` : status==='crashing'||status==='crashed'?'0.0 s':'—';
  $('rushFill').style.width= `${clamp(distanceToObstacle()/NODE,0,1)*100}%`;
  $('rushHud').classList.toggle('danger',secs<2&&!solved&&status==='running');
  $('rushHud').classList.toggle('safe',solved&&status==='running');
- $('rushLabel').textContent=solved?'HÜPE VALMIS':status==='crashing'||status==='crashed'?'KOKKUPÕRGE!':'TAKISTUSENI';
+ $('rushLabel').textContent=wrongLocked?'VALE VASTUS':solved?'HÜPE VALMIS':status==='crashing'||status==='crashed'?'KOKKUPÕRGE!':'TAKISTUSENI';
 }
 function setSound(){soundOn=!soundOn;$('sound').classList.toggle('enabled',soundOn);$('sound').setAttribute('aria-label',soundOn?'Lülita heli välja':'Lülita heli sisse');if(soundOn)tone(510,.07,'triangle',.035)}
 function tone(frequency,duration,type='sine',volume=.045,delay=0){
@@ -288,6 +293,7 @@ function winSound(){tone(540,.14,'sine',.036);tone(790,.19,'triangle',.03,.07);t
 function startGame(retry=false){
  if(!retry||!tasks.length){tasks=createTasks();validateTasks(tasks)}
  attempts++;step=0;typed='';solved=false;playerX=ORIGIN;camera=playerX-canvasW*.30;
+ jumping=false;jumpAge=0;jumpHeight=0;jumpStarted=false;wrongLocked=false;jumpCount=0;
  particleTrail=[];status='running';crashElapsed=0;playElapsed=0;rewardUnlocked=false;fxGlow=0;fxBurst=0;shake=0;
  hideOverlay();showTask();updateRushHUD();
  try{localStorage.removeItem('edukass-neon-world1-finished')}catch(e){}
@@ -304,7 +310,7 @@ function lose(reason){
  updateRushHUD();
 }
 function onKey(key){
- if(status!=='running'||solved)return;
+ if(status!=='running'||solved||wrongLocked)return;
  if(key==='back'){typed=typed.slice(0,-1);updateAnswer();return}
  if(key==='check'){check(true);return}
  if(!/^\d$/.test(key)||typed.length>=8)return;
@@ -315,14 +321,17 @@ function onKey(key){
  else if(typed.length>=answer.length)check(false);
 }
 function check(manual){
- if(status!=='running'||solved||!typed)return;
+ if(status!=='running'||solved||wrongLocked||!typed)return;
  if(Number(typed)===tasks[step].answer){
   solved=true;$('answerBox').classList.add('success');note('ÕIGE! HÜPE VALMIS','ok');
   fxGlow=.6;tone(600,.14,'sine',.04);tone(810,.12,'triangle',.022,.08);
-  $('sceneCaption').textContent='VÄRAV AVATUD · HOIA HOOGU';updateRushHUD();return;
+  $('sceneCaption').textContent='HÜPE VALMIS · HÜPPA ÜLE TAKISTUSE';updateRushHUD();return;
  }
  if(!manual&&typed.length<String(tasks[step].answer).length)return;
- lose('wrong');
+ wrongLocked=true; // The obstacle remains lethal; the crystal physically runs into it.
+ $('answerBox').classList.add('wrong');note('VALE VASTUS! TAKISTUS LÄHENEB!','bad');
+ $('sceneCaption').textContent='VALE VASTUS · KOKKUPÕRGE LÄHENEB';
+ shake=5;tone(230,.15,'sawtooth',.04);updateRushHUD();
 }
 function finish(){
  status='finished';step=TOTAL;solved=false;updateGems();updateRushHUD();
@@ -330,17 +339,34 @@ function finish(){
  try{localStorage.setItem('edukass-neon-world1-finished','1')}catch(e){}
  setTimeout(()=>{if(status==='finished')overlay('finish')},reduced?80:750);
 }
-function reset(){status='intro';step=0;typed='';solved=false;playerX=ORIGIN;particleTrail=[];updateGems();updateAnswer();note('Vasta enne takistust!');updateRushHUD();overlay('intro')}
+function reset(){status='intro';step=0;typed='';solved=false;playerX=ORIGIN;particleTrail=[];jumping=false;jumpAge=0;jumpHeight=0;jumpStarted=false;wrongLocked=false;jumpCount=0;updateGems();updateAnswer();note('Vasta enne takistust!');updateRushHUD();overlay('intro')}
 function viewWorld(){hideOverlay();status='showcase';$('sceneCaption').textContent='VALGUSSAARE KRISTALL · 01/09';note('Maailm läbitud · mängi uuesti ülal ↻','ok')}
 function advance(dt){
  const delta=clamp(dt,0,100);
  if(status==='running'){
-  playerX+=speedForStep()*delta/1000;playElapsed+=delta;
+  const dtSeconds=delta/1000;
   const gate=ORIGIN+NODE*(step+1);
-  if(playerX>=gate){
-   playerX=gate;
-   if(!solved){lose('timeout')}
-   else{step++;if(step>=TOTAL)finish();else{showTask();winSound()}}
+  const approach=gate-playerX;
+  // A correct answer arms one automatic jump. It starts at the same point relative
+  // to the obstacle at every pace, then follows a genuine ballistic arc.
+  if(solved&&!jumpStarted&&!jumping&&approach<=speedForStep()*JUMP_TOTAL/2){
+   jumping=true;jumpStarted=true;jumpAge=0;jumpHeight=0;jumpCount++;
+   tone(420,.10,'triangle',.035);
+  }
+  if(jumping){
+   jumpAge+=dtSeconds;
+   jumpHeight=Math.max(0,JUMP_V*jumpAge-.5*JUMP_G*jumpAge*jumpAge);
+   if(jumpAge>=JUMP_TOTAL){jumping=false;jumpAge=0;jumpHeight=0}
+  }
+  playerX+=effectiveSpeed()*dtSeconds;
+  playElapsed+=delta;
+  // No gate toggling or teleport: the hitbox must actually clear the spikes.
+  const inHazard=Math.abs(gate-playerX)<=HAZARD_HALF_WIDTH*hazardScale();
+  if(inHazard&&jumpHeight<CLEARANCE){
+   lose(wrongLocked?'wrong':'timeout');
+  }else if(playerX>=gate+HAZARD_HALF_WIDTH*hazardScale()+8){
+   step++;
+   if(step>=TOTAL)finish();else{showTask();winSound()}
   }
   if(status==='running')updateRushHUD();
  }
@@ -423,11 +449,11 @@ function drawTrack(t){
 function drawGate(worldX,i,t){
  const x=worldX-camera,ground=canvasH*.76;
  if(x<-100||x>canvasW+125)return;
- const open=i<=step||(i===step+1&&solved&&status==='running');
+ const open=i<=step; // spikes stay solid even when the rounding answer is correct
  const danger=i===step+1&&!solved&&status==='running';
  ctx.save();ctx.translate(x,ground);
  const active=1+Math.sin(t*.008+i)*.035;
- ctx.scale(active,active);
+ ctx.scale(active*hazardScale(),active*hazardScale());
  glowCircle(0,-35,77,open?'#35fbe13d':'#ff5aaf42');
  // Original neon hazard: sharply legible double crystalline fangs with laser crossbar.
  const left=[[-43,0],[-36,-41],[-20,-79],[-3,-40],[-9,0]];
@@ -462,24 +488,18 @@ function drawSpire(x,y,scale,t,final=false){
 }
 function drawPlayer(t){
  let x=playerX-camera;
- const hover=2*Math.sin(t*.010);
- let jump=0,spin=0;
- for(let i=1;i<=TOTAL;i++){
-  const dist=ORIGIN+NODE*i-playerX;
-  if(dist<-85||dist>145)continue;
-  if(i<=step||(i===step+1&&solved)){
-   const q=clamp((145-dist)/230,0,1);
-   jump=Math.sin(Math.PI*q)*canvasH*.27;spin=q*Math.PI*1.5;break;
-  }
- }
- let y=canvasH*.76-43-jump+hover;
+ const scale=hazardScale();
+ const hover=jumping?0:1.3*Math.sin(t*.010);
+ // Position and rotation are driven by physical jump state, not proximity animation.
+ const spin=jumping?Math.PI*2*jumpAge/JUMP_TOTAL:0;
+ const y=canvasH*.76-43*scale-jumpHeight*scale+hover;
  if(status==='crashing'&&crashElapsed>190)return;
  // Soft particle trail follows movement.
  if(status==='running'&&Math.random()<.94){particleTrail.push({x,y:y+random(17)-8,birth:t,size:1.2+Math.random()*3});}
  particleTrail=particleTrail.filter(s=>t-s.birth<900).slice(-70);
  ctx.save();particleTrail.forEach(s=>{const age=(t-s.birth)/900,dx=(t-s.birth)*.085;circle(s.x-dx,s.y,s.size*(1-age),'rgba(88,255,226,'+(.56*(1-age))+')')});ctx.restore();
- glowCircle(x,y,59,'#54ffe43c');glowCircle(x,y,27,'#cfffee72');
- ctx.save();ctx.translate(x,y);ctx.rotate(spin+Math.sin(t*.011)*.06);
+ glowCircle(x,y,59*scale,'#54ffe43c');glowCircle(x,y,27*scale,'#cfffee72');
+ ctx.save();ctx.translate(x,y);ctx.scale(scale,scale);ctx.rotate(spin+Math.sin(t*.011)*.025);
  ctx.shadowColor='#70ffe7';ctx.shadowBlur=19;
  // Original asymmetric prism avatar: no cube, car, vehicle, or iconography from reference games.
  polygon([[0,-26],[19,-7],[13,16],[0,28],[-18,11],[-15,-9]],'#79e9ed','#ddfff1',2);
@@ -493,7 +513,7 @@ function drawPlayer(t){
  polygon([[16,1],[31,9],[23,15],[14,12]],'#7adcf6','#d9ffff80',.8);
  ctx.restore();
  for(let i=0;i<3;i++){
-  const a=t*.001+i*Math.PI*2/3;circle(x+Math.cos(a)*35,y+Math.sin(a)*18,1.5+i%2,'#dcffed');
+  const a=t*.001+i*Math.PI*2/3;circle(x+Math.cos(a)*35*scale,y+Math.sin(a)*18*scale,(1.5+i%2)*scale,'#dcffed');
  }
 }
 function spawnBurst(worldX,count){
@@ -520,8 +540,7 @@ function frame(t){
  drawSpire(finalX,canvasH*.49,.8+step*.03,t,true);
  drawTrack(t);
  for(let i=1;i<=TOTAL;i++){
-  let wx=ORIGIN+NODE*i;
-  if(status==='crashing'&&i===step+1){const dist=Math.max(0,wx-playerX);wx=playerX+dist*(1-clamp(crashElapsed/210,0,1));}
+  const wx=ORIGIN+NODE*i;
   drawGate(wx,i,t);
  }
  if(status!=='crashed')drawPlayer(t);
@@ -543,7 +562,7 @@ function init(){
  stars=[];updateGems();resize();bind();updateRushHUD();overlay('intro');requestAnimationFrame(frame);
 }
 // Test interface is read-only except for simulated key input; it is not displayed to players.
-window.__EDUKASS_TEST__={get:()=>({status,step,typed,tasks:tasks.map(t=>({...t})),playerX,solved,crashReason,attempts,world:'valgussaar',rewardUnlocked:status==='finished'||status==='showcase'}),press:onKey,start:()=>startGame(),retry:()=>startGame(true),tick:(ms)=>{for(let r=0;r<ms;r+=35)advance(Math.min(35,ms-r))},reset,validateTasks,generate:createTasks};
+window.__EDUKASS_TEST__={get:()=>({status,step,typed,tasks:tasks.map(t=>({...t})),playerX,solved,crashReason,attempts,world:'valgussaar',rewardUnlocked:status==='finished'||status==='showcase',jumping,jumpHeight,jumpCount,wrongLocked,distance:distanceToObstacle()}),press:onKey,start:()=>startGame(),retry:()=>startGame(true),tick:(ms)=>{for(let r=0;r<ms;r+=35)advance(Math.min(35,ms-r))},reset,validateTasks,generate:createTasks};
 init();
 })();
 </script>
