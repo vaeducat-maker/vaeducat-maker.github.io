@@ -8,6 +8,28 @@ def test(browser,w,h,label):
  p=browser.new_page(viewport={'width':w,'height':h}, device_scale_factor=1, has_touch=True,is_mobile=w<600)
  problems=[];p.on('pageerror',lambda err: problems.append(str(err)))
  p.set_content(html,wait_until='domcontentloaded',timeout=30000)
+ assert p.locator('.scene-sub').count()==0, 'Remove 8 TAKISTUST in game canvas'
+ assert p.locator('[data-key="check"]').count()==0, 'Only auto-check input'
+ assert p.locator('#viewWorld').count()==0, 'No unnecessary revisit-world action'
+ assert p.locator('.keypad .key').count()==11, 'Ten digits plus backspace'
+ assert p.locator('.key-zero').get_attribute('data-key')=='0'
+ if w<600:
+  g=p.evaluate("""() => ({
+   bottom:document.querySelector('.key-zero').getBoundingClientRect().bottom,
+   keyboard:document.querySelector('.keypad').getBoundingClientRect().bottom,
+   height:window.innerHeight,
+   scrollHeight:document.documentElement.scrollHeight
+  })""")
+  assert g['bottom']<=g['height']+1 and g['keyboard']<=g['height']+1,g
+  assert g['scrollHeight']<=g['height']+4,g
+ # The vault must be available before any reward is earned.
+ p.locator('#openVaultIntro').click()
+ assert p.locator('#vaultHero').is_visible()
+ assert p.locator('#vaultGrid .vault-card').count()==9
+ assert p.locator('#vaultGrid .vault-card.unlocked').count()==0
+ assert p.locator('#vaultGrid .vault-card.locked').count()==9
+ p.locator('#closeVault').click()
+ assert p.locator('#introHero').is_visible()
  p.locator('#begin').click()
  p.wait_for_timeout(260)
  s=p.evaluate('window.__EDUKASS_TEST__.get()')
@@ -93,8 +115,8 @@ def test(browser,w,h,label):
  assert p.locator('#finishHero').is_visible()
  assert p.locator('.prize-crystal svg').is_visible()
  assert p.locator('#celebrateParticles .confetti').count()>=50
- assert p.locator('.crystal-slots span').count()==9
- assert p.locator('.crystal-slots span.owned').count()==1
+ assert p.locator('#openVaultReward').is_visible()
+ assert p.locator('#rewardCollectionCount').inner_text()=='1 / 9'
  assert p.locator('#nextWorld').is_disabled(), 'Do not navigate to a nonexistent second world'
  assert s['crystalCollected'] and s['rewardUnlocked'],s
  assert p.evaluate("localStorage.getItem('edukass-neon-world1-crystal-unlocked')")=='1'
@@ -109,11 +131,22 @@ def test(browser,w,h,label):
  assert viewport['panelRight']<=viewport['width']+4,viewport
  assert viewport['prizeWidth']>90,viewport
  p.screenshot(path=str(root/f'{label}_finished.png'))
+ p.locator('#openVaultReward').click()
+ assert p.locator('#vaultHero').is_visible()
+ assert p.locator('#vaultGrid .vault-card').count()==9
+ assert p.locator('#vaultGrid .vault-card.unlocked').count()==1
+ assert p.locator('#vaultGrid .vault-card.locked').count()==8
+ assert p.locator('#vaultProgress').inner_text()=='KOGUTUD 1 / 9'
+ assert p.evaluate('window.__EDUKASS_TEST__.get().vaultCount')==1
+ p.screenshot(path=str(root/f'{label}_vault.png'))
+ p.locator('#closeVault').click()
+ assert p.locator('#finishHero').is_visible()
  assert not problems,problems
  # Replaying must NOT erase an earned crystal.
  p.locator('#again').click()
  assert p.evaluate('window.__EDUKASS_TEST__.get().crystalCollected') is True
  assert p.evaluate("localStorage.getItem('edukass-neon-world1-crystal-unlocked')")=='1'
+ assert p.evaluate("JSON.parse(localStorage.getItem('edukass-neon-crystal-vault-v1'))")==[1]
  # Late correct answers must keep normal motion so turbo cannot cause an unfair crash.
  p.evaluate('window.__EDUKASS_TEST__.tick(6800)')
  late=p.evaluate('window.__EDUKASS_TEST__.get()')
@@ -126,9 +159,9 @@ def test(browser,w,h,label):
  assert p.evaluate('window.__EDUKASS_TEST__.get().step')==1,'Late correct answer was unfairly punished'
  # mobile keyboard in viewport (except landscape where layout dedicated)
  if w<600:
-  g=p.evaluate('''() => ({bottom:document.querySelector('.keypad').getBoundingClientRect().bottom,doc:document.documentElement.scrollHeight})''')
-  assert g['bottom']<=h+15, g
- print(json.dumps({'viewport':[w,h],'runner':'PASS','wrong_crash':'PASS','timeout_crash':'PASS','restart':'PASS','8_obstacles':'PASS','real_jump':'PASS','turbo':'PASS','late_answer_safe':'PASS','five_hazards':'PASS','fresh_tasks':'PASS','25pct_slower':'PASS','physical_collision':'PASS','victory_animation':'PASS','crystal_award':'PASS','award_persistence':'PASS','finish':'PASS','errors':problems},ensure_ascii=False))
+  g=p.evaluate('''() => ({bottom:document.querySelector('.key-zero').getBoundingClientRect().bottom,viewport:window.innerHeight,scrollHeight:document.documentElement.scrollHeight})''')
+  assert g['bottom']<=g['viewport']+1 and g['scrollHeight']<=g['viewport']+4, g
+ print(json.dumps({'viewport':[w,h],'runner':'PASS','wrong_crash':'PASS','timeout_crash':'PASS','restart':'PASS','8_obstacles':'PASS','real_jump':'PASS','turbo':'PASS','late_answer_safe':'PASS','five_hazards':'PASS','fresh_tasks':'PASS','25pct_slower':'PASS','physical_collision':'PASS','victory_animation':'PASS','crystal_award':'PASS','award_persistence':'PASS','mobile_full_keypad':'PASS','auto_check':'PASS','nine_crystal_vault':'PASS','finish':'PASS','errors':problems},ensure_ascii=False))
  p.close()
 
 
@@ -155,5 +188,5 @@ def check_randomization(browser):
 with sync_playwright() as pw:
  browser=pw.chromium.launch(headless=True, executable_path='/usr/bin/chromium',args=['--no-sandbox','--disable-gpu-sandbox'])
  check_randomization(browser)
- for w,h,label in [(390,844,'phone'),(360,740,'compact'),(844,390,'landscape')]:test(browser,w,h,label)
+ for w,h,label in [(390,844,'phone'),(360,740,'compact'),(360,600,'android-browser'),(360,540,'short-android'),(844,390,'landscape')]:test(browser,w,h,label)
  browser.close()
