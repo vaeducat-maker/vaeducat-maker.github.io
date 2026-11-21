@@ -47,7 +47,8 @@ window.EDUKASS_CATALOG=[
     {kind:"custom",handler:"litAliceNov21",title:"Урок 12 — Alice: otsused ja grammatika · 21.11.2026",meta:"25 предложений · грамматические ответы · мнение 94 слова · перевод"}
   ]},
   {id:"muusika",label:"Muusika",icon:"🎵",lessons:[
-    {kind:"custom",handler:"musicLesson1",title:"Урок 1 — Kontrolltöö: tämber, dünaamika · 03.10.26",meta:"19 эстонских слов · 13 музыкальных терминов"}
+    {kind:"custom",handler:"musicLesson1",title:"Урок 1 — Kontrolltöö: tämber, dünaamika · 03.10.26",meta:"19 эстонских слов · 13 музыкальных терминов"},
+    {kind:"custom",handler:"musicMinecraftRockOperaLesson",title:"Урок 2 — Minecraft: Viimane lahing · 21.11.2026",meta:"Рок-опера · 3 действия · перевод · 20 карточек · 8 вопросов"}
   ]},
   {id:"ajalugu",label:"Ajalugu",icon:"🏺",lessons:[{kind:"custom",handler:"historyAjastud",title:"Ajastud",meta:"12 карточек · 3 тренировки"}]}
 ];
