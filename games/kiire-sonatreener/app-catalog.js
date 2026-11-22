@@ -5,6 +5,9 @@ window.EDUKASS_CATALOG=[
     {kind:"custom",handler:"kalaKehaosadLesson",title:"Урок 3 — Kala kehaosad",meta:"7 частей рыбы · плакат · карточки · Kontroll (7 заданий)"},
     {kind:"custom",handler:"konnLesson",title:"Урок 4 — Konn ja kobras",meta:"19 строк · 9 вопросов с ответами · перевод · 28 карточек (10 + 18)"}
   ]},
+  {id:"matemaatika",label:"Matemaatika",icon:"📐",lessons:[
+    {kind:"core",lang:"et",topic:"joonestame-ja-moodame",meta:"11 терминов · перевод · карточки в обе стороны · написание"}
+  ]},
   {id:"inimene",label:"Inimeseõpetus",icon:"👤",lessons:[
     {kind:"custom",handler:"inimeneTervisLesson",title:"Урок 1 — Tervis · 03.10.26",meta:"4 карточки"},
     {kind:"custom",handler:"inimeneTervisenaitajadLesson",title:"Урок 2 — Tervisenäitajad",meta:"Задание A · переводы · 15 карточек в обе стороны"},
