@@ -32,6 +32,21 @@ const DATA={
         {word:"Järvenõgu - järvenõod täituvad pinnaveega.",ru:"Озёрная котловина — озёрные котловины заполняются поверхностной водой."}
       ]}
     ]},
+    {id:"matemaatika",label:"Matemaatika",icon:"📐",showWordList:true,topics:[
+      {id:"joonestame-ja-moodame",title:"Joonestame ja mõõdame",subtitle:"Matemaatika · nr 258, 260, 261",active:false,poster:null,words:[
+        {word:"lõik",ru:"отрезок"},
+        {word:"lõigu otspunktid",ru:"концы отрезка"},
+        {word:"pikkus",ru:"длина"},
+        {word:"laius",ru:"ширина"},
+        {word:"ristkülik",ru:"прямоугольник"},
+        {word:"ruut",ru:"квадрат"},
+        {word:"ümbermõõt",ru:"периметр"},
+        {word:"pindala",ru:"площадь"},
+        {word:"murdjoon",ru:"ломаная линия"},
+        {word:"murdjoone otspunktid",ru:"концы ломаной линии"},
+        {word:"lüli (lülid)",ru:"звено (звенья)"}
+      ]}
+    ]},
     {id:"inimene",label:"Inimene",icon:"👤",topics:[]},
     {id:"eesti-keel",label:"Eesti keel",icon:"📝",showWordList:true,topics:[
       {id:"eesti-keel-1",title:"Sõnad 1",subtitle:"Eesti keel",active:false,poster:null,words:[
