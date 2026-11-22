@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Sõnatreener">
 <title>Sõnatreener — EDUKASS</title>
-<link rel="manifest" href="./manifest.webmanifest?v=20261113-1">
+<link rel="manifest" href="./manifest.webmanifest?v=20261122-2">
 <link rel="icon" href="./icon.svg" type="image/svg+xml">
 <link rel="icon" href="./icon-192.png" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="./icon-192.png">
@@ -240,6 +240,9 @@
   new MutationObserver(tidy).observe(card,{childList:true,subtree:true});
   tidy();
   renderSubjects();
+  // Allow sharing a direct lesson link, without scrolling through the subject catalog.
+  const directLesson=new URLSearchParams(window.location.search).get('lesson');
+  if(directLesson==='joonestame-ja-moodame')openExisting('et',directLesson);
 })();
 </script>
 <script>
