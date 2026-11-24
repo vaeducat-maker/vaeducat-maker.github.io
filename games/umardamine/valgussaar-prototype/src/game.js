@@ -46,26 +46,29 @@ function awardCrystal(number){
  }catch(e){}
  updateCrystalVault();
 }
+function collectibleSVG(id,identifier){
+ // Every world has its own collectible silhouette, not merely a recolor.
+ if(id===2)return "<svg viewBox=\"0 0 82 104\" aria-hidden=\"true\"><defs><linearGradient id=\"___GRAD___\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\"><stop stop-color=\"#fff6b0\"/><stop offset=\".35\" stop-color=\"#ffb642\"/><stop offset=\".73\" stop-color=\"#ff563b\"/><stop offset=\"1\" stop-color=\"#b5124b\"/></linearGradient></defs><path d=\"M41 95C17 84 11 66 18 44c7 11 12 17 20 19C22 46 26 23 42 6c14 18 20 38 6 57 11-4 15-12 20-21 9 22-1 41-27 53Z\" fill=\"url(#___GRAD___)\" stroke=\"#ffe5a2\" stroke-width=\"2.2\"/><path d=\"M41 97C29 87 22 72 29 51c4 8 9 14 12 16 9-12 14-20 12-30 10 22 1 45-12 60Z\" fill=\"#ffcc5a\" opacity=\".8\"/><path d=\"M41 22 50 48 42 76 33 48Z\" fill=\"#fff4af\" opacity=\".82\"/><path d=\"M18 60 35 74 41 95 46 74 66 60\" fill=\"none\" stroke=\"#fff2ab\" stroke-width=\"1.7\"/><path d=\"M41 12v77M30 52l11 14 11-14\" fill=\"none\" stroke=\"#fff3b8\" stroke-opacity=\".72\" stroke-width=\"1.2\"/></svg>".replaceAll('___GRAD___',identifier);
+ return "<svg viewBox=\"0 0 82 104\" aria-hidden=\"true\"><defs><linearGradient id=\"___GRAD___\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\"><stop stop-color=\"#fffde3\"/><stop offset=\".25\" stop-color=\"#9effff\"/><stop offset=\".65\" stop-color=\"#4ac7f8\"/><stop offset=\"1\" stop-color=\"#4354e8\"/></linearGradient></defs><path d=\"M41 2 64 25 75 49 56 81 41 102 20 81 7 49 17 24Z\" fill=\"url(#___GRAD___)\" stroke=\"#f8ffff\" stroke-width=\"2\"/><path d=\"M41 2 17 24 7 49 41 45Z\" fill=\"#d9ffff\" opacity=\".74\"/><path d=\"M41 45 75 49 56 81 41 102Z\" fill=\"#377fc4\" opacity=\".60\"/><path d=\"M17 24 41 45 64 25M7 49l34-4 34 4M20 81l21-36 15 36M41 2v100\" stroke=\"#fff\" stroke-opacity=\".62\" fill=\"none\" stroke-width=\"1.3\"/></svg>".replaceAll('___GRAD___',identifier);
+}
+function updateAwardArt(){
+ const id=1;
+ $('awardCrystalArt').innerHTML=collectibleSVG(id,'awardWorld'+id);
+}
+
 function updateCrystalVault(){
  const ids=collectedCrystals(),count=ids.length;
  $('introCollectionCount').textContent=count+' / 9';
  $('rewardCollectionCount').textContent=count+' / 9';
  $('vaultProgress').textContent='KOGUTUD '+count+' / 9';
  const views=Array.from({length:9},(_,k)=>{
-  const id=k+1,got=ids.includes(id),name=id===1?'VALGUSSAAR':'MAAILM '+String(id).padStart(2,'0');
-  const title=got?(id===1?'VALGUSSAARE KRISTALL':'KRISTALL '+id):'LUKUS';
-  const shapeId='vaultShape'+id;
+  const id=k+1,got=ids.includes(id),name=id===1?'VALGUSSAAR':id===2?'PÄIKESEKURU':'MAAILM '+String(id).padStart(2,'0');
+  const title=got?(id===1?'VALGUSSAARE KRISTALL':id===2?'PÄIKESEKURU KRISTALL':'KRISTALL '+id):'LUKUS';
   return '<div class="vault-card '+(got?'unlocked':'locked')+'" style="--slot:'+(id-1)+'" aria-label="'+name+': '+title+'">'
-    +'<div class="vault-card-number">'+String(id).padStart(2,'0')+'</div>'
-    +'<div class="vault-card-gem"><svg viewBox="0 0 82 104" aria-hidden="true">'
-    +'<defs><linearGradient id="'+shapeId+'" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fffdd0"/><stop offset=".3" stop-color="#9ffff0"/><stop offset=".72" stop-color="#4aa5e6"/><stop offset="1" stop-color="#7858df"/></linearGradient></defs>'
-    +'<path d="M41 3 64 20 77 48 62 76 41 101 20 76 5 48 18 20Z" fill="url(#'+shapeId+')" stroke="#eafff0" stroke-width="2"/>'
-    +'<path d="M41 3 18 20 5 48 41 44Z" fill="#efffff" opacity=".48"/>'
-    +'<path d="M41 44 77 48 62 76 41 101Z" fill="#267abf" opacity=".48"/>'
-    +'<path d="M18 20 41 44 64 20M5 48l36-4 36 4M20 76l21-32 21 32M41 3v98" stroke="#ffffff" stroke-opacity=".52" fill="none" stroke-width="1.5"/>'
-    +'</svg></div>'
-    +'<div class="vault-card-name">'+name+'</div>'
-    +'<div class="vault-card-status">'+(got?'KOGUTUD':'LUKUS')+'</div></div>';
+  +'<div class="vault-card-number">'+String(id).padStart(2,'0')+'</div>'
+  +'<div class="vault-card-gem">'+collectibleSVG(id,'vaultShape'+id)+'</div>'
+  +'<div class="vault-card-name">'+name+'</div>'
+  +'<div class="vault-card-status">'+(got?'KOGUTUD':'LUKUS')+'</div></div>';
  });
  $('vaultGrid').innerHTML=views.join('');
  $('vaultDescription').textContent=count===9?'Kõik üheksa kristalli on kogutud!':count===0?'Läbi maailmad ja kogu kõik üheksa kristalli!':'Sul on '+count+' kristall'+(count===1?'':'i')+'! Järgmine maailm toob uue auhinna.';
@@ -524,11 +527,12 @@ function bind(){
  $('openVaultIntro').addEventListener('click',()=>openCrystalVault('intro'));
  $('openVaultReward').addEventListener('click',()=>openCrystalVault('finish'));
  $('closeVault').addEventListener('click',closeCrystalVault);
+ $('nextWorld').addEventListener('click',()=>{window.location.href='../paikesekuru-prototype/EDUKASS_Paikesekuru_World2_Play.html'});
  window.addEventListener('resize',resize);
  document.addEventListener('visibilitychange',()=>{lastFrame=0});
 }
 function init(){
- stars=[];updateGems();resize();bind();updateCrystalVault();updateRushHUD();overlay('intro');requestAnimationFrame(frame);
+ stars=[];updateGems();resize();bind();updateCrystalVault();updateAwardArt();updateRushHUD();overlay('intro');requestAnimationFrame(frame);
 }
 // Test interface is read-only except for simulated key input; it is not displayed to players.
 window.__EDUKASS_TEST__={get:()=>({status,step,typed,tasks:tasks.map(t=>({...t})),playerX,solved,crashReason,attempts,world:'valgussaar',rewardUnlocked:rewardUnlocked||status==='finished',victoryStage,crystalCollected:collectedCrystals().includes(1),vaultCount:collectedCrystals().length,jumping,jumpHeight,jumpCount,wrongLocked,turboActive,runningSpeed:effectiveSpeed(),distance:distanceToObstacle(),obstacles:Array.from({length:TOTAL},(_,j)=>obstacleKind(j+1))}),press:onKey,start:()=>startGame(),retry:()=>startGame(true),tick:(ms)=>{for(let r=0;r<ms;r+=35)advance(Math.min(35,ms-r))},reset,validateTasks,generate:createTasks};
