@@ -248,7 +248,7 @@ function validateTasks(ts){
  ts.forEach((t,i)=>{
   if(!WORLD_UNITS[worldId].includes(t.unit)||used.has(t.v)||t.v%t.unit===0||!Number.isSafeInteger(t.v)||!Number.isSafeInteger(t.answer))
    throw Error('Invalid or already-rounded exercise '+i);
-  if(t.answer!==Math.floor((t.v+t.unit/2)/t.unit)*t.unit||!matchesSituation(t,{unit:t.unit,min:1,max:999999999,scenario:t.scenario}))
+  if(t.answer!==Math.floor((t.v+t.unit/2)/t.unit)*t.unit||!matchesSituation(t.v,{unit:t.unit,min:1,max:999999999,scenario:t.scenario}))
    throw Error('Wrong rounding or scenario '+i);
   used.add(t.v);situationCounts[t.scenario]=(situationCounts[t.scenario]||0)+1;
  });
