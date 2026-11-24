@@ -47,6 +47,10 @@ def test(browser,w,h,label):
  assert p.locator('#vaultGrid .vault-card.locked').count()==9
  p.locator('#closeVault').click()
  assert p.locator('#introHero').is_visible()
+ assert p.locator('#nextWorld').is_enabled(), 'World 1 should lead to playable world 2'
+ assert p.locator('#awardCrystalArt svg').count()==1
+ assert p.locator('#awardCrystalArt svg path').first.get_attribute('d').startswith('M41 2'), 'Valgussaar reward must have long faceted form'
+ assert p.locator('#vaultGrid svg').count()==9, 'Each world must have a jewel'
  p.locator('#begin').click()
  p.wait_for_timeout(260)
  s=p.evaluate('window.__EDUKASS_TEST__.get()')
