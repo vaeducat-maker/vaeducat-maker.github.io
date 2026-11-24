@@ -140,43 +140,123 @@ function openCrystalVault(from){
 }
 function closeCrystalVault(){overlay(vaultReturn)}
 
-function taskSpec(w,i){
- if(w===1)return i===7?[100,101,999]:i===5?[10,101,999]:[10,11,99];
- if(w===2)return i<4?[10,11,99]:i<8?[10,101,999]:[100,101,999];
- const specs={
- 3:[[100,101,999],[1000,1001,9999]],
- 4:[[100,1001,9999],[1000,1001,99999],[10000,10001,99999]],
- 5:[[1000,1001,99999],[10000,10001,999999],[100000,100001,999999]],
- 6:[[1000,10001,999999],[10000,10001,999999],[100000,100001,9999999],[1000000,1000001,9999999]],
- 7:[[10000,100001,9999999],[100000,100001,9999999],[1000000,1000001,99999999],[10000000,10000001,99999999]],
- 8:[[100000,1000001,99999999],[1000000,1000001,99999999],[10000000,10000001,999999999],[100000000,100000001,999999999]],
- 9:[[1000000,10000001,999999999],[10000000,10000001,999999999],[100000000,100000001,999999999]]
- }[w];return specs[Math.min(specs.length-1,Math.floor(i*specs.length/TOTAL))];
+// Methodically balanced spiralled rounding, world 1..9.
+// An input already divisible by its rounding unit is deliberately NEVER generated.
+// Each problem has independent number length, requested rounding unit, and
+// mathematical situation; the child cannot infer the unit from the number size.
+const WORLD_UNITS={
+ 1:[10,10,10,10,10,10,10,100],
+ 2:[10,10,10,10,100,10,100,10,100,10,100,100],
+ 3:[10,100,1000,100,1000,10,1000,100,10,1000,100,1000],
+ 4:[10,100,1000,10000,1000,100,10000,1000,10,10000,100,1000],
+ 5:[100,1000,10000,100000,10000,1000,100000,10000,100,100000,1000,10000],
+ 6:[1000,10000,100000,1000000,100000,10000,1000000,100000,1000,1000000,10000,100000],
+ 7:[10000,100000,1000000,10000000,1000000,100000,10000000,1000000,10000,10000000,100000,1000000],
+ 8:[100000,1000000,10000000,100000000,10000000,1000000,100000000,10000000,100000,100000000,1000000,10000000],
+ 9:[100,1000,1000000,10,100000000,10000,10000000,100000,1000,100000000,100,10000]
+};
+const SCENARIOS_8=['down','up','boundary4','boundary5','carry','down','up','zeroDown'];
+const SCENARIOS_12=['down','up','boundary4','boundary5','carry','down','up','carry','zeroDown','zeroUp','down','down'];
+function taskBlueprint(){
+ const units=WORLD_UNITS[worldId],types=TOTAL===8?SCENARIOS_8:SCENARIOS_12;
+ const plan=units.map((unit,i)=>{
+  // A target number length is independent of the place being rounded.
+  // Worlds 3..8 mainly use 4..9-digit numbers respectively, plus occasional
+  // shorter review examples. World 9 mixes ALL rounding units with 9-digit inputs.
+  let digits;
+  if(worldId===1)digits=i===7||i===5?3:2;
+  else if(worldId===2)digits=i<4?2:3;
+  else digits=Math.min(9,worldId+1);
+  if(worldId>=3&&worldId<=8&&i<2&&unit<=Math.pow(10,digits-2))digits--;
+  digits=Math.max(digits,String(unit).length);
+  return {unit,scenario:types[i],min:Math.pow(10,digits-1),max:Math.pow(10,digits)-1};
+ });
+ // Mix tasks while retaining the first introductory examples and the last
+ // hundred-rounding challenge of world 1. Avoid same-place runs >= 4.
+ const fixed=worldId===1?2:worldId===2?4:2;
+ const end=worldId===1?plan.length-1:plan.length;
+ for(let retry=0;retry<80;retry++){
+  for(let i=end-1;i>fixed;i--){const j=fixed+random(i-fixed+1);[plan[i],plan[j]]=[plan[j],plan[i]]}
+  if(worldId===1||!plan.some((t,i)=>i>=3&&plan[i-1].unit===t.unit&&plan[i-2].unit===t.unit&&plan[i-3].unit===t.unit))break;
+ }
+ return plan;
+}
+function roundingDigit(n,u){return Math.floor(n/(u/10))%10}
+function hasInternalZero(n){return String(n).slice(1,-1).includes('0')}
+function matchesSituation(n,p){
+ const u=p.unit,d=roundingDigit(n,u),remainder=n%u;
+ if(!remainder||n<p.min||n>p.max)return false; // never already-round numbers
+ const up=d>=5;
+ if(p.scenario==='boundary4')return d===4;
+ if(p.scenario==='boundary5')return d===5;
+ if(p.scenario==='carry')return up&&Math.floor((n+u/2)/u)%10===0;
+ if(p.scenario==='zeroDown')return !up&&hasInternalZero(n);
+ if(p.scenario==='zeroUp')return up&&hasInternalZero(n);
+ if(p.scenario==='up')return d>=6;
+ return d>=1&&d<=3;
+}
+function sampleFromSituation(p){
+ const u=p.unit,part=u/10;
+ if(p.scenario==='carry'){
+  // To cross a base-ten boundary of the rounding unit, the answer must end
+  // in one extra zero: e.g. 9 950 -> 10 000 rounded to hundreds.
+  const lowest=Math.ceil((p.min+1)/(u*10)),highest=Math.floor((p.max+u/2)/(u*10));
+  if(highest<lowest)throw Error('Carry scenario impossible');
+  const target=(lowest+random(highest-lowest+1))*u*10;
+  const delta=1+random(u/2);
+  return target-delta;
+ }
+ const minBase=Math.floor(p.min/u),maxBase=Math.floor(p.max/u);
+ let digit=1+random(3);
+ if(p.scenario==='up'||p.scenario==='zeroUp')digit=6+random(4);
+ else if(p.scenario==='boundary4')digit=4;
+ else if(p.scenario==='boundary5')digit=5;
+ else if(p.scenario==='zeroDown')digit=random(5);
+ const tail=part>1?random(part):0;
+ const base=(minBase+random(maxBase-minBase+1))*u;
+ return base+digit*part+tail;
 }
 function createTasks(){
- const key='edukass-nine-world-math-v1-'+worldId;let history=[];
- try{const h=JSON.parse(localStorage.getItem(key)||'[]');if(Array.isArray(h))history=h.slice(-4)}catch(e){}
- const recent=new Set(history.flat()),used=new Set(),out=[];
- for(let i=0;i<TOTAL;i++){
-  const [unit,min,max]=taskSpec(worldId,i);let n=0;
-  for(let j=0;j<200;j++){const v=min+random(max-min+1);if(v%unit!==0&&!used.has(v)&&!recent.has(v)){n=v;break}}
-  if(!n)for(let v=min;v<=Math.min(max,min+5000);v++)if(v%unit!==0&&!used.has(v)){n=v;break}
-  if(!n)throw Error('Task pool exhausted');
-  const answer=Math.floor((n+unit/2)/unit)*unit;
-  if(!Number.isSafeInteger(answer))throw Error('Unsafe answer');
-  used.add(n);out.push({v:n,unit,answer});
+ const plan=taskBlueprint(),key='edukass-nine-world-methodical-v2-'+worldId;
+ let history=[];try{const old=JSON.parse(localStorage.getItem(key)||'[]');if(Array.isArray(old))history=old.slice(-4)}catch(e){}
+ const recent=new Set(history.flat()),used=new Set(),usedAnswers=new Set(),result=[];
+ for(let i=0;i<plan.length;i++){
+  const spec=plan[i];let n=0;
+  // Pass 1 avoids recently seen numbers and duplicate answers, pass 2 relaxes
+  // just the latter, so every round still meets its instructional scenario.
+  for(let phase=0;phase<3&&!n;phase++)for(let trial=0;trial<2400;trial++){
+   const candidate=sampleFromSituation(spec);
+   if(!matchesSituation(candidate,spec)||used.has(candidate)||phase<2&&recent.has(candidate))continue;
+   const answer=Math.floor((candidate+spec.unit/2)/spec.unit)*spec.unit;
+   if(phase===0&&usedAnswers.has(answer))continue;
+   n=candidate;break;
+  }
+  if(!n)throw Error('Cannot create pedagogically valid '+spec.scenario+' rounding task at world '+worldId+', slot '+i);
+  const answer=Math.floor((n+spec.unit/2)/spec.unit)*spec.unit;
+  if(!Number.isSafeInteger(answer))throw Error('Unsafe rounding result');
+  used.add(n);usedAnswers.add(answer);
+  result.push({v:n,unit:spec.unit,answer,scenario:spec.scenario});
  }
- try{history.push(out.map(x=>x.v));localStorage.setItem(key,JSON.stringify(history.slice(-4)))}catch(e){}
- return out;
+ try{history.push(result.map(t=>t.v));localStorage.setItem(key,JSON.stringify(history.slice(-4)))}catch(e){}
+ validateTasks(result);
+ return result;
 }
 function validateTasks(ts){
  if(ts.length!==TOTAL)throw Error('Incorrect task count');
- const seen=new Set();
+ const used=new Set(),required=worldId===1?SCENARIOS_8:SCENARIOS_12;
+ const situationCounts={};
  ts.forEach((t,i)=>{
-  const [unit,min,max]=taskSpec(worldId,i);
-  if(t.unit!==unit||t.v<min||t.v>max||seen.has(t.v)||t.answer!==Math.floor((t.v+t.unit/2)/t.unit)*t.unit)throw Error('Bad task '+i);
-  seen.add(t.v);
- });return true;
+  if(!WORLD_UNITS[worldId].includes(t.unit)||used.has(t.v)||t.v%t.unit===0||!Number.isSafeInteger(t.v)||!Number.isSafeInteger(t.answer))
+   throw Error('Invalid or already-rounded exercise '+i);
+  if(t.answer!==Math.floor((t.v+t.unit/2)/t.unit)*t.unit||!matchesSituation(t,{unit:t.unit,min:1,max:999999999,scenario:t.scenario}))
+   throw Error('Wrong rounding or scenario '+i);
+  used.add(t.v);situationCounts[t.scenario]=(situationCounts[t.scenario]||0)+1;
+ });
+ const configured=WORLD_UNITS[worldId];
+ for(const u of [...new Set(configured)])if(ts.filter(t=>t.unit===u).length!==configured.filter(t=>t===u).length)throw Error('Unit frequency drift');
+ for(const scenario of [...new Set(required)])if(situationCounts[scenario]!==required.filter(t=>t===scenario).length)throw Error('Situation frequency drift '+scenario);
+ if(worldId>1&&ts.some((t,i)=>i>=3&&ts[i-1].unit===t.unit&&ts[i-2].unit===t.unit&&ts[i-3].unit===t.unit))throw Error('Four identical units in a row');
+ return true;
 }
 function updateGems(){
  $('gems').innerHTML=Array.from({length:TOTAL},(_,i)=>`<span class="gem ${i<step?'done':i===step&&status!=='finished'?'now':''}" aria-hidden="true"></span>`).join('');
