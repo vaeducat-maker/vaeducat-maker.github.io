@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="et">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#080d24"><meta name="color-scheme" content="dark">
+<title>EDUKASS · Ümardamine · Päikesekuru</title>
+<style>/*__CSS__*/</style>
+</head>
+<body>
+<main id="shell">
+  <header class="top">
+    <div class="logo">EDU<span>KASS</span></div>
+    <div class="world-pill"><span class="world-dot"></span> <b>02</b> / 09 · PÄIKESEKURU</div>
+    <div class="top-actions">
+      <button type="button" class="icon-btn" id="sound" aria-label="Lülita heli sisse või välja" title="Heli"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path class="sound-lines" d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/><path class="sound-muted" d="m16 9 5 6m0-6-5 6"/></svg></button>
+      <button type="button" class="icon-btn" id="restart" aria-label="Alusta uuesti" title="Alusta uuesti"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></button>
+    </div>
+  </header>
+  <div class="progress" aria-label="Edenemine"><span class="progress-label">TAKISTUSED</span><div class="gems" id="gems"></div><span class="progress-count" id="step">0/12</span></div>
+  <section class="scene" id="scene" aria-label="Helendavate saarte mängumaailm">
+    <canvas id="world" aria-hidden="true"></canvas>
+    <div class="scene-heading"><small>MAAILM 02</small><strong>Päikesekuru</strong></div>
+    <div class="rush-hud" id="rushHud"><div class="rush-line"><span id="rushLabel">TAKISTUSENI</span><strong id="rushClock">—</strong></div><div class="rush-track"><div id="rushFill"></div></div></div>
+    <div class="scene-caption" id="sceneCaption">KIIRUSTA! TAKISTUS LÄHENEB</div>
+    <div class="scene-glow" id="sceneGlow"></div>
+  </section>
+  <section class="problem" aria-live="polite"><div class="problem-top"><span class="verb">ÜMARDA</span><span class="unit" id="unit">KÜMNELISTENI</span></div><div class="number" id="number">—</div></section>
+  <div class="answer-wrap"><div class="answer-display" id="answerBox"><span class="answer-value empty" id="answerValue"></span></div><div class="answer-info"><small>ETAPP</small><strong id="answerStep">01 / 12</strong></div></div>
+  <div class="note" id="note" aria-live="polite">Sisesta vastus</div>
+  <section class="keypad" id="keypad" aria-label="Numbriklahvistik">
+    <button class="key" data-key="1">1</button><button class="key" data-key="2">2</button><button class="key" data-key="3">3</button>
+    <button class="key" data-key="4">4</button><button class="key" data-key="5">5</button><button class="key" data-key="6">6</button>
+    <button class="key" data-key="7">7</button><button class="key" data-key="8">8</button><button class="key" data-key="9">9</button>
+    <button class="key action" data-key="back" aria-label="Kustuta viimane number">⌫</button><button class="key key-zero" data-key="0">0</button>
+  </section>
+  <footer class="foot">EDUKASS · ÜMARDAMINE · PROTOTÜÜP 01</footer>
+</main>
+<div class="overlay" id="overlay" role="dialog" aria-modal="true">
+ <div class="hero" id="introHero">
+  <span class="eyebrow">EDUKASS · ÜMARDAMINE</span>
+  <div class="hero-mark" aria-hidden="true"><svg viewBox="0 0 128 128"><defs><linearGradient id="introG" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#fdffcf"/><stop offset=".48" stop-color="#83ffe9"/><stop offset="1" stop-color="#587af4"/></linearGradient></defs><circle cx="64" cy="64" r="56" stroke="#a1ffe6" stroke-opacity=".42" stroke-width="2" fill="none" stroke-dasharray="2 9"/><path d="M64 12 92 49 90 82 64 116 38 82 36 49Z" fill="url(#introG)" stroke="#e8fff9" stroke-width="3"/><path d="m64 12 0 104m-28-67 28 13 28-13M38 82l26-20 26 20" stroke="#147baf" stroke-opacity=".52" stroke-width="2" fill="none"/><path d="M64 12 36 49 64 62 92 49Z" fill="#f9ffe4" fill-opacity=".32"/><path d="M14 55h15M99 55h15M64 0v10M64 118v10" stroke="#a5fff1" stroke-width="2"/></svg></div>
+  <h1>Avasta<br>Päikesekuru</h1>
+  <p>Kristall kihutab ise edasi! Ümarda enne takistust: õige vastus avab hüppe, vale vastus või hilinemine tähendab kokkupõrget. Siis alustad otsast.</p>
+  <button class="primary" id="begin">ALUSTA MÄNGU <span aria-hidden="true">›</span></button>
+  <button class="intro-vault-btn" id="openVaultIntro" type="button">KRISTALLIDE VARAKAMBER <span id="introCollectionCount">0 / 9</span></button>
+ </div>
+ <div class="celebrate-particles" id="celebrateParticles" aria-hidden="true"></div>
+ <div class="hero celebrate-victory" id="victoryHero" hidden>
+  <div class="victory-halo" aria-hidden="true"><span></span><span></span><span></span></div>
+  <span class="victory-kicker">MAAILM 02 VÕIDETUD</span>
+  <h1 class="victory-headline">VÕRRATU!</h1>
+  <div class="victory-score"><strong>12 / 12</strong><span>TAKISTUST LÄBITUD</span></div>
+  <div class="victory-stars" aria-hidden="true">✦ <span>✦</span> ✦</div>
+ </div>
+ <div class="hero celebrate-reward" id="finishHero" hidden>
+  <span class="reward-kicker">MAAILM 02 · PÄIKESEKURU</span>
+  <h1 class="reward-title">KRISTALL SAADUD!</h1>
+  <div class="prize-theatre" aria-label="Päikesekuru kristall">
+   <div class="prize-rays" aria-hidden="true"></div>
+   <div class="prize-aura" aria-hidden="true"></div>
+   <div class="prize-ring prize-ring-one" aria-hidden="true"></div>
+   <div class="prize-ring prize-ring-two" aria-hidden="true"></div>
+   <div class="prize-star s1" aria-hidden="true">✦</div>
+   <div class="prize-star s2" aria-hidden="true">✧</div>
+   <div class="prize-star s3" aria-hidden="true">✦</div>
+   <div class="prize-star s4" aria-hidden="true">✦</div>
+   <div class="prize-crystal">
+    <svg viewBox="0 0 180 218" role="img" aria-label="Helendav Päikesekuru kristall">
+     <defs>
+      <linearGradient id="awardBody" x1=".12" y1="0" x2=".86" y2="1"><stop stop-color="#fff8b7"/><stop offset=".22" stop-color="#f0fff7"/><stop offset=".48" stop-color="#8cffe3"/><stop offset=".78" stop-color="#55bcec"/><stop offset="1" stop-color="#7856e7"/></linearGradient>
+      <linearGradient id="awardLeft" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#e5ffff"/><stop offset=".6" stop-color="#66dee4"/><stop offset="1" stop-color="#3179be"/></linearGradient>
+      <linearGradient id="awardRight" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f6fff2"/><stop offset=".45" stop-color="#75f5dd"/><stop offset="1" stop-color="#6357cf"/></linearGradient>
+      <linearGradient id="awardCore" x1="0" y1="0" x2=".2" y2="1"><stop stop-color="#fffde6"/><stop offset=".5" stop-color="#b9ffe4"/><stop offset="1" stop-color="#50c8db"/></linearGradient>
+     </defs>
+     <path d="M90 4 136 43 162 99 128 160 90 212 52 160 18 99 44 43Z" fill="url(#awardBody)" stroke="#f5ffdf" stroke-width="3.5"/>
+     <path d="M90 4 44 43 18 99 90 88Z" fill="url(#awardLeft)"/>
+     <path d="M90 4 136 43 162 99 90 88Z" fill="#cefff0" opacity=".83"/>
+     <path d="M18 99 52 160 90 212 90 88Z" fill="#3d9ad3" opacity=".72"/>
+     <path d="M162 99 128 160 90 212 90 88Z" fill="url(#awardRight)" opacity=".95"/>
+     <path d="M44 43 90 4 136 43 90 88Z" fill="url(#awardCore)" stroke="#fffbd6" stroke-width="1.2"/>
+     <path d="M90 88V212M18 99l72-11 72 11M52 160l38-72 38 72M44 43l46 45 46-45" fill="none" stroke="#f7ffff" stroke-opacity=".58" stroke-width="1.8"/>
+     <path d="M90 25 101 63 91 84 78 63Z" fill="#fffddd" opacity=".76"/>
+     <path d="M37 100 59 94 83 104 58 137Z" fill="#fff" opacity=".28"/>
+     <path d="M110 104 145 102 123 139 98 172Z" fill="#d5fff3" opacity=".30"/>
+    </svg>
+   </div>
+   <div class="prize-floor" aria-hidden="true"></div>
+  </div>
+  <div class="reward-name">PÄIKESEKURU KRISTALL<small>SA SAID PÄIKESEKURU KRISTALLI!</small></div>
+  <button class="vault-open-btn" id="openVaultReward" type="button"><span class="mini-crystal" aria-hidden="true"></span><span>AVA KRISTALLIDE VARAKAMBER</span><strong id="rewardCollectionCount">1 / 9</strong></button>
+  <button class="next-world" id="nextWorld" type="button" disabled aria-label="Järgmine maailm tuleb varsti">JÄRGMINE MAAILM <span>VARSTI</span></button>
+  <div class="reward-actions">
+   <button class="secondary" id="again" type="button">MÄNGI UUESTI ↻</button>
+  </div>
+ </div>
+ <div class="hero crystal-vault" id="vaultHero" hidden>
+  <span class="vault-eyebrow">EDUKASS · KRISTALLIDE KOGU</span>
+  <h1 class="vault-title">KRISTALLIDE VARAKAMBER</h1>
+  <div class="vault-progress" id="vaultProgress" aria-live="polite">KOGUTUD 0 / 9</div>
+  <div class="vault-display">
+   <div class="vault-constellation" aria-hidden="true"></div>
+   <div class="vault-grid" id="vaultGrid" aria-label="Üheksa kristalli"></div>
+  </div>
+  <p class="vault-description" id="vaultDescription">Läbi maailmad ja kogu kõik üheksa kristalli!</p>
+  <button class="vault-back" id="closeVault" type="button">TAGASI</button>
+ </div>
+ <div class="hero" id="crashHero" hidden>
+  <span class="fail-kicker">MAAILM 02 · KATSE LÄBI</span>
+  <div class="fail-icon" aria-hidden="true">✕</div>
+  <h1>Kokkupõrge!</h1>
+  <p id="crashDetail">Takistus tabas kristalli.</p>
+  <div class="fail-score">LÄBITUD TAKISTUSI: <strong id="crashCount">0 / 8</strong></div>
+  <p class="fail-explain">Kui eksid või jääd hiljaks, algab tase uuesti.</p>
+  <button class="primary" id="retry">PROOVI UUESTI ↻</button>
+ </div>
+</div>
+<script>/*__JS__*/</script>
+</body>
+</html>
