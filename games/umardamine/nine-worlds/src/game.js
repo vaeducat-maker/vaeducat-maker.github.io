@@ -356,6 +356,7 @@ function approvedMusicPause(){try{solarTrack.pause()}catch(e){}}
 function setSound(){
  soundOn=!soundOn;$('sound').classList.toggle('enabled',soundOn);
  $('sound').setAttribute('aria-label',soundOn?'Lülita heli välja':'Lülita heli sisse');
+ $('introSound').textContent=soundOn?'♫ MUUSIKA SEES · LÜLITA VÄLJA':'♫ KUULA SOLAR SPARKI';
  if(soundOn){approvedMusicPlay();tone(510,.07,'triangle',.018)}
  else {approvedMusicPause();try{softFail.pause()}catch(e){}}
 }
@@ -807,7 +808,7 @@ function bind(){
   if($('passportDialog').open||$('shareDialog').open)return;
   const key=e.key;if(key==='Backspace'){e.preventDefault();onKey('back')}else if(key==='Enter'){e.preventDefault();if(victoryStage==='vault')closeCrystalVault();else if(status==='intro')startGame();else if(status==='finished'&&victoryStage==='finish')startGame();else if(status==='crashed')startGame(true)}else if(/^\d$/.test(key))onKey(key);
  });
- $('begin').addEventListener('click',()=>startGame());$('again').addEventListener('click',()=>startGame());$('retry').addEventListener('click',()=>startGame(true));$('restart').addEventListener('click',reset);$('sound').addEventListener('click',setSound);
+ $('begin').addEventListener('click',()=>startGame());$('again').addEventListener('click',()=>startGame());$('retry').addEventListener('click',()=>startGame(true));$('restart').addEventListener('click',reset);$('sound').addEventListener('click',setSound);$('introSound').addEventListener('click',setSound);
  $('openVaultIntro').addEventListener('click',()=>openCrystalVault('intro'));
  $('openVaultReward').addEventListener('click',()=>openCrystalVault('finish'));
  $('closeVault').addEventListener('click',closeCrystalVault);
