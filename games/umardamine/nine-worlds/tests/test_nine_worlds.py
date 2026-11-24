@@ -183,6 +183,9 @@ def validate(browser,width,height,label,full=True):
     assert second_page.evaluate("window.__EDUKASS_TEST__.get().worldId")==2
     assert second_page.locator("#introName").inner_text()=="Päikesekuru"
     assert second_page.evaluate("JSON.parse(localStorage.getItem('edukass-neon-crystal-vault-v1'))")==[1]
+    second_page.reload(wait_until="domcontentloaded")
+    assert second_page.evaluate("window.__EDUKASS_TEST__.get().worldId")==2,"Local progress should resume at first unfinished world"
+    assert second_page.evaluate("window.__EDUKASS_TEST__.get().vaultCount")==1
     new_device.close()
     page.locator("#closePassport").click()
    page.screenshot(path=str(ROOT/f"qa_{label}_world_{world+1}_intro.png"))
