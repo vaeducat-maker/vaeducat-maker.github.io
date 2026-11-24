@@ -26,7 +26,17 @@ def check(browser,w,h,label):
  p.set_content(html,wait_until='domcontentloaded')
  assert p.locator('[data-key="check"]').count()==0
  assert p.locator('.keypad .key').count()==11
+ assert p.locator('#awardCrystalArt svg').count()==1
+ assert p.locator('#awardCrystalArt svg path').first.get_attribute('d').startswith('M41 95'), 'Päikesekuru reward must be flame-lotus shaped'
+ assert p.locator('#vaultGrid svg').count()==9, 'Nine different vault jewels'
+ assert p.locator('#nextWorld').is_disabled(), 'Do not link to unfinished world three'
  p.locator('#begin').click()
+ assert p.evaluate('window.__EDUKASS_TEST__.get().runningSpeed')==47, 'Second world needs relaxed pace'
+ assert len(set(p.evaluate('window.__EDUKASS_TEST__.get().obstacles')))==6, 'Second world needs new obstacles'
+ tasks=p.evaluate('window.__EDUKASS_TEST__.get().tasks')
+ assert all(t['unit']==10 and t['v']<100 for t in tasks[:4])
+ assert all(t['unit']==10 and 100<=t['v']<1000 for t in tasks[4:8])
+ assert all(t['unit']==100 and 100<=t['v']<1000 for t in tasks[8:])
  assert p.evaluate('window.__EDUKASS_TEST__.get().tasks.length')==12
  assert p.evaluate('window.__EDUKASS_TEST__.get().world')=='paikesekuru'
  for step in range(12):
