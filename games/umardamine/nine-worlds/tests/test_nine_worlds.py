@@ -69,6 +69,41 @@ def validate(browser,width,height,label,full=True):
  assert page.locator(".keypad [data-key='check']").count()==0
  assert page.locator(".keypad .key").count()==11
  assert page.locator("#introName").inner_text()=="Valgussaar"
+ assert page.locator(".intro-crystal").count()==9
+ assert "KRISTALLIRÄNNAK" in page.locator(".intro-game-name").inner_text()
+ assert page.locator("#shareGame").is_visible()
+ assert page.locator("#openPassport").is_visible()
+ assert page.locator("#solarTrack").get_attribute("src")=="assets/02_solar_spark.mp3"
+ assert page.locator("#softFail").get_attribute("src")=="assets/01_soft_oops.mp3"
+ assert page.locator("#solarTrack").evaluate("(a)=>a.volume")==0.32
+ assert page.locator("#softFail").evaluate("(a)=>a.volume")==0.53
+ page.locator("#shareGameIntro").click()
+ assert page.locator("#shareDialog").is_visible()
+ assert page.locator("#shareQr svg").count()==1
+ public_link=page.locator("#shareUrl").input_value()
+ assert public_link.startswith("http://127.0.0.1:") and "#ekpass=" not in public_link
+ page.locator("#closeShare").click()
+ assert not page.locator("#shareDialog").is_visible()
+ page.locator("#openPassportIntro").click()
+ assert page.locator("#passportDialog").is_visible()
+ assert "KOGUTUD 0 / 9" in page.locator("#passportSummary").inner_text()
+ page.locator("#createPassport").click()
+ assert page.locator("#passportQr svg").count()==1
+ start_link=page.locator("#passportUrl").input_value()
+ assert "#ekpass=" in start_link
+ page.locator("#closePassport").click()
+ assert not page.locator("#passportDialog").is_visible()
+ # A valid passport URL is not silently imported: new device must confirm.
+ second=browser.new_context(viewport={"width":width,"height":height})
+ other=second.new_page()
+ other.goto(start_link,wait_until="domcontentloaded")
+ assert other.locator("#passportDialog").is_visible()
+ assert other.locator("#passportConfirm").is_visible()
+ assert other.evaluate("window.__EDUKASS_TEST__.get().vaultCount")==0
+ other.locator("#passportRestore").click()
+ assert not other.locator("#passportDialog").is_visible()
+ assert other.evaluate("window.__EDUKASS_TEST__.get().vaultCount")==0
+ second.close()
  page.screenshot(path=str(ROOT/f"qa_{label}_world_1_intro.png"))
  if width<600:
   bounds=page.evaluate("""() => ({
@@ -122,6 +157,25 @@ def validate(browser,width,height,label,full=True):
    page.locator("#nextWorld").click()
    assert page.locator("#introHero").is_visible()
    assert page.evaluate("window.__EDUKASS_TEST__.get().worldId")==world+1
+   if world==1:
+    # Earned crystal must survive a personal, QR-ready link on a different device.
+    page.locator("#openPassportIntro").click()
+    page.locator("#createPassport").click()
+    assert page.locator("#passportQr svg").count()==1
+    transfer=page.locator("#passportUrl").input_value()
+    new_device=browser.new_context(viewport={"width":width,"height":height})
+    second_page=new_device.new_page()
+    second_page.goto(transfer,wait_until="domcontentloaded")
+    assert second_page.locator("#passportConfirm").is_visible()
+    assert "1 / 9" in second_page.locator("#passportImportSummary").inner_text()
+    assert second_page.evaluate("window.__EDUKASS_TEST__.get().vaultCount")==0
+    second_page.locator("#passportRestore").click()
+    assert second_page.evaluate("window.__EDUKASS_TEST__.get().vaultCount")==1
+    assert second_page.evaluate("window.__EDUKASS_TEST__.get().worldId")==2
+    assert second_page.locator("#introName").inner_text()=="Päikesekuru"
+    assert second_page.evaluate("JSON.parse(localStorage.getItem('edukass-neon-crystal-vault-v1'))")==[1]
+    new_device.close()
+    page.locator("#closePassport").click()
    page.screenshot(path=str(ROOT/f"qa_{label}_world_{world+1}_intro.png"))
   else:
    # The automatic cinematic also activates after the winning ceremony.
