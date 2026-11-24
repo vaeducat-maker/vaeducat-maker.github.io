@@ -4,20 +4,20 @@ const $=id=>document.getElementById(id);
 const canvas=$('world'),ctx=canvas.getContext('2d',{alpha:false});
 const reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const NODE=580, ORIGIN=108, TOTAL=12;
-const SPEED=64.5, FINAL_SPEED=56.25, TURBO_SPEED=255, TURBO_ARC_STRETCH=1.4; // 25% slower
+const SPEED=47, FINAL_SPEED=43, TURBO_SPEED=195, TURBO_ARC_STRETCH=1.4; // 25% slower
 const ORIGINAL_SPEED=86, ORIGINAL_FINAL_SPEED=75; // maintain original physical jump curves
 const JUMP_V=240, JUMP_G=200, JUMP_TOTAL=2*JUMP_V/JUMP_G;
 const HAZARD_HALF_WIDTH=58, CLEARANCE=76; // consistent with the rendered spike and crystal hitboxes
 const COLORS={cyan:'#ffc26e',cyanB:'#ffa34b',violet:'#ff6879',pink:'#ff8a55',gold:'#ffe29b',white:'#f1fff9'};
 const names={10:'KÜMNELISTENI',100:'SAJALISTENI'};
-const HAZARD_TYPES=['fangs','rotor','tri-spikes','lightning','prism'];
+const HAZARD_TYPES=['fire-steps','sun-wheel','ember-wall','flame-fangs','solar-ramp','fire-steps','sun-wheel','ember-wall','flame-fangs','rotor','solar-ramp','fire-steps'];
 const templates=[
-{unit:10,kind:'two-tens'},{unit:10,kind:'two-tens'},
-{unit:10,kind:'three-tens'},{unit:100,kind:'three-hundreds'},
-{unit:10,kind:'three-tens'},{unit:100,kind:'three-hundreds'},
-{unit:100,kind:'three-hundreds'},{unit:10,kind:'three-tens'},
-{unit:100,kind:'three-hundreds'},{unit:100,kind:'four-hundreds'},
-{unit:10,kind:'three-tens'},{unit:100,kind:'four-hundreds'}
+ {unit:10,kind:'two-tens'}, {unit:10,kind:'two-tens'},
+ {unit:10,kind:'two-tens'}, {unit:10,kind:'two-tens'},
+ {unit:10,kind:'three-tens'}, {unit:10,kind:'three-tens'},
+ {unit:10,kind:'three-tens'}, {unit:10,kind:'three-tens'},
+ {unit:100,kind:'three-hundreds'}, {unit:100,kind:'three-hundreds'},
+ {unit:100,kind:'three-hundreds'}, {unit:100,kind:'three-hundreds'}
 ];
 let tasks=[],step=0,typed='',status='intro',solved=false,crashStart=0,crashReason='',crashElapsed=0,playElapsed=0;
 let attempts=0,ceremonyToken=0,victoryStage='hidden',vaultReturn='intro';
@@ -51,6 +51,16 @@ function awardCrystal(number){
  }catch(e){}
  updateCrystalVault();
 }
+function collectibleSVG(id,identifier){
+ // Every world has its own collectible silhouette, not merely a recolor.
+ if(id===2)return "<svg viewBox=\"0 0 82 104\" aria-hidden=\"true\"><defs><linearGradient id=\"___GRAD___\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\"><stop stop-color=\"#fff6b0\"/><stop offset=\".35\" stop-color=\"#ffb642\"/><stop offset=\".73\" stop-color=\"#ff563b\"/><stop offset=\"1\" stop-color=\"#b5124b\"/></linearGradient></defs><path d=\"M41 95C17 84 11 66 18 44c7 11 12 17 20 19C22 46 26 23 42 6c14 18 20 38 6 57 11-4 15-12 20-21 9 22-1 41-27 53Z\" fill=\"url(#___GRAD___)\" stroke=\"#ffe5a2\" stroke-width=\"2.2\"/><path d=\"M41 97C29 87 22 72 29 51c4 8 9 14 12 16 9-12 14-20 12-30 10 22 1 45-12 60Z\" fill=\"#ffcc5a\" opacity=\".8\"/><path d=\"M41 22 50 48 42 76 33 48Z\" fill=\"#fff4af\" opacity=\".82\"/><path d=\"M18 60 35 74 41 95 46 74 66 60\" fill=\"none\" stroke=\"#fff2ab\" stroke-width=\"1.7\"/><path d=\"M41 12v77M30 52l11 14 11-14\" fill=\"none\" stroke=\"#fff3b8\" stroke-opacity=\".72\" stroke-width=\"1.2\"/></svg>".replaceAll('___GRAD___',identifier);
+ return "<svg viewBox=\"0 0 82 104\" aria-hidden=\"true\"><defs><linearGradient id=\"___GRAD___\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\"><stop stop-color=\"#fffde3\"/><stop offset=\".25\" stop-color=\"#9effff\"/><stop offset=\".65\" stop-color=\"#4ac7f8\"/><stop offset=\"1\" stop-color=\"#4354e8\"/></linearGradient></defs><path d=\"M41 2 64 25 75 49 56 81 41 102 20 81 7 49 17 24Z\" fill=\"url(#___GRAD___)\" stroke=\"#f8ffff\" stroke-width=\"2\"/><path d=\"M41 2 17 24 7 49 41 45Z\" fill=\"#d9ffff\" opacity=\".74\"/><path d=\"M41 45 75 49 56 81 41 102Z\" fill=\"#377fc4\" opacity=\".60\"/><path d=\"M17 24 41 45 64 25M7 49l34-4 34 4M20 81l21-36 15 36M41 2v100\" stroke=\"#fff\" stroke-opacity=\".62\" fill=\"none\" stroke-width=\"1.3\"/></svg>".replaceAll('___GRAD___',identifier);
+}
+function updateAwardArt(){
+ const id=2;
+ $('awardCrystalArt').innerHTML=collectibleSVG(id,'awardWorld'+id);
+}
+
 function updateCrystalVault(){
  const ids=collectedCrystals(),count=ids.length;
  $('introCollectionCount').textContent=count+' / 9';
@@ -59,18 +69,11 @@ function updateCrystalVault(){
  const views=Array.from({length:9},(_,k)=>{
   const id=k+1,got=ids.includes(id),name=id===1?'VALGUSSAAR':id===2?'PÄIKESEKURU':'MAAILM '+String(id).padStart(2,'0');
   const title=got?(id===1?'VALGUSSAARE KRISTALL':id===2?'PÄIKESEKURU KRISTALL':'KRISTALL '+id):'LUKUS';
-  const shapeId='vaultShape'+id;
   return '<div class="vault-card '+(got?'unlocked':'locked')+'" style="--slot:'+(id-1)+'" aria-label="'+name+': '+title+'">'
-    +'<div class="vault-card-number">'+String(id).padStart(2,'0')+'</div>'
-    +'<div class="vault-card-gem"><svg viewBox="0 0 82 104" aria-hidden="true">'
-    +'<defs><linearGradient id="'+shapeId+'" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fffdd0"/><stop offset=".3" stop-color="#9ffff0"/><stop offset=".72" stop-color="#4aa5e6"/><stop offset="1" stop-color="#7858df"/></linearGradient></defs>'
-    +'<path d="M41 3 64 20 77 48 62 76 41 101 20 76 5 48 18 20Z" fill="url(#'+shapeId+')" stroke="#eafff0" stroke-width="2"/>'
-    +'<path d="M41 3 18 20 5 48 41 44Z" fill="#efffff" opacity=".48"/>'
-    +'<path d="M41 44 77 48 62 76 41 101Z" fill="#267abf" opacity=".48"/>'
-    +'<path d="M18 20 41 44 64 20M5 48l36-4 36 4M20 76l21-32 21 32M41 3v98" stroke="#ffffff" stroke-opacity=".52" fill="none" stroke-width="1.5"/>'
-    +'</svg></div>'
-    +'<div class="vault-card-name">'+name+'</div>'
-    +'<div class="vault-card-status">'+(got?'KOGUTUD':'LUKUS')+'</div></div>';
+  +'<div class="vault-card-number">'+String(id).padStart(2,'0')+'</div>'
+  +'<div class="vault-card-gem">'+collectibleSVG(id,'vaultShape'+id)+'</div>'
+  +'<div class="vault-card-name">'+name+'</div>'
+  +'<div class="vault-card-status">'+(got?'KOGUTUD':'LUKUS')+'</div></div>';
  });
  $('vaultGrid').innerHTML=views.join('');
  $('vaultDescription').textContent=count===9?'Kõik üheksa kristalli on kogutud!':count===0?'Läbi maailmad ja kogu kõik üheksa kristalli!':'Sul on '+count+' kristall'+(count===1?'':'i')+'! Järgmine maailm toob uue auhinna.';
@@ -112,12 +115,16 @@ function createTasks(){
  return result;
 }
 function validateTasks(ts){
- if(ts.length!==TOTAL)throw Error('World 2 must have twelve tasks');
+ if(ts.length!==12)throw Error('World two requires twelve problems');
  const seen=new Set();
- ts.forEach((t,i)=>{if(seen.has(t.v))throw Error('duplicate number');seen.add(t.v);
- if(t.answer!==Math.floor((t.v+t.unit/2)/t.unit)*t.unit)throw Error('rounding incorrect '+i);
- if(i<2&&(t.unit!==10||t.v>99||t.v<10))throw Error('early progression');});
- if(ts.filter(t=>t.unit===100).length<5)throw Error('hundreds must be practiced');
+ ts.forEach((t,i)=>{
+  if(seen.has(t.v))throw Error('Duplicate number');
+  seen.add(t.v);
+  if(t.answer!==Math.floor((t.v+t.unit/2)/t.unit)*t.unit)throw Error('Wrong rounding '+i);
+  if(i<4&&(t.kind!=='two-tens'||t.unit!==10||t.v>99))throw Error('Early level must stay two digit');
+  if(i>=4&&i<8&&(t.kind!=='three-tens'||t.unit!==10||t.v<100||t.v>999))throw Error('Middle level tens');
+  if(i>=8&&(t.kind!=='three-hundreds'||t.unit!==100||t.v<100||t.v>999))throw Error('Final level hundreds');
+ });
  return true;
 }
 function updateGems(){
@@ -179,7 +186,7 @@ function makeConfetti(){
 }
 function speedForStep(){return step===TOTAL-1?FINAL_SPEED:SPEED}
 function jumpReferenceSpeed(){return step===TOTAL-1?ORIGINAL_FINAL_SPEED:ORIGINAL_SPEED}
-function obstacleKind(i){return HAZARD_TYPES[(i-1+obstacleOffset)%HAZARD_TYPES.length]}
+function obstacleKind(i){return HAZARD_TYPES[i-1]}
 function distanceToObstacle(){return ORIGIN+NODE*(step+1)-playerX}
 function hazardScale(){return clamp(canvasH/310,.42,1)}
 function effectiveSpeed(){
@@ -390,7 +397,32 @@ function drawGate(worldX,i,t){
  ctx.globalAlpha=past?.57:1;
  glowCircle(0,-36,77,past?'#35fbe121':'#ff5aaf35');
  const col=past?'#225b70':'#a83147',rim=past?'#93ffe8':'#ffd485';
- if(type==='fangs'){
+ if(type==='fire-steps'){
+  // A staggered stack of glowing hot blocks.
+  polygon([[-48,0],[-48,-35],[-18,-35],[-18,-63],[10,-63],[10,-82],[45,-82],[45,0]],'#8b2335','#ffd77c',2.5);
+  polygon([[-46,-34],[-18,-34],[-18,-28],[-46,-28]],'#ff9a3d');
+  polygon([[-18,-62],[10,-62],[10,-56],[-18,-56]],'#ffae53');
+  polygon([[10,-81],[44,-81],[44,-75],[10,-75]],'#ffe6a2');
+ }else if(type==='sun-wheel'){
+  ctx.save();ctx.translate(0,-40);ctx.rotate(t*.0016+i);
+  const rays=[];for(let n=0;n<20;n++){const a=n*Math.PI/10,rad=n%2===0?42:30;rays.push([Math.cos(a)*rad,Math.sin(a)*rad])}
+  polygon(rays,'#b42a35','#ffbc58',2);
+  circle(0,0,24,'#f67a33');circle(0,0,11,'#fff2bd');circle(0,0,5,'#ad2333');
+  ctx.restore();
+ }else if(type==='ember-wall'){
+  polygon([[-39,0],[-39,-76],[39,-76],[39,0]],'#9b283a','#ffb64d',2.5);
+  for(let n=0;n<3;n++){
+   polygon([[-29+n*20,-20],[-21+n*20,-62],[-10+n*20,-37],[-15+n*20,-19]],n%2?'#ffdf7d':'#ff843c','#fff0b2',.8);
+  }
+ }else if(type==='flame-fangs'){
+  polygon([[-48,0],[-41,-46],[-25,-81],[-5,-44],[-8,0]],'#ae2d39','#ffc264',2);
+  polygon([[8,0],[5,-44],[25,-81],[41,-46],[48,0]],'#ae2d39','#ffc264',2);
+  polygon([[-16,-15],[0,-65],[16,-15],[0,-29]],'#ffad44','#ffe7a3',2);
+ }else if(type==='solar-ramp'){
+  polygon([[-49,0],[-9,-70],[19,-70],[49,0]],'#9b293b','#ffcb6e',2.3);
+  line([[-29,-8],[-3,-50],[13,-50],[31,-8]],'#ffeda1',3);
+  polygon([[-6,-49],[8,-49],[0,-61]],'#ffea92');
+ }else if(type==='fangs'){
   polygon([[-43,0],[-36,-41],[-20,-79],[-3,-40],[-9,0]],col,rim,2);
   polygon([[9,0],[3,-40],[20,-79],[36,-41],[43,0]],col,rim,2);
   polygon([[-26,-71],[-20,-86],[-13,-66],[-20,-71]],past?'#adf3e4':'#ffd1ee');
@@ -458,16 +490,14 @@ function drawPlayer(t){
  glowCircle(x,y,59*scale,'#ffae634c');glowCircle(x,y,27*scale,'#ffda8a72');
  ctx.save();ctx.translate(x,y);ctx.scale(scale,scale);ctx.rotate(spin+Math.sin(t*.011)*.025);
  ctx.shadowColor='#ffab5d';ctx.shadowBlur=19;
- // Original asymmetric prism avatar: no cube, car, vehicle, or iconography from reference games.
- polygon([[0,-26],[19,-7],[13,16],[0,28],[-18,11],[-15,-9]],'#ffc16c','#ddfff1',2);
- ctx.shadowBlur=0;
- polygon([[0,-26],[19,-7],[0,1],[-15,-9]],'#fff0c9');
- polygon([[-15,-9],[0,1],[0,28],[-18,11]],'#ef8f54');
- polygon([[0,1],[19,-7],[13,16],[0,28]],'#dd5551');
- line([[0,-23],[0,24]],'#ffffff9c',1.2,.67);
- // Geometric bright fins, like a comet but not a vehicle.
- polygon([[-16,1],[-32,9],[-24,16],[-14,13]],'#f66b78','#f0d5ff70',.8);
- polygon([[16,1],[31,9],[23,15],[14,12]],'#7adcf6','#d9ffff80',.8);
+ // A fire-lotus crystal: five pointed facets, no blue diamond body.
+ polygon([[0,-34],[14,-13],[23,-19],[23,4],[15,23],[0,34],[-15,23],[-23,4],[-23,-19],[-14,-13]],'#ff762f','#ffec9e',2);
+ polygon([[0,-34],[14,-13],[0,-4],[-14,-13]],'#fff5b5','#fff8d9',1.1);
+ polygon([[-23,-19],[-9,0],[-15,23],[-23,4]],'#ff4c43','#ffd175',1);
+ polygon([[23,-19],[9,0],[15,23],[23,4]],'#ee3560','#ffd175',1);
+ polygon([[0,-4],[15,23],[0,34],[-15,23]],'#ffba49','#fff1a5',1);
+ polygon([[0,-28],[7,-9],[0,16],[-7,-9]],'#fff8c0');
+ line([[0,-29],[0,29]],'#fff8cd',1.1);
  ctx.restore();
  for(let i=0;i<3;i++){
   const a=t*.001+i*Math.PI*2/3;circle(x+Math.cos(a)*35*scale,y+Math.sin(a)*18*scale,(1.5+i%2)*scale,'#dcffed');
@@ -519,7 +549,7 @@ function bind(){
  document.addEventListener('visibilitychange',()=>{lastFrame=0});
 }
 function init(){
- stars=[];updateGems();resize();bind();updateCrystalVault();updateRushHUD();overlay('intro');requestAnimationFrame(frame);
+ stars=[];updateGems();resize();bind();updateCrystalVault();updateAwardArt();updateRushHUD();overlay('intro');requestAnimationFrame(frame);
 }
 // Test interface is read-only except for simulated key input; it is not displayed to players.
 window.__EDUKASS_TEST__={get:()=>({status,step,typed,tasks:tasks.map(t=>({...t})),playerX,solved,crashReason,attempts,world:'paikesekuru',rewardUnlocked:rewardUnlocked||status==='finished',victoryStage,crystalCollected:collectedCrystals().includes(2),vaultCount:collectedCrystals().length,jumping,jumpHeight,jumpCount,wrongLocked,turboActive,runningSpeed:effectiveSpeed(),distance:distanceToObstacle(),obstacles:Array.from({length:TOTAL},(_,j)=>obstacleKind(j+1))}),press:onKey,start:()=>startGame(),retry:()=>startGame(true),tick:(ms)=>{for(let r=0;r<ms;r+=35)advance(Math.min(35,ms-r))},reset,validateTasks,generate:createTasks};
