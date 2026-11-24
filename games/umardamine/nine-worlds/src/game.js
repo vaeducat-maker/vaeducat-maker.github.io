@@ -173,7 +173,7 @@ function taskBlueprint(){
  });
  // Mix tasks while retaining the first introductory examples and the last
  // hundred-rounding challenge of world 1. Avoid same-place runs >= 4.
- const fixed=worldId===1?2:worldId===2?4:2;
+ const fixed=2; // preserve two approachable starting tasks, then mix the rest
  const end=worldId===1?plan.length-1:plan.length;
  for(let retry=0;retry<80;retry++){
   for(let i=end-1;i>fixed;i--){const j=fixed+random(i-fixed+1);[plan[i],plan[j]]=[plan[j],plan[i]]}
