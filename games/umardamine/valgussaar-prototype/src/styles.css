@@ -324,3 +324,9 @@ button:disabled{cursor:default;opacity:.7}
  #crashHero h1{font-size:18px}
  #crashHero #retry{min-height:34px;padding:5px}
 }
+
+#nextWorld:not(:disabled){cursor:pointer;background:linear-gradient(110deg,#3abfa6,#2572ae);box-shadow:0 0 22px #59ffe456;border:1px solid #baffea;font-weight:1000;color:white}
+
+/* Unique jewel silhouettes: Valgussaar long prism, Päikesekuru fire lotus. */
+.vault-card:nth-child(1).unlocked .vault-card-gem svg{filter:drop-shadow(0 0 9px #73ffec) drop-shadow(0 0 16px #63b7ff)}
+.vault-card:nth-child(2).unlocked .vault-card-gem svg{filter:drop-shadow(0 0 9px #ffb855) drop-shadow(0 0 16px #ff7549)}
