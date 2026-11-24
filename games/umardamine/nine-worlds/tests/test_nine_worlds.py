@@ -204,6 +204,31 @@ def validate(browser,width,height,label,full=True):
  print(json.dumps({"viewport":label,"worlds":9,"tasks":104,"fusion":"PASS","console_errors":errors},ensure_ascii=False))
  context.close()
 
+def validate_audio(browser):
+ context=browser.new_context(viewport={'width':390,'height':844})
+ page=context.new_page()
+ errors=[]
+ page.on('pageerror',lambda error:errors.append(str(error)))
+ page.goto(URL,wait_until='domcontentloaded')
+ page.locator('#begin').click()
+ page.locator('#sound').click()  # explicit user gesture
+ page.wait_for_function("() => {const a=document.querySelector('#solarTrack');return a.readyState>=2&&!a.paused}",timeout=12000)
+ assert page.locator('#solarTrack').evaluate('(a)=>a.duration')>20
+ before=page.evaluate('window.__EDUKASS_TEST__.get().playerX')
+ page.locator('#shareGame').click()
+ assert page.locator('#shareDialog').is_visible()
+ page.evaluate('window.__EDUKASS_TEST__.tick(15000)')
+ assert page.evaluate('window.__EDUKASS_TEST__.get().playerX')==before,'Game should pause during sharing'
+ assert page.locator('#solarTrack').evaluate('(a)=>a.paused'),'Music should pause during sharing'
+ page.locator('#closeShare').click()
+ page.evaluate('window.__EDUKASS_TEST__.tick(14000)') # timeout collision
+ assert page.evaluate('window.__EDUKASS_TEST__.get().crashReason')=='timeout'
+ page.wait_for_function("() => document.querySelector('#softFail').currentTime>0",timeout=4000)
+ assert page.locator('#solarTrack').evaluate('(a)=>a.paused'),'Music should stop on collision'
+ assert not errors,errors
+ print(json.dumps({'audio':'SOLAR_SPARK_AND_SOFT_OOPS_PASS','share_pause':'PASS','page_errors':errors}))
+ context.close()
+
 try:
  with sync_playwright() as p:
   opts={"headless":True}
@@ -213,6 +238,7 @@ try:
   validate(browser,390,844,"portrait")
   validate(browser,360,600,"compact",full=False)
   validate(browser,844,390,"landscape",full=False)
+  validate_audio(browser)
   browser.close()
 finally:
  httpd.shutdown()
