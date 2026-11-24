@@ -213,9 +213,11 @@ def validate_audio(browser):
  errors=[]
  page.on('pageerror',lambda error:errors.append(str(error)))
  page.goto(URL,wait_until='domcontentloaded')
- page.locator('#begin').click()
- page.locator('#sound').click()  # explicit user gesture
+ assert page.locator('#solarTrack').evaluate('(a)=>a.paused'),'Must not autoplay'
+ page.locator('#introSound').click() # one-tap approved soundtrack preview on title screen
  page.wait_for_function("() => {const a=document.querySelector('#solarTrack');return a.readyState>=2&&!a.paused}",timeout=12000)
+ assert 'MUUSIKA SEES' in page.locator('#introSound').inner_text()
+ page.locator('#begin').click()
  assert page.locator('#solarTrack').evaluate('(a)=>a.duration')>20
  page.locator('#shareGame').click()
  assert page.locator('#shareDialog').is_visible()
