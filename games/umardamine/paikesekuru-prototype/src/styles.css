@@ -339,3 +339,12 @@ body{background:radial-gradient(ellipse 100% 75% at 50% 0%,#802441,#3a0b23 66%,#
  #crashHero h1{font-size:18px}
  #crashHero #retry{min-height:34px;padding:5px}
 }
+
+/* World 2: orange-red flame reward and soft timing. */
+.prize-crystal{filter:drop-shadow(0 0 17px #ff9e3b) drop-shadow(0 0 26px #ff593b)}
+.vault-card:nth-child(2).unlocked{border-color:#ffcd78;box-shadow:0 0 20px #ff863e96,inset 0 0 18px #ff853e36}
+.vault-card:nth-child(2).unlocked .vault-card-gem svg{filter:drop-shadow(0 0 9px #ffbb56) drop-shadow(0 0 17px #ff6b3b)}
+
+/* Unique jewel silhouettes: Valgussaar long prism, Päikesekuru fire lotus. */
+.vault-card:nth-child(1).unlocked .vault-card-gem svg{filter:drop-shadow(0 0 9px #73ffec) drop-shadow(0 0 16px #63b7ff)}
+.vault-card:nth-child(2).unlocked .vault-card-gem svg{filter:drop-shadow(0 0 9px #ffb855) drop-shadow(0 0 16px #ff7549)}
