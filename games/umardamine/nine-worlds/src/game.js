@@ -115,6 +115,7 @@ function updateAwardArt(){
 function updateCrystalVault(){
  const ids=collectedCrystals(),count=ids.length;
  $('introCollectionCount').textContent=count+' / 9';
+ if(count===9){try{localStorage.setItem('edukass-ultimate-crystal','1')}catch(e){}}
  $('rewardCollectionCount').textContent=count+' / 9';
  $('vaultProgress').textContent='KOGUTUD '+count+' / 9';
  const views=Array.from({length:9},(_,k)=>{
@@ -248,7 +249,39 @@ function updateRushHUD(){
  $('rushHud').classList.toggle('safe',solved&&status==='running');
  $('rushLabel').textContent=wrongLocked?'VALE VASTUS':solved?(turboActive?'TURBO · HÜPE VALMIS':'HÜPE VALMIS'):status==='crashing'||status==='crashed'?'KOKKUPÕRGE!':'TAKISTUSENI';
 }
-function setSound(){soundOn=!soundOn;$('sound').classList.toggle('enabled',soundOn);$('sound').setAttribute('aria-label',soundOn?'Lülita heli välja':'Lülita heli sisse');if(soundOn)tone(510,.07,'triangle',.035)}
+let musicNextTime=0,musicStep=0;
+function setSound(){
+ soundOn=!soundOn;$('sound').classList.toggle('enabled',soundOn);
+ $('sound').setAttribute('aria-label',soundOn?'Lülita heli välja':'Lülita heli sisse');
+ if(soundOn){tone(510,.07,'triangle',.035);musicNextTime=0;musicStep=0}
+}
+function electronicBeat(){
+ if(!soundOn||status!=='running')return;
+ try{
+  audio=audio||new(window.AudioContext||window.webkitAudioContext)();
+  if(audio.state==='suspended'){audio.resume();return}
+  const beat=60/world().bpm/2;
+  if(!musicNextTime||musicNextTime<audio.currentTime-.5)musicNextTime=audio.currentTime+.045;
+  let count=0;
+  while(musicNextTime<audio.currentTime+.14&&count++<5){
+   const q=musicStep%16,now=musicNextTime,root=[110,123.47,98,130.81,116.54,103.83,146.83,130.81,110][worldId-1];
+   function play(freq,length,type,amp,attack=.009){
+    const o=audio.createOscillator(),g=audio.createGain();o.type=type;o.frequency.setValueAtTime(freq,now);
+    g.gain.setValueAtTime(.0001,now);g.gain.exponentialRampToValueAtTime(Math.max(.0002,amp),now+attack);
+    g.gain.exponentialRampToValueAtTime(.0001,now+length);
+    o.connect(g);g.connect(audio.destination);o.start(now);o.stop(now+length+.012);
+   }
+   if(q%4===0)play(70,.17,'sine',.085); // original four-on-floor kick
+   if(q===4||q===12)play(195,.11,'triangle',.028);
+   if(q%2===0)play(1150,.045,'square',.008);
+   const degrees=[0,3,7,10,7,3,5,7,12,10,7,5,3,0,5,7];
+   const semitone=degrees[q];play(root*4*Math.pow(2,semitone/12),beat*.82,'triangle',.017);
+   if(q%4===0)play(root*(q<8?1:1.5),beat*3.4,'sine',.016,.035);
+   musicNextTime+=beat;musicStep++;
+  }
+ }catch(e){}
+}
+
 function tone(frequency,duration,type='sine',volume=.045,delay=0){
  if(!soundOn)return;
  try{audio=audio||new(window.AudioContext||window.webkitAudioContext)();if(audio.state==='suspended')audio.resume();
@@ -573,7 +606,7 @@ function drawFX(dt){
 }
 function frame(t){
  if(!canvasW||!canvasH)resize();const dt=lastFrame?clamp(t-lastFrame,0,45):16;lastFrame=t;clock=t;
- advance(dt);
+ advance(dt);electronicBeat();
  const wanted=playerX-canvasW*.30;camera=lerp(camera,wanted,reduced?1:clamp(dt*.032,0,1));
  ctx.save();if(status==='crashing'&&shake>0)ctx.translate((Math.random()-.5)*shake,(Math.random()-.5)*shake*.45);
  ctx.clearRect(-25,-25,canvasW+50,canvasH+50);
@@ -600,6 +633,10 @@ function bind(){
  $('openVaultIntro').addEventListener('click',()=>openCrystalVault('intro'));
  $('openVaultReward').addEventListener('click',()=>openCrystalVault('finish'));
  $('closeVault').addEventListener('click',closeCrystalVault);
+ $('worldMenu').addEventListener('click',e=>{const item=e.target.closest('[data-world]');if(item&&!item.disabled)switchWorld(Number(item.dataset.world))});
+ $('nextWorld').addEventListener('click',()=>{if(worldId<9)switchWorld(worldId+1);else showFusion()});
+ $('fusionClose').addEventListener('click',()=>overlay('finish'));
+
  window.addEventListener('resize',resize);
  document.addEventListener('visibilitychange',()=>{lastFrame=0});
 }
