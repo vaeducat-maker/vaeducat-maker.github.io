@@ -34,5 +34,7 @@ jobs:
           git add games/umardamine/nine-worlds/assets/02_solar_spark.mp3 games/umardamine/nine-worlds/assets/01_soft_oops.mp3
           if ! git diff --staged --quiet; then
             git commit -m "Add approved Solar Spark and Soft Oops MP3 game assets [skip ci]"
+            git fetch origin feature/umardamine-solar-spark-share-passport-20261124
+            git rebase FETCH_HEAD
             git push origin HEAD:feature/umardamine-solar-spark-share-passport-20261124
           fi
