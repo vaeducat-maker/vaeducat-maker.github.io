@@ -1,5 +1,22 @@
 from pathlib import Path
 from playwright.sync_api import sync_playwright
+
+# The feedback panel must show the actual arithmetic, not only a collision warning.
+def assert_learning_panel(page, reason):
+ state=page.evaluate('window.__EDUKASS_TEST__.get()')
+ task=state['tasks'][state['step']]
+ expected=task['answer']
+ assert page.locator('#learningCorrect').inner_text().replace(' ','')==str(expected)
+ assert str(task['v']) in page.locator('#learningNumber').inner_text().replace(' ','')
+ rule=page.locator('#learningRule').inner_text()
+ digit=task['v']%10 if task['unit']==10 else (task['v']//10)%10
+ assert str(digit) in rule
+ assert str(expected) in rule.replace(' ','')
+ assert page.locator('#learningYourAnswer').inner_text()
+ if reason=='timeout':
+  assert 'EI VASTANUD' in page.locator('#learningYourAnswer').inner_text() or 'POOLELI JÄI' in page.locator('#learningYourAnswer').inner_text()
+
+
 root=Path(__file__).resolve().parents[1]
 html=(root/'EDUKASS_Paikesekuru_World2_Play.html').read_text(encoding='utf8')
 
@@ -39,6 +56,7 @@ def check(browser,w,h,label):
  assert p.evaluate('window.__EDUKASS_TEST__.get().crystalCollected')
  p.evaluate('window.__EDUKASS_TEST__.tick(15000)')
  assert p.evaluate("window.__EDUKASS_TEST__.get().crashReason")=='timeout'
+ assert_learning_panel(p,'timeout')
  if w<600:
   metrics=p.evaluate("""() => ({bottom:document.querySelector('.key-zero').getBoundingClientRect().bottom,h:innerHeight})""")
   assert metrics['bottom']<=metrics['h']+2,metrics
