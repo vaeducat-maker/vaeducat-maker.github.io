@@ -2,7 +2,7 @@
 **Preview / work-in-progress QA branch; not merged into EDUKASS's public site.**
 
 ## Launch
-Open `index.html` in a browser or through an HTTPS static preview. There are no CDN images, music files or external library dependencies. Everything is inline in the standalone HTML. Enter the correct rounded number; the runner automatically jumps. An incorrect full answer or missing the deadline causes a physical collision, followed by a lesson showing the exact correct answer, the incorrectly entered digits if any, and the rounding rule. Replay generates fresh numbers.
+Open `index.html` in a browser or through an HTTPS static preview. There are no CDN images, external audio hosts or external runtime dependencies. The HTML inlines the JavaScript, CSS and QR encoder, while its two approved MP3 sound files are served from the local `assets/` folder. Enter the correct rounded number; the runner automatically jumps. An incorrect full answer or missing the deadline causes a physical collision, followed by a lesson showing the exact correct answer, the incorrectly entered digits if any, and the rounding rule. Replay generates fresh numbers.
 
 ## Maths curriculum — approved 24 November 2026
 
@@ -64,8 +64,7 @@ Input and obstacles remain synchronized by 8-ms maximum physics substeps so fast
 Each world has a distinct palette, abstract dynamic geometric scene, unique runner avatar and themed hazard sequence. Obstacle types may recur nonconsecutively several worlds later but should never all be the same as the previous world. The nine-slot vault uses separate SVG shapes and world-specific hues, persisted under `edukass-neon-crystal-vault-v1`. Winning world 9 invokes a **fusion cinematic**, assembling the nine collected gems into one **ÜLIM KRISTALL**. The ultimate reward is stored under `edukass-ultimate-crystal` and can be revisited from the full vault.
 
 ## Sound
-Original generative electro-arcade / synth beat, not an existing copyrighted Geometry Dash song. Nine tempos from **124 to 158 BPM**, synthesized per beat with four-on-the-floor kick, high tick, bass and a melodic arpeggiator by Web Audio API. Music is muted by default; the player explicitly taps the sound button to activate. No external licensing or network fetch is necessary. This is a generated in-game loop rather than a professionally produced studio recording.
-
+Approved sound: **Solar Spark #2** at 136 BPM, an original electronic track that loops across the game, and **Soft Oops #1** at collision. Both are shipped from local MP3 assets. Music begins only after the user explicitly presses the sound control and pauses when the game is interrupted or a transfer dialog opens. The other generative electronic beat prototype remains in source only as historical fallback logic but is not called during gameplay.
 
 ## Approved music, cinematic title, sharing and progress transfer · November 2026
 
@@ -84,8 +83,11 @@ Original generative electro-arcade / synth beat, not an existing copyrighted Geo
 ## Source and reproducibility
 - `src/app.html` — template with `/*__CSS__*/` and `/*__JS__*/` placeholders
 - `src/styles.css` — responsive layout, themes, effects and fusion cinematic
-- `src/game.js` — all nine worlds, input/physics, rounding generator, audio and award collection
-- `index.html` — combined playable self-contained build
+- `src/game.js` — all nine worlds, input/physics, rounding generator and crystal award collection
+- `src/passport.js` — public sharing and confirmed private cross-device progress transfer
+- `src/qrcode-vendor.js` — offline MIT-licensed QR generator
+- `assets/*.mp3` — approved music and defeat audio, stored in the repository
+- `index.html` — HTML/CSS/JS/QR combined playable build; local MP3 assets remain separate files
 
 Rebuild:
 ```python
@@ -94,6 +96,8 @@ p=Path('games/umardamine/nine-worlds')
 html=(p/'src/app.html').read_text(encoding='utf8')
 html=html.replace('/*__CSS__*/',(p/'src/styles.css').read_text(encoding='utf8'))
 html=html.replace('/*__JS__*/',(p/'src/game.js').read_text(encoding='utf8'))
+html=html.replace('/*__QR__*/',(p/'src/qrcode-vendor.js').read_text(encoding='utf8'))
+html=html.replace('/*__PASSPORT__*/',(p/'src/passport.js').read_text(encoding='utf8'))
 (p/'index.html').write_text(html,encoding='utf8')
 ```
 
