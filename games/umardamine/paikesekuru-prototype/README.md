@@ -10,3 +10,12 @@ Playable standalone experimental world 2 (warm orange, amber, crimson neon). The
 - Source: `src/app.html`, `src/styles.css`, `src/game.js`. Rebuild using the equivalent of `app.html.replace('/*__CSS__*/', styles.css).replace('/*__JS__*/', game.js)`.
 - 9 deterministic game-loop simulated passes verified 12/12, earned prize 02, retry prize persistence, and missing-answer collision at 3 canvas heights × 3 timestep sizes. No real-browser Playwright run was completed in this session.
 - This is a prototype branch. The main public site and world-one HTML remain untouched. The full 9-world progression is not finished.
+
+## Revised playable World 02 (24 November 2026)
+- Relaxed pace: 47 px/s (43 in the last section) and automatic post-answer turbo at 195 px/s; 12 real jump hazards remain physically passable.
+- Curriculum: tasks 1–4 two digits rounded to tens, 5–8 three digits rounded to tens, 9–12 three digits rounded to hundreds. Numbers regenerate for every new attempt.
+- Päikesekuru runner avatar and prize are a warm orange-red **fire lotus / flame shard**, visibly unlike the long cool blue faceted Valgussaar crystal.
+- World 02 hazards: glowing stepped blocks, fiery sun-wheel, ember wall, double flame fangs and solar ramp, with a single familiar rotor to connect the worlds. Obstacle silhouettes are not all the same as world one.
+- Collection displays 9 distinct SVG silhouettes, 1 blue and 2 flame when both collected. World 3 remains unavailable.
+- Correct-answer automatic jump, collision feedback with rounded value and explanation, mobile 11-key input, festive two-stage award and shared storage continue to work.
+- 18 deterministic combined-world QA scenarios passed across three canvas heights and three frame rates, including award collection, retry persistence and error correction. Real browser visual QA has **not** been executed.
