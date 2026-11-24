@@ -120,6 +120,7 @@ function updateCrystalVault(){
  if(count===9){try{localStorage.setItem('edukass-ultimate-crystal','1')}catch(e){}}
  $('rewardCollectionCount').textContent=count+' / 9';
  $('vaultProgress').textContent='KOGUTUD '+count+' / 9';
+ $('showUltimate').hidden=count!==9;
  const views=Array.from({length:9},(_,k)=>{
   const id=k+1,got=ids.includes(id),name=WORLDS[id-1].name.toUpperCase();
   const title=got?(WORLDS[id-1].name.toUpperCase()+' KRISTALL'):'LUKUS';
@@ -712,7 +713,8 @@ function bind(){
  $('closeVault').addEventListener('click',closeCrystalVault);
  $('worldMenu').addEventListener('click',e=>{const item=e.target.closest('[data-world]');if(item&&!item.disabled)switchWorld(Number(item.dataset.world))});
  $('nextWorld').addEventListener('click',()=>{if(worldId<9)switchWorld(worldId+1);else showFusion()});
- $('fusionClose').addEventListener('click',()=>overlay('finish'));
+ $('fusionClose').addEventListener('click',()=>overlay('vault'));
+ $('showUltimate').addEventListener('click',showFusion);
 
  window.addEventListener('resize',resize);
  document.addEventListener('visibilitychange',()=>{lastFrame=0});
