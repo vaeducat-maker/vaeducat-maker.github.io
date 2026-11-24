@@ -1,0 +1,1262 @@
+<!doctype html>
+<html lang="et">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#080d24"><meta name="color-scheme" content="dark">
+<title>EDUKASS · Ümardamine · 9 kristallimaailma</title>
+<style>:root{
+ --bg:#080d24; --white:#f4f7ff; --dim:#93a5c9; --cyan:#56edec; --violet:#aa83ff;
+ --gold:#ffd67a;--glass:rgba(16,27,59,.88); --stroke:rgba(175,202,255,.19);
+ font-family:Inter, ui-sans-serif, system-ui,-apple-system,Segoe UI,Arial,sans-serif;color:var(--white);color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{width:100%;min-height:100%;margin:0}
+body{background:radial-gradient(ellipse 100% 68% at 50% 0%,#17366e 0%,#080f2c 59%,#080d20 100%);overflow-x:hidden}
+button{font-family:inherit;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+button:focus-visible{outline:3px solid #ffe7a9;outline-offset:3px}
+button:disabled{cursor:default;opacity:.7}
+#shell{width:min(520px,100%);min-height:100svh;margin:0 auto;position:relative;padding:env(safe-area-inset-top,0px) clamp(10px,3vw,17px) max(10px,env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:9px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px;height:48px;flex:0 0 48px}
+.logo{font-weight:950;font-size:18px;letter-spacing:-1px;text-transform:uppercase;white-space:nowrap;color:#f5fbff;text-shadow:0 0 13px #00d6ea55}
+.logo span{color:#64e8de}
+.world-pill{display:flex;align-items:center;gap:7px;min-width:0;justify-content:center;border:1px solid #8c9dd158;border-radius:999px;background:#101d42d6;box-shadow:inset 0 1px #ffffff19;padding:7px 13px;white-space:nowrap;font-size:11px;font-weight:900;letter-spacing:.1em;color:#b9d1ed}
+.world-pill b{color:#fff;font-size:11px;letter-spacing:.07em}
+.world-dot{height:8px;width:8px;background:var(--cyan);box-shadow:0 0 12px #58f8ee;border-radius:50%;flex:none}
+.top-actions{display:flex;gap:5px}
+.icon-btn{border:1px solid #8c9dd14d;background:linear-gradient(150deg,#253764b3,#142148b8);border-radius:13px;width:38px;height:38px;color:#d7e4ff;font-size:18px;cursor:pointer;display:grid;place-items:center;box-shadow:inset 0 1px #ffffff27}
+.icon-btn svg{width:19px;height:19px}
+.progress{display:flex;gap:8px;align-items:center;min-height:23px;padding:0 3px}
+.progress-label{white-space:nowrap;font-weight:900;letter-spacing:.095em;color:#a8c1e7;font-size:10px}
+.gems{flex:1;display:flex;justify-content:space-between;align-items:center;gap:4px;min-width:0}
+.gem{height:9px;flex:1;max-width:44px;border-radius:12px;background:linear-gradient(#24335e,#18294e);border:1px solid #7e8db45e;box-shadow:inset 0 1px 3px #0007;position:relative;transition:background .3s, box-shadow .3s}
+.gem.done{background:linear-gradient(90deg,#55e2ec,#95f8da);border-color:#bbfff6;box-shadow:0 0 12px #31e7d488}
+.gem.now{background:#d7c17b;border-color:#ffeaa1;box-shadow:0 0 10px #ffd870bb}
+.progress-count{font-size:12px;font-weight:850;color:#ffe4a2;min-width:27px;text-align:right;font-variant-numeric:tabular-nums}
+.scene{height:clamp(224px,33svh,318px);min-height:215px;position:relative;flex:0 0 auto;border:1px solid #90adf077;overflow:hidden;isolation:isolate;border-radius:25px;background:#08122f;box-shadow:0 9px 35px #0009, inset 0 1px #fff5}
+.scene::before{pointer-events:none;content:"";position:absolute;inset:0;border-radius:24px;border:1px solid #dcecff1a;z-index:2}
+.scene canvas{width:100%;height:100%;display:block;position:absolute;inset:0}
+.scene-heading{z-index:3;pointer-events:none;position:absolute;top:14px;left:16px;display:flex;flex-direction:column;gap:2px;text-shadow:0 2px 10px #000c}
+.scene-heading small{font-size:9px;font-weight:950;letter-spacing:.22em;color:#8df5eb}
+.scene-heading strong{font-size:clamp(15px,3.8vw,20px);line-height:1.16;letter-spacing:-.04em;font-weight:950}
+.scene-sub{position:absolute;z-index:3;right:14px;top:15px;border:1px solid #bbf8ef45;background:#0f1e47ad;border-radius:10px;font-size:10px;letter-spacing:.05em;font-weight:800;color:#d4eaff;padding:6px 9px}
+.scene-caption{pointer-events:none;position:absolute;z-index:3;left:14px;bottom:12px;max-width:80%;color:#c7d7f3;font-size:10px;letter-spacing:.045em;font-weight:750;text-shadow:0 2px 9px #000e}
+.scene-glow{pointer-events:none;position:absolute;inset:0;z-index:4;opacity:0;background:radial-gradient(circle at 58% 58%,#caffeb70 0%,#40fbd43d 15%,transparent 68%);transition:opacity .15s}
+.scene-glow.on{opacity:1}
+.problem{background:linear-gradient(145deg,#1b2b5aeb,#111c3eea);border:1px solid var(--stroke);border-radius:21px;padding:11px 16px 12px;box-shadow:inset 0 1px #eaf6ff19,0 7px 22px #0004;flex:0 0 auto;position:relative}
+.problem-top{display:flex;align-items:center;justify-content:center;gap:8px;min-height:24px;flex-wrap:wrap}
+.problem-top .verb{font-size:11px;font-weight:1000;letter-spacing:.16em;color:#aabbdc}
+.unit{font-size:10px;letter-spacing:.07em;font-weight:1000;color:#172444;background:linear-gradient(120deg,#d9fdf7,#8bf3dd);border-radius:7px;padding:5px 8px;box-shadow:0 2px 13px #55e3d055}
+.number{text-align:center;font-size:clamp(38px,8vw,50px);line-height:1.07;font-weight:950;letter-spacing:.015em;font-variant-numeric:tabular-nums;text-shadow:0 0 20px #9dafff30;color:#fff;transition:transform .2s}
+.number.bump{transform:scale(1.07)}
+.answer-wrap{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:9px;flex:0 0 auto;align-items:stretch}
+.answer-display{height:57px;display:flex;align-items:center;justify-content:center;border:1.5px solid #4d88b6;border-radius:17px;background:linear-gradient(180deg,#0b1b40,#121f43);box-shadow:inset 0 2px 9px #06102a;position:relative;min-width:0}
+.answer-display:after{content:"";pointer-events:none;position:absolute;inset:2px;border-radius:14px;border:1px solid #ffffff08}
+.answer-value{font-size:clamp(25px,6vw,34px);font-variant-numeric:tabular-nums;letter-spacing:.045em;font-weight:850;color:#e9fffa}
+.answer-value.empty:before{content:"";display:inline-block;width:2px;height:28px;background:#83fff3;vertical-align:middle;box-shadow:0 0 8px #6fffe8;animation:blink 1s step-end infinite}
+.answer-display.wrong{border-color:#ff769e;background:#431c43;animation:shake .27s}
+.answer-display.wrong .answer-value{color:#ffadba}
+.answer-display.success{border-color:#a5ffe0;box-shadow:inset 0 0 14px #3cecbf40,0 0 14px #3de4b949}
+.answer-info{width:79px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0;background:#162a50;border:1px solid #ffffff16;border-radius:15px}
+.answer-info small{color:#839ac6;font-size:9px;font-weight:900;letter-spacing:.13em}
+.answer-info strong{font-size:13px;font-weight:950;color:#edf7ff}
+.note{min-height:20px;flex:0 0 20px;display:flex;align-items:center;justify-content:center;color:#a4b6d9;font-weight:700;font-size:12px;letter-spacing:.01em;text-align:center}
+.note.ok{color:#76f8d5}.note.bad{color:#ff9ba9}
+.keypad{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(4,minmax(40px,1fr));gap:7px;flex:1 1 238px;min-height:197px;max-height:270px}
+.key{border:1px solid #6c85b04d;border-radius:15px;background:linear-gradient(180deg,#2a3b69,#1b2a50);color:#f4f7ff;font-weight:850;font-size:clamp(22px,5vw,28px);box-shadow:0 3px 0 #09132e, inset 0 1px #d5e3ff2b;cursor:pointer;user-select:none;transition:transform .08s,background .08s}
+.key:active,.key.pressed{transform:translateY(2px);box-shadow:0 1px 0 #09132e,inset 0 1px #e7f5ff2b;background:#334e86}
+.key.action{color:#8df8e4;background:linear-gradient(180deg,#214d64,#15364f);border-color:#6debd260;font-size:21px}
+.key.submit{font-size:22px;color:#0a2430;background:linear-gradient(120deg,#adffee,#56e6d4);border-color:#aafff1;box-shadow:0 3px 0 #0c665d,inset 0 1px #fff9}
+.foot{text-align:center;flex:0 0 auto;font-size:9px;letter-spacing:.17em;color:#6e85b0;font-weight:900;padding-top:1px}
+.overlay{position:absolute;inset:0;z-index:10;display:grid;place-items:center;padding:20px;background:linear-gradient(180deg,#05133368,#080d24a8 38%,#050c20e8);backdrop-filter:blur(4px);transition:opacity .25s}
+.overlay.hidden{display:none}
+.hero{text-align:center;width:min(350px,100%);margin:auto;display:flex;flex-direction:column;align-items:center}
+.eyebrow{font-size:10px;font-weight:950;letter-spacing:.19em;color:#96ffdf}
+.hero-mark{height:114px;width:114px;margin:14px auto 15px;position:relative;display:grid;place-items:center;filter:drop-shadow(0 0 29px #45ebed8a)}
+.hero-mark svg{width:100%;height:100%;overflow:visible;animation:float 3s ease-in-out infinite}
+.hero h1{font-size:clamp(27px,7vw,37px);line-height:1.05;margin:0 0 10px;letter-spacing:-.06em;font-weight:1000;text-wrap:balance;text-shadow:0 0 26px #57e7ff70}
+.hero p{font-size:13px;color:#bdcdea;line-height:1.5;max-width:285px;margin:0 0 16px}
+.primary{border:none;border-radius:15px;background:linear-gradient(113deg,#a2ffee,#42e7d2);color:#102442;font-size:15px;font-weight:1000;letter-spacing:.08em;padding:15px 22px;min-width:220px;box-shadow:0 5px 0 #0e756e,0 4px 24px #37efc770;cursor:pointer;transition:transform .1s}
+.primary:active{transform:translateY(3px);box-shadow:0 2px 0 #0e756e}
+.secondary{color:#baceef;background:none;border:1px solid #9ebff955;border-radius:12px;padding:10px 18px;font-weight:800;margin-top:10px;cursor:pointer}
+.finish-kicker{font-size:10px;font-weight:1000;letter-spacing:.2em;color:#ffda85;margin-bottom:10px}
+.finish-gem{position:relative;width:150px;height:150px;margin:4px auto 12px}
+.finish-gem svg{width:100%;height:100%;overflow:visible;filter:drop-shadow(0 0 25px #55efec96);animation:float 3s ease-in-out infinite}
+.stars-score{font-size:14px;color:#fce0a4;letter-spacing:.09em;font-weight:900;margin-bottom:13px}
+.finish-note{border:1px solid #71e4e064;border-radius:13px;background:#18355c99;padding:10px 14px;margin:0 0 15px;color:#d9edff;font-size:12px;font-weight:750}
+@keyframes blink{50%{opacity:0}}@keyframes shake{20%{transform:translateX(-5px)}45%{transform:translateX(5px)}70%{transform:translateX(-3px)}}@keyframes float{50%{transform:translateY(-8px)}}
+@media(max-height:760px){#shell{gap:6px}.scene{height:clamp(205px,31svh,243px)}.top{height:42px;flex-basis:42px}.problem{padding:7px 11px}.number{font-size:36px}.answer-display{height:51px}.keypad{gap:6px;min-height:188px}.key{border-radius:12px}.note{min-height:15px;flex-basis:15px}}
+@media(min-width:740px){body{display:grid;place-items:start center}#shell{margin-top:12px;border:1px solid #aaccff21;min-height:calc(100svh - 24px);border-radius:25px;background:#0b1534c4;box-shadow:0 10px 70px #0006}.scene{height:335px}}
+@media(prefers-reduced-motion:reduce){.hero-mark svg,.finish-gem svg,.answer-value.empty:before{animation:none}*{scroll-behavior:auto!important}}
+.hero[hidden]{display:none!important}
+#sound:not(.enabled) .sound-lines{display:none}
+#sound.enabled .sound-muted{display:none}
+
+@media (orientation:landscape) and (max-height:600px) and (min-width:650px){
+ body{display:block}
+ #shell{width:100%;max-width:none;height:100svh;min-height:0;margin:0;border:0;border-radius:0;padding:5px 13px 6px;display:grid;grid-template-columns:minmax(0,1.12fr) minmax(315px,.88fr);grid-template-rows:38px 19px 76px 46px 16px minmax(0,1fr) 10px;gap:4px 10px;background:transparent;box-shadow:none}
+ .top{grid-column:1 / 3;grid-row:1;height:38px;min-height:0}
+ .world-pill{padding:5px 11px}
+ .icon-btn{width:34px;height:34px}
+ .progress{grid-column:1;grid-row:2;min-height:0}
+ .scene{grid-column:1;grid-row:3 / span 4;width:100%;height:100%;min-height:0;border-radius:17px}
+ .scene::before{border-radius:16px}
+ .scene-heading{top:10px;left:13px}
+ .problem{grid-column:2;grid-row:2 / span 2;min-height:0;padding:5px 8px;display:flex;flex-direction:column;justify-content:center;border-radius:13px}
+ .problem-top{min-height:22px}.number{font-size:32px}
+ .answer-wrap{grid-column:2;grid-row:4;min-height:0}.answer-display{height:auto;min-height:0;border-radius:11px}
+ .answer-info{border-radius:11px}.answer-value{font-size:26px}
+ .note{grid-column:2;grid-row:5;min-height:0;font-size:10px}
+ .keypad{grid-column:2;grid-row:6;min-height:0;max-height:none;height:100%;grid-template-rows:repeat(4,minmax(0,1fr));gap:4px}
+ .key{font-size:19px;border-radius:10px}.key.action,.key.submit{font-size:17px}
+ .foot{grid-column:1 / 3;grid-row:7;font-size:8px;padding:0;line-height:10px}
+ .overlay{position:fixed}.hero-mark{height:60px;width:60px;margin:4px auto}.hero h1{font-size:24px}.hero p{font-size:11px;margin-bottom:9px}.primary{padding:11px 18px}.finish-gem{height:72px;width:72px}.stars-score{margin-bottom:5px}.finish-note{margin-bottom:7px}
+}
+
+/* Auto-run obstacle HUD and collision screen; same approved visual language. */
+.rush-hud{position:absolute;z-index:3;top:58px;right:13px;min-width:125px;width:34%;max-width:190px;border:1px solid #9febef50;background:#091935ba;backdrop-filter:blur(5px);border-radius:10px;padding:6px 8px;pointer-events:none}
+.rush-line{display:flex;justify-content:space-between;gap:7px;font-size:9px;font-weight:950;letter-spacing:.04em;color:#b4ddf0;white-space:nowrap}
+.rush-line strong{font-variant-numeric:tabular-nums;color:#d9fff2}
+.rush-track{height:5px;background:#13254d;border-radius:5px;margin-top:6px;overflow:hidden}
+#rushFill{height:100%;width:100%;border-radius:5px;background:linear-gradient(90deg,#50e9f0,#a2ffe4);transition:width .08s linear}
+.rush-hud.danger{border-color:#ff80b5a6;background:#3b1b3bc7}.rush-hud.danger #rushFill{background:#ff6c98}.rush-hud.danger .rush-line strong{color:#ffbed4}
+.rush-hud.safe{border-color:#87ffc4a1}.rush-hud.safe #rushFill{background:#75ffae}
+.fail-kicker{font-size:10px;font-weight:1000;letter-spacing:.15em;color:#ff94c0;margin-bottom:6px}
+.fail-icon{display:grid;place-items:center;width:115px;height:115px;margin:8px auto 14px;border:4px solid #ff73b8;border-radius:50%;box-shadow:0 0 45px #ff479e7a,inset 0 0 30px #ff479e44;color:#ffd8e8;font-weight:950;font-size:67px;transform:rotate(-9deg)}
+.fail-score{border:1px solid #ff7ca768;background:#50274b8c;color:#ffd5e3;font-size:11px;font-weight:800;padding:11px 14px;border-radius:13px;margin:0 0 8px}
+.fail-score strong{color:white;margin-left:7px}
+.fail-explain{font-size:11px!important;color:#c5b1ca!important;margin-bottom:20px!important}
+@media (orientation:landscape) and (max-height:600px) and (min-width:650px){.rush-hud{top:46px;width:40%;min-width:120px}.fail-icon{width:70px;height:70px;margin:3px auto 6px;font-size:42px}.fail-explain{margin-bottom:9px!important}}
+
+
+/* Valgussaar victory ceremony: original CSS/SVG artwork, no external assets. */
+.overlay.is-celebrating{position:fixed;inset:0;overflow-y:auto;overscroll-behavior:contain;isolation:isolate;background:radial-gradient(ellipse 90% 56% at 50% 35%,#2d67b3b8,#18235fd9 54%,#060b27f4 100%);backdrop-filter:blur(8px)}
+.overlay.is-celebrating:before{content:"";pointer-events:none;position:absolute;inset:0;background:radial-gradient(circle at 50% 43%,#a1ffdb32,transparent 53%),repeating-conic-gradient(from 0deg at 50% 42%,#8ce8ff00 0deg 12deg,#82dcff12 14deg 18deg,#8ce8ff00 22deg 30deg);animation:victoryHalo 11s linear infinite;opacity:.8}
+.hero.celebrate-victory,.hero.celebrate-reward{position:relative;z-index:2;color:#f7ffff;margin:auto;max-width:100%;flex:none}
+.hero.celebrate-victory{width:min(450px,100%);justify-content:center;min-height:min(460px,85svh);gap:12px}
+.victory-kicker{font-size:clamp(12px,2.5vw,15px);font-weight:950;letter-spacing:.26em;color:#b2fff1;text-shadow:0 0 25px #9cfff4;animation:victoryRise .5s .08s both}
+.hero .victory-headline{font-size:clamp(47px,11vw,78px);line-height:1;margin:0;letter-spacing:-.08em;font-weight:1000;color:#fffde1;text-shadow:0 0 16px #fff9cbbb,0 0 50px #5cf7d999,0 0 70px #5695f588;animation:victoryPunch .75s .1s both}
+.victory-score{display:flex;flex-direction:column;gap:3px;background:linear-gradient(125deg,#c8ffed32,#0e366ebd,#ffe6a42c);border:1px solid #d3ffdf9a;padding:15px 33px;border-radius:22px;box-shadow:0 8px 40px #26ffc155,inset 0 1px #ffffffbb;animation:victoryRise .6s .3s both}
+.victory-score strong{font-size:clamp(38px,8vw,60px);font-variant-numeric:tabular-nums;line-height:1;color:#ffe8a1;text-shadow:0 0 22px #ffe291a6}
+.victory-score span{font-size:11px;letter-spacing:.16em;font-weight:900;color:#d8fffa}
+.victory-stars{font-size:40px;letter-spacing:.2em;color:#ffe4a3;text-shadow:0 0 20px #fff0b3;animation:victoryRise .65s .5s both}
+.victory-stars span{display:inline-block;transform:translateY(-8px);font-size:56px}
+.victory-halo{position:absolute;z-index:-1;top:50%;left:50%;transform:translate(-50%,-50%);width:min(390px,85vw);aspect-ratio:1;pointer-events:none}
+.victory-halo span{position:absolute;inset:0;border:2px solid #baffff7d;border-radius:50%;box-shadow:0 0 25px #4fffe98e;animation:victoryRing .9s ease-out both}
+.victory-halo span:nth-child(2){animation-delay:.18s}.victory-halo span:nth-child(3){animation-delay:.36s}
+.celebrate-particles{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:1}
+.celebrate-particles .confetti{position:absolute;top:-14%;left:var(--x);height:var(--h);width:var(--w);border-radius:2px;background:var(--col);box-shadow:0 0 9px var(--col);opacity:0;transform:rotate(var(--rot));animation:celebrateFall var(--duration) var(--delay) linear both}
+.celebrate-particles .spark{position:absolute;top:var(--y);left:var(--x);height:var(--size);width:var(--size);border-radius:50%;background:#fffbd0;box-shadow:0 0 12px #9bfff2,0 0 27px #ffe8ab;animation:celebrateSpark var(--duration) var(--delay) ease-in-out infinite alternate}
+.celebrate-particles .flare{position:absolute;top:var(--y);left:var(--x);width:7px;height:7px;border:1.5px solid #fffdd1;border-radius:50%;box-shadow:0 0 17px #97fff2;opacity:0;animation:celebrateFlare 2.1s var(--delay) ease-out infinite}
+.hero.celebrate-reward{width:min(430px,100%);gap:7px;padding:14px 7px 20px;max-height:calc(100svh - 24px);overflow-y:auto;scrollbar-width:none}
+.hero.celebrate-reward::-webkit-scrollbar{display:none}
+.reward-kicker{font-weight:950;letter-spacing:.24em;color:#b2fff0;font-size:10px;animation:rewardAppear .55s .07s both}
+.hero .reward-title{font-size:clamp(25px,6.1vw,37px);letter-spacing:-.035em;line-height:1.1;margin:1px 0;color:#fff4c0;text-shadow:0 0 22px #ffd98c9c,0 0 42px #aaffdb77;animation:rewardAppear .7s .1s both}
+.prize-theatre{height:clamp(165px,30svh,240px);width:min(280px,86vw);margin:0 auto;flex:none;position:relative;display:grid;place-items:center;isolation:isolate}
+.prize-aura{position:absolute;inset:2%;border-radius:50%;background:radial-gradient(circle,#ffffffac 0%,#c3ffe595 19%,#63cce75d 39%,#4b49d921 65%,transparent 70%);animation:prizeGlow 2.7s ease-in-out infinite;filter:blur(6px)}
+.prize-rays{position:absolute;inset:-13%;opacity:.75;background:repeating-conic-gradient(from 5deg,#ffffff00 0deg 12deg,#feffdbb0 14deg 16deg,#ffffff00 18deg 30deg);mask-image:radial-gradient(circle,transparent 6%,black 33%,transparent 65%);animation:prizeRotate 18s linear infinite}
+.prize-ring{position:absolute;border:2px solid #d3ffebbb;border-radius:50%;box-shadow:0 0 19px #7cffefaa,inset 0 0 23px #e6fff58b;animation:prizeGlow 2.5s ease-in-out infinite}
+.prize-ring-one{width:74%;aspect-ratio:1;transform:scaleY(.65);animation:prizeRingBreath 3.1s ease-in-out infinite}
+.prize-ring-two{width:97%;aspect-ratio:1;border-style:dashed;border-color:#e5d49f8c;transform:scaleY(.66);animation:prizeRingBreath 3.1s .5s ease-in-out infinite}
+.prize-crystal{position:absolute;z-index:2;top:3%;height:91%;aspect-ratio:180/218;filter:drop-shadow(0 3px 14px #abffed) drop-shadow(0 0 25px #4fefe4);animation:prizeEntrance .95s .1s cubic-bezier(.18,1.5,.4,1) both,prizeFloat 3.2s 1.2s ease-in-out infinite}
+.prize-crystal svg{width:100%;height:100%;display:block;overflow:visible}
+.prize-floor{position:absolute;bottom:-6px;width:63%;height:20px;background:radial-gradient(ellipse,#7afce9b5,transparent 68%);filter:blur(6px)}
+.prize-star{position:absolute;font-size:21px;color:#fff5b0;text-shadow:0 0 13px #fff3b3;z-index:3;animation:prizeTwinkle 1.8s ease-in-out infinite}
+.prize-star.s1{top:12%;left:6%}.prize-star.s2{top:25%;right:4%;animation-delay:.45s}.prize-star.s3{bottom:17%;left:14%;animation-delay:.8s}.prize-star.s4{bottom:11%;right:11%;animation-delay:1.2s}
+.reward-name{color:#ebfff8;text-shadow:0 0 19px #a7fff1a3;font-weight:1000;letter-spacing:.14em;font-size:clamp(11px,2.7vw,15px);animation:rewardAppear .55s .25s both}
+.reward-name small{display:block;font-size:9px;font-weight:800;letter-spacing:.06em;color:#c4fff0;margin-top:4px;text-shadow:0 0 10px #73ffe666}
+.crystal-collection{width:min(336px,100%);display:flex;flex-direction:column;gap:8px;padding:9px 12px 10px;border:1px solid #b3f4e86b;border-radius:14px;background:linear-gradient(120deg,#184973bb,#172d59b5);box-shadow:inset 0 1px 1px #ffffff22;animation:rewardAppear .5s .38s both}
+.collection-counter{font-weight:900;color:#d4fff5;letter-spacing:.10em;font-size:11px}
+.collection-counter strong{font-size:15px;color:#ffe3a2;padding-left:6px}
+.crystal-slots{display:flex;justify-content:center;align-items:center;gap:clamp(5px,2vw,10px)}
+.crystal-slots span{font-size:clamp(13px,3.7vw,18px);color:#8f9bbb75;filter:drop-shadow(0 0 1px #647da3)}
+.crystal-slots span.owned{color:#c0fff0;filter:drop-shadow(0 0 9px #aaffdd) drop-shadow(0 0 5px #ffd98c);transform:scale(1.2)}
+.next-world{width:min(336px,100%);border:1px solid #ffdfad72;border-radius:14px;padding:11px 13px;display:flex;align-items:center;justify-content:center;gap:10px;font-size:13px;letter-spacing:.07em;font-weight:1000;color:#fff0cb;background:linear-gradient(110deg,#6f678cbd,#353d76e3);box-shadow:inset 0 1px 1px #ffebd64f;opacity:1!important;cursor:not-allowed!important;animation:rewardAppear .55s .55s both}
+.next-world span{font-size:10px;border:1px solid #fff0bf70;border-radius:7px;padding:4px 6px;background:#101b46c4;letter-spacing:.08em;color:#ffe7ae}
+.reward-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:7px;width:min(336px,100%);animation:rewardAppear .55s .7s both}
+.reward-actions .secondary{margin:0;flex:1 1 128px;min-height:42px;padding:9px 8px;color:#e8ffff;background:#16446caa;border-color:#88ffe26a;font-size:11px;letter-spacing:.04em}
+.reward-actions .secondary:active{transform:translateY(1px);background:#215c83}
+@keyframes victoryHalo{to{transform:rotate(360deg)}}
+@keyframes victoryPunch{0%{opacity:0;transform:scale(.35);filter:blur(9px)}65%{opacity:1;transform:scale(1.15);filter:blur(0)}100%{transform:scale(1)}}
+@keyframes victoryRise{from{opacity:0;transform:translateY(28px) scale(.82)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes victoryRing{0%{opacity:1;transform:scale(.06)}100%{opacity:0;transform:scale(1.45)}}
+@keyframes celebrateFall{0%{opacity:0;transform:translate3d(0,-25px,0) rotate(var(--rot))}7%{opacity:.95}90%{opacity:.9}100%{opacity:0;transform:translate3d(var(--dx),115svh,0) rotate(calc(var(--rot) + 740deg))}}
+@keyframes celebrateSpark{from{opacity:.1;transform:scale(.45)}to{opacity:1;transform:scale(1.65)}}
+@keyframes celebrateFlare{0%{opacity:1;transform:scale(.2)}100%{opacity:0;transform:scale(9)}}
+@keyframes rewardAppear{from{opacity:0;transform:translateY(14px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes prizeGlow{50%{opacity:.62;transform:scale(1.13)}}
+@keyframes prizeRotate{to{transform:rotate(360deg)}}
+@keyframes prizeEntrance{from{opacity:0;transform:translateY(70px) scale(.2) rotate(-75deg)}to{opacity:1;transform:translateY(0) scale(1) rotate(0deg)}}
+@keyframes prizeFloat{50%{transform:translateY(-9px) rotate(4deg)}}
+@keyframes prizeTwinkle{50%{opacity:.27;transform:scale(.6) rotate(25deg)}}
+@keyframes prizeRingBreath{50%{opacity:.5;transform:scaleY(.63) scale(1.1)}}
+@media(max-height:730px){.hero.celebrate-reward{gap:4px;padding:7px 4px}.prize-theatre{height:clamp(128px,26svh,195px)}.crystal-collection{gap:4px;padding:6px 10px}.next-world{padding:8px 12px}.reward-actions .secondary{min-height:36px}.hero .reward-title{font-size:clamp(22px,5.8vw,30px)}}
+@media(orientation:landscape) and (max-height:600px) and (min-width:650px){
+ .hero.celebrate-reward{width:min(570px,100%);max-height:calc(100svh - 12px);gap:3px;padding:4px;display:grid;grid-template-columns:minmax(145px,200px) minmax(250px,1fr);grid-template-rows:auto auto auto auto auto;column-gap:14px;align-items:center}
+ .reward-kicker,.hero .reward-title{grid-column:2;text-align:center}
+ .reward-kicker{grid-row:1;align-self:end}.hero .reward-title{grid-row:2;font-size:23px}
+ .prize-theatre{grid-column:1;grid-row:1 / span 5;align-self:center;height:min(215px,66svh);width:100%}
+ .reward-name{grid-column:2;grid-row:3;font-size:11px}
+ .crystal-collection{grid-column:2;grid-row:4;padding:5px 7px;gap:3px}
+ .next-world{grid-column:2;grid-row:5;padding:6px}
+ .reward-actions{grid-column:2;grid-row:6;gap:5px}
+ .reward-actions .secondary{min-height:32px;font-size:10px}
+ .hero.celebrate-victory{min-height:88svh;gap:5px}
+ .victory-score{padding:7px 25px}.victory-stars{font-size:25px}
+}
+@media(prefers-reduced-motion:reduce){.overlay.is-celebrating:before,.victory-headline,.victory-score,.victory-kicker,.victory-stars,.victory-halo span,.celebrate-particles span,.reward-kicker,.reward-title,.prize-crystal,.prize-rays,.prize-aura,.prize-ring,.prize-star,.reward-name,.crystal-collection,.next-world,.reward-actions{animation:none!important}}
+
+
+/* Fit the full keypad inside Android dynamic browser viewport, without hiding a row. */
+.key-zero{grid-column:span 2}
+.intro-vault-btn{font-size:11px;letter-spacing:.08em;color:#c7fff0;background:#163b64bf;border:1px solid #77f9e27d;border-radius:12px;padding:11px 14px;cursor:pointer;margin-top:11px;font-weight:900;display:flex;justify-content:center;gap:10px;align-items:center}
+.intro-vault-btn span{color:#ffdc9e;font-variant-numeric:tabular-nums}
+.vault-open-btn{width:min(336px,100%);min-height:46px;display:flex;align-items:center;justify-content:center;gap:10px;padding:8px 12px;background:linear-gradient(115deg,#0a6779cf,#18376ccc);color:#effff6;border:1px solid #c1ffe5b8;border-radius:14px;cursor:pointer;box-shadow:inset 0 1px 1px #fff9,0 0 20px #4effba28;font-size:11px;letter-spacing:.035em;font-weight:950}
+.vault-open-btn strong{font-size:12px;white-space:nowrap;color:#ffe6a5}
+.mini-crystal{width:17px;height:25px;background:linear-gradient(140deg,#f9ffc6,#57f3e5,#576ddf);clip-path:polygon(50% 0,90% 28%,82% 68%,50% 100%,18% 68%,10% 28%);filter:drop-shadow(0 0 10px #80fff4)}
+.crystal-vault{width:min(530px,100%);max-height:calc(100dvh - 24px);overflow-y:auto;scrollbar-width:thin;gap:8px;margin:auto;padding:13px 2px 14px;flex:none}
+.crystal-vault[hidden]{display:none!important}
+.vault-eyebrow{font-size:10px;font-weight:950;letter-spacing:.18em;color:#b4fff3}
+.crystal-vault .vault-title{font-size:clamp(24px,5.1vw,34px);line-height:1.06;margin:0;color:#ffecb9;text-shadow:0 0 19px #ffed9c88;letter-spacing:-.035em}
+.vault-progress{font-size:13px;font-weight:950;letter-spacing:.12em;color:#d4ffee;background:#183b6585;border:1px solid #9efde66e;padding:6px 15px;border-radius:50px}
+.vault-display{position:relative;isolation:isolate;width:min(490px,100%);background:radial-gradient(ellipse at 50% 46%,#2963a3ba,#0e1c49ec 76%),repeating-linear-gradient(60deg,#d4ffff10 0 1px,transparent 1px 33px);border:1px solid #c5fbe75a;border-radius:24px;padding:14px;box-shadow:0 11px 38px #0009,inset 0 0 45px #99e9ff12}
+.vault-constellation{position:absolute;inset:5%;pointer-events:none;background:radial-gradient(circle at 50% 50%,#b3fff450 0 1px,transparent 3px),radial-gradient(circle at 24% 25%,#ffe4aa66 0 1.5px,transparent 3px),radial-gradient(circle at 77% 30%,#a4eaff6a 0 1.5px,transparent 3px),repeating-conic-gradient(from 0deg at 50% 50%,transparent 0deg 38deg,#8ee5f31a 39deg 40deg,transparent 42deg 45deg)}
+.vault-grid{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.vault-card{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-width:0;min-height:112px;padding:7px 3px 5px;border:1px solid #749ab65c;border-radius:15px;background:linear-gradient(150deg,#25355dc9,#101c39d9);box-shadow:inset 0 1px 1px #ffffff22,0 3px 13px #020b23a8;overflow:hidden}
+.vault-card:before{content:"";position:absolute;inset:-22%;background:radial-gradient(circle,#78fff119 0%,transparent 57%);pointer-events:none}
+.vault-card.unlocked{border:1px solid #c4ffe2;box-shadow:0 0 18px #4ffff581,inset 0 0 22px #a3fff424;background:radial-gradient(circle at 50% 39%,#4daab66b,#123968e8 75%)}
+.vault-card-number{font-size:11px;letter-spacing:.1em;color:#a7b9d6;font-weight:950}
+.vault-card.unlocked .vault-card-number{color:#fff2b2}
+.vault-card-gem{width:clamp(32px,9vw,49px);height:clamp(45px,11vw,59px);display:flex;align-items:center;justify-content:center}
+.vault-card-gem svg{width:100%;height:100%;filter:grayscale(1) brightness(.34) saturate(.3);opacity:.52;transform:scale(.9) rotate(calc((var(--slot) - 4)*3deg))}
+.vault-card.unlocked .vault-card-gem svg{filter:drop-shadow(0 0 9px #c3ffdb) drop-shadow(0 0 20px #68fff9);opacity:1;transform:scale(1.04);animation:prizeFloat 3.4s ease-in-out infinite}
+.vault-card-name{font-size:10px;color:#cedef8;font-weight:900;letter-spacing:.02em;white-space:nowrap}
+.vault-card.unlocked .vault-card-name{color:#e7fff9}
+.vault-card-status{font-size:9px;font-weight:900;letter-spacing:.075em;color:#8396b2}
+.vault-card.unlocked .vault-card-status{color:#ffe9a7}
+.vault-description{font-size:12px!important;line-height:1.36!important;color:#bce9fa!important;margin:2px 0 5px!important;text-align:center;max-width:340px!important}
+.vault-back{min-width:178px;min-height:42px;border-radius:12px;border:1px solid #8bfce396;background:linear-gradient(125deg,#82fff0,#43ccdd);font-size:13px;font-weight:950;letter-spacing:.08em;color:#132b43;cursor:pointer;box-shadow:0 3px 10px #6cffed3c}
+@media (max-width:739px) and (orientation:portrait){
+ html,body{height:100%;min-height:0;overflow:hidden}
+ body{height:100dvh}
+ #shell{width:100%;height:100dvh;min-height:0;overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:39px 18px minmax(125px,1fr) minmax(60px,76px) 47px 15px minmax(164px,1.03fr);gap:4px;padding:max(4px,env(safe-area-inset-top)) clamp(8px,2.6vw,13px) max(4px,env(safe-area-inset-bottom));margin:0;border:0;border-radius:0}
+ .top{grid-row:1;grid-column:1;height:39px;min-height:0;gap:5px}
+ .logo{font-size:clamp(14px,4.2vw,17px)}
+ .world-pill{font-size:clamp(9px,2.7vw,11px);letter-spacing:.01em;padding:5px 8px;gap:5px}
+ .world-pill b{font-size:10px}
+ .top-actions{gap:4px}
+ .icon-btn{width:34px;height:34px;border-radius:10px}
+ .progress{grid-row:2;grid-column:1;min-height:0;gap:5px}
+ .progress-label{font-size:9px}
+ .gem{height:7px}
+ .scene{grid-row:3;grid-column:1;height:100%;min-height:0;border-radius:17px}
+ .scene:before{border-radius:16px}
+ .scene-heading{top:9px;left:11px}
+ .scene-heading strong{font-size:16px}
+ .scene-heading small{font-size:8px}
+ .scene-caption{left:11px;bottom:8px;font-size:9px}
+ .rush-hud{top:45px;right:9px;min-width:118px;padding:5px 7px}
+ .rush-line{font-size:8px}
+ .problem{grid-row:4;grid-column:1;min-height:0;padding:5px 10px;display:flex;flex-direction:column;justify-content:center;gap:0;border-radius:15px}
+ .problem-top{min-height:19px;gap:6px}
+ .problem-top .verb{font-size:10px}
+ .unit{font-size:9px;padding:4px 7px}
+ .number{font-size:clamp(31px,5.5dvh,42px);line-height:1.0}
+ .answer-wrap{grid-row:5;grid-column:1;min-height:0;gap:6px}
+ .answer-display{height:100%;min-height:0;border-radius:13px}
+ .answer-value{font-size:27px}
+ .answer-info{width:70px;border-radius:12px}
+ .note{grid-row:6;grid-column:1;height:15px;min-height:0;flex:none;font-size:11px;line-height:1}
+ .keypad{grid-row:7;grid-column:1;height:100%;min-height:0;max-height:none;grid-template-rows:repeat(4,minmax(0,1fr));gap:5px}
+ .key{min-height:0;border-radius:11px;font-size:clamp(20px,4.9dvh,27px)}
+ .key.action{font-size:21px}
+ .foot{display:none}
+ .overlay{position:fixed;inset:0;height:100dvh;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+ .hero.celebrate-reward{max-height:calc(100dvh - 12px)}
+}
+@media (max-width:739px) and (orientation:portrait) and (max-height:560px){
+ #shell{grid-template-rows:34px 15px minmax(102px,1fr) minmax(53px,63px) 42px 12px minmax(142px,.97fr);gap:3px}
+ .top{height:34px}
+ .scene-heading strong{font-size:14px}
+ .key{font-size:20px}
+ .note{height:12px;font-size:10px}
+}
+@media(orientation:landscape) and (max-height:600px) and (min-width:650px){
+ .vault-display{width:min(680px,100%);padding:6px 9px}
+ .crystal-vault{width:min(700px,98%);max-height:calc(100dvh - 12px);padding:5px 3px;gap:3px}
+ .crystal-vault .vault-title{font-size:22px}
+ .vault-grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+ .vault-card{min-height:93px;padding:4px}
+ .vault-card-gem{height:44px;width:35px}
+ .vault-description{margin:0!important;font-size:10px!important}
+ .vault-back{min-height:32px}
+}
+@media(prefers-reduced-motion:reduce){.vault-card.unlocked .vault-card-gem svg{animation:none!important}}
+
+:root{--bg:#230719;--cyan:#ffae4e;--violet:#f4516a;--gold:#ffe3a1;--stroke:rgba(255,159,109,.27)}
+body{background:radial-gradient(ellipse 100% 75% at 50% 0%,#802441,#3a0b23 66%,#200719)}
+#shell{background-color:#29091944}
+.logo span{color:#ffc161}.world-dot{background:#ffa632;box-shadow:0 0 12px #ff9d39}
+.world-pill{border-color:#ffad8978;background:#48112ba8}
+.scene{border-color:#ffad8085;background:#390d26}.scene-heading small,.scene-caption{color:#ffdfa7}
+.progress .gem.done{background:linear-gradient(90deg,#ff8d39,#ffe39c);box-shadow:0 0 10px #ff7a39}
+.problem{background:linear-gradient(145deg,#69213fe8,#341025f2);border-color:#e96b6673}
+.unit{background:linear-gradient(120deg,#ffe2a1,#ffb251);color:#562135}.number{color:#fff0d6}
+.answer-display{background:linear-gradient(180deg,#390c26,#4d1632);border-color:#ff966a}.answer-value{color:#fff0d7}
+.key{background:linear-gradient(180deg,#742442,#4b1531);border-color:#ff95666f}
+.key.action{background:linear-gradient(180deg,#7b302f,#57202a);color:#ffd6a0}.key-zero{grid-column:span 2}
+#rushFill{background:linear-gradient(90deg,#ff753b,#ffdc89)}.rush-hud{border-color:#ffad786e;background:#461127b5}
+.prize-crystal{filter:drop-shadow(0 0 21px #ffa63e)}
+
+
+/* Pedagogical failure screen: the right answer is the visual focal point. */
+.learning-panel{width:min(370px,100%);display:flex;flex-direction:column;gap:8px;margin:9px auto 12px;padding:13px 14px;border-radius:17px;background:linear-gradient(160deg,#0c2744ee,#11254bef);border:1px solid #9df8e89c;box-shadow:0 0 28px #5affd026,inset 0 1px 1px #ffffff30}
+.learning-heading{font-size:11px;line-height:1.3;letter-spacing:.075em;font-weight:1000;color:#c5fff2;text-align:center}
+.learning-question{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:8px;font-size:11px;font-weight:900;color:#c8dfff}
+.learning-question strong{font-size:clamp(28px,7vw,42px);font-weight:1000;line-height:1.1;color:#fff8d8;font-variant-numeric:tabular-nums}
+.learning-your-answer{font-size:11px;font-weight:900;color:#ffb5b5;text-align:center;letter-spacing:.04em}
+.learning-result{display:flex;justify-content:center;align-items:center;gap:9px;padding:10px 12px;border:1px solid #b0ffe2ba;border-radius:12px;background:linear-gradient(125deg,#12654a8a,#164470b5);box-shadow:0 0 19px #67ffb93b}
+.learning-result span{font-size:12px;font-weight:1000;letter-spacing:.055em;color:#c9ffe7}
+.learning-result strong{font-size:clamp(34px,8vw,49px);font-weight:1000;line-height:1;color:#fff1a6;text-shadow:0 0 18px #9cffe48f;font-variant-numeric:tabular-nums}
+.learning-rule{font-size:clamp(12px,3.2vw,14px);line-height:1.42;color:#e5f9f4;text-align:center;font-weight:750}
+#crashHero{max-height:calc(100dvh - 16px);overflow-y:auto;scrollbar-width:thin;justify-content:flex-start;padding-top:10px;padding-bottom:12px}
+#crashHero .fail-icon{height:64px;width:64px;font-size:37px;border-width:3px;margin:2px auto 3px;flex:none}
+#crashHero h1{font-size:clamp(24px,7vw,32px);margin:1px 0}
+#crashHero .fail-score{margin:0 0 6px;padding:7px 10px}
+#crashHero .fail-explain{margin:2px 0 8px!important;line-height:1.25!important}
+#crashHero #retry{flex:none;margin:0;min-height:44px}
+@media(max-height:660px){
+ #crashHero{gap:3px;padding-top:6px}
+ #crashHero .fail-icon{height:45px;width:45px;font-size:27px;margin:0 auto}
+ #crashHero h1{font-size:22px}
+ #crashHero .fail-kicker{font-size:9px}
+ #crashHero #crashDetail{font-size:11px;margin:0 0 2px}
+ .learning-panel{padding:8px 10px;gap:5px;margin:5px auto 6px}
+ .learning-question strong{font-size:30px}
+ .learning-result{padding:7px}
+ .learning-result strong{font-size:36px}
+ .learning-rule{font-size:11px}
+ #crashHero .fail-explain{font-size:10px!important}
+}
+@media(orientation:landscape) and (max-height:600px) and (min-width:650px){
+ #crashHero{width:min(720px,97vw);max-width:720px;display:grid;grid-template-columns:minmax(120px,200px) minmax(270px,1fr);grid-template-rows:auto auto auto auto auto;gap:3px 12px;align-items:center;padding:5px 10px;max-height:calc(100dvh - 8px)}
+ #crashHero .fail-kicker,#crashHero .fail-icon,#crashHero h1,#crashHero #crashDetail,#crashHero .fail-score,#crashHero .fail-explain,#crashHero #retry{grid-column:1}
+ #crashHero .learning-panel{grid-column:2;grid-row:1 / span 7;width:100%;max-height:100%;padding:8px}
+ #crashHero .fail-icon{height:36px;width:36px;font-size:21px}
+ #crashHero h1{font-size:18px}
+ #crashHero #retry{min-height:34px;padding:5px}
+}
+
+/* World 2: orange-red flame reward and soft timing. */
+.prize-crystal{filter:drop-shadow(0 0 17px #ff9e3b) drop-shadow(0 0 26px #ff593b)}
+.vault-card:nth-child(2).unlocked{border-color:#ffcd78;box-shadow:0 0 20px #ff863e96,inset 0 0 18px #ff853e36}
+.vault-card:nth-child(2).unlocked .vault-card-gem svg{filter:drop-shadow(0 0 9px #ffbb56) drop-shadow(0 0 17px #ff6b3b)}
+
+/* Unique jewel silhouettes: Valgussaar long prism, Päikesekuru fire lotus. */
+.vault-card:nth-child(1).unlocked .vault-card-gem svg{filter:drop-shadow(0 0 9px #73ffec) drop-shadow(0 0 16px #63b7ff)}
+.vault-card:nth-child(2).unlocked .vault-card-gem svg{filter:drop-shadow(0 0 9px #ffb855) drop-shadow(0 0 16px #ff7549)}
+
+
+/* World-two ceremony has amber light, not the icy halo of the first world. */
+.celebrate-reward .prize-aura{background:radial-gradient(circle,#fff9b7bb 0%,#ffd482a0 20%,#ff904f69 43%,#b51c4229 65%,transparent 73%)}
+.celebrate-reward .prize-ring{border-color:#ffe6a7d9;box-shadow:0 0 22px #ff9a60c9,inset 0 0 23px #ffecb28b}
+.celebrate-reward .prize-rays{background:repeating-conic-gradient(from 5deg,#fff2b300 0deg 12deg,#ffd99cc0 14deg 16deg,#ffe4b900 18deg 30deg)}
+.celebrate-reward .reward-title{color:#fff0b4;text-shadow:0 0 24px #ffb35fb5,0 0 44px #ff754f88}
+.celebrate-reward .prize-star{color:#ffe5a5;text-shadow:0 0 15px #ffac62}
+.celebrate-reward .vault-open-btn{border-color:#ffd08a;background:linear-gradient(125deg,#89312fd9,#512243d9)}
+
+
+/* EDUKASS · nine-world arcade: reusable world palettes without new game mechanics. */
+:root{--world-main:#66ffe9;--world-accent:#367feb;--world-dark:#0b224b}
+.logo span{color:var(--world-main)}
+.world-dot{background:var(--world-main);box-shadow:0 0 17px var(--world-main)}
+.world-pill{border-color:var(--world-accent)}
+.scene{border-color:var(--world-accent)}
+.scene-heading small{color:var(--world-main)}
+.progress .gem.done{background:linear-gradient(90deg,var(--world-accent),var(--world-main));box-shadow:0 0 10px var(--world-main)}
+.problem{border-color:var(--world-accent)}
+.unit{background:linear-gradient(115deg,#fff7d4,var(--world-main));color:#18182f}
+.answer-display{border-color:var(--world-accent)}
+.key{border-color:var(--world-accent);background:linear-gradient(165deg,#34325c,#1b1d3f)}
+.rush-hud{border-color:var(--world-accent)}
+#rushFill{background:linear-gradient(90deg,var(--world-accent),var(--world-main))}
+.prize-crystal{filter:drop-shadow(0 0 16px var(--world-main)) drop-shadow(0 0 27px var(--world-accent))}
+.vault-card.unlocked{border-color:var(--world-main)}
+#nextWorld{cursor:pointer!important;background:linear-gradient(115deg,var(--world-accent),var(--world-main))!important;color:#17132e!important;opacity:1!important}
+.world-selector{width:min(350px,100%);border:1px solid #87ffdb70;background:#0d2049bc;border-radius:13px;padding:7px 10px;color:#c4fff1}
+.world-selector summary{cursor:pointer;list-style:none;font-size:11px;font-weight:1000;letter-spacing:.1em;padding:5px 2px}
+.world-selector summary::-webkit-details-marker{display:none}
+.world-menu{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin-top:9px}
+.world-choice{border:1px solid var(--choice-color);background:#111c43e2;color:#e8f6ff;border-radius:8px;font-size:9px;line-height:1.3;padding:9px 3px;min-height:36px;font-weight:850;cursor:pointer;white-space:normal}
+.world-choice.active{background:linear-gradient(140deg,var(--choice-color),#273364);color:#101931}
+.world-choice:disabled{opacity:.4;filter:saturate(.5);cursor:not-allowed}
+#introHero{max-height:calc(100dvh - 16px);overflow-y:auto;justify-content:flex-start;padding-block:10px}
+#introHero .hero-mark{flex:none}
+.fusion-hero{width:min(540px,98%);max-height:calc(100dvh - 15px);overflow-y:auto;padding:15px 8px;gap:9px;margin:auto;flex:none;text-align:center}
+.fusion-kicker{font-weight:950;font-size:11px;letter-spacing:.20em;color:#bdfff0}
+.fusion-heading{font-size:clamp(24px,5.9vw,38px)!important;line-height:1.1;margin:0;color:#fff2bc;text-shadow:0 0 24px #ffebac}
+.fusion-theatre{position:relative;width:min(360px,90vw);height:clamp(225px,39svh,330px);margin:auto;isolation:isolate;background:radial-gradient(circle at 50% 52%,#e8ffff38,transparent 68%);display:grid;place-items:center}
+.fusion-theatre:before{content:"";position:absolute;inset:0;border-radius:50%;background:repeating-conic-gradient(from 0deg,#fff0 0deg 14deg,#ffe4ad69 16deg 18deg,#fff0 22deg 33deg);mask-image:radial-gradient(circle,transparent 5%,#000 47%,transparent 73%);animation:fusionHalo 15s linear infinite}
+.fusion-pieces{position:absolute;inset:0;animation:fusionPiecesDisappear 4.3s ease-in forwards}
+.fusion-piece{position:absolute;top:50%;left:50%;width:49px;height:63px;margin:-30px 0 0 -24px;filter:drop-shadow(0 0 8px var(--c));transform:rotate(var(--a)) translateY(-115px) rotate(calc(-1*var(--a)));animation:fusionOrbit 4.3s cubic-bezier(.2,.6,.35,1) forwards}
+.fusion-piece svg{width:100%;height:100%}
+.fusion-ultimate{position:relative;width:clamp(150px,48%,220px);filter:drop-shadow(0 0 30px #ecfff4) drop-shadow(0 0 27px #ffacdb);animation:fusionBirth 4.5s ease-out both}
+.fusion-ultimate svg{display:block;width:100%;height:auto;max-height:100%}
+.fusion-title{margin:0;color:#ffeba2;font-size:clamp(31px,7vw,43px);text-shadow:0 0 25px #ffe8a1b6;letter-spacing:.08em}
+.fusion-description{margin:0;color:#d6fff8;line-height:1.35;font-size:13px}
+.fusion-action-text{color:#b6fff7;font-size:11px;letter-spacing:.15em;font-weight:1000}
+#fusionClose{width:min(260px,95%);min-height:42px;margin:4px auto}
+@keyframes fusionHalo{to{transform:rotate(360deg)}}
+@keyframes fusionOrbit{0%{opacity:1;transform:rotate(var(--a)) translateY(-118px) rotate(calc(-1 * var(--a))) scale(1)}60%{opacity:1;transform:rotate(calc(var(--a) + 540deg)) translateY(-87px) rotate(calc(-1 * var(--a))) scale(.88)}95%,100%{opacity:0;transform:rotate(calc(var(--a) + 900deg)) translateY(0) scale(.06)}}
+@keyframes fusionPiecesDisappear{90%{opacity:1}100%{opacity:0}}
+@keyframes fusionBirth{0%,57%{opacity:0;transform:scale(.12) rotate(-75deg)}77%{opacity:1;transform:scale(1.13) rotate(8deg)}100%{transform:scale(1) rotate(0)}}
+@media(max-height:610px){.fusion-theatre{height:160px}.fusion-ultimate{width:115px}.fusion-hero{gap:3px}.fusion-heading{font-size:21px!important}.fusion-title{font-size:27px}.fusion-description{font-size:11px}}
+@media(prefers-reduced-motion:reduce){.fusion-theatre:before,.fusion-pieces,.fusion-piece,.fusion-ultimate{animation:none!important}.fusion-piece{display:none}.fusion-ultimate{transform:none;opacity:1}}
+
+
+/* Numeral scaling: allow 10-digit answers, e.g. 1 000 000 000, on narrow phones. */
+.number.long-number{font-size:clamp(21px,6vw,38px)!important;letter-spacing:-.045em!important;white-space:nowrap}
+.answer-value.long-answer{font-size:clamp(21px,5.4vw,35px)!important;letter-spacing:-.045em!important;white-space:nowrap}
+.learning-number,.learning-result strong{overflow-wrap:anywhere}
+#introCrystalArt{display:grid;place-items:center}
+#introCrystalArt svg{width:100%;height:100%;max-width:110px;max-height:112px;filter:drop-shadow(0 0 15px var(--world-main))}
+@media(max-width:380px){.problem .unit{font-size:clamp(8px,2.35vw,10px);white-space:normal;max-width:70%}.number.long-number{font-size:clamp(20px,5.55vw,28px)!important}.answer-value.long-answer{font-size:clamp(20px,5.1vw,28px)!important}}
+</style>
+</head>
+<body>
+<main id="shell">
+  <header class="top">
+    <div class="logo">EDU<span>KASS</span></div>
+    <div class="world-pill" id="worldPill"><span class="world-dot"></span> <b>02</b> / 09 · PÄIKESEKURU</div>
+    <div class="top-actions">
+      <button type="button" class="icon-btn" id="sound" aria-label="Lülita heli sisse või välja" title="Heli"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path class="sound-lines" d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/><path class="sound-muted" d="m16 9 5 6m0-6-5 6"/></svg></button>
+      <button type="button" class="icon-btn" id="restart" aria-label="Alusta uuesti" title="Alusta uuesti"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></button>
+    </div>
+  </header>
+  <div class="progress" aria-label="Edenemine"><span class="progress-label">TAKISTUSED</span><div class="gems" id="gems"></div><span class="progress-count" id="step">0/12</span></div>
+  <section class="scene" id="scene" aria-label="Helendavate saarte mängumaailm">
+    <canvas id="world" aria-hidden="true"></canvas>
+    <div class="scene-heading"><small id="sceneWorld">MAAILM 01</small><strong id="sceneName">Valgussaar</strong></div>
+    <div class="rush-hud" id="rushHud"><div class="rush-line"><span id="rushLabel">TAKISTUSENI</span><strong id="rushClock">—</strong></div><div class="rush-track"><div id="rushFill"></div></div></div>
+    <div class="scene-caption" id="sceneCaption">KIIRUSTA! TAKISTUS LÄHENEB</div>
+    <div class="scene-glow" id="sceneGlow"></div>
+  </section>
+  <section class="problem" aria-live="polite"><div class="problem-top"><span class="verb">ÜMARDA</span><span class="unit" id="unit">KÜMNELISTENI</span></div><div class="number" id="number">—</div></section>
+  <div class="answer-wrap"><div class="answer-display" id="answerBox"><span class="answer-value empty" id="answerValue"></span></div><div class="answer-info"><small>ETAPP</small><strong id="answerStep">01 / 12</strong></div></div>
+  <div class="note" id="note" aria-live="polite">Sisesta vastus</div>
+  <section class="keypad" id="keypad" aria-label="Numbriklahvistik">
+    <button class="key" data-key="1">1</button><button class="key" data-key="2">2</button><button class="key" data-key="3">3</button>
+    <button class="key" data-key="4">4</button><button class="key" data-key="5">5</button><button class="key" data-key="6">6</button>
+    <button class="key" data-key="7">7</button><button class="key" data-key="8">8</button><button class="key" data-key="9">9</button>
+    <button class="key action" data-key="back" aria-label="Kustuta viimane number">⌫</button><button class="key key-zero" data-key="0">0</button>
+  </section>
+  <footer class="foot">EDUKASS · ÜMARDAMINE · PROTOTÜÜP 01</footer>
+</main>
+<div class="overlay" id="overlay" role="dialog" aria-modal="true">
+ <div class="hero" id="introHero">
+  <span class="eyebrow">EDUKASS · ÜMARDAMINE</span>
+  <div class="hero-mark" id="introCrystalArt" aria-hidden="true"></div>
+  <h1>Avasta<br><span id="introName">Valgussaar</span></h1>
+  <p>Kristall kihutab ise edasi! Ümarda enne takistust: õige vastus avab hüppe, vale vastus või hilinemine tähendab kokkupõrget. Siis alustad otsast.</p>
+  <details class="world-selector" id="worldSelector"><summary>VALI MAAILM · 9 MAAILMA</summary><div id="worldMenu" class="world-menu"></div></details>
+  <button class="primary" id="begin">ALUSTA MÄNGU <span aria-hidden="true">›</span></button>
+  <button class="intro-vault-btn" id="openVaultIntro" type="button">KRISTALLIDE VARAKAMBER <span id="introCollectionCount">0 / 9</span></button>
+ </div>
+ <div class="celebrate-particles" id="celebrateParticles" aria-hidden="true"></div>
+ <div class="hero celebrate-victory" id="victoryHero" hidden>
+  <div class="victory-halo" aria-hidden="true"><span></span><span></span><span></span></div>
+  <span class="victory-kicker" id="victoryWorld">MAAILM 01 VÕIDETUD</span>
+  <h1 class="victory-headline">VÕRRATU!</h1>
+  <div class="victory-score"><strong id="victoryScore">8 / 8</strong><span>TAKISTUST LÄBITUD</span></div>
+  <div class="victory-stars" aria-hidden="true">✦ <span>✦</span> ✦</div>
+ </div>
+ <div class="hero celebrate-reward" id="finishHero" hidden>
+  <span class="reward-kicker" id="rewardWorld">MAAILM 01 · VALGUSSAAR</span>
+  <h1 class="reward-title">KRISTALL SAADUD!</h1>
+  <div class="prize-theatre" aria-label="Päikesekuru kristall">
+   <div class="prize-rays" aria-hidden="true"></div>
+   <div class="prize-aura" aria-hidden="true"></div>
+   <div class="prize-ring prize-ring-one" aria-hidden="true"></div>
+   <div class="prize-ring prize-ring-two" aria-hidden="true"></div>
+   <div class="prize-star s1" aria-hidden="true">✦</div>
+   <div class="prize-star s2" aria-hidden="true">✧</div>
+   <div class="prize-star s3" aria-hidden="true">✦</div>
+   <div class="prize-star s4" aria-hidden="true">✦</div>
+   <div class="prize-crystal" id="awardCrystalArt" aria-label="Päikesekuru kristall"></div>
+   <div class="prize-floor" aria-hidden="true"></div>
+  </div>
+  <div class="reward-name"><span id="rewardName">VALGUSSAAR KRISTALL</span><small id="rewardCaption">SA SAID VALGUSSAARE KRISTALLI!</small></div>
+  <button class="vault-open-btn" id="openVaultReward" type="button"><span class="mini-crystal" aria-hidden="true"></span><span>AVA KRISTALLIDE VARAKAMBER</span><strong id="rewardCollectionCount">1 / 9</strong></button>
+  <button class="next-world" id="nextWorld" type="button">JÄRGMINE MAAILM <span>02</span></button>
+  <div class="reward-actions">
+   <button class="secondary" id="again" type="button">MÄNGI UUESTI ↻</button>
+  </div>
+ </div>
+ <div class="hero crystal-vault" id="vaultHero" hidden>
+  <span class="vault-eyebrow">EDUKASS · KRISTALLIDE KOGU</span>
+  <h1 class="vault-title">KRISTALLIDE VARAKAMBER</h1>
+  <div class="vault-progress" id="vaultProgress" aria-live="polite">KOGUTUD 0 / 9</div>
+  <div class="vault-display">
+   <div class="vault-constellation" aria-hidden="true"></div>
+   <div class="vault-grid" id="vaultGrid" aria-label="Üheksa kristalli"></div>
+  </div>
+  <p class="vault-description" id="vaultDescription">Läbi maailmad ja kogu kõik üheksa kristalli!</p>
+  <button class="vault-back" id="closeVault" type="button">TAGASI</button>
+ </div>
+ <div class="hero fusion-hero" id="fusionHero" hidden>
+  <span class="fusion-kicker">EDUKASS · 9 / 9 KRISTALLI</span>
+  <h1 class="fusion-heading">KÕIK KRISTALLID ÜHINEVAD!</h1>
+  <div class="fusion-theatre" aria-label="Üheksast kristallist sünnib ülim kristall">
+   <div class="fusion-pieces" id="fusionPieces"></div>
+   <div class="fusion-ultimate" id="ultimateGem"></div>
+  </div>
+  <h2 class="fusion-title">ÜLIM KRISTALL</h2>
+  <p class="fusion-description">Üheksa maailma, üheksa võitu — üks erakordne kristall!</p>
+  <div class="fusion-action-text">OLED ÜHEKSA MAAILMA MEISTER!</div>
+  <button class="primary" id="fusionClose" type="button">VAATA KRISTALLE</button>
+ </div>
+ <div class="hero" id="crashHero" hidden>
+  <span class="fail-kicker" id="crashWorld">MAAILM 01 · KATSE LÄBI</span>
+  <div class="fail-icon" aria-hidden="true">✕</div>
+  <h1>Kokkupõrge!</h1>
+  <p id="crashDetail">Takistus tabas kristalli.</p>
+  <div class="learning-panel" id="learningPanel" aria-live="assertive">
+   <div class="learning-heading">VAATAME ÕIGE VASTUSE ÜLE!</div>
+   <div class="learning-question"><span id="learningPrompt">ÜMARDA</span><strong id="learningNumber">—</strong></div>
+   <div class="learning-your-answer" id="learningYourAnswer">SINU VASTUS: —</div>
+   <div class="learning-result"><span>ÕIGE VASTUS</span><strong id="learningCorrect">—</strong></div>
+   <div class="learning-rule" id="learningRule">Vaata ümardamise reeglit.</div>
+  </div>
+  <div class="fail-score">LÄBITUD TAKISTUSI: <strong id="crashCount">0 / 8</strong></div>
+  <p class="fail-explain">Kui eksid või jääd hiljaks, algab tase uuesti.</p>
+  <button class="primary" id="retry">PROOVI UUESTI ↻</button>
+ </div>
+</div>
+<script>(()=>{
+'use strict';
+const $=id=>document.getElementById(id);
+const canvas=$('world'),ctx=canvas.getContext('2d',{alpha:false});
+const reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const NODE=580, ORIGIN=108;let TOTAL=8;
+const SPEED=47, FINAL_SPEED=43, TURBO_SPEED=850, TURBO_ARC_STRETCH=1.4; // 25% slower
+const ORIGINAL_SPEED=86, ORIGINAL_FINAL_SPEED=75; // maintain original physical jump curves
+const JUMP_V=240, JUMP_G=200, JUMP_TOTAL=2*JUMP_V/JUMP_G;
+const HAZARD_HALF_WIDTH=58, CLEARANCE=76; // consistent with the rendered spike and crystal hitboxes
+const COLORS={cyan:'#ffc26e',cyanB:'#ffa34b',violet:'#ff6879',pink:'#ff8a55',gold:'#ffe29b',white:'#f1fff9'};
+const names={10:'KÜMNELISTENI',100:'SAJALISTENI',1000:'TUHANDELISTENI',10000:'KÜMNETUHANDELISTENI',100000:'SAJATUHANDELISTENI',1000000:'MILJONILISTENI',10000000:'KÜMNETE MILJONITENI',100000000:'SAJA MILJONITENI'};
+const HAZARD_TYPES=['fire-steps','sun-wheel','ember-wall','flame-fangs','solar-ramp','fire-steps','sun-wheel','ember-wall','flame-fangs','rotor','solar-ramp','fire-steps'];
+const templates=[
+ {unit:10,kind:'two-tens'}, {unit:10,kind:'two-tens'},
+ {unit:10,kind:'two-tens'}, {unit:10,kind:'two-tens'},
+ {unit:10,kind:'three-tens'}, {unit:10,kind:'three-tens'},
+ {unit:10,kind:'three-tens'}, {unit:10,kind:'three-tens'},
+ {unit:100,kind:'three-hundreds'}, {unit:100,kind:'three-hundreds'},
+ {unit:100,kind:'three-hundreds'}, {unit:100,kind:'three-hundreds'}
+];
+let tasks=[],step=0,typed='',status='intro',solved=false,crashStart=0,crashReason='',crashElapsed=0,playElapsed=0;
+let attempts=0,ceremonyToken=0,victoryStage='hidden',vaultReturn='intro';
+let playerX=ORIGIN,clock=0,lastFrame=0,canvasW=0,canvasH=0,dpr=1;
+let jumping=false,jumpAge=0,jumpHeight=0,jumpStarted=false,jumpCount=0,wrongLocked=false,turboActive=false,jumpScale=1;
+let soundOn=false,audio=null,fxGlow=0,fxBurst=0,shake=0,toastUntil=0,rewardUnlocked=false;
+let camera=ORIGIN-110,particleTrail=[],specks=[],stars=[],ambient=[],latestAnswer='',obstacleOffset=0;
+function clamp(v,lo,hi){return Math.max(lo,Math.min(hi,v))}
+function lerp(a,b,t){return a+(b-a)*t}
+function easeOut(t){return 1-Math.pow(1-t,3)}
+function easeBoth(t){return t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2}
+function random(n){return Math.floor(Math.random()*n)}
+function format(n){return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,' ')}
+
+const WORLDS=[{"id":1,"name":"Valgussaar","main":"#66ffe9","accent":"#367feb","dark":"#0b224b","bpm":124,"obstacles":["fangs","rotor","tri-spikes","lightning","prism"],"total":8},{"id":2,"name":"Päikesekuru","main":"#ffbe61","accent":"#f84b44","dark":"#3c1026","bpm":132,"obstacles":["fire-steps","sun-wheel","ember-wall","flame-fangs","solar-ramp"],"total":12},{"id":3,"name":"Mäevardjad","main":"#dfb3ff","accent":"#9255ee","dark":"#201045","bpm":136,"obstacles":["prism","violet-obelisk","arc-gate","rotor","violet-obelisk"],"total":12},{"id":4,"name":"Tormitasandik","main":"#80dcff","accent":"#468aff","dark":"#0c2250","bpm":140,"obstacles":["lightning","ion-block","storm-rotor","tri-spikes","ion-block"],"total":12},{"id":5,"name":"Kaksikorg","main":"#8effc0","accent":"#19bd95","dark":"#083c33","bpm":144,"obstacles":["twin-shards","jade-steps","prism","rotor","jade-steps"],"total":12},{"id":6,"name":"Keeriseorg","main":"#ff96e0","accent":"#d33cbd","dark":"#41134a","bpm":146,"obstacles":["spiral-barrier","orbit-ring","arc-gate","prism","orbit-ring"],"total":12},{"id":7,"name":"Täheväli","main":"#ffe69b","accent":"#e5ad3f","dark":"#422442","bpm":150,"obstacles":["star-burst","golden-saw","fire-steps","solar-ramp","golden-saw"],"total":12},{"id":8,"name":"Prismakants","main":"#a6bbff","accent":"#6770ff","dark":"#151947","bpm":154,"obstacles":["crystal-labyrinth","color-wall","prism","tri-spikes","color-wall"],"total":12},{"id":9,"name":"Meteoritorm","main":"#ffa38e","accent":"#fd4774","dark":"#42112c","bpm":158,"obstacles":["meteor-slab","impact-ring","star-burst","rotor","meteor-slab"],"total":12}];
+let worldId=1;
+function world(){return WORLDS[worldId-1]}
+function updateWorldUI(){
+ const w=world(),nn=String(worldId).padStart(2,'0');
+ $('worldPill').innerHTML='<span class="world-dot"></span> <b>'+nn+'</b> / 09 · '+w.name.toUpperCase();
+ $('sceneWorld').textContent='MAAILM '+nn;$('sceneName').textContent=w.name;
+ $('introName').textContent=w.name;$('victoryWorld').textContent='MAAILM '+nn+' VÕIDETUD';
+ $('victoryScore').textContent=TOTAL+' / '+TOTAL;
+ $('rewardWorld').textContent='MAAILM '+nn+' · '+w.name.toUpperCase();
+ $('rewardName').textContent=w.name.toUpperCase()+' KRISTALL';
+ $('rewardCaption').textContent='SA SAID '+w.name.toUpperCase()+' KRISTALLI!';
+ $('crashWorld').textContent='MAAILM '+nn+' · KATSE LÄBI';
+ $('nextWorld').disabled=false;
+ $('nextWorld').innerHTML=worldId===9?'ÜLIM KRISTALL <span>9 / 9</span>':'JÄRGMINE MAAILM <span>'+String(worldId+1).padStart(2,'0')+'</span>';
+ document.documentElement.style.setProperty('--world-main',w.main);
+ document.documentElement.style.setProperty('--world-accent',w.accent);
+ document.documentElement.style.setProperty('--world-dark',w.dark);
+ document.body.style.background='radial-gradient(ellipse at 50% 0%,'+w.accent+'77,'+w.dark+' 66%,#090719)';
+ $('awardCrystalArt').innerHTML=collectibleSVG(worldId,'awardWorld'+worldId);
+ $('introCrystalArt').innerHTML=collectibleSVG(worldId,'introWorld'+worldId);
+ $('worldMenu').innerHTML=WORLDS.map(z=>{
+  const have=collectedCrystals(),owned=have.includes(z.id),allowed=z.id===1||owned||have.includes(z.id-1);
+  return '<button type="button" data-world="'+z.id+'" class="world-choice'+(worldId===z.id?' active':'')+'" '+(allowed?'':'disabled')+' style="--choice-color:'+z.main+'">'
+   +String(z.id).padStart(2,'0')+' · '+z.name+(owned?' ◆':'')+'</button>';
+ }).join('');
+ updateCrystalVault();updateGems();
+}
+function switchWorld(id){
+ const have=collectedCrystals();
+ if(!Number.isInteger(id)||id<1||id>9||(id>1&&!have.includes(id)&&!have.includes(id-1)))return false;
+ worldId=id;TOTAL=world().total;reset();updateWorldUI();return true;
+}
+
+const VAULT_STORAGE='edukass-neon-crystal-vault-v1';
+function collectedCrystals(){
+ let ids=[];try{
+  const parsed=JSON.parse(localStorage.getItem(VAULT_STORAGE)||'[]');
+  if(Array.isArray(parsed))ids=parsed.filter(n=>Number.isInteger(n)&&n>=1&&n<=9);
+  if(localStorage.getItem('edukass-neon-world1-crystal-unlocked')==='1'||localStorage.getItem('edukass-neon-world1-finished')==='1')ids.push(1);
+  if(localStorage.getItem('edukass-neon-world2-crystal-unlocked')==='1'||localStorage.getItem('edukass-neon-world2-finished')==='1')ids.push(2);
+  for(let n=3;n<=9;n++)if(localStorage.getItem('edukass-neon-world'+n+'-crystal-unlocked')==='1')ids.push(n);
+ }catch(e){}
+ return [...new Set(ids)].sort((a,b)=>a-b);
+}
+function awardCrystal(number){
+ const ids=collectedCrystals();
+ if(!ids.includes(number))ids.push(number);
+ try{
+  localStorage.setItem(VAULT_STORAGE,JSON.stringify(ids.sort((a,b)=>a-b)));
+  localStorage.setItem('edukass-neon-world'+number+'-crystal-unlocked','1');
+ }catch(e){}
+ updateCrystalVault();
+}
+function collectibleSVG(id,identifier){
+ // Every world has its own collectible silhouette, not merely a recolor.
+ if(id===2)return "<svg viewBox=\"0 0 82 104\" aria-hidden=\"true\"><defs><linearGradient id=\"___GRAD___\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\"><stop stop-color=\"#fff6b0\"/><stop offset=\".35\" stop-color=\"#ffb642\"/><stop offset=\".73\" stop-color=\"#ff563b\"/><stop offset=\"1\" stop-color=\"#b5124b\"/></linearGradient></defs><path d=\"M41 95C17 84 11 66 18 44c7 11 12 17 20 19C22 46 26 23 42 6c14 18 20 38 6 57 11-4 15-12 20-21 9 22-1 41-27 53Z\" fill=\"url(#___GRAD___)\" stroke=\"#ffe5a2\" stroke-width=\"2.2\"/><path d=\"M41 97C29 87 22 72 29 51c4 8 9 14 12 16 9-12 14-20 12-30 10 22 1 45-12 60Z\" fill=\"#ffcc5a\" opacity=\".8\"/><path d=\"M41 22 50 48 42 76 33 48Z\" fill=\"#fff4af\" opacity=\".82\"/><path d=\"M18 60 35 74 41 95 46 74 66 60\" fill=\"none\" stroke=\"#fff2ab\" stroke-width=\"1.7\"/><path d=\"M41 12v77M30 52l11 14 11-14\" fill=\"none\" stroke=\"#fff3b8\" stroke-opacity=\".72\" stroke-width=\"1.2\"/></svg>".replaceAll('___GRAD___',identifier);
+ if(id>=3){
+  // Distinct silhouettes reserved for the seven still-locked future worlds:
+  // spire, orbit, twin shards, spiral, star, crown cluster, meteor.
+  const shapes={
+   3:'M41 2 56 28 50 90 41 103 31 90 26 28Z',
+   4:'M41 6A35 35 0 1 1 40.9 6Z M41 17A24 24 0 1 0 41 65A24 24 0 1 0 41 17Z',
+   5:'M24 5 40 35 30 86 15 102 5 65Z M58 5 76 65 66 102 51 86 42 35Z',
+   6:'M41 6C72 6 78 26 64 40C45 58 29 34 38 29C52 22 62 45 48 61C31 84 12 70 14 51C15 77 34 103 41 103C58 97 72 75 72 55C72 39 57 22 41 6Z',
+   7:'M41 1 52 35 79 28 61 52 79 79 50 72 41 103 30 72 3 79 21 52 3 28 30 35Z',
+   8:'M8 37 20 61 21 8 41 44 61 8 62 61 74 37 70 92 41 103 12 92Z',
+   9:'M59 4 71 17 64 34 79 60 51 99 23 103 12 74 24 43 14 30 38 34Z'
+  };
+  const theme=WORLDS[id-1];
+  const gradient='<defs><linearGradient id="'+identifier+'" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#fffce3"/><stop offset=".55" stop-color="'+theme.main+'"/><stop offset="1" stop-color="'+theme.accent+'"/></linearGradient></defs>';
+  return '<svg viewBox="0 0 82 104" aria-hidden="true">'+gradient+
+   '<path d="'+shapes[id]+'" fill="url(#'+identifier+')" stroke="#ecf2ff" stroke-width="2" fill-rule="evenodd"/>'
+   +'<path d="M41 12 41 87" stroke="#ffffff" opacity=".43" stroke-width="1.5"/></svg>';
+ }
+ return "<svg viewBox=\"0 0 82 104\" aria-hidden=\"true\"><defs><linearGradient id=\"___GRAD___\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\"><stop stop-color=\"#fffde3\"/><stop offset=\".25\" stop-color=\"#9effff\"/><stop offset=\".65\" stop-color=\"#4ac7f8\"/><stop offset=\"1\" stop-color=\"#4354e8\"/></linearGradient></defs><path d=\"M41 2 64 25 75 49 56 81 41 102 20 81 7 49 17 24Z\" fill=\"url(#___GRAD___)\" stroke=\"#f8ffff\" stroke-width=\"2\"/><path d=\"M41 2 17 24 7 49 41 45Z\" fill=\"#d9ffff\" opacity=\".74\"/><path d=\"M41 45 75 49 56 81 41 102Z\" fill=\"#377fc4\" opacity=\".60\"/><path d=\"M17 24 41 45 64 25M7 49l34-4 34 4M20 81l21-36 15 36M41 2v100\" stroke=\"#fff\" stroke-opacity=\".62\" fill=\"none\" stroke-width=\"1.3\"/></svg>".replaceAll('___GRAD___',identifier);
+}
+function updateAwardArt(){
+ const id=worldId;
+ $('awardCrystalArt').innerHTML=collectibleSVG(id,'awardWorld'+id);
+}
+
+function updateCrystalVault(){
+ const ids=collectedCrystals(),count=ids.length;
+ $('introCollectionCount').textContent=count+' / 9';
+ if(count===9){try{localStorage.setItem('edukass-ultimate-crystal','1')}catch(e){}}
+ $('rewardCollectionCount').textContent=count+' / 9';
+ $('vaultProgress').textContent='KOGUTUD '+count+' / 9';
+ const views=Array.from({length:9},(_,k)=>{
+  const id=k+1,got=ids.includes(id),name=WORLDS[id-1].name.toUpperCase();
+  const title=got?(WORLDS[id-1].name.toUpperCase()+' KRISTALL'):'LUKUS';
+  return '<div class="vault-card '+(got?'unlocked':'locked')+'" style="--slot:'+(id-1)+'" aria-label="'+name+': '+title+'">'
+  +'<div class="vault-card-number">'+String(id).padStart(2,'0')+'</div>'
+  +'<div class="vault-card-gem">'+collectibleSVG(id,'vaultShape'+id)+'</div>'
+  +'<div class="vault-card-name">'+name+'</div>'
+  +'<div class="vault-card-status">'+(got?'KOGUTUD':'LUKUS')+'</div></div>';
+ });
+ $('vaultGrid').innerHTML=views.join('');
+ $('vaultDescription').textContent=count===9?'Kõik üheksa kristalli on kogutud!':count===0?'Läbi maailmad ja kogu kõik üheksa kristalli!':'Sul on '+count+' kristall'+(count===1?'':'i')+'! Järgmine maailm toob uue auhinna.';
+}
+function openCrystalVault(from){
+ vaultReturn=from==='finish'?'finish':'intro';
+ updateCrystalVault();
+ overlay('vault');
+}
+function closeCrystalVault(){overlay(vaultReturn)}
+
+function taskSpec(w,i){
+ if(w===1)return i===7?[100,101,999]:i===5?[10,101,999]:[10,11,99];
+ if(w===2)return i<4?[10,11,99]:i<8?[10,101,999]:[100,101,999];
+ const specs={
+ 3:[[100,101,999],[1000,1001,9999]],
+ 4:[[100,1001,9999],[1000,1001,99999],[10000,10001,99999]],
+ 5:[[1000,1001,99999],[10000,10001,999999],[100000,100001,999999]],
+ 6:[[1000,10001,999999],[10000,10001,999999],[100000,100001,9999999],[1000000,1000001,9999999]],
+ 7:[[10000,100001,9999999],[100000,100001,9999999],[1000000,1000001,99999999],[10000000,10000001,99999999]],
+ 8:[[100000,1000001,99999999],[1000000,1000001,99999999],[10000000,10000001,999999999],[100000000,100000001,999999999]],
+ 9:[[1000000,10000001,999999999],[10000000,10000001,999999999],[100000000,100000001,999999999]]
+ }[w];return specs[Math.min(specs.length-1,Math.floor(i*specs.length/TOTAL))];
+}
+function createTasks(){
+ const key='edukass-nine-world-math-v1-'+worldId;let history=[];
+ try{const h=JSON.parse(localStorage.getItem(key)||'[]');if(Array.isArray(h))history=h.slice(-4)}catch(e){}
+ const recent=new Set(history.flat()),used=new Set(),out=[];
+ for(let i=0;i<TOTAL;i++){
+  const [unit,min,max]=taskSpec(worldId,i);let n=0;
+  for(let j=0;j<200;j++){const v=min+random(max-min+1);if(v%unit!==0&&!used.has(v)&&!recent.has(v)){n=v;break}}
+  if(!n)for(let v=min;v<=Math.min(max,min+5000);v++)if(v%unit!==0&&!used.has(v)){n=v;break}
+  if(!n)throw Error('Task pool exhausted');
+  const answer=Math.floor((n+unit/2)/unit)*unit;
+  if(!Number.isSafeInteger(answer))throw Error('Unsafe answer');
+  used.add(n);out.push({v:n,unit,answer});
+ }
+ try{history.push(out.map(x=>x.v));localStorage.setItem(key,JSON.stringify(history.slice(-4)))}catch(e){}
+ return out;
+}
+function validateTasks(ts){
+ if(ts.length!==TOTAL)throw Error('Incorrect task count');
+ const seen=new Set();
+ ts.forEach((t,i)=>{
+  const [unit,min,max]=taskSpec(worldId,i);
+  if(t.unit!==unit||t.v<min||t.v>max||seen.has(t.v)||t.answer!==Math.floor((t.v+t.unit/2)/t.unit)*t.unit)throw Error('Bad task '+i);
+  seen.add(t.v);
+ });return true;
+}
+function updateGems(){
+ $('gems').innerHTML=Array.from({length:TOTAL},(_,i)=>`<span class="gem ${i<step?'done':i===step&&status!=='finished'?'now':''}" aria-hidden="true"></span>`).join('');
+ $('step').textContent=`${step}/${TOTAL}`;
+ $('answerStep').textContent=step<TOTAL?`${String(step+1).padStart(2,'0')} / ${TOTAL}`:`${TOTAL} / ${TOTAL}`;
+}
+function updateAnswer(){
+ $('answerValue').textContent=typed?format(typed):'';
+ $('answerValue').classList.toggle('empty',!typed);
+ $('answerValue').classList.toggle('long-answer',typed.length>=6);
+}
+function note(t='',kind=''){$('note').textContent=t;$('note').className='note '+kind}
+function showTask(){
+ if(step>=TOTAL)return;
+ const t=tasks[step];
+ $('unit').textContent=names[t.unit];$('number').textContent=format(t.v);
+ $('number').classList.remove('bump');$('number').classList.toggle('long-number',String(t.v).length>=6);void $('number').offsetWidth;$('number').classList.add('bump');
+ typed='';solved=false;jumpStarted=false;wrongLocked=false;turboActive=false;updateAnswer();$('answerBox').classList.remove('wrong','success');
+ note('Vasta enne takistust!');updateGems();
+ $('sceneCaption').textContent=step===TOTAL-1?'VIIMANE TAKISTUS · ÄRA PEATU':'KIIRUSTA! TAKISTUS LÄHENEB';
+}
+function showFusion(){
+ if(collectedCrystals().length!==9)return;
+ $('fusionPieces').innerHTML=WORLDS.map((w,i)=>'<div class="fusion-piece" style="--a:'+(i*40)+'deg;--c:'+w.main+'">'+collectibleSVG(w.id,'fusionPiece'+w.id)+'</div>').join('');
+ $('ultimateGem').innerHTML='<svg viewBox="0 0 220 270" role="img" aria-label="Ülim Kristall"><defs><linearGradient id="ultimateRay" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fffacc"/><stop offset=".24" stop-color="#88ffff"/><stop offset=".48" stop-color="#b88fff"/><stop offset=".72" stop-color="#ff9ac1"/><stop offset="1" stop-color="#ffcf74"/></linearGradient></defs><path d="M110 8 160 60 206 100 190 164 160 221 110 263 60 221 30 164 14 100 60 60Z" fill="url(#ultimateRay)" stroke="#ffffff" stroke-width="4"/><path d="M110 8 110 134 30 164Z" fill="#c1fff6" opacity=".60"/><path d="M110 8 110 134 190 164Z" fill="#fca7db" opacity=".59"/><path d="M110 134 60 221 110 263 160 221Z" fill="#ffe48e" opacity=".70"/><path d="M110 8V263 M14 100l96 34 96-34 M30 164l80-30 80 30" fill="none" stroke="#ffffff" stroke-width="2" opacity=".73"/></svg>';
+ try{localStorage.setItem('edukass-ultimate-crystal','1')}catch(e){}
+ overlay('fusion');winSound();
+}
+function overlay(type){
+ $('overlay').classList.remove('hidden');$('overlay').setAttribute('aria-hidden','false');
+ $('overlay').classList.toggle('is-celebrating',type==='victory'||type==='finish'||type==='vault'||type==='fusion');
+ $('introHero').hidden=type!=='intro';
+ $('victoryHero').hidden=type!=='victory';
+ $('finishHero').hidden=type!=='finish';
+ $('vaultHero').hidden=type!=='vault';
+ $('fusionHero').hidden=type!=='fusion';
+ $('crashHero').hidden=type!=='crash';
+ victoryStage=type;
+}
+function hideOverlay(){
+ $('overlay').classList.add('hidden');
+ $('overlay').classList.remove('is-celebrating');
+ $('overlay').setAttribute('aria-hidden','true');
+ victoryStage='hidden';
+}
+function makeConfetti(){
+ if(reduced){$('celebrateParticles').innerHTML='';return}
+ const colors=['#8effe9','#ffe99e','#c8a5ff','#ffffff','#77bcff','#ff9bcf'];
+ const list=[];
+ for(let i=0;i<56;i++){
+  const x=(i*79.7+Math.random()*11)%100;
+  const delay=(i%12)*.085;
+  const dur=2.1+(i%7)*.21;
+  const w=4+i%5,h=8+i%8;
+  const angle=30+i*13%180,dx=(i%2?-1:1)*(24+i%9*9);
+  list.push('<span class="confetti" style="--x:'+x+'%;--delay:'+delay+'s;--duration:'+dur+'s;--w:'+w+'px;--h:'+h+'px;--col:'+colors[i%colors.length]+';--rot:'+angle+'deg;--dx:'+dx+'px"></span>');
+ }
+ for(let i=0;i<20;i++){
+  const x=6+(i*31.9)%88,y=11+(i*28.7)%76;
+  list.push('<span class="spark" style="--x:'+x+'%;--y:'+y+'%;--size:'+(3+i%5)+'px;--duration:'+(1.2+(i%6)*.29)+'s;--delay:'+(i%7)*.22+'s"></span>');
+ }
+ for(let i=0;i<4;i++){
+  const x=22+i*19,y=20+(i%2)*50;
+  list.push('<span class="flare" style="--x:'+x+'%;--y:'+y+'%;--delay:'+(i*.45)+'s"></span>');
+ }
+ $('celebrateParticles').innerHTML=list.join('');
+}
+function speedForStep(){if(worldId===1)return step===TOTAL-1?56.25:64.5;if(worldId===2)return step===TOTAL-1?43:47;const t=tasks[step];if(!t)return 40;const digits=String(t.answer).length,unitDigits=String(t.unit).length;const seconds=11.8+1.72*Math.max(0,digits-3)+.88*Math.max(0,unitDigits-3)+.7*(t.answer>=Math.pow(10,digits-1)&&t.v<Math.pow(10,digits-1));return Math.max(19,Math.min(47,500/seconds))}
+function jumpReferenceSpeed(){return step===TOTAL-1?ORIGINAL_FINAL_SPEED:ORIGINAL_SPEED}
+function obstacleKind(i){const o=world().obstacles;return o[(i-1)%o.length]}
+function distanceToObstacle(){return ORIGIN+NODE*(step+1)-playerX}
+function hazardScale(){return clamp(canvasH/310,.42,1)}
+function effectiveSpeed(){
+ if(wrongLocked)return Math.max(speedForStep()*1.65,distanceToObstacle()/1.12);
+ return solved&&turboActive?TURBO_SPEED:speedForStep();
+}
+function updateRushHUD(){
+ const secs=Math.max(0,distanceToObstacle()/effectiveSpeed());
+ $('rushClock').textContent=status==='running' ? `${secs.toFixed(1)} s` : status==='crashing'||status==='crashed'?'0.0 s':'—';
+ $('rushFill').style.width= `${clamp(distanceToObstacle()/NODE,0,1)*100}%`;
+ $('rushHud').classList.toggle('danger',secs<2&&!solved&&status==='running');
+ $('rushHud').classList.toggle('safe',solved&&status==='running');
+ $('rushLabel').textContent=wrongLocked?'VALE VASTUS':solved?(turboActive?'TURBO · HÜPE VALMIS':'HÜPE VALMIS'):status==='crashing'||status==='crashed'?'KOKKUPÕRGE!':'TAKISTUSENI';
+}
+let musicNextTime=0,musicStep=0;
+function setSound(){
+ soundOn=!soundOn;$('sound').classList.toggle('enabled',soundOn);
+ $('sound').setAttribute('aria-label',soundOn?'Lülita heli välja':'Lülita heli sisse');
+ if(soundOn){tone(510,.07,'triangle',.035);musicNextTime=0;musicStep=0}
+}
+function electronicBeat(){
+ if(!soundOn||status!=='running')return;
+ try{
+  audio=audio||new(window.AudioContext||window.webkitAudioContext)();
+  if(audio.state==='suspended'){audio.resume();return}
+  const beat=60/world().bpm/2;
+  if(!musicNextTime||musicNextTime<audio.currentTime-.5)musicNextTime=audio.currentTime+.045;
+  let count=0;
+  while(musicNextTime<audio.currentTime+.14&&count++<5){
+   const q=musicStep%16,now=musicNextTime,root=[110,123.47,98,130.81,116.54,103.83,146.83,130.81,110][worldId-1];
+   function play(freq,length,type,amp,attack=.009){
+    const o=audio.createOscillator(),g=audio.createGain();o.type=type;o.frequency.setValueAtTime(freq,now);
+    g.gain.setValueAtTime(.0001,now);g.gain.exponentialRampToValueAtTime(Math.max(.0002,amp),now+attack);
+    g.gain.exponentialRampToValueAtTime(.0001,now+length);
+    o.connect(g);g.connect(audio.destination);o.start(now);o.stop(now+length+.012);
+   }
+   if(q%4===0)play(70,.17,'sine',.085); // original four-on-floor kick
+   if(q===4||q===12)play(195,.11,'triangle',.028);
+   if(q%2===0)play(1150,.045,'square',.008);
+   const degrees=[0,3,7,10,7,3,5,7,12,10,7,5,3,0,5,7];
+   const semitone=degrees[q];play(root*4*Math.pow(2,semitone/12),beat*.82,'triangle',.017);
+   if(q%4===0)play(root*(q<8?1:1.5),beat*3.4,'sine',.016,.035);
+   musicNextTime+=beat;musicStep++;
+  }
+ }catch(e){}
+}
+
+function tone(frequency,duration,type='sine',volume=.045,delay=0){
+ if(!soundOn)return;
+ try{audio=audio||new(window.AudioContext||window.webkitAudioContext)();if(audio.state==='suspended')audio.resume();
+ const t=audio.currentTime+delay,o=audio.createOscillator(),g=audio.createGain();o.type=type;o.frequency.setValueAtTime(frequency,t);o.frequency.exponentialRampToValueAtTime(frequency*.83,t+duration);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(Math.max(.0002,volume),t+.012);g.gain.exponentialRampToValueAtTime(.0001,t+duration);o.connect(g);g.connect(audio.destination);o.start(t);o.stop(t+duration+.012);}catch(e){}
+}
+function winSound(){
+ // Short original synthesized award fanfare; only plays when the user enabled audio.
+ tone(392,.18,'triangle',.045);
+ tone(523,.18,'triangle',.047,.11);
+ tone(659,.22,'triangle',.043,.23);
+ tone(784,.27,'triangle',.042,.38);
+ tone(1046,.41,'sine',.037,.56);
+ tone(1318,.46,'sine',.022,.67);
+}
+function startGame(retry=false){
+ ceremonyToken++; // cancel delayed celebration steps if the player restarts
+ tasks=createTasks();validateTasks(tasks);obstacleOffset=random(HAZARD_TYPES.length);
+ attempts++;step=0;typed='';solved=false;playerX=ORIGIN;camera=playerX-canvasW*.30;
+ jumping=false;jumpAge=0;jumpHeight=0;jumpStarted=false;wrongLocked=false;turboActive=false;jumpScale=1;jumpCount=0;
+ particleTrail=[];status='running';crashElapsed=0;playElapsed=0;rewardUnlocked=false;fxGlow=0;fxBurst=0;shake=0;
+ hideOverlay();showTask();updateRushHUD();
+ // Earned crystal is permanent: replay must never remove the collection record.
+}
+function showLearningFeedback(reason){
+ const task=tasks[step];
+ if(!task)return;
+ const digit=Math.floor(task.v/(task.unit/10))%10;
+ const place={10:'üheliste',100:'kümneliste',1000:'sajaliste',10000:'tuhandeliste',100000:'kümnetuhandeliste',1000000:'sajatuhandeliste',10000000:'miljoniliste',100000000:'kümnemiljoniliste'}[task.unit];
+ const action=digit>=5?'üles':'alla';
+ const decision=digit>=5?'5 või suurem':'väiksem kui 5';
+ $('learningPrompt').textContent='ÜMARDA '+names[task.unit];
+ $('learningNumber').textContent=format(task.v);
+ const actual=typed?format(typed):'—';
+ $('learningYourAnswer').textContent=reason==='wrong'?'SINU VASTUS: '+actual
+  :typed?'POOLELI JÄI: '+actual:'SINU VASTUS: EI VASTANUD';
+ $('learningCorrect').textContent=format(task.answer);
+ $('learningRule').textContent='Vaata '+place+' numbrit: '+digit+'. See on '+decision
+  +', seega ümardame '+action+'. '+format(task.v)+' → '+format(task.answer)+'.';
+}
+function lose(reason){
+ if(status!=='running')return;
+ status='crashing';crashReason=reason;crashElapsed=0;fxGlow=.4;shake=18;
+ $('answerBox').classList.remove('success');$('answerBox').classList.add('wrong');
+ note(reason==='wrong'?'VALE VASTUS! KOKKUPÕRGE!':'AEG SAI OTSA! KOKKUPÕRGE!','bad');
+ $('sceneCaption').textContent='KOKKUPÕRGE!';
+ tone(160,.35,'sawtooth',.065);
+ $('crashCount').textContent=`${step} / ${TOTAL}`;
+ $('crashDetail').textContent=reason==='wrong'?'Vastus oli vale. Vaata, kuidas õigesti ümardada!':'Aeg sai otsa. Vaata õiget vastust enne uut katset!';
+ showLearningFeedback(reason);
+ updateRushHUD();
+}
+function onKey(key){
+ if(status!=='running'||solved||wrongLocked)return;
+ if(key==='back'){typed=typed.slice(0,-1);updateAnswer();return}
+ if(!/^\d$/.test(key)||typed.length>=12)return;
+ if(!typed&&key==='0')return;
+ typed+=key;updateAnswer();
+ const answer=String(tasks[step].answer);
+ if(typed===answer)check();
+ else if(typed.length>=answer.length)check();
+}
+function check(){
+ if(status!=='running'||solved||wrongLocked||!typed)return;
+ if(Number(typed)===tasks[step].answer){
+  solved=true;turboActive=distanceToObstacle()>180; // late correct answers keep the original safe jump speed
+  $('answerBox').classList.add('success');note(turboActive?'ÕIGE! TURBO!':'ÕIGE! HÜPE VALMIS','ok');
+  fxGlow=.6;tone(600,.14,'sine',.04);tone(810,.12,'triangle',.022,.08);
+  $('sceneCaption').textContent=turboActive?'TURBO · KRISTALL KIHUTAB EDASI':'HÜPE VALMIS · HÜPPA ÜLE TAKISTUSE';updateRushHUD();return;
+ }
+ if(typed.length<String(tasks[step].answer).length)return;
+ wrongLocked=true; // The obstacle remains lethal; the crystal physically runs into it.
+ $('answerBox').classList.add('wrong');note('VALE VASTUS! TAKISTUS LÄHENEB!','bad');
+ $('sceneCaption').textContent='VALE VASTUS · KOKKUPÕRGE LÄHENEB';
+ shake=5;tone(230,.15,'sawtooth',.04);updateRushHUD();
+}
+function finish(){
+ status='finished';step=TOTAL;solved=false;rewardUnlocked=true;
+ updateGems();updateRushHUD();
+ $('answerBox').classList.remove('success');
+ note('Kristall saadud!','ok');fxBurst=1;spawnBurst(playerX,96);winSound();
+ try{localStorage.setItem('edukass-neon-world'+worldId+'-finished','1')}catch(e){}
+ awardCrystal(worldId);
+ const token=++ceremonyToken;
+ makeConfetti();
+ if(reduced){overlay('finish');return}
+ // First show the in-world flash, then the victory burst, then award the crystal.
+ setTimeout(()=>{if(status==='finished'&&token===ceremonyToken)overlay('victory')},180);
+ setTimeout(()=>{if(status==='finished'&&token===ceremonyToken)overlay('finish')},1670);
+ if(worldId===9)setTimeout(()=>{if(status==='finished'&&token===ceremonyToken)showFusion()},6200);
+}
+function reset(){ceremonyToken++;status='intro';step=0;typed='';solved=false;playerX=ORIGIN;particleTrail=[];jumping=false;jumpAge=0;jumpHeight=0;jumpStarted=false;wrongLocked=false;turboActive=false;jumpScale=1;jumpCount=0;updateGems();updateAnswer();note('Vasta enne takistust!');updateRushHUD();overlay('intro')}
+function advance(dt){
+ let remaining=clamp(dt,0,100);
+ while(remaining>0){
+  const d=Math.min(8,remaining);
+  advanceSubstep(d);
+  remaining-=d;
+ }
+}
+function advanceSubstep(dt){
+ const delta=dt;
+ if(status==='running'){
+  const dtSeconds=delta/1000;
+  const gate=ORIGIN+NODE*(step+1);
+  const approach=gate-playerX;
+  // A correct answer arms one automatic jump. It starts at the same point relative
+  // to the obstacle at every pace, then follows a genuine ballistic arc.
+  const takeoffDistance=jumpReferenceSpeed()*JUMP_TOTAL/2*(turboActive?TURBO_ARC_STRETCH:1);
+  if(solved&&!jumpStarted&&approach<=takeoffDistance){
+   jumping=true;jumpStarted=true;jumpAge=0;jumpHeight=0;jumpCount++;
+   // Longer world-space flight during turbo keeps both ends of the solid hazard
+   // within a visible, physical arc instead of skipping the collision hitbox.
+   jumpScale=(effectiveSpeed()/jumpReferenceSpeed())/(turboActive?TURBO_ARC_STRETCH:1);
+   tone(420,.10,'triangle',.035);
+  }
+  if(jumping){
+   jumpAge+=dtSeconds;
+   jumpHeight=Math.max(0,JUMP_V*jumpScale*jumpAge-.5*JUMP_G*jumpScale*jumpScale*jumpAge*jumpAge);
+   if(jumpAge>=JUMP_TOTAL/jumpScale){jumping=false;jumpAge=0;jumpHeight=0}
+  }
+  playerX+=effectiveSpeed()*dtSeconds;
+  playElapsed+=delta;
+  // No gate toggling or teleport: the hitbox must actually clear the spikes.
+  const inHazard=Math.abs(gate-playerX)<=HAZARD_HALF_WIDTH*hazardScale();
+  if(inHazard&&jumpHeight<CLEARANCE){
+   lose(wrongLocked?'wrong':'timeout');
+  }else if(playerX>=gate+HAZARD_HALF_WIDTH*hazardScale()+8){
+   step++;
+   if(step>=TOTAL)finish();else{showTask();winSound()}
+  }
+  if(status==='running')updateRushHUD();
+ }
+ if(status==='crashing'){
+  const previousCrashElapsed=crashElapsed;
+  crashElapsed+=delta;shake=Math.max(0,18*(1-crashElapsed/650));
+  if(previousCrashElapsed<190&&crashElapsed>=190)spawnBurst(playerX,65);
+  if(crashElapsed>=650){status='crashed';overlay('crash')}
+ }
+}
+const skyStars=Array.from({length:125},(_,i)=>({x:Math.random(),y:Math.random()*.72,r:.45+Math.random()*1.15,a:.2+Math.random()*.7,p:Math.random()*6.28,layer:Math.random()}));
+const snowStars=Array.from({length:22},()=>({x:Math.random(),y:Math.random(),size:.4+Math.random()*1.6,offset:Math.random()*6.28}));
+function resize(){
+ const r=canvas.getBoundingClientRect();if(r.width<10||r.height<10)return;
+ dpr=Math.min(window.devicePixelRatio||1,2);canvasW=r.width;canvasH=r.height;
+ const width=Math.round(canvasW*dpr),height=Math.round(canvasH*dpr);
+ if(canvas.width!==width||canvas.height!==height){canvas.width=width;canvas.height=height}
+ ctx.setTransform(dpr,0,0,dpr,0,0);
+}
+function line(points,stroke,width=1,alpha=1){
+ ctx.globalAlpha=alpha;ctx.strokeStyle=stroke;ctx.lineWidth=width;ctx.beginPath();points.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.stroke();ctx.globalAlpha=1;
+}
+function polygon(points,fill,stroke='',lw=1){ctx.beginPath();points.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.closePath();if(fill){ctx.fillStyle=fill;ctx.fill()}if(stroke){ctx.lineWidth=lw;ctx.strokeStyle=stroke;ctx.stroke()}}
+function circle(x,y,r,fill){ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fillStyle=fill;ctx.fill()}
+function glowCircle(x,y,r,color1,color2='transparent'){
+ if(r<=0)return;const g=ctx.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,color1);g.addColorStop(1,color2);ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();
+}
+function paintBackground(t){
+ const w=canvasW,h=canvasH,theme=world(),g=ctx.createLinearGradient(0,0,0,h);
+ g.addColorStop(0,theme.dark);g.addColorStop(.53,theme.accent+'90');g.addColorStop(1,theme.dark);
+ ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+ const bx=w*.68-camera*.002,by=h*.38;
+ glowCircle(bx,by,w*.54,theme.main+'42');
+ circle(bx,by,Math.min(w*.18,h*.32),theme.accent);
+ circle(bx,by,Math.min(w*.145,h*.25),theme.main);
+ for(let layer=0;layer<3;layer++){
+  const y=h*(.64+layer*.065),offset=camera*(.018+layer*.034);
+  ctx.beginPath();ctx.moveTo(-10,h);
+  for(let k=-2;k<w/55+5;k++){const x=k*55-offset%55;ctx.lineTo(x,y+(k%3)*14);ctx.lineTo(x+25,y-24-(k%4)*9)}
+  ctx.lineTo(w+10,h);ctx.closePath();ctx.fillStyle=theme.dark;ctx.globalAlpha=.4+layer*.16;ctx.fill();ctx.globalAlpha=1;
+ }
+ for(let k=0;k<34;k++){
+  const x=((k*89-camera*.12)%(w+50)+w+50)%(w+50);
+  circle(x,(k*47)%Math.max(30,h*.58),1+k%2,theme.main+'8d');
+ }
+}
+function drawTrack(t){
+ const w=canvasW,h=canvasH,y=h*.76;
+ const grad=ctx.createLinearGradient(0,y-4,0,h);grad.addColorStop(0,'#72213d');grad.addColorStop(.35,'#4f152e');grad.addColorStop(1,'#28091b');
+ ctx.fillStyle=grad;ctx.fillRect(0,y,w,h-y);
+ glowCircle(w*.5,y,w*.9,'#2ffff01a');
+ ctx.fillStyle='#5c1734';ctx.fillRect(0,y+6,w,6);
+ ctx.fillStyle=world().main;ctx.fillRect(0,y,w,3);
+ ctx.fillStyle='#ff9a4c85';ctx.fillRect(0,y+17,w,1);
+ // Track tiles and light patterns move continuously: always a runner, never a static station.
+ const pitch=94,start=Math.floor(camera/pitch)-1,end=Math.ceil((camera+w)/pitch)+1;
+ for(let n=start;n<=end;n++){
+  let x=n*pitch-camera;
+  polygon([[x+7,y+15],[x+75,y+15],[x+65,y+25],[x-3,y+25]],n%2?'#22446c':'#1a3864','#8afae33d',.8);
+  line([[x+14,y+37],[x+47,y+37]],'#4e92c8',2,.35);
+  polygon([[x+20,y+3],[x+27,y+3],[x+34,y+11],[x+27,y+11]],'#68e4dd69');
+ }
+ // Camera streaks add arcade speed without shortening mathematical thinking time.
+ ctx.save();ctx.globalCompositeOperation='lighter';
+ for(let i=0;i<11;i++){
+  let x=(i*79-camera*(.85+i%3*.2))%(w+100);if(x<0)x+=w+100;
+  const yy=y*.63+i*9%Math.max(30,y*.29);const alpha=.08+Math.sin(t*.003+i)*.025;
+  line([[x-62,yy],[x,yy]],i%3?'#5deff2':'#bd9eff',i%4?1:2,alpha);
+ }
+ ctx.restore();
+}
+function drawGate(worldX,i,t){
+ const x=worldX-camera,ground=canvasH*.76;
+ if(x<-130||x>canvasW+130)return;
+ const past=i<=step,danger=i===step+1&&!solved&&status==='running',type=obstacleKind(i);
+ ctx.save();ctx.translate(x,ground);
+ ctx.scale((1+Math.sin(t*.008+i)*.012)*hazardScale(),(1+Math.sin(t*.008+i)*.012)*hazardScale());
+ ctx.globalAlpha=past?.57:1;
+ glowCircle(0,-36,77,past?'#35fbe121':'#ff5aaf35');
+ const col=past?'#225b70':world().accent,rim=past?'#93ffe8':world().main;
+ if(type==='violet-obelisk'){
+  polygon([[-34,0],[-25,-78],[0,-94],[25,-78],[34,0]],col,rim,2.5);
+  polygon([[-25,-78],[0,-94],[0,-14],[-34,0]],'#bc82ff','#f4d7ff',1.1);
+  polygon([[0,-94],[25,-78],[34,0],[0,-14]],'#6038b4','#cbb0ff',1.1);
+ }else if(type==='arc-gate'){
+  polygon([[-47,0],[-45,-72],[-26,-72],[-25,0]],col,rim,2);
+  polygon([[25,0],[26,-72],[45,-72],[47,0]],col,rim,2);
+  polygon([[-45,-72],[-25,-84],[25,-84],[45,-72]],'#db7cff',rim,2);
+  line([[-24,-55],[0,-28],[24,-55]],rim,3);
+ }else if(type==='ion-block'){
+  polygon([[-43,0],[-43,-76],[43,-76],[43,0]],col,rim,2);
+  for(let k=0;k<3;k++)polygon([[-28+k*21,-17],[-15+k*21,-62],[-5+k*21,-44]],'#9df3ff','#f4ffff',1.3);
+ }else if(type==='storm-rotor'){
+  ctx.save();ctx.translate(0,-39);ctx.rotate(t*.002+i);
+  const pts=[];for(let k=0;k<16;k++){const a=k*Math.PI/8,rad=k%2===0?44:23;pts.push([rad*Math.cos(a),rad*Math.sin(a)])}
+  polygon(pts,col,rim,2);circle(0,0,14,'#b7f4ff');ctx.restore();
+ }else if(type==='twin-shards'){
+  polygon([[-47,0],[-37,-73],[-14,-83],[-3,-32],[-8,0]],col,rim,2);
+  polygon([[8,0],[3,-32],[14,-83],[37,-73],[47,0]],'#3be1a2',rim,2);
+  polygon([[-32,-58],[-20,-76],[-15,-29]],'#c6ffe3');
+  polygon([[32,-58],[20,-76],[15,-29]],'#d6fff1');
+ }else if(type==='jade-steps'){
+  polygon([[-49,0],[-49,-35],[-15,-35],[-15,-63],[14,-63],[14,-80],[49,-80],[49,0]],col,rim,2);
+  for(let j=0;j<3;j++)line([[-45+j*28,-18-j*22],[-18+j*27,-18-j*22]],'#b7ffcb',3);
+ }else if(type==='spiral-barrier'){
+  ctx.save();ctx.translate(0,-41);ctx.rotate(t*.0008+i);
+  for(let j=0;j<4;j++){const a=j*Math.PI/2+t*.00015;const p=[];for(let q=0;q<8;q++){let angle=a+q*.34,rad=12+q*4;p.push([rad*Math.cos(angle),rad*Math.sin(angle)])}line(p,rim,7-j)}
+  ctx.restore();circle(0,-41,10,col);
+ }else if(type==='orbit-ring'){
+  ctx.save();ctx.translate(0,-43);ctx.rotate(t*.0015);
+  for(let j=0;j<12;j++){let a=j*Math.PI/6;let rad=j%2===0?43:33;polygon([[Math.cos(a)*rad,Math.sin(a)*rad],[Math.cos(a+.19)*(rad+7),Math.sin(a+.19)*(rad+7)],[Math.cos(a+.43)*rad,Math.sin(a+.43)*rad]],col,rim,1)}
+  circle(0,0,22,'#efaeff');circle(0,0,11,'#6d1fa8');ctx.restore();
+ }else if(type==='star-burst'){
+  const pts=[];for(let j=0;j<16;j++){const a=-Math.PI/2+j*Math.PI/8,rad=j%2===0?47:22;pts.push([rad*Math.cos(a),-41+rad*Math.sin(a)])}
+  polygon(pts,col,rim,2.2);polygon([[0,-70],[16,-41],[0,-17],[-16,-41]],'#ffe9a9','#fff7d5',1);
+ }else if(type==='golden-saw'){
+  ctx.save();ctx.translate(0,-38);ctx.rotate(t*.0017+i);
+  const q=[];for(let n=0;n<24;n++){let a=n*Math.PI/12,rad=n%2?27:44;q.push([rad*Math.cos(a),rad*Math.sin(a)])}
+  polygon(q,'#d59729','#ffdf83',2);circle(0,0,18,'#fff1bc');ctx.restore();
+ }else if(type==='crystal-labyrinth'){
+  polygon([[-48,0],[-48,-75],[-25,-75],[-25,-22],[-7,-22],[-7,-70],[15,-70],[15,-37],[37,-37],[37,0]],col,rim,2.3);
+  line([[-42,-69],[-30,-69],[-30,-17],[-12,-17],[-12,-65]],'#d4e6ff',1.8);
+ }else if(type==='color-wall'){
+  polygon([[-44,0],[-44,-77],[44,-77],[44,0]],'#6363c9',rim,2);
+  for(let j=0;j<4;j++)polygon([[-39+j*19,-70],[-25+j*19,-70],[-25+j*19,-6],[-39+j*19,-6]],['#8de4ff','#b4b2ff','#ffa1d6','#ffda91'][j],'#ffffff65',1);
+ }else if(type==='meteor-slab'){
+  polygon([[-47,0],[-36,-72],[-10,-84],[25,-70],[47,-22],[35,0]],col,rim,2);
+  polygon([[-36,-72],[-10,-84],[9,-51],[-7,-33]],'#ffbf81','#ffecbc',1);
+  polygon([[9,-51],[25,-70],[47,-22],[10,-17]],'#ff516e',rim,1);
+ }else if(type==='impact-ring'){
+  ctx.save();ctx.translate(0,-40);ctx.rotate(t*.0013+i);
+  const pts=[];for(let j=0;j<14;j++){const a=j*Math.PI/7,rad=j%2?26:44;pts.push([Math.cos(a)*rad,Math.sin(a)*rad])}
+  polygon(pts,'#b53458','#ffbb9c',2);circle(0,0,19,'#ff805e');circle(0,0,7,'#ffe2ae');ctx.restore();
+ }else if(type==='fire-steps'){
+  // A staggered stack of glowing hot blocks.
+  polygon([[-48,0],[-48,-35],[-18,-35],[-18,-63],[10,-63],[10,-82],[45,-82],[45,0]],'#8b2335','#ffd77c',2.5);
+  polygon([[-46,-34],[-18,-34],[-18,-28],[-46,-28]],'#ff9a3d');
+  polygon([[-18,-62],[10,-62],[10,-56],[-18,-56]],'#ffae53');
+  polygon([[10,-81],[44,-81],[44,-75],[10,-75]],'#ffe6a2');
+ }else if(type==='sun-wheel'){
+  ctx.save();ctx.translate(0,-40);ctx.rotate(t*.0016+i);
+  const rays=[];for(let n=0;n<20;n++){const a=n*Math.PI/10,rad=n%2===0?42:30;rays.push([Math.cos(a)*rad,Math.sin(a)*rad])}
+  polygon(rays,'#b42a35','#ffbc58',2);
+  circle(0,0,24,'#f67a33');circle(0,0,11,'#fff2bd');circle(0,0,5,'#ad2333');
+  ctx.restore();
+ }else if(type==='ember-wall'){
+  polygon([[-39,0],[-39,-76],[39,-76],[39,0]],'#9b283a','#ffb64d',2.5);
+  for(let n=0;n<3;n++){
+   polygon([[-29+n*20,-20],[-21+n*20,-62],[-10+n*20,-37],[-15+n*20,-19]],n%2?'#ffdf7d':'#ff843c','#fff0b2',.8);
+  }
+ }else if(type==='flame-fangs'){
+  polygon([[-48,0],[-41,-46],[-25,-81],[-5,-44],[-8,0]],'#ae2d39','#ffc264',2);
+  polygon([[8,0],[5,-44],[25,-81],[41,-46],[48,0]],'#ae2d39','#ffc264',2);
+  polygon([[-16,-15],[0,-65],[16,-15],[0,-29]],'#ffad44','#ffe7a3',2);
+ }else if(type==='solar-ramp'){
+  polygon([[-49,0],[-9,-70],[19,-70],[49,0]],'#9b293b','#ffcb6e',2.3);
+  line([[-29,-8],[-3,-50],[13,-50],[31,-8]],'#ffeda1',3);
+  polygon([[-6,-49],[8,-49],[0,-61]],'#ffea92');
+ }else if(type==='fangs'){
+  polygon([[-43,0],[-36,-41],[-20,-79],[-3,-40],[-9,0]],col,rim,2);
+  polygon([[9,0],[3,-40],[20,-79],[36,-41],[43,0]],col,rim,2);
+  polygon([[-26,-71],[-20,-86],[-13,-66],[-20,-71]],past?'#adf3e4':'#ffd1ee');
+  polygon([[13,-66],[20,-86],[26,-71],[20,-71]],past?'#adf3e4':'#ffd1ee');
+  polygon([[-10,-36],[0,-60],[10,-36],[0,-13]],past?'#64c5bd':'#ff6aab',rim,1.4);
+ }else if(type==='rotor'){
+  // Rotating crystalline saw mounted on a low pivot.
+  ctx.save();ctx.translate(0,-38);ctx.rotate(t*.0012+(i*.7));
+  const teeth=[];
+  for(let n=0;n<24;n++){const a=n*Math.PI/12-Math.PI/2,rad=n%2===0?39:29;teeth.push([Math.cos(a)*rad,Math.sin(a)*rad]);}
+  polygon(teeth,col,rim,2);
+  circle(0,0,19,past?'#7fdccf':'#ffb1da');
+  polygon([[0,-15],[14,0],[0,15],[-14,0]],past?'#245977':'#473974','#ecfffa',1.5);
+  circle(0,0,5,'#ebfff9');ctx.restore();
+  line([[-6,0],[-6,-5]],rim,2);
+ }else if(type==='tri-spikes'){
+  // Three separate jagged spears, staggered in height.
+  polygon([[-49,0],[-35,-63],[-16,0]],col,rim,2);
+  polygon([[-25,0],[0,-77],[25,0]],past?'#376b79':'#a64bba',rim,2);
+  polygon([[16,0],[35,-63],[49,0]],col,rim,2);
+  polygon([[-35,-63],[-31,-50],[-40,-41]],past?'#bdf9e6':'#ffd1e9');
+  polygon([[0,-77],[7,-53],[-7,-53]],past?'#c3f5e6':'#ffeff9');
+  polygon([[35,-63],[40,-41],[30,-50]],past?'#bdf9e6':'#ffd1e9');
+ }else if(type==='lightning'){
+  // Electric pylons with a zig-zag voltage beam between them.
+  polygon([[-46,0],[-42,-70],[-22,-70],[-18,0]],col,rim,2);
+  polygon([[18,0],[22,-70],[42,-70],[46,0]],col,rim,2);
+  polygon([[-45,-71],[-32,-83],[-19,-71]],past?'#94e4d1':'#ffcfdf',rim,1.1);
+  polygon([[19,-71],[32,-83],[45,-71]],past?'#94e4d1':'#ffcfdf',rim,1.1);
+  line([[-28,-49],[-5,-32],[-11,-48],[14,-34],[29,-50]],past?'#8fe8ce':'#ffe1a6',past?2:4);
+  glowCircle(0,-43,24,past?'#56ffe322':'#ffd7683e');
+ }else if(type==='prism'){
+  // Thick angular prism wall and its internal glowing facet.
+  polygon([[-42,0],[-40,-47],[-22,-76],[20,-76],[41,-48],[43,0]],col,rim,2);
+  polygon([[-22,-76],[0,-62],[20,-76],[7,-43],[-7,-43]],past?'#58989d':'#e78aca',rim,1);
+  polygon([[-31,-21],[0,-45],[31,-21],[0,-9]],past?'#2a6577':'#59377e',rim,1);
+  line([[0,-62],[0,-44]],past?'#b2f9e8':'#fff3dc',2);
+  circle(0,-28,7,past?'#b3fff0':'#ffd6f4');
+ }
+ ctx.restore();
+ if(danger&&x<canvasW*.62){glowCircle(x,ground-52,92,'#ff577e15')}
+}
+function drawSpire(x,y,scale,t,final=false){
+ if(x< -140||x>canvasW+140)return;
+ ctx.save();ctx.translate(x,y);ctx.scale(scale,scale);
+ glowCircle(0,0,95,final?'#ffd97634':'#7fa2ff29');
+ polygon([[-70,60],[-48,-5],[-21,-9],[-12,-74],[0,-100],[12,-74],[21,-9],[48,-5],[70,60]],'#23386a','#84c9ec6a',1.2);
+ polygon([[-12,-74],[0,-100],[12,-74],[21,-9],[0,16],[-21,-9]],'#526bb3','#92acff76',1);
+ polygon([[-6,-78],[0,-92],[6,-78],[0,-62]],final?'#f9d184':'#7ffff1','#d9ffee',1);
+ line([[0,-70],[0,30]],final?'#ffe7a2':'#92e7fa',1.5,.7);
+ ctx.restore();
+}
+function drawPlayer(t){
+ let x=playerX-camera;
+ const scale=hazardScale();
+ const hover=jumping?0:1.3*Math.sin(t*.010);
+ // Position and rotation are driven by physical jump state, not proximity animation.
+ const spin=jumping?Math.PI*2*jumpAge*jumpScale/JUMP_TOTAL:0;
+ const y=canvasH*.76-43*scale-jumpHeight*scale+hover;
+ if(status==='crashing'&&crashElapsed>190)return;
+ // Soft particle trail follows movement.
+ if(status==='running'&&Math.random()<.94){particleTrail.push({x,y:y+random(17)-8,birth:t,size:1.2+Math.random()*3});}
+ particleTrail=particleTrail.filter(s=>t-s.birth<900).slice(-70);
+ ctx.save();particleTrail.forEach(s=>{const age=(t-s.birth)/900,dx=(t-s.birth)*.085;circle(s.x-dx,s.y,s.size*(1-age),'rgba(88,255,226,'+(.56*(1-age))+')')});ctx.restore();
+ glowCircle(x,y,59*scale,'#ffae634c');glowCircle(x,y,27*scale,'#ffda8a72');
+ ctx.save();ctx.translate(x,y);ctx.scale(scale,scale);ctx.rotate(spin+Math.sin(t*.011)*.025);
+ ctx.shadowColor=world().main;ctx.shadowBlur=19;
+ // Distinct runner silhouette and facets for each world.
+ const verts=[
+  [[0,-32],[17,-11],[12,19],[0,31],[-17,11],[-15,-9]],
+  [[0,-34],[14,-13],[23,-19],[23,4],[15,23],[0,34],[-15,23],[-23,4],[-23,-19],[-14,-13]],
+  [[0,-38],[17,-15],[12,28],[0,38],[-11,28],[-17,-15]],
+  [[0,-29],[24,-19],[27,12],[0,31],[-27,12],[-24,-19]],
+  [[-19,-31],[-2,-21],[-5,29],[-21,36],[-29,2],[11,-32],[27,-21],[28,17],[10,34],[3,15]],
+  [[0,-33],[20,-15],[30,5],[19,31],[-5,36],[-25,20],[-20,-14]],
+  [[0,-39],[10,-12],[32,-24],[20,4],[34,23],[7,18],[0,40],[-11,18],[-34,23],[-20,4],[-32,-24],[-10,-12]],
+  [[-22,-24],[-5,-36],[9,-8],[21,-28],[30,22],[0,39],[-29,22]],
+  [[-18,-30],[14,-38],[32,-10],[17,24],[-10,36],[-28,15],[-30,-13]]
+ ][worldId-1];
+ polygon(verts,world().accent,'#fff6df',2);
+ polygon([[0,-26],[15,-9],[0,10],[-12,-6]],world().main,'#fffbe7',1.1);
+ line([[0,-23],[0,23]],'#ffffffbb',1.4);
+ ctx.restore();
+ for(let i=0;i<3;i++){
+  const a=t*.001+i*Math.PI*2/3;circle(x+Math.cos(a)*35*scale,y+Math.sin(a)*18*scale,(1.5+i%2)*scale,'#dcffed');
+ }
+}
+function spawnBurst(worldX,count){
+ const x=worldX-camera,y=canvasH*.52;
+ for(let i=0;i<count;i++){
+  const a=Math.PI*2*i/count+Math.random()*.3;
+  specks.push({x,y,dx:Math.cos(a)*(1.4+Math.random()*2.8),dy:Math.sin(a)*(1.2+Math.random()*3),s:2+Math.random()*3,c:i%5===0?'#ffdd96':i%3===0?'#b18aff':'#91ffdd',life:1});
+ }
+}
+function drawFX(dt){
+ specks=specks.filter(p=>p.life>0);ctx.globalCompositeOperation='lighter';
+ specks.forEach(p=>{p.x+=p.dx*dt*.07;p.y+=p.dy*dt*.07;p.dy+=.017*dt*.05;p.life-=dt*.0013;ctx.globalAlpha=clamp(p.life,0,1);if(p.life>0)circle(p.x,p.y,p.s*p.life,p.c)});
+ ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over';
+ if(fxGlow>0){glowCircle(canvasW*.50,canvasH*.46,canvasW*.65,`rgba(97,255,226,${fxGlow*.20})`);fxGlow=Math.max(0,fxGlow-dt*.0017)}
+}
+function frame(t){
+ if(!canvasW||!canvasH)resize();const dt=lastFrame?clamp(t-lastFrame,0,45):16;lastFrame=t;clock=t;
+ advance(dt);electronicBeat();
+ const wanted=playerX-canvasW*.30;camera=lerp(camera,wanted,reduced?1:clamp(dt*.032,0,1));
+ ctx.save();if(status==='crashing'&&shake>0)ctx.translate((Math.random()-.5)*shake,(Math.random()-.5)*shake*.45);
+ ctx.clearRect(-25,-25,canvasW+50,canvasH+50);
+ paintBackground(t);
+ const finalX=ORIGIN+NODE*TOTAL-camera;
+ drawSpire(finalX,canvasH*.49,.8+step*.03,t,true);
+ drawTrack(t);
+ for(let i=1;i<=TOTAL;i++){
+  const wx=ORIGIN+NODE*i;
+  drawGate(wx,i,t);
+ }
+ if(status!=='crashed')drawPlayer(t);
+ drawFX(dt);
+ if(status==='crashing')glowCircle(playerX-camera,canvasH*.72,95,'#ff4da981');
+ ctx.restore();
+ requestAnimationFrame(frame);
+}
+function bind(){
+ $('keypad').addEventListener('click',e=>{const b=e.target.closest('[data-key]');if(!b)return;onKey(b.dataset.key)});
+ document.addEventListener('keydown',e=>{
+  const key=e.key;if(key==='Backspace'){e.preventDefault();onKey('back')}else if(key==='Enter'){e.preventDefault();if(victoryStage==='vault')closeCrystalVault();else if(status==='intro')startGame();else if(status==='finished'&&victoryStage==='finish')startGame();else if(status==='crashed')startGame(true)}else if(/^\d$/.test(key))onKey(key);
+ });
+ $('begin').addEventListener('click',()=>startGame());$('again').addEventListener('click',()=>startGame());$('retry').addEventListener('click',()=>startGame(true));$('restart').addEventListener('click',reset);$('sound').addEventListener('click',setSound);
+ $('openVaultIntro').addEventListener('click',()=>openCrystalVault('intro'));
+ $('openVaultReward').addEventListener('click',()=>openCrystalVault('finish'));
+ $('closeVault').addEventListener('click',closeCrystalVault);
+ $('worldMenu').addEventListener('click',e=>{const item=e.target.closest('[data-world]');if(item&&!item.disabled)switchWorld(Number(item.dataset.world))});
+ $('nextWorld').addEventListener('click',()=>{if(worldId<9)switchWorld(worldId+1);else showFusion()});
+ $('fusionClose').addEventListener('click',()=>overlay('finish'));
+
+ window.addEventListener('resize',resize);
+ document.addEventListener('visibilitychange',()=>{lastFrame=0});
+}
+function init(){
+ stars=[];TOTAL=world().total;resize();bind();updateWorldUI();updateRushHUD();overlay('intro');requestAnimationFrame(frame);
+}
+// Test interface is read-only except for simulated key input; it is not displayed to players.
+window.__EDUKASS_TEST__={get:()=>({status,step,typed,tasks:tasks.map(t=>({...t})),playerX,solved,crashReason,attempts,world:world().name.toLowerCase(),rewardUnlocked:rewardUnlocked||status==='finished',victoryStage,worldId,crystalCollected:collectedCrystals().includes(worldId),vaultCount:collectedCrystals().length,jumping,jumpHeight,jumpCount,wrongLocked,turboActive,runningSpeed:effectiveSpeed(),distance:distanceToObstacle(),obstacles:Array.from({length:TOTAL},(_,j)=>obstacleKind(j+1))}),press:onKey,start:()=>startGame(),retry:()=>startGame(true),tick:(ms)=>{for(let r=0;r<ms;r+=35)advance(Math.min(35,ms-r))},reset,validateTasks,generate:createTasks};
+init();
+})();
+</script>
+</body>
+</html>
