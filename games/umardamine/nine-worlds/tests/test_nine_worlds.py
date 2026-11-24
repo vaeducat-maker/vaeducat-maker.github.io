@@ -234,6 +234,41 @@ def validate_audio(browser):
  print(json.dumps({'audio':'SOLAR_SPARK_AND_SOFT_OOPS_PASS','share_pause':'PASS','page_errors':errors}))
  context.close()
 
+def validate_passport(browser):
+ # Two genuinely separate browser profiles (no shared localStorage).
+ old=browser.new_context(viewport={"width":390,"height":844})
+ a=old.new_page();a.goto(URL,wait_until="domcontentloaded")
+ a.evaluate("window.EDUKASS_GAME_PROGRESS.restore({completed:[1,2],lastWorld:3,ultimate:false})")
+ a.locator("#openPassportIntro").click()
+ assert a.locator("#passportDialog").is_visible()
+ a.locator("#createPassport").click()
+ link=a.locator("#passportUrl").input_value()
+ assert link.startswith(URL+"#ekpass="),link
+ assert a.locator("#passportQr svg").count()==1
+ # Ordinary sharing must contain no private progress and display independent QR.
+ a.locator("#closePassport").click()
+ a.locator("#shareGameIntro").click()
+ assert a.locator("#shareDialog").is_visible()
+ assert a.locator("#shareUrl").input_value()==URL
+ assert a.locator("#shareQr svg").count()==1
+ a.locator("#closeShare").click()
+ newer=browser.new_context(viewport={"width":390,"height":844})
+ b=newer.new_page();b.goto(link,wait_until="domcontentloaded")
+ assert b.locator("#passportDialog").is_visible()
+ assert b.locator("#passportConfirm").is_visible()
+ assert b.evaluate("window.EDUKASS_GAME_PROGRESS.get().completed")==[], "Import must never happen without confirmation"
+ assert b.locator("#passportImportSummary").is_visible()
+ b.locator("#passportRestore").click()
+ assert b.evaluate("window.EDUKASS_GAME_PROGRESS.get().completed")==[1,2]
+ assert b.evaluate("window.EDUKASS_GAME_PROGRESS.get().lastWorld")==3
+ assert b.locator("#introName").inner_text()=="Mäevardjad"
+ # Reopening the game on device B must retain both crystals.
+ b.reload(wait_until="domcontentloaded")
+ assert b.evaluate("window.EDUKASS_GAME_PROGRESS.get().completed")==[1,2]
+ assert b.locator("#worldMenu .world-choice:not([disabled])").count()==3
+ print(json.dumps({"passport":"TWO_DEVICE_TRANSFER_PASS","qr":"BOTH_VISIBLE","confirmation":"REQUIRED"}))
+ old.close();newer.close()
+
 try:
  with sync_playwright() as p:
   opts={"headless":True}
@@ -244,6 +279,7 @@ try:
   validate(browser,360,600,"compact",full=False)
   validate(browser,844,390,"landscape",full=False)
   validate_audio(browser)
+  validate_passport(browser)
   browser.close()
 finally:
  httpd.shutdown()
