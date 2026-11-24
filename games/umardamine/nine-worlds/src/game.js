@@ -827,7 +827,7 @@ function init(){
 // Small approved public bridge for EDUKASS Passport Lite.
 // Personal link carries only completed crystals and chosen world, no personal data.
 window.EDUKASS_GAME_PROGRESS={
- get:()=>({completed:collectedCrystals(),lastWorld:worldId,ultimate:collectedCrystals().length===9}),
+ get:()=>({completed:collectedCrystals(),lastWorld:status==='finished'&&worldId<9?worldId+1:worldId,ultimate:collectedCrystals().length===9}),
  restore:(data)=>{
   if(!data||!Array.isArray(data.completed)||data.completed.length>9||
     data.completed.some(x=>!Number.isInteger(x)||x<1||x>9)||
