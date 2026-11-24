@@ -417,3 +417,54 @@ body{background:radial-gradient(ellipse 100% 75% at 50% 0%,#802441,#3a0b23 66%,#
 
 .ultimate-vault-link{width:min(340px,100%);border:2px solid #ffdf96;border-radius:14px;padding:10px 12px;background:linear-gradient(115deg,#9957db,#f1bb6d);color:#fff;font-size:12px;font-weight:1000;letter-spacing:.045em;box-shadow:0 0 18px #ffdfaa88;cursor:pointer}
 .ultimate-vault-link[hidden]{display:none!important}
+
+
+/* Nine-world title cinematic: self-contained faceted jewels, no stock imagery. */
+.intro-game-name{margin:4px auto 1px!important;line-height:1.03!important;letter-spacing:.07em!important;font-weight:1000!important;font-size:clamp(19px,6vw,31px)!important;text-align:center;color:#f2fff7;text-shadow:0 0 20px #69ffe5a6}
+.intro-game-name span{color:#ffe3a1;text-shadow:0 0 25px #ffd98bb8}
+.intro-arc-label{font-size:10px;font-weight:900;letter-spacing:.1em;color:#b8ffe6;text-align:center}
+.intro-nine-crystals{display:flex;justify-content:center;align-items:center;gap:clamp(3px,1vw,7px);margin:4px auto 0;width:min(350px,98%);height:43px}
+.intro-crystal{display:block;width:10%;min-width:18px;max-width:32px;height:40px;opacity:.28;filter:grayscale(.75);transform:translateY(0);animation:introCrystalFloat 2.5s ease-in-out infinite;animation-delay:calc(var(--ix) * -0.2s)}
+.intro-crystal svg{width:100%;height:100%;display:block}
+.intro-crystal.owned{opacity:1;filter:drop-shadow(0 0 9px var(--world-main))}
+.intro-crystal.current{opacity:1;filter:drop-shadow(0 0 9px var(--world-main));transform:scale(1.14);animation:introCrystalPulse 2s ease-in-out infinite}
+@keyframes introCrystalFloat{0%,100%{translate:0 0}50%{translate:0 -4px}}
+@keyframes introCrystalPulse{0%,100%{scale:1}50%{scale:1.16}}
+.intro-world-title{font-size:clamp(15px,4.5vw,20px)!important;color:#f0efff;letter-spacing:.015em;margin:1px auto!important}
+.intro-world-title span{color:var(--world-main)}
+#introHero{gap:clamp(3px,.9svh,10px)!important}
+#introHero>p{font-size:clamp(11px,2.7vw,13px);line-height:1.32;margin:0!important}
+#introHero>.hero-mark{height:clamp(68px,15svh,106px)!important;min-height:60px;max-height:106px;margin:2px auto!important}
+.intro-utility-actions{display:grid;grid-template-columns:1fr 1.2fr;gap:7px;width:min(355px,98%);margin:0 auto 4px}
+.intro-utility-actions button{font-size:clamp(9px,2.5vw,11px);font-weight:950;letter-spacing:.02em;color:#e7fffa;background:linear-gradient(130deg,#14365dde,#172951e6);border:1px solid #84e9d180;border-radius:12px;padding:9px 5px;min-height:40px;cursor:pointer}
+.intro-utility-actions button:last-child{border-color:#ffdda780;background:linear-gradient(130deg,#39305f,#1c2b49)}
+@media(max-height:660px){#introHero{gap:2px!important}.intro-nine-crystals{height:29px}.intro-crystal{height:28px}#introHero>.hero-mark{height:55px!important;min-height:55px}.intro-game-name{font-size:22px!important}.intro-arc-label{font-size:9px}}
+@media(prefers-reduced-motion:reduce){.intro-crystal{animation:none!important}}
+/* EDUKASS Passport Lite and sharing overlays: password-free, user-controlled. */
+.edukass-modal{position:fixed;inset:0;width:min(94vw,455px);max-width:455px;max-height:88dvh;padding:0;margin:auto;overflow-y:auto;background:linear-gradient(155deg,#112c52 0%,#1b2049 58%,#362249 100%);border:1px solid #a4ffe09b;border-radius:22px;color:#f5fff9;box-shadow:0 24px 90px #010415c9}
+.edukass-modal::backdrop{background:#040a20c9;backdrop-filter:blur(7px)}
+.edukass-modal [hidden]{display:none!important}
+.edukass-modal-inner{padding:24px 18px 22px;display:flex;flex-direction:column;gap:10px;position:relative}
+.edukass-modal-inner>p{font-size:13px;line-height:1.45;color:#dae8f6;margin:0}
+.edukass-modal h2{font-size:clamp(22px,5vw,27px);margin:0;line-height:1.14;color:#fff4c5;font-weight:1000}
+.modal-kicker{font-size:11px;letter-spacing:.12em;color:#a6ffe8;font-weight:900}
+.modal-close{position:absolute;top:9px;right:11px;border:1px solid #bbdae27d;border-radius:50%;width:36px;height:36px;background:#183057;color:white;font-size:24px;cursor:pointer}
+.passport-progress{padding:9px 12px;border-radius:12px;border:1px solid #85e6d267;background:#1643659e;text-align:center;color:#aaffed;font-weight:1000;letter-spacing:.08em;font-size:13px}
+.passport-main,.edukass-modal .transfer-actions button,.passport-manual button{background:linear-gradient(120deg,#ffe4a5,#ffba5d);border:1px solid #ffe8b2;color:#202947;font-weight:1000;border-radius:13px;padding:11px 10px;min-height:42px;cursor:pointer}
+.passport-main{width:100%}
+.transfer-qr{width:188px;height:188px;margin:5px auto 8px;padding:11px;background:#fff;border-radius:13px;box-shadow:0 0 23px #afffe259;display:grid;place-items:center;overflow:hidden}
+.transfer-qr svg{display:block;width:100%;height:100%;shape-rendering:crispEdges}
+.transfer-link{width:100%;min-height:67px;max-height:106px;resize:none;background:#ffffff;color:#14294a;border:1px solid #c3d6e4;border-radius:12px;font-size:11px;padding:10px;overflow-wrap:anywhere}
+.transfer-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+.edukass-modal .transfer-actions button:first-child{background:linear-gradient(130deg,#d5edfd,#b8fff1);border-color:#a9ffde}
+.transfer-status{min-height:18px;font-size:12px;color:#9ffff0!important;font-weight:800;margin:0!important}
+.private-note{font-size:11px;color:#ffdd9a;line-height:1.4;margin:7px 0 0}
+.passport-manual{border:1px solid #879ec765;border-radius:12px;padding:9px 12px}
+.passport-manual>summary{cursor:pointer;font-size:12px;letter-spacing:.04em;font-weight:900}
+.passport-manual textarea{width:100%;min-height:72px;max-height:120px;margin:10px 0 8px;padding:10px;border-radius:9px;border:1px solid #a2c7d3;background:#fff;color:#122f49;font-size:12px}
+.passport-manual button{width:100%;font-size:11px}
+.passport-confirm{padding:10px;border-radius:13px;background:#372640cb;border:1px solid #ffbc9976}
+.passport-confirm p{margin:0 0 9px;font-size:12px;line-height:1.45}
+.passport-warning{color:#ffdfad}
+.passport-confirm .transfer-actions button{font-size:11px}
+@media(max-height:600px){.edukass-modal-inner{padding:18px 14px;gap:6px}.transfer-qr{width:138px;height:138px}.edukass-modal h2{font-size:21px}}
