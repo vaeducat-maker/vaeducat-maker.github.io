@@ -127,6 +127,8 @@
  $('sendGameUrl').addEventListener('click',()=>send($('shareUrl').value,$('shareUrl'),'shareStatus','EDUKASS · Ümardamise kristallirännak'));
  $('openPassport').addEventListener('click',openPassport);
  $('openPassportIntro').addEventListener('click',openPassport);
+ $('saveAfterVictory').addEventListener('click',openPassport);
+ $('saveFromVault').addEventListener('click',openPassport);
  $('closePassport').addEventListener('click',()=>close(passportDialog));
  $('createPassport').addEventListener('click',createPassport);
  $('copyPassport').addEventListener('click',()=>copy(latestPassport,$('passportUrl'),'passportStatus'));
