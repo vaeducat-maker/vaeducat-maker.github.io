@@ -1,9 +1,12 @@
 """Chromium acceptance suite for EDUKASS nine-world runner.
 Run: python games/umardamine/nine-worlds/tests/test_nine_worlds.py
-Requires: pip install playwright; playwright install chromium
+Requires: pip install playwright pillow zxing-cpp; playwright install chromium
 Screenshots are generated locally; this script is not a substitute for manual review.
 """
 from pathlib import Path
+from io import BytesIO
+from PIL import Image
+import zxingcpp
 import threading
 import json
 import shutil
@@ -58,6 +61,13 @@ def verify_methodical_round(tasks,world):
  if world>1:
   assert not any(tasks[i]['unit']==tasks[i-1]['unit']==tasks[i-2]['unit']==tasks[i-3]['unit'] for i in range(3,len(tasks)))
 
+def assert_qr_decodes(page, element, expected):
+ # Decode the actual rendered QR screenshot rather than trusting its SVG presence.
+ qr = page.locator(element)
+ qr.scroll_into_view_if_needed()
+ result = zxingcpp.read_barcode(Image.open(BytesIO(qr.screenshot())).convert("RGB"))
+ assert result is not None and result.text == expected, (element, expected, result)
+
 def validate(browser,width,height,label,full=True):
  context=browser.new_context(viewport={"width":width,"height":height},device_scale_factor=1)
  page=context.new_page()
@@ -85,6 +95,7 @@ def validate(browser,width,height,label,full=True):
  assert page.locator("#shareQr svg").count()==1
  public_link=page.locator("#shareUrl").input_value()
  assert public_link.startswith("http://127.0.0.1:") and "#ekpass=" not in public_link
+ assert_qr_decodes(page,"#shareQr",public_link)
  page.locator("#closeShare").click()
  assert not page.locator("#shareDialog").is_visible()
  page.locator("#openPassportIntro").click()
@@ -94,6 +105,7 @@ def validate(browser,width,height,label,full=True):
  assert page.locator("#passportQr svg").count()==1
  start_link=page.locator("#passportUrl").input_value()
  assert "#ekpass=" in start_link
+ assert_qr_decodes(page,"#passportQr",start_link)
  page.locator("#closePassport").click()
  assert not page.locator("#passportDialog").is_visible()
  # A valid passport URL is not silently imported: new device must confirm.
@@ -245,6 +257,7 @@ def validate_passport(browser):
  link=a.locator("#passportUrl").input_value()
  assert link.startswith(URL+"#ekpass="),link
  assert a.locator("#passportQr svg").count()==1
+ assert_qr_decodes(a,"#passportQr",link)
  # Ordinary sharing must contain no private progress and display independent QR.
  a.locator("#closePassport").click()
  a.locator("#shareGameIntro").click()

@@ -18,7 +18,7 @@ jobs:
       - name: Install browser test dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install playwright
+          python -m pip install playwright pillow zxing-cpp
           python -m playwright install --with-deps chromium
       - name: Validate nine worlds, crystals, keyboard and final fusion
         run: python games/umardamine/nine-worlds/tests/test_nine_worlds.py

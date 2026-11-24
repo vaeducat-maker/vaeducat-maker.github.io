@@ -110,3 +110,6 @@ html=html.replace('/*__PASSPORT__*/',(p/'src/passport.js').read_text(encoding='u
 - **Release status:** **prototype only**; do **not** merge automatically into `main` or expose as the production EDUKASS game until browser QA is complete.
 
 The older car-based rally rules in `EDUKASS_UMARDAMISRALLI_RULES.md` are a historical standard for a different design. The later approved Geometry-Dash-like crystal runner supersedes its roads/postcards/car gameplay; maths accuracy and explicit browser QA remain mandatory.
+
+## QR scan reliability · 25 November 2026
+The previous Chromium suite verified transfer by URL and SVG presence. QR images now include the standard four-module white quiet zone and larger responsive dimensions, including on compact screens. The browser suite additionally decodes actual screenshots of the public and private QR images with ZXing, comparing the decoded value with the original URL in each tested viewport. This is automated image decoding, not a substitute for real phone-camera testing. No game-world, arithmetic, physics, music, crystal or passport-consent behavior was changed.

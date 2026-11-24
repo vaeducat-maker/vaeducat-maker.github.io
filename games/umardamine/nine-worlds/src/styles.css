@@ -452,7 +452,7 @@ body{background:radial-gradient(ellipse 100% 75% at 50% 0%,#802441,#3a0b23 66%,#
 .passport-progress{padding:9px 12px;border-radius:12px;border:1px solid #85e6d267;background:#1643659e;text-align:center;color:#aaffed;font-weight:1000;letter-spacing:.08em;font-size:13px}
 .passport-main,.edukass-modal .transfer-actions button,.passport-manual button{background:linear-gradient(120deg,#ffe4a5,#ffba5d);border:1px solid #ffe8b2;color:#202947;font-weight:1000;border-radius:13px;padding:11px 10px;min-height:42px;cursor:pointer}
 .passport-main{width:100%}
-.transfer-qr{width:188px;height:188px;margin:5px auto 8px;padding:11px;background:#fff;border-radius:13px;box-shadow:0 0 23px #afffe259;display:grid;place-items:center;overflow:hidden}
+.transfer-qr{width:min(252px,100%);aspect-ratio:1;height:auto;margin:5px auto 8px;padding:4px;background:#fff;border-radius:13px;box-shadow:0 0 23px #afffe259;display:grid;place-items:center;overflow:hidden}
 .transfer-qr svg{display:block;width:100%;height:100%;shape-rendering:crispEdges}
 .transfer-link{width:100%;min-height:67px;max-height:106px;resize:none;background:#ffffff;color:#14294a;border:1px solid #c3d6e4;border-radius:12px;font-size:11px;padding:10px;overflow-wrap:anywhere}
 .transfer-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
@@ -467,7 +467,7 @@ body{background:radial-gradient(ellipse 100% 75% at 50% 0%,#802441,#3a0b23 66%,#
 .passport-confirm p{margin:0 0 9px;font-size:12px;line-height:1.45}
 .passport-warning{color:#ffdfad}
 .passport-confirm .transfer-actions button{font-size:11px}
-@media(max-height:600px){.edukass-modal-inner{padding:18px 14px;gap:6px}.transfer-qr{width:138px;height:138px}.edukass-modal h2{font-size:21px}}
+@media(max-height:600px){.edukass-modal-inner{padding:18px 14px;gap:6px} .transfer-qr{width:min(224px,100%)}.edukass-modal h2{font-size:21px}}
 
 .progress-save-cta{min-height:41px;font-size:11px!important;letter-spacing:.035em;font-weight:950!important;background:linear-gradient(140deg,#1b395edb,#433259d1)!important;color:#fff5da!important;border:1px solid #f9d99b88!important;border-radius:13px!important;cursor:pointer}
 

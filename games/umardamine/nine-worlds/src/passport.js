@@ -41,7 +41,7 @@
   if(typeof window.qrcode!=='function'){node.textContent='QR pole saadaval. Kasuta allolevat linki.';return}
   try{
    const qr=window.qrcode(0,'M');
-   qr.addData(url,'Byte');qr.make();node.innerHTML=qr.createSvgTag(4,0);
+   qr.addData(url,'Byte');qr.make();node.innerHTML=qr.createSvgTag(4,16);
    const svg=node.querySelector('svg');if(svg){svg.setAttribute('role','img');svg.setAttribute('aria-label','Skaneeri linki avamiseks')}
   }catch(e){node.textContent='QR pole saadaval. Kasuta linki.'}
  }
