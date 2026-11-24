@@ -4,18 +4,39 @@
 ## Launch
 Open `index.html` in a browser or through an HTTPS static preview. There are no CDN images, music files or external library dependencies. Everything is inline in the standalone HTML. Enter the correct rounded number; the runner automatically jumps. An incorrect full answer or missing the deadline causes a physical collision, followed by a lesson showing the exact correct answer, the incorrectly entered digits if any, and the rounding rule. Replay generates fresh numbers.
 
-## Worlds and curricula
-1. **Valgussaar** — eight exercises, tens and an introduction to hundreds. Cyan long faceted crystal.
-2. **Päikesekuru** — twelve exercises: 4 two-digit tens, 4 three-digit tens, 4 three-digit hundreds. Amber fire-lotus crystal.
-3. **Mäevardjad** — twelve exercises; hundreds and first thousands. Purple obelisk crystal.
-4. **Tormitasandik** — twelve exercises; mixed hundreds, thousands and ten-thousands. Electric orbit crystal.
-5. **Kaksikorg** — twelve exercises; thousands, ten-thousands and hundred-thousands. Twin jade shards.
-6. **Keeriseorg** — twelve exercises; up to millions. Pink spiral crystal.
-7. **Täheväli** — twelve exercises; up to ten millions. Golden star crystal.
-8. **Prismakants** — twelve exercises; up to hundred millions. Prism-crown crystal.
-9. **Meteoritorm** — twelve exercises; large 8–9-digit input numbers and mixed millions / ten / hundred millions. Meteor crystal.
+## Maths curriculum — approved 24 November 2026
 
-Total: **104 tasks per complete pass** (8 + 8 × 12), infinitely re-generating in practice from broad valid integer pools. The generator avoids exactly recent input numbers where feasible and tests the full expected round result. Correctly rounded answers at carry boundaries can be 10 digits; input accepts up to 12 digits.
+The mathematics engine uses **three independent dimensions** for each example: (1) magnitude / digit count of the starting number, (2) requested rounding unit, and (3) the mathematical situation (up/down, threshold 4/5, carry, internal zero). **Never generate an input already divisible by the requested unit.** Example 3 400 rounded to hundreds = 3 400 is intentionally excluded, following the EDUKASS owner's decision.
+
+### Spiral progression: exact per-world quotas
+| World | Tens (10) | Hundreds (100) | Thousands (1,000) | Ten-thousands (10,000) | Hundred-thousands (100,000) | Millions | Ten-millions | Hundred-millions |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| 1. Valgussaar (8) | 7 | 1 | – | – | – | – | – | – |
+| 2. Päikesekuru (12) | 7 | 5 | – | – | – | – | – | – |
+| 3. Mäevardjad (12) | 3 | 4 | 5 | – | – | – | – | – |
+| 4. Tormitasandik (12) | 2 | 3 | 4 | 3 | – | – | – | – |
+| 5. Kaksikorg (12) | – | 2 | 3 | 4 | 3 | – | – | – |
+| 6. Keeriseorg (12) | – | – | 2 | 3 | 4 | 3 | – | – |
+| 7. Täheväli (12) | – | – | – | 2 | 3 | 4 | 3 | – |
+| 8. Prismakants (12) | – | – | – | – | 2 | 3 | 4 | 3 |
+| 9. Meteoritorm (12) | 1 | 2 | 2 | 2 | 1 | 1 | 1 | 2 |
+
+The final world comprehensively rechecks **all eight studied rounding units** on large numbers. Rounding unit does **not** mechanically follow the leading number magnitude: four-, five-, or nine-digit input numbers can be rounded to tens or hundreds if the world has introduced those units.
+
+World 1 preserves two-digit introductory tasks and one final hundreds task. World 2 begins with two approachable two-digit tens examples, then mixes tens and hundreds. In worlds 3–8, the first two positions revise simpler units; other task-unit combinations and situations are shuffled. For worlds 2–9, the engine rejects any four consecutive identical rounding units.
+
+### Each world deliberately includes essential situations
+- **World 1, eight tasks:** 4 downward and 4 upward outcomes including one exact 4, one exact 5, one carry across a place, one interior zero and ordinary mixed cases.
+- **Worlds 2–9, twelve tasks:** 6 downward, 6 upward outcomes including one exact 4, one exact 5, two carry cases, one internal-zero/down and one internal-zero/up, alongside regular varied examples.
+- Carry means the rounded answer crosses the next power-of-ten place (e.g. `9 950 → 10 000` when rounding to hundreds), not an arbitrary input whose first digit changes.
+- Internal zeros are *within* the original numeral, not merely a trailing zero (e.g. `406 → 400` to hundreds, `105 → 110` to tens).
+- Already-round inputs are categorically excluded for this exercise (e.g. no `3 400 → 3 400` when rounding to hundreds).
+- Numbers and task order change between attempts, avoiding recently used inputs when possible. All values are safely represented in integer JavaScript arithmetic.
+
+### Example of place-awareness
+`3 482` rounded to tens → `3 480`, to hundreds → `3 500`, to thousands → `3 000`. These are illustrative *types*, not three mandatory consecutive questions. The generator chooses the rounding unit separately from the length of the displayed number.
+
+Total: **104 tasks** per complete nine-world pass (8 + 8 × 12), from large independent random integer ranges. Highest inputs are nine digits; carry can yield a ten-digit correct result. Input supports up to 12 digits, for comfortable handling of all supported cases.
 
 ## Maths-paced movement
 The ordinary speed is deliberately separate from the **instant 850 world-pixel/s turbo** on an early correct answer. Worlds 1 and 2 preserve tested 64.5 and 47 normal speed (and safer 56.25 and 43 for their final tasks).
