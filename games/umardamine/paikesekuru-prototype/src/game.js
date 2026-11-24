@@ -123,7 +123,7 @@ function validateTasks(ts){
 function updateGems(){
  $('gems').innerHTML=Array.from({length:TOTAL},(_,i)=>`<span class="gem ${i<step?'done':i===step&&status!=='finished'?'now':''}" aria-hidden="true"></span>`).join('');
  $('step').textContent=`${step}/${TOTAL}`;
- $('answerStep').textContent=step<TOTAL?`${String(step+1).padStart(2,'0')} / 12`:'08 / 12';
+ $('answerStep').textContent=step<TOTAL?`${String(step+1).padStart(2,'0')} / 12` :'12 / 12';
 }
 function updateAnswer(){
  $('answerValue').textContent=typed?format(typed):'';
