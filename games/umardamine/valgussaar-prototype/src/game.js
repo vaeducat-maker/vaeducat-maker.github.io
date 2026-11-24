@@ -4,7 +4,7 @@ const $=id=>document.getElementById(id);
 const canvas=$('world'),ctx=canvas.getContext('2d',{alpha:false});
 const reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const NODE=580, ORIGIN=108, TOTAL=8;
-const SPEED=64.5, FINAL_SPEED=56.25, TURBO_SPEED=255, TURBO_ARC_STRETCH=1.4; // 25% slower
+const SPEED=64.5, FINAL_SPEED=56.25, TURBO_SPEED=850, TURBO_ARC_STRETCH=1.4; // 25% slower
 const ORIGINAL_SPEED=86, ORIGINAL_FINAL_SPEED=75; // maintain original physical jump curves
 const JUMP_V=240, JUMP_G=200, JUMP_TOTAL=2*JUMP_V/JUMP_G;
 const HAZARD_HALF_WIDTH=58, CLEARANCE=76; // consistent with the rendered spike and crystal hitboxes
@@ -302,7 +302,15 @@ function finish(){
 }
 function reset(){ceremonyToken++;status='intro';step=0;typed='';solved=false;playerX=ORIGIN;particleTrail=[];jumping=false;jumpAge=0;jumpHeight=0;jumpStarted=false;wrongLocked=false;turboActive=false;jumpScale=1;jumpCount=0;updateGems();updateAnswer();note('Vasta enne takistust!');updateRushHUD();overlay('intro')}
 function advance(dt){
- const delta=clamp(dt,0,100);
+ let remaining=clamp(dt,0,100);
+ while(remaining>0){
+  const d=Math.min(8,remaining);
+  advanceSubstep(d);
+  remaining-=d;
+ }
+}
+function advanceSubstep(dt){
+ const delta=dt;
  if(status==='running'){
   const dtSeconds=delta/1000;
   const gate=ORIGIN+NODE*(step+1);
@@ -310,7 +318,7 @@ function advance(dt){
   // A correct answer arms one automatic jump. It starts at the same point relative
   // to the obstacle at every pace, then follows a genuine ballistic arc.
   const takeoffDistance=jumpReferenceSpeed()*JUMP_TOTAL/2*(turboActive?TURBO_ARC_STRETCH:1);
-  if(solved&&!jumpStarted&&!jumping&&approach<=takeoffDistance){
+  if(solved&&!jumpStarted&&approach<=takeoffDistance){
    jumping=true;jumpStarted=true;jumpAge=0;jumpHeight=0;jumpCount++;
    // Longer world-space flight during turbo keeps both ends of the solid hazard
    // within a visible, physical arc instead of skipping the collision hitbox.
