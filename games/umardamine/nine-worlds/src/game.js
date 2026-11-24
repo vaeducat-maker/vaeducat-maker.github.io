@@ -822,7 +822,12 @@ function bind(){
  window.addEventListener('edukass-dialog-open',approvedMusicPause);
 }
 function init(){
- stars=[];TOTAL=world().total;resize();bind();updateWorldUI();updateRushHUD();overlay('intro');requestAnimationFrame(frame);
+ // The same device resumes at the first world not yet completed; past worlds
+ // remain accessible through the world selector.
+ const already=collectedCrystals();let resume=1;
+ while(resume<9&&already.includes(resume))resume++;
+ worldId=resume;TOTAL=world().total;
+ stars=[];resize();bind();updateWorldUI();updateRushHUD();overlay('intro');requestAnimationFrame(frame);
 }
 // Small approved public bridge for EDUKASS Passport Lite.
 // Personal link carries only completed crystals and chosen world, no personal data.
