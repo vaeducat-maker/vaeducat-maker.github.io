@@ -21,6 +21,43 @@ httpd=ThreadingHTTPServer(("127.0.0.1",0),Handler)
 threading.Thread(target=httpd.serve_forever,daemon=True).start()
 URL=f"http://127.0.0.1:{httpd.server_port}/index.html"
 
+UNIT_QUOTAS={
+ 1:{10:7,100:1},
+ 2:{10:7,100:5},
+ 3:{10:3,100:4,1000:5},
+ 4:{10:2,100:3,1000:4,10000:3},
+ 5:{100:2,1000:3,10000:4,100000:3},
+ 6:{1000:2,10000:3,100000:4,1000000:3},
+ 7:{10000:2,100000:3,1000000:4,10000000:3},
+ 8:{100000:2,1000000:3,10000000:4,100000000:3},
+ 9:{10:1,100:2,1000:2,10000:2,100000:1,1000000:1,10000000:1,100000000:2}
+}
+CASE_QUOTAS_8={'down':2,'up':2,'boundary4':1,'boundary5':1,'carry':1,'zeroDown':1}
+CASE_QUOTAS_12={'down':4,'up':2,'boundary4':1,'boundary5':1,'carry':2,'zeroDown':1,'zeroUp':1}
+
+def verify_methodical_round(tasks,world):
+ from collections import Counter
+ assert Counter(t['unit'] for t in tasks)==Counter(UNIT_QUOTAS[world])
+ assert Counter(t['scenario'] for t in tasks)==Counter(CASE_QUOTAS_8 if world==1 else CASE_QUOTAS_12)
+ assert len({t['v'] for t in tasks})==len(tasks)
+ for t in tasks:
+  n,u,answer,kind=t['v'],t['unit'],t['answer'],t['scenario']
+  assert n%u!=0,(world,t)  # Never an already-rounded exercise
+  assert answer==((n+u//2)//u)*u,(world,t)
+  d=(n//(u//10))%10
+  carries=answer//u%10==0 and d>=5
+  zero='0' in str(n)[1:-1]
+  match={
+   'down':1<=d<=3,'up':6<=d<=9,
+   'boundary4':d==4,'boundary5':d==5,
+   'carry':carries,'zeroDown':d<=4 and zero,
+   'zeroUp':d>=5 and zero
+  }
+  assert match[kind],(world,t,match)
+ assert sum((t['v']//(t['unit']//10))%10<5 for t in tasks)==(4 if world==1 else 6)
+ if world>1:
+  assert not any(tasks[i]['unit']==tasks[i-1]['unit']==tasks[i-2]['unit']==tasks[i-3]['unit'] for i in range(3,len(tasks)))
+
 def validate(browser,width,height,label,full=True):
  context=browser.new_context(viewport={"width":width,"height":height},device_scale_factor=1)
  page=context.new_page()
@@ -50,6 +87,11 @@ def validate(browser,width,height,label,full=True):
   initial=page.evaluate("window.__EDUKASS_TEST__.get()")
   count=8 if world==1 else 12
   assert len(initial["tasks"])==count,(world,initial)
+  verify_methodical_round(initial['tasks'],world)
+  # Verify several fresh random rounds with the full pedagogical distribution.
+  for _ in range(20):
+   sample=page.evaluate('window.__EDUKASS_TEST__.generate()')
+   verify_methodical_round(sample,world)
   if world>=3:
    assert 10<=initial["distance"]/initial["runningSpeed"]<=31
   # Test actual keypad click on the first digit, then deterministic in-game stepping.
