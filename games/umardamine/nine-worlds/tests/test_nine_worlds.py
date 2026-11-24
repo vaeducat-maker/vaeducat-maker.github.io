@@ -77,6 +77,9 @@ def validate(browser,width,height,label,full=True):
  assert page.locator("#softFail").get_attribute("src")=="assets/01_soft_oops.mp3"
  assert page.locator("#solarTrack").evaluate("(a)=>a.volume")==0.32
  assert page.locator("#softFail").evaluate("(a)=>a.volume")==0.53
+ for clip in ("02_solar_spark.mp3","01_soft_oops.mp3"):
+  resp=context.request.get(URL.rsplit("/",1)[0]+"/assets/"+clip)
+  assert resp.status==200 and len(resp.body())>5000,(clip,resp.status,len(resp.body()))
  page.locator("#shareGameIntro").click()
  assert page.locator("#shareDialog").is_visible()
  assert page.locator("#shareQr svg").count()==1
@@ -152,6 +155,12 @@ def validate(browser,width,height,label,full=True):
   page.wait_for_timeout(1900)
   assert page.locator("#finishHero").is_visible()
   assert page.locator("#awardCrystalArt svg").count()==1
+  assert page.locator("#saveAfterVictory").is_visible()
+  if world==1:
+   page.locator("#saveAfterVictory").click()
+   assert page.locator("#passportDialog").is_visible()
+   assert "KOGUTUD 1 / 9" in page.locator("#passportSummary").inner_text()
+   page.locator("#closePassport").click()
   page.screenshot(path=str(ROOT/f"qa_{label}_world_{world}_award.png"))
   if world<9:
    page.locator("#nextWorld").click()
