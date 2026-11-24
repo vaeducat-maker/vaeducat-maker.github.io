@@ -109,6 +109,13 @@
   <div class="fail-icon" aria-hidden="true">✕</div>
   <h1>Kokkupõrge!</h1>
   <p id="crashDetail">Takistus tabas kristalli.</p>
+  <div class="learning-panel" id="learningPanel" aria-live="assertive">
+   <div class="learning-heading">VAATAME ÕIGE VASTUSE ÜLE!</div>
+   <div class="learning-question"><span id="learningPrompt">ÜMARDA</span><strong id="learningNumber">—</strong></div>
+   <div class="learning-your-answer" id="learningYourAnswer">SINU VASTUS: —</div>
+   <div class="learning-result"><span>ÕIGE VASTUS</span><strong id="learningCorrect">—</strong></div>
+   <div class="learning-rule" id="learningRule">Vaata ümardamise reeglit.</div>
+  </div>
   <div class="fail-score">LÄBITUD TAKISTUSI: <strong id="crashCount">0 / 8</strong></div>
   <p class="fail-explain">Kui eksid või jääd hiljaks, algab tase uuesti.</p>
   <button class="primary" id="retry">PROOVI UUESTI ↻</button>
