@@ -51,3 +51,10 @@ The first world now ends with two consecutive celebration stages rather than the
 - The artwork is responsive for portrait phones and compact landscape phone screens, with internal award-panel scrolling as a fallback.
 - 27 deterministic game-loop simulations checked victory sequence, stage timers, stored award, return to gameplay, and timer cancellation. Browser acceptance tests were updated for victory/reward, but real browser screenshots still need to be inspected before calling this release production-ready.
 - This branch remains private to prototype development in the **public GitHub repository**, and is not merged to the public site. 
+
+## Two-world release updates (24 November 2026)
+- World 01 retains its approved cyan prism avatar, 8 rounds, and five hazard families.
+- A successful 8/8 awards the long blue faceted Valgussaar crystal and enables the **JÄRGMINE MAAILM** button linking to the real World 02 HTML on this same static host.
+- All nine slots in the crystal vault now have distinct SVG outlines, even while locked. World 02 specifically has a warm fire-lotus silhouette.
+- Existing collected crystal flags remain shared in the browser's localStorage. Correct-answer jumps, collision feedback, auto-check, keypad layout and festive ending remain intact.
+- JS simulations verified first and second worlds combined; real-browser visual QA is not claimed.
