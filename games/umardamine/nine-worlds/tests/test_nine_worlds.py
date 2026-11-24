@@ -217,9 +217,9 @@ def validate_audio(browser):
  page.locator('#sound').click()  # explicit user gesture
  page.wait_for_function("() => {const a=document.querySelector('#solarTrack');return a.readyState>=2&&!a.paused}",timeout=12000)
  assert page.locator('#solarTrack').evaluate('(a)=>a.duration')>20
- before=page.evaluate('window.__EDUKASS_TEST__.get().playerX')
  page.locator('#shareGame').click()
  assert page.locator('#shareDialog').is_visible()
+ before=page.evaluate('window.__EDUKASS_TEST__.get().playerX')
  page.evaluate('window.__EDUKASS_TEST__.tick(15000)')
  assert page.evaluate('window.__EDUKASS_TEST__.get().playerX')==before,'Game should pause during sharing'
  assert page.locator('#solarTrack').evaluate('(a)=>a.paused'),'Music should pause during sharing'
