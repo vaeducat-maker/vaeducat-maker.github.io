@@ -52,6 +52,7 @@ function updateWorldUI(){
  document.documentElement.style.setProperty('--world-dark',w.dark);
  document.body.style.background='radial-gradient(ellipse at 50% 0%,'+w.accent+'77,'+w.dark+' 66%,#090719)';
  $('awardCrystalArt').innerHTML=collectibleSVG(worldId,'awardWorld'+worldId);
+ $('introCrystalArt').innerHTML=collectibleSVG(worldId,'introWorld'+worldId);
  $('worldMenu').innerHTML=WORLDS.map(z=>{
   const have=collectedCrystals(),owned=have.includes(z.id),allowed=z.id===1||owned||have.includes(z.id-1);
   return '<button type="button" data-world="'+z.id+'" class="world-choice'+(worldId===z.id?' active':'')+'" '+(allowed?'':'disabled')+' style="--choice-color:'+z.main+'">'
@@ -100,7 +101,8 @@ function collectibleSVG(id,identifier){
    8:'M8 37 20 61 21 8 41 44 61 8 62 61 74 37 70 92 41 103 12 92Z',
    9:'M59 4 71 17 64 34 79 60 51 99 23 103 12 74 24 43 14 30 38 34Z'
   };
-  const gradient='<defs><linearGradient id="'+identifier+'" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#d3d3ff"/><stop offset=".55" stop-color="#9bbcef"/><stop offset="1" stop-color="#6d569c"/></linearGradient></defs>';
+  const theme=WORLDS[id-1];
+  const gradient='<defs><linearGradient id="'+identifier+'" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#fffce3"/><stop offset=".55" stop-color="'+theme.main+'"/><stop offset="1" stop-color="'+theme.accent+'"/></linearGradient></defs>';
   return '<svg viewBox="0 0 82 104" aria-hidden="true">'+gradient+
    '<path d="'+shapes[id]+'" fill="url(#'+identifier+')" stroke="#ecf2ff" stroke-width="2" fill-rule="evenodd"/>'
    +'<path d="M41 12 41 87" stroke="#ffffff" opacity=".43" stroke-width="1.5"/></svg>';
@@ -108,7 +110,7 @@ function collectibleSVG(id,identifier){
  return "<svg viewBox=\"0 0 82 104\" aria-hidden=\"true\"><defs><linearGradient id=\"___GRAD___\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\"><stop stop-color=\"#fffde3\"/><stop offset=\".25\" stop-color=\"#9effff\"/><stop offset=\".65\" stop-color=\"#4ac7f8\"/><stop offset=\"1\" stop-color=\"#4354e8\"/></linearGradient></defs><path d=\"M41 2 64 25 75 49 56 81 41 102 20 81 7 49 17 24Z\" fill=\"url(#___GRAD___)\" stroke=\"#f8ffff\" stroke-width=\"2\"/><path d=\"M41 2 17 24 7 49 41 45Z\" fill=\"#d9ffff\" opacity=\".74\"/><path d=\"M41 45 75 49 56 81 41 102Z\" fill=\"#377fc4\" opacity=\".60\"/><path d=\"M17 24 41 45 64 25M7 49l34-4 34 4M20 81l21-36 15 36M41 2v100\" stroke=\"#fff\" stroke-opacity=\".62\" fill=\"none\" stroke-width=\"1.3\"/></svg>".replaceAll('___GRAD___',identifier);
 }
 function updateAwardArt(){
- const id=2;
+ const id=worldId;
  $('awardCrystalArt').innerHTML=collectibleSVG(id,'awardWorld'+id);
 }
 
@@ -183,13 +185,14 @@ function updateGems(){
 function updateAnswer(){
  $('answerValue').textContent=typed?format(typed):'';
  $('answerValue').classList.toggle('empty',!typed);
+ $('answerValue').classList.toggle('long-answer',typed.length>=6);
 }
 function note(t='',kind=''){$('note').textContent=t;$('note').className='note '+kind}
 function showTask(){
  if(step>=TOTAL)return;
  const t=tasks[step];
  $('unit').textContent=names[t.unit];$('number').textContent=format(t.v);
- $('number').classList.remove('bump');void $('number').offsetWidth;$('number').classList.add('bump');
+ $('number').classList.remove('bump');$('number').classList.toggle('long-number',String(t.v).length>=6);void $('number').offsetWidth;$('number').classList.add('bump');
  typed='';solved=false;jumpStarted=false;wrongLocked=false;turboActive=false;updateAnswer();$('answerBox').classList.remove('wrong','success');
  note('Vasta enne takistust!');updateGems();
  $('sceneCaption').textContent=step===TOTAL-1?'VIIMANE TAKISTUS · ÄRA PEATU':'KIIRUSTA! TAKISTUS LÄHENEB';
