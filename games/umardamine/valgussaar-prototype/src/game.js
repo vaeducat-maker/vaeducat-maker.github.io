@@ -214,6 +214,22 @@ function startGame(retry=false){
  hideOverlay();showTask();updateRushHUD();
  // Earned crystal is permanent: replay must never remove the collection record.
 }
+function showLearningFeedback(reason){
+ const task=tasks[step];
+ if(!task)return;
+ const digit=task.unit===10?task.v%10:Math.floor(task.v/10)%10;
+ const place=task.unit===10?'üheliste':'kümneliste';
+ const action=digit>=5?'üles':'alla';
+ const decision=digit>=5?'5 või suurem':'väiksem kui 5';
+ $('learningPrompt').textContent='ÜMARDA '+names[task.unit];
+ $('learningNumber').textContent=format(task.v);
+ const actual=typed?format(typed):'—';
+ $('learningYourAnswer').textContent=reason==='wrong'?'SINU VASTUS: '+actual
+  :typed?'POOLELI JÄI: '+actual:'SINU VASTUS: EI VASTANUD';
+ $('learningCorrect').textContent=format(task.answer);
+ $('learningRule').textContent='Vaata '+place+' numbrit: '+digit+'. See on '+decision
+  +', seega ümardame '+action+'. '+format(task.v)+' → '+format(task.answer)+'.';
+}
 function lose(reason){
  if(status!=='running')return;
  status='crashing';crashReason=reason;crashElapsed=0;fxGlow=.4;shake=18;
@@ -222,7 +238,8 @@ function lose(reason){
  $('sceneCaption').textContent='KOKKUPÕRGE!';
  tone(160,.35,'sawtooth',.065);
  $('crashCount').textContent=`${step} / ${TOTAL}`;
- $('crashDetail').textContent=reason==='wrong'?'Vale vastus! Kristall põrkas vastu takistust.':'Takistus jõudis kohale enne õiget vastust.';
+ $('crashDetail').textContent=reason==='wrong'?'Vastus oli vale. Vaata, kuidas õigesti ümardada!':'Aeg sai otsa. Vaata õiget vastust enne uut katset!';
+ showLearningFeedback(reason);
  updateRushHUD();
 }
 function onKey(key){
