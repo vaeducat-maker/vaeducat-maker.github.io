@@ -483,3 +483,6 @@ body{background:radial-gradient(ellipse 100% 75% at 50% 0%,#802441,#3a0b23 66%,#
  .world-dot{flex:0 0 7px}
  .world-pill b{font-size:10px;flex:0 0 auto}
 }
+
+.intro-music-toggle{width:min(355px,98%);min-height:37px;border:1px solid #ffdaa488;border-radius:12px;background:linear-gradient(90deg,#342758a8,#1c3e5fa8);color:#ffeda7;font-size:11px;font-weight:950;letter-spacing:.09em;cursor:pointer;box-shadow:inset 0 0 16px #ffc77f1a}
+@media(max-height:630px){.intro-music-toggle{min-height:30px;font-size:10px}}
