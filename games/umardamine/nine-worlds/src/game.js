@@ -35,6 +35,36 @@ function format(n){return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,' ')}
 const WORLDS=[{"id":1,"name":"Valgussaar","main":"#66ffe9","accent":"#367feb","dark":"#0b224b","bpm":124,"obstacles":["fangs","rotor","tri-spikes","lightning","prism"],"total":8},{"id":2,"name":"Päikesekuru","main":"#ffbe61","accent":"#f84b44","dark":"#3c1026","bpm":132,"obstacles":["fire-steps","sun-wheel","ember-wall","flame-fangs","solar-ramp"],"total":12},{"id":3,"name":"Mäevardjad","main":"#dfb3ff","accent":"#9255ee","dark":"#201045","bpm":136,"obstacles":["prism","violet-obelisk","arc-gate","rotor","violet-obelisk"],"total":12},{"id":4,"name":"Tormitasandik","main":"#80dcff","accent":"#468aff","dark":"#0c2250","bpm":140,"obstacles":["lightning","ion-block","storm-rotor","tri-spikes","ion-block"],"total":12},{"id":5,"name":"Kaksikorg","main":"#8effc0","accent":"#19bd95","dark":"#083c33","bpm":144,"obstacles":["twin-shards","jade-steps","prism","rotor","jade-steps"],"total":12},{"id":6,"name":"Keeriseorg","main":"#ff96e0","accent":"#d33cbd","dark":"#41134a","bpm":146,"obstacles":["spiral-barrier","orbit-ring","arc-gate","prism","orbit-ring"],"total":12},{"id":7,"name":"Täheväli","main":"#ffe69b","accent":"#e5ad3f","dark":"#422442","bpm":150,"obstacles":["star-burst","golden-saw","fire-steps","solar-ramp","golden-saw"],"total":12},{"id":8,"name":"Prismakants","main":"#a6bbff","accent":"#6770ff","dark":"#151947","bpm":154,"obstacles":["crystal-labyrinth","color-wall","prism","tri-spikes","color-wall"],"total":12},{"id":9,"name":"Meteoritorm","main":"#ffa38e","accent":"#fd4774","dark":"#42112c","bpm":158,"obstacles":["meteor-slab","impact-ring","star-burst","rotor","meteor-slab"],"total":12}];
 let worldId=1;
 function world(){return WORLDS[worldId-1]}
+function updateWorldUI(){
+ const w=world(),nn=String(worldId).padStart(2,'0');
+ $('worldPill').innerHTML='<span class="world-dot"></span> <b>'+nn+'</b> / 09 · '+w.name.toUpperCase();
+ $('sceneWorld').textContent='MAAILM '+nn;$('sceneName').textContent=w.name;
+ $('introName').textContent=w.name;$('victoryWorld').textContent='MAAILM '+nn+' VÕIDETUD';
+ $('victoryScore').textContent=TOTAL+' / '+TOTAL;
+ $('rewardWorld').textContent='MAAILM '+nn+' · '+w.name.toUpperCase();
+ $('rewardName').textContent=w.name.toUpperCase()+' KRISTALL';
+ $('rewardCaption').textContent='SA SAID '+w.name.toUpperCase()+' KRISTALLI!';
+ $('crashWorld').textContent='MAAILM '+nn+' · KATSE LÄBI';
+ $('nextWorld').disabled=false;
+ $('nextWorld').innerHTML=worldId===9?'ÜLIM KRISTALL <span>9 / 9</span>':'JÄRGMINE MAAILM <span>'+String(worldId+1).padStart(2,'0')+'</span>';
+ document.documentElement.style.setProperty('--world-main',w.main);
+ document.documentElement.style.setProperty('--world-accent',w.accent);
+ document.documentElement.style.setProperty('--world-dark',w.dark);
+ document.body.style.background='radial-gradient(ellipse at 50% 0%,'+w.accent+'77,'+w.dark+' 66%,#090719)';
+ $('awardCrystalArt').innerHTML=collectibleSVG(worldId,'awardWorld'+worldId);
+ $('worldMenu').innerHTML=WORLDS.map(z=>{
+  const have=collectedCrystals(),owned=have.includes(z.id),allowed=z.id===1||owned||have.includes(z.id-1);
+  return '<button type="button" data-world="'+z.id+'" class="world-choice'+(worldId===z.id?' active':'')+'" '+(allowed?'':'disabled')+' style="--choice-color:'+z.main+'">'
+   +String(z.id).padStart(2,'0')+' · '+z.name+(owned?' ◆':'')+'</button>';
+ }).join('');
+ updateCrystalVault();updateGems();
+}
+function switchWorld(id){
+ const have=collectedCrystals();
+ if(!Number.isInteger(id)||id<1||id>9||(id>1&&!have.includes(id)&&!have.includes(id-1)))return false;
+ worldId=id;TOTAL=world().total;reset();updateWorldUI();return true;
+}
+
 const VAULT_STORAGE='edukass-neon-crystal-vault-v1';
 function collectedCrystals(){
  let ids=[];try{
@@ -42,6 +72,7 @@ function collectedCrystals(){
   if(Array.isArray(parsed))ids=parsed.filter(n=>Number.isInteger(n)&&n>=1&&n<=9);
   if(localStorage.getItem('edukass-neon-world1-crystal-unlocked')==='1'||localStorage.getItem('edukass-neon-world1-finished')==='1')ids.push(1);
   if(localStorage.getItem('edukass-neon-world2-crystal-unlocked')==='1'||localStorage.getItem('edukass-neon-world2-finished')==='1')ids.push(2);
+  for(let n=3;n<=9;n++)if(localStorage.getItem('edukass-neon-world'+n+'-crystal-unlocked')==='1')ids.push(n);
  }catch(e){}
  return [...new Set(ids)].sort((a,b)=>a-b);
 }
@@ -50,7 +81,7 @@ function awardCrystal(number){
  if(!ids.includes(number))ids.push(number);
  try{
   localStorage.setItem(VAULT_STORAGE,JSON.stringify(ids.sort((a,b)=>a-b)));
-  if(number===2)localStorage.setItem('edukass-neon-world2-crystal-unlocked','1');
+  localStorage.setItem('edukass-neon-world'+number+'-crystal-unlocked','1');
  }catch(e){}
  updateCrystalVault();
 }
@@ -87,8 +118,8 @@ function updateCrystalVault(){
  $('rewardCollectionCount').textContent=count+' / 9';
  $('vaultProgress').textContent='KOGUTUD '+count+' / 9';
  const views=Array.from({length:9},(_,k)=>{
-  const id=k+1,got=ids.includes(id),name=id===1?'VALGUSSAAR':id===2?'PÄIKESEKURU':'MAAILM '+String(id).padStart(2,'0');
-  const title=got?(id===1?'VALGUSSAARE KRISTALL':id===2?'PÄIKESEKURU KRISTALL':'KRISTALL '+id):'LUKUS';
+  const id=k+1,got=ids.includes(id),name=WORLDS[id-1].name.toUpperCase();
+  const title=got?(WORLDS[id-1].name.toUpperCase()+' KRISTALL'):'LUKUS';
   return '<div class="vault-card '+(got?'unlocked':'locked')+'" style="--slot:'+(id-1)+'" aria-label="'+name+': '+title+'">'
   +'<div class="vault-card-number">'+String(id).padStart(2,'0')+'</div>'
   +'<div class="vault-card-gem">'+collectibleSVG(id,'vaultShape'+id)+'</div>'
@@ -298,8 +329,8 @@ function finish(){
  updateGems();updateRushHUD();
  $('answerBox').classList.remove('success');
  note('Kristall saadud!','ok');fxBurst=1;spawnBurst(playerX,96);winSound();
- try{localStorage.setItem('edukass-neon-world2-finished','1')}catch(e){}
- awardCrystal(2);
+ try{localStorage.setItem('edukass-neon-world'+worldId+'-finished','1')}catch(e){}
+ awardCrystal(worldId);
  const token=++ceremonyToken;
  makeConfetti();
  if(reduced){overlay('finish');return}
@@ -576,6 +607,6 @@ function init(){
  stars=[];updateGems();resize();bind();updateCrystalVault();updateAwardArt();updateRushHUD();overlay('intro');requestAnimationFrame(frame);
 }
 // Test interface is read-only except for simulated key input; it is not displayed to players.
-window.__EDUKASS_TEST__={get:()=>({status,step,typed,tasks:tasks.map(t=>({...t})),playerX,solved,crashReason,attempts,world:'paikesekuru',rewardUnlocked:rewardUnlocked||status==='finished',victoryStage,crystalCollected:collectedCrystals().includes(2),vaultCount:collectedCrystals().length,jumping,jumpHeight,jumpCount,wrongLocked,turboActive,runningSpeed:effectiveSpeed(),distance:distanceToObstacle(),obstacles:Array.from({length:TOTAL},(_,j)=>obstacleKind(j+1))}),press:onKey,start:()=>startGame(),retry:()=>startGame(true),tick:(ms)=>{for(let r=0;r<ms;r+=35)advance(Math.min(35,ms-r))},reset,validateTasks,generate:createTasks};
+window.__EDUKASS_TEST__={get:()=>({status,step,typed,tasks:tasks.map(t=>({...t})),playerX,solved,crashReason,attempts,world:world().name.toLowerCase(),rewardUnlocked:rewardUnlocked||status==='finished',victoryStage,worldId,crystalCollected:collectedCrystals().includes(worldId),vaultCount:collectedCrystals().length,jumping,jumpHeight,jumpCount,wrongLocked,turboActive,runningSpeed:effectiveSpeed(),distance:distanceToObstacle(),obstacles:Array.from({length:TOTAL},(_,j)=>obstacleKind(j+1))}),press:onKey,start:()=>startGame(),retry:()=>startGame(true),tick:(ms)=>{for(let r=0;r<ms;r+=35)advance(Math.min(35,ms-r))},reset,validateTasks,generate:createTasks};
 init();
 })();
