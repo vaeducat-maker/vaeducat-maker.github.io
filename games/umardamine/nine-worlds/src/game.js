@@ -194,13 +194,21 @@ function showTask(){
  note('Vasta enne takistust!');updateGems();
  $('sceneCaption').textContent=step===TOTAL-1?'VIIMANE TAKISTUS · ÄRA PEATU':'KIIRUSTA! TAKISTUS LÄHENEB';
 }
+function showFusion(){
+ if(collectedCrystals().length!==9)return;
+ $('fusionPieces').innerHTML=WORLDS.map((w,i)=>'<div class="fusion-piece" style="--a:'+(i*40)+'deg;--c:'+w.main+'">'+collectibleSVG(w.id,'fusionPiece'+w.id)+'</div>').join('');
+ $('ultimateGem').innerHTML='<svg viewBox="0 0 220 270" role="img" aria-label="Ülim Kristall"><defs><linearGradient id="ultimateRay" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fffacc"/><stop offset=".24" stop-color="#88ffff"/><stop offset=".48" stop-color="#b88fff"/><stop offset=".72" stop-color="#ff9ac1"/><stop offset="1" stop-color="#ffcf74"/></linearGradient></defs><path d="M110 8 160 60 206 100 190 164 160 221 110 263 60 221 30 164 14 100 60 60Z" fill="url(#ultimateRay)" stroke="#ffffff" stroke-width="4"/><path d="M110 8 110 134 30 164Z" fill="#c1fff6" opacity=".60"/><path d="M110 8 110 134 190 164Z" fill="#fca7db" opacity=".59"/><path d="M110 134 60 221 110 263 160 221Z" fill="#ffe48e" opacity=".70"/><path d="M110 8V263 M14 100l96 34 96-34 M30 164l80-30 80 30" fill="none" stroke="#ffffff" stroke-width="2" opacity=".73"/></svg>';
+ try{localStorage.setItem('edukass-ultimate-crystal','1')}catch(e){}
+ overlay('fusion');winSound();
+}
 function overlay(type){
  $('overlay').classList.remove('hidden');$('overlay').setAttribute('aria-hidden','false');
- $('overlay').classList.toggle('is-celebrating',type==='victory'||type==='finish'||type==='vault');
+ $('overlay').classList.toggle('is-celebrating',type==='victory'||type==='finish'||type==='vault'||type==='fusion');
  $('introHero').hidden=type!=='intro';
  $('victoryHero').hidden=type!=='victory';
  $('finishHero').hidden=type!=='finish';
  $('vaultHero').hidden=type!=='vault';
+ $('fusionHero').hidden=type!=='fusion';
  $('crashHero').hidden=type!=='crash';
  victoryStage=type;
 }
@@ -370,6 +378,7 @@ function finish(){
  // First show the in-world flash, then the victory burst, then award the crystal.
  setTimeout(()=>{if(status==='finished'&&token===ceremonyToken)overlay('victory')},180);
  setTimeout(()=>{if(status==='finished'&&token===ceremonyToken)overlay('finish')},1670);
+ if(worldId===9)setTimeout(()=>{if(status==='finished'&&token===ceremonyToken)showFusion()},6200);
 }
 function reset(){ceremonyToken++;status='intro';step=0;typed='';solved=false;playerX=ORIGIN;particleTrail=[];jumping=false;jumpAge=0;jumpHeight=0;jumpStarted=false;wrongLocked=false;turboActive=false;jumpScale=1;jumpCount=0;updateGems();updateAnswer();note('Vasta enne takistust!');updateRushHUD();overlay('intro')}
 function advance(dt){
@@ -641,7 +650,7 @@ function bind(){
  document.addEventListener('visibilitychange',()=>{lastFrame=0});
 }
 function init(){
- stars=[];updateGems();resize();bind();updateCrystalVault();updateAwardArt();updateRushHUD();overlay('intro');requestAnimationFrame(frame);
+ stars=[];TOTAL=world().total;resize();bind();updateWorldUI();updateRushHUD();overlay('intro');requestAnimationFrame(frame);
 }
 // Test interface is read-only except for simulated key input; it is not displayed to players.
 window.__EDUKASS_TEST__={get:()=>({status,step,typed,tasks:tasks.map(t=>({...t})),playerX,solved,crashReason,attempts,world:world().name.toLowerCase(),rewardUnlocked:rewardUnlocked||status==='finished',victoryStage,worldId,crystalCollected:collectedCrystals().includes(worldId),vaultCount:collectedCrystals().length,jumping,jumpHeight,jumpCount,wrongLocked,turboActive,runningSpeed:effectiveSpeed(),distance:distanceToObstacle(),obstacles:Array.from({length:TOTAL},(_,j)=>obstacleKind(j+1))}),press:onKey,start:()=>startGame(),retry:()=>startGame(true),tick:(ms)=>{for(let r=0;r<ms;r+=35)advance(Math.min(35,ms-r))},reset,validateTasks,generate:createTasks};
