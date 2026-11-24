@@ -405,3 +405,12 @@ body{background:radial-gradient(ellipse 100% 75% at 50% 0%,#802441,#3a0b23 66%,#
 @keyframes fusionBirth{0%,57%{opacity:0;transform:scale(.12) rotate(-75deg)}77%{opacity:1;transform:scale(1.13) rotate(8deg)}100%{transform:scale(1) rotate(0)}}
 @media(max-height:610px){.fusion-theatre{height:160px}.fusion-ultimate{width:115px}.fusion-hero{gap:3px}.fusion-heading{font-size:21px!important}.fusion-title{font-size:27px}.fusion-description{font-size:11px}}
 @media(prefers-reduced-motion:reduce){.fusion-theatre:before,.fusion-pieces,.fusion-piece,.fusion-ultimate{animation:none!important}.fusion-piece{display:none}.fusion-ultimate{transform:none;opacity:1}}
+
+
+/* Numeral scaling: allow 10-digit answers, e.g. 1 000 000 000, on narrow phones. */
+.number.long-number{font-size:clamp(21px,6vw,38px)!important;letter-spacing:-.045em!important;white-space:nowrap}
+.answer-value.long-answer{font-size:clamp(21px,5.4vw,35px)!important;letter-spacing:-.045em!important;white-space:nowrap}
+.learning-number,.learning-result strong{overflow-wrap:anywhere}
+#introCrystalArt{display:grid;place-items:center}
+#introCrystalArt svg{width:100%;height:100%;max-width:110px;max-height:112px;filter:drop-shadow(0 0 15px var(--world-main))}
+@media(max-width:380px){.problem .unit{font-size:clamp(8px,2.35vw,10px);white-space:normal;max-width:70%}.number.long-number{font-size:clamp(20px,5.55vw,28px)!important}.answer-value.long-answer{font-size:clamp(20px,5.1vw,28px)!important}}
