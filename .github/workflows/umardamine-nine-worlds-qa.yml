@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - feature/umardamine-nine-worlds-complete-20261124
+      - feature/umardamine-methodical-math-20261124
   workflow_dispatch:
 jobs:
   browser-tests:
