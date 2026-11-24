@@ -12,6 +12,8 @@
     <div class="logo">EDU<span>KASS</span></div>
     <div class="world-pill" id="worldPill"><span class="world-dot"></span> <b>02</b> / 09 · PÄIKESEKURU</div>
     <div class="top-actions">
+      <button class="icon-btn" id="shareGame" type="button" title="Jaga mängu" aria-label="Jaga mängu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M8 10.8 15.6 6.2 M8 13.3 15.6 17.8"/></svg></button>
+      <button class="icon-btn" id="openPassport" type="button" title="Minu edusammud" aria-label="Salvesta ja taasta edusammud"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z"/><path d="m9 12 2 2 4-4"/></svg></button>
       <button type="button" class="icon-btn" id="sound" aria-label="Lülita heli sisse või välja" title="Heli"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path class="sound-lines" d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/><path class="sound-muted" d="m16 9 5 6m0-6-5 6"/></svg></button>
       <button type="button" class="icon-btn" id="restart" aria-label="Alusta uuesti" title="Alusta uuesti"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></button>
     </div>
@@ -33,17 +35,21 @@
     <button class="key" data-key="7">7</button><button class="key" data-key="8">8</button><button class="key" data-key="9">9</button>
     <button class="key action" data-key="back" aria-label="Kustuta viimane number">⌫</button><button class="key key-zero" data-key="0">0</button>
   </section>
-  <footer class="foot">EDUKASS · ÜMARDAMINE · PROTOTÜÜP 01</footer>
+  <footer class="foot">EDUKASS · 9 KRISTALLIMAAILMA · ÜMARDAMINE</footer>
 </main>
 <div class="overlay" id="overlay" role="dialog" aria-modal="true">
  <div class="hero" id="introHero">
-  <span class="eyebrow">EDUKASS · ÜMARDAMINE</span>
+  <span class="eyebrow">EDUKASS · KRISTALLISEIKLUS</span>
+  <h1 class="intro-game-name">ÜMARDAMISE<br><span>KRISTALLIRÄNNAK</span></h1>
+  <div class="intro-arc-label">9 MAAILMA · 9 KRISTALLI · 1 SUUR FINAAL</div>
+  <div class="intro-nine-crystals" id="introNineCrystals" aria-label="Üheksa kogutavat kristalli"></div>
   <div class="hero-mark" id="introCrystalArt" aria-hidden="true"></div>
-  <h1>Avasta<br><span id="introName">Valgussaar</span></h1>
+  <h2 class="intro-world-title">Alustame: <span id="introName">Valgussaar</span></h2>
   <p>Kristall kihutab ise edasi! Ümarda enne takistust: õige vastus avab hüppe, vale vastus või hilinemine tähendab kokkupõrget. Siis alustad otsast.</p>
   <details class="world-selector" id="worldSelector"><summary>VALI MAAILM · 9 MAAILMA</summary><div id="worldMenu" class="world-menu"></div></details>
   <button class="primary" id="begin">ALUSTA MÄNGU <span aria-hidden="true">›</span></button>
   <button class="intro-vault-btn" id="openVaultIntro" type="button">KRISTALLIDE VARAKAMBER <span id="introCollectionCount">0 / 9</span></button>
+  <div class="intro-utility-actions"><button type="button" id="shareGameIntro">↗ JAGA MÄNGU</button><button type="button" id="openPassportIntro">◈ MINU EDUSAMMUD · TEINE SEADE</button></div>
  </div>
  <div class="celebrate-particles" id="celebrateParticles" aria-hidden="true"></div>
  <div class="hero celebrate-victory" id="victoryHero" hidden>
@@ -116,6 +122,46 @@
   <button class="primary" id="retry">PROOVI UUESTI ↻</button>
  </div>
 </div>
+<dialog class="edukass-modal" id="shareDialog" aria-labelledby="shareTitle">
+ <div class="edukass-modal-inner">
+  <button type="button" class="modal-close" id="closeShare" aria-label="Sulge">×</button>
+  <div class="modal-kicker">EDUKASS · 9 MAAILMA</div>
+  <h2 id="shareTitle">JAGA MÄNGU</h2>
+  <p>Saada mängu link sõbrale või ava mäng teises seadmes. See link <strong>ei sisalda sinu edusamme</strong>.</p>
+  <div class="transfer-qr" id="shareQr" aria-label="Mängu QR-kood"></div>
+  <textarea id="shareUrl" class="transfer-link" readonly aria-label="Mängu link"></textarea>
+  <div class="transfer-actions"><button id="copyGameUrl" type="button">⧉ KOPEERI</button><button id="sendGameUrl" type="button">↗ SAADA</button></div>
+  <p id="shareStatus" class="transfer-status" role="status" aria-live="polite"></p>
+ </div>
+</dialog>
+<dialog class="edukass-modal" id="passportDialog" aria-labelledby="passportTitle">
+ <div class="edukass-modal-inner">
+  <button class="modal-close" id="closePassport" aria-label="Sulge" type="button">×</button>
+  <div class="modal-kicker">EDUKASS · PASSPORT LITE</div>
+  <h2 id="passportTitle">MINU EDUSAMMUD</h2>
+  <p id="passportText">Sinu kristallid salvestatakse selles seadmes automaatselt. Loo isiklik link, et jätkata teises seadmes.</p>
+  <div class="passport-progress" id="passportSummary">KOGUTUD 0 / 9 KRISTALLI</div>
+  <button class="passport-main" id="createPassport" type="button">◈ LOO MINU EDUSAMMUDE LINK</button>
+  <div id="passportExport" hidden>
+   <div class="transfer-qr" id="passportQr" aria-label="Isiklik edusammude QR-kood"></div>
+   <textarea id="passportUrl" class="transfer-link" readonly aria-label="Isiklik edusammude link"></textarea>
+   <div class="transfer-actions"><button id="copyPassport" type="button">⧉ KOPEERI</button><button id="sendPassport" type="button">↗ SAADA</button></div>
+   <p class="private-note">See link sisaldab sinu saavutusi. Jaga seda ainult enda teise seadmega.</p>
+  </div>
+  <details class="passport-manual" id="passportImportPanel"><summary>TAAS­TA TEISEST SEADMEST</summary>
+   <textarea id="passportImportText" placeholder="Kleebi siia isiklik link või salvestuskood…" aria-label="Salvestuslink või kood"></textarea>
+   <button id="passportCheck" type="button">KONTROLLI SALVESTUST</button>
+  </details>
+  <div id="passportConfirm" hidden class="passport-confirm">
+   <p id="passportImportSummary"></p>
+   <p class="passport-warning">Taastamine <strong>asendab selle seadme praegused kristallid</strong>. Jätka ainult siis, kui see on sinu salvestus.</p>
+   <div class="transfer-actions"><button id="passportCancelImport" type="button">KATKESTA</button><button class="passport-main" id="passportRestore" type="button">✓ TAASTA EDUSAMMUD</button></div>
+  </div>
+  <p id="passportStatus" class="transfer-status" role="status" aria-live="polite"></p>
+ </div>
+</dialog>
+<script>/*__QR__*/</script>
 <script>/*__JS__*/</script>
+<script>/*__PASSPORT__*/</script>
 </body>
 </html>
