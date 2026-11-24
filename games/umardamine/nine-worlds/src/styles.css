@@ -468,3 +468,5 @@ body{background:radial-gradient(ellipse 100% 75% at 50% 0%,#802441,#3a0b23 66%,#
 .passport-warning{color:#ffdfad}
 .passport-confirm .transfer-actions button{font-size:11px}
 @media(max-height:600px){.edukass-modal-inner{padding:18px 14px;gap:6px}.transfer-qr{width:138px;height:138px}.edukass-modal h2{font-size:21px}}
+
+.progress-save-cta{min-height:41px;font-size:11px!important;letter-spacing:.035em;font-weight:950!important;background:linear-gradient(140deg,#1b395edb,#433259d1)!important;color:#fff5da!important;border:1px solid #f9d99b88!important;border-radius:13px!important;cursor:pointer}
