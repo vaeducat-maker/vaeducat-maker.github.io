@@ -37,7 +37,7 @@ let worldId=1;
 function world(){return WORLDS[worldId-1]}
 function updateWorldUI(){
  const w=world(),nn=String(worldId).padStart(2,'0');
- $('worldPill').innerHTML='<span class="world-dot"></span> <b>'+nn+'</b> / 09 · '+w.name.toUpperCase();
+ $('worldPill').innerHTML='<span class="world-dot"></span> <b>'+nn+'</b> / 09';
  $('sceneWorld').textContent='MAAILM '+nn;$('sceneName').textContent=w.name;
  $('introName').textContent=w.name;$('victoryWorld').textContent='MAAILM '+nn+' VÕIDETUD';
  $('victoryScore').textContent=TOTAL+' / '+TOTAL;
@@ -123,7 +123,7 @@ function updateCrystalVault(){
  $('introCollectionCount').textContent=count+' / 9';
  if(count===9){try{localStorage.setItem('edukass-ultimate-crystal','1')}catch(e){}}
  $('rewardCollectionCount').textContent=count+' / 9';
- $('vaultProgress').textContent='KOGUTUD '+count+' / 9';
+ $('vaultProgress').textContent=count+' / 9';
  $('showUltimate').hidden=count!==9;
  const views=Array.from({length:9},(_,k)=>{
   const id=k+1,got=ids.includes(id),name=WORLDS[id-1].name.toUpperCase();
@@ -279,7 +279,7 @@ function showTask(){
  $('unit').textContent=names[t.unit];$('number').textContent=format(t.v);
  $('number').classList.remove('bump');$('number').classList.toggle('long-number',String(t.v).length>=6);void $('number').offsetWidth;$('number').classList.add('bump');
  typed='';solved=false;jumpStarted=false;wrongLocked=false;turboActive=false;updateAnswer();$('answerBox').classList.remove('wrong','success');
- note('Vasta enne takistust!');updateGems();
+ note('Sisesta vastus');updateGems();
  $('sceneCaption').textContent=step===TOTAL-1?'VIIMANE TAKISTUS · ÄRA PEATU':'KIIRUSTA! TAKISTUS LÄHENEB';
 }
 function showFusion(){
@@ -292,6 +292,7 @@ function showFusion(){
 function overlay(type){
  $('overlay').classList.remove('hidden');$('overlay').setAttribute('aria-hidden','false');
  $('overlay').classList.toggle('is-celebrating',type==='victory'||type==='finish'||type==='vault'||type==='fusion');
+ $('overlay').classList.toggle('is-intro',type==='intro');
  $('introHero').hidden=type!=='intro';
  $('victoryHero').hidden=type!=='victory';
  $('finishHero').hidden=type!=='finish';
@@ -302,7 +303,7 @@ function overlay(type){
 }
 function hideOverlay(){
  $('overlay').classList.add('hidden');
- $('overlay').classList.remove('is-celebrating');
+ $('overlay').classList.remove('is-celebrating','is-intro');
  $('overlay').setAttribute('aria-hidden','true');
  victoryStage='hidden';
 }
@@ -343,7 +344,7 @@ function updateRushHUD(){
  $('rushFill').style.width= `${clamp(distanceToObstacle()/NODE,0,1)*100}%`;
  $('rushHud').classList.toggle('danger',secs<2&&!solved&&status==='running');
  $('rushHud').classList.toggle('safe',solved&&status==='running');
- $('rushLabel').textContent=wrongLocked?'VALE VASTUS':solved?(turboActive?'TURBO · HÜPE VALMIS':'HÜPE VALMIS'):status==='crashing'||status==='crashed'?'KOKKUPÕRGE!':'TAKISTUSENI';
+ $('rushLabel').textContent=wrongLocked?'VALE VASTUS':solved?(turboActive?'TURBO!':'HÜPE'):status==='crashing'||status==='crashed'?'KOKKUPÕRGE!':'AEG';
 }
 let musicNextTime=0,musicStep=0;
 const solarTrack=$('solarTrack'),softFail=$('softFail');
@@ -356,7 +357,8 @@ function approvedMusicPause(){try{solarTrack.pause()}catch(e){}}
 function setSound(){
  soundOn=!soundOn;$('sound').classList.toggle('enabled',soundOn);
  $('sound').setAttribute('aria-label',soundOn?'Lülita heli välja':'Lülita heli sisse');
- $('introSound').textContent=soundOn?'♫ MUUSIKA SEES · LÜLITA VÄLJA':'♫ KUULA SOLAR SPARKI';
+ $('introSound').setAttribute('aria-pressed',String(soundOn));
+ $('introSound').setAttribute('aria-label',soundOn?'Lülita heli välja':'Lülita heli sisse');
  if(soundOn){approvedMusicPlay();tone(510,.07,'triangle',.018)}
  else {approvedMusicPause();try{softFail.pause()}catch(e){}}
 }
@@ -436,11 +438,11 @@ function lose(reason){
  if(status!=='running')return;
  status='crashing';crashReason=reason;crashElapsed=0;fxGlow=.4;shake=18;
  $('answerBox').classList.remove('success');$('answerBox').classList.add('wrong');
- note(reason==='wrong'?'VALE VASTUS! KOKKUPÕRGE!':'AEG SAI OTSA! KOKKUPÕRGE!','bad');
+ note(reason==='wrong'?'Vale vastus!':'Aeg sai otsa!','bad');
  $('sceneCaption').textContent='KOKKUPÕRGE!';
  approvedFailSound();
  $('crashCount').textContent=`${step} / ${TOTAL}`;
- $('crashDetail').textContent=reason==='wrong'?'Vastus oli vale. Vaata, kuidas õigesti ümardada!':'Aeg sai otsa. Vaata õiget vastust enne uut katset!';
+ $('crashDetail').textContent=reason==='wrong'?'Vale vastus.':'Aeg sai otsa.';
  showLearningFeedback(reason);
  updateRushHUD();
 }
@@ -458,13 +460,13 @@ function check(){
  if(status!=='running'||solved||wrongLocked||!typed)return;
  if(Number(typed)===tasks[step].answer){
   solved=true;turboActive=distanceToObstacle()>180; // late correct answers keep the original safe jump speed
-  $('answerBox').classList.add('success');note(turboActive?'ÕIGE! TURBO!':'ÕIGE! HÜPE VALMIS','ok');
+  $('answerBox').classList.add('success');note('Õige!','ok');
   fxGlow=.6;tone(600,.14,'sine',.04);tone(810,.12,'triangle',.022,.08);
   $('sceneCaption').textContent=turboActive?'TURBO · KRISTALL KIHUTAB EDASI':'HÜPE VALMIS · HÜPPA ÜLE TAKISTUSE';updateRushHUD();return;
  }
  if(typed.length<String(tasks[step].answer).length)return;
  wrongLocked=true; // The obstacle remains lethal; the crystal physically runs into it.
- $('answerBox').classList.add('wrong');note('VALE VASTUS! TAKISTUS LÄHENEB!','bad');
+ $('answerBox').classList.add('wrong');note('Vale vastus!','bad');
  $('sceneCaption').textContent='VALE VASTUS · KOKKUPÕRGE LÄHENEB';
  shake=5;tone(230,.15,'sawtooth',.04);updateRushHUD();
 }
@@ -483,7 +485,7 @@ function finish(){
  setTimeout(()=>{if(status==='finished'&&token===ceremonyToken)overlay('finish')},1670);
  if(worldId===9)setTimeout(()=>{if(status==='finished'&&token===ceremonyToken)showFusion()},6200);
 }
-function reset(){approvedMusicPause();ceremonyToken++;status='intro';step=0;typed='';solved=false;playerX=ORIGIN;particleTrail=[];jumping=false;jumpAge=0;jumpHeight=0;jumpStarted=false;wrongLocked=false;turboActive=false;jumpScale=1;jumpCount=0;updateGems();updateAnswer();note('Vasta enne takistust!');updateRushHUD();overlay('intro')}
+function reset(){approvedMusicPause();ceremonyToken++;status='intro';step=0;typed='';solved=false;playerX=ORIGIN;particleTrail=[];jumping=false;jumpAge=0;jumpHeight=0;jumpStarted=false;wrongLocked=false;turboActive=false;jumpScale=1;jumpCount=0;updateGems();updateAnswer();note('Sisesta vastus');updateRushHUD();overlay('intro')}
 function advance(dt){
  if($('passportDialog').open||$('shareDialog').open)return; // pause timer while sharing or transferring
  let remaining=clamp(dt,0,100);
@@ -806,13 +808,13 @@ function bind(){
  $('keypad').addEventListener('click',e=>{const b=e.target.closest('[data-key]');if(!b)return;onKey(b.dataset.key)});
  document.addEventListener('keydown',e=>{
   if($('passportDialog').open||$('shareDialog').open)return;
-  const key=e.key;if(key==='Backspace'){e.preventDefault();onKey('back')}else if(key==='Enter'){e.preventDefault();if(victoryStage==='vault')closeCrystalVault();else if(status==='intro')startGame();else if(status==='finished'&&victoryStage==='finish')startGame();else if(status==='crashed')startGame(true)}else if(/^\d$/.test(key))onKey(key);
+  const key=e.key;if(key==='Enter'&&e.target instanceof Element&&e.target.closest('button,summary'))return;if(key==='Backspace'){e.preventDefault();onKey('back')}else if(key==='Enter'){e.preventDefault();if(victoryStage==='vault')closeCrystalVault();else if(status==='intro')startGame();else if(status==='finished'&&victoryStage==='finish')startGame();else if(status==='crashed')startGame(true)}else if(/^\d$/.test(key))onKey(key);
  });
  $('begin').addEventListener('click',()=>startGame());$('again').addEventListener('click',()=>startGame());$('retry').addEventListener('click',()=>startGame(true));$('restart').addEventListener('click',reset);$('sound').addEventListener('click',setSound);$('introSound').addEventListener('click',setSound);
  $('openVaultIntro').addEventListener('click',()=>openCrystalVault('intro'));
  $('openVaultReward').addEventListener('click',()=>openCrystalVault('finish'));
  $('closeVault').addEventListener('click',closeCrystalVault);
- $('worldMenu').addEventListener('click',e=>{const item=e.target.closest('[data-world]');if(item&&!item.disabled)switchWorld(Number(item.dataset.world))});
+ $('worldMenu').addEventListener('click',e=>{const item=e.target.closest('[data-world]');if(item&&!item.disabled&&switchWorld(Number(item.dataset.world)))$('worldSelector').open=false});
  $('nextWorld').addEventListener('click',()=>{if(worldId<9)switchWorld(worldId+1);else showFusion()});
  $('fusionClose').addEventListener('click',()=>overlay('vault'));
  $('showUltimate').addEventListener('click',showFusion);

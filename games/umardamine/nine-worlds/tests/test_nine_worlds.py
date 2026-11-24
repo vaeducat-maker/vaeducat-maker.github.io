@@ -80,7 +80,17 @@ def validate(browser,width,height,label,full=True):
  assert page.locator(".keypad .key").count()==11
  assert page.locator("#introName").inner_text()=="Valgussaar"
  assert page.locator(".intro-crystal").count()==9
- assert "KRISTALLIRÄNNAK" in page.locator(".intro-game-name").inner_text()
+ assert "Kristallirännak" in page.locator(".intro-game-name").inner_text()
+ assert page.locator("#introHero > p").count()==0
+ assert page.locator("#begin").inner_text().strip().endswith("MÄNGI!")
+ for control in ("#begin","#introSound","#shareGameIntro","#openPassportIntro","#openVaultIntro","#worldSelector summary"):
+  assert page.locator(control).is_visible(),control
+  b=page.locator(control).bounding_box()
+  assert b["x"]>=0 and b["y"]>=0 and b["x"]+b["width"]<=width+1 and b["y"]+b["height"]<=height+1,(label,control,b)
+ page.locator("#worldSelector summary").click()
+ assert page.locator("#worldMenu .world-choice").first.is_visible()
+ page.locator("#worldMenu .world-choice").first.click()
+ assert not page.locator("#worldSelector").evaluate("(d)=>d.open")
  assert page.locator("#shareGame").is_visible()
  assert page.locator("#openPassport").is_visible()
  assert page.locator("#solarTrack").get_attribute("src")=="assets/02_solar_spark.mp3"
@@ -228,7 +238,7 @@ def validate_audio(browser):
  assert page.locator('#solarTrack').evaluate('(a)=>a.paused'),'Must not autoplay'
  page.locator('#introSound').click() # one-tap approved soundtrack preview on title screen
  page.wait_for_function("() => {const a=document.querySelector('#solarTrack');return a.readyState>=2&&!a.paused}",timeout=12000)
- assert 'MUUSIKA SEES' in page.locator('#introSound').inner_text()
+ assert page.locator('#introSound').get_attribute('aria-pressed')=='true'
  page.locator('#begin').click()
  assert page.locator('#solarTrack').evaluate('(a)=>a.duration')>20
  page.locator('#shareGame').click()

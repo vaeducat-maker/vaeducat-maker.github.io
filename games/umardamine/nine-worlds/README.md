@@ -113,3 +113,6 @@ The older car-based rally rules in `EDUKASS_UMARDAMISRALLI_RULES.md` are a histo
 
 ## QR scan reliability · 25 November 2026
 The previous Chromium suite verified transfer by URL and SVG presence. QR images now include the standard four-module white quiet zone and larger responsive dimensions, including on compact screens. The browser suite additionally decodes actual screenshots of the public and private QR images with ZXing, comparing the decoded value with the original URL in each tested viewport. This is automated image decoding, not a substitute for real phone-camera testing. No game-world, arithmetic, physics, music, crystal or passport-consent behavior was changed.
+
+## Child-first interface · 25 November 2026
+One large MÄNGI! button, enlarged animated crystal, collection row and quiet utility icons. World selection and vault remain accessible. Long intro instructions and duplicated gameplay/reward labels are removed. Mathematical feedback retains the task, answer, correct answer and place-value rule. Generator, worlds, physics, audio and transfer consent remain unchanged. Automated tests check title controls at three viewports; manual visual QA remains required.

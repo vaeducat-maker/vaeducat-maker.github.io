@@ -492,6 +492,66 @@ body{background:radial-gradient(ellipse 100% 75% at 50% 0%,#802441,#3a0b23 66%,#
 
 .intro-music-toggle{width:min(355px,98%);min-height:37px;border:1px solid #ffdaa488;border-radius:12px;background:linear-gradient(90deg,#342758a8,#1c3e5fa8);color:#ffeda7;font-size:11px;font-weight:950;letter-spacing:.09em;cursor:pointer;box-shadow:inset 0 0 16px #ffc77f1a}
 @media(max-height:630px){.intro-music-toggle{min-height:30px;font-size:10px}}
+
+/* Child-first interface */
+[hidden]{display:none!important}
+.answer-wrap{grid-template-columns:minmax(0,1fr)}
+.rush-hud{top:12px;right:11px;min-width:104px;width:31%}
+#overlay.is-intro{background:radial-gradient(ellipse at 50% 34%,var(--world-accent),transparent 60%),#090e26;backdrop-filter:none}
+#introHero{width:min(440px,100%);max-height:calc(100dvh - 40px);padding:4px 5px 12px;gap:clamp(7px,1.7dvh,15px)!important;scrollbar-width:thin}
+.intro-top{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;flex:none}
+.intro-top .logo{font-size:17px}
+.intro-tools{display:flex;align-items:center;gap:8px}
+#introHero .intro-tools .icon-btn{display:grid;place-items:center;flex:0 0 44px;width:44px;height:44px;padding:0;border-radius:14px;background:#101f3dcc;border:1px solid #b6e6ed55;color:#e2f7ff}
+#introHero .intro-tools svg{width:22px;height:22px}
+#introSound .intro-sound-on,#introSound[aria-pressed="true"] .intro-sound-off{display:none}
+#introSound[aria-pressed="true"] .intro-sound-on{display:block}
+#introSound[aria-pressed="true"]{color:#a5ffe0!important;border-color:#9dffe9!important}
+#introHero .intro-game-name{font-size:clamp(34px,9vw,48px)!important;letter-spacing:-.055em!important;line-height:1.03!important;margin:8px 0 0!important;flex:none}
+#introHero .intro-game-name span{display:block;font-size:.58em;letter-spacing:.015em;line-height:1.3;margin-top:5px;color:#ffe6a5}
+.intro-art-stage{position:relative;isolation:isolate;display:grid;place-items:center;width:min(340px,100%);height:clamp(145px,30dvh,245px);flex:none;background:radial-gradient(ellipse at 50% 48%,#9fffe83d 0%,#85bdff16 42%,transparent 72%)}
+#introHero .intro-art-stage .hero-mark{z-index:2;width:clamp(108px,40vw,185px);height:clamp(128px,27dvh,215px);margin:0!important;filter:drop-shadow(0 0 24px var(--world-main))}
+#introHero #introCrystalArt svg{max-width:100%;max-height:100%;filter:drop-shadow(0 0 20px var(--world-main))}
+.intro-orbit{position:absolute;pointer-events:none;left:50%;top:77%;width:77%;height:19%;transform:translate(-50%,-50%) rotate(-7deg);border:1px solid #c5fff77a;border-radius:50%;box-shadow:0 0 20px #adfff92b}
+.intro-orbit.orbit-two{width:94%;height:26%;transform:translate(-50%,-50%) rotate(8deg);opacity:.4}
+.intro-spark{position:absolute;color:#eafff6;text-shadow:0 0 15px var(--world-main);font-size:23px;animation:introCrystalFloat 3s ease-in-out infinite}
+.spark-one{left:14%;top:24%}.spark-two{right:12%;top:15%;font-size:29px;animation-delay:-1s}.spark-three{right:19%;bottom:24%;font-size:13px;animation-delay:-2s}
+#introHero .intro-nine-crystals{height:46px;flex:none;margin:0;gap:6px}
+#introHero .intro-crystal{height:42px}
+#introHero .intro-world-title{font-size:16px!important;font-weight:750;letter-spacing:.02em!important}
+#introHero #begin{width:min(310px,100%);min-width:0;min-height:58px;border-radius:999px;background:linear-gradient(145deg,#fff1ad,#ffd061 56%,#ffac59);color:#192544;font-size:21px;letter-spacing:.025em;box-shadow:0 5px 0 #ad6c37,0 0 28px #ffd26166;flex:none}
+#introHero #begin span{font-size:.8em;margin-right:8px}
+.intro-bottom{width:min(310px,100%);display:grid;grid-template-columns:1fr 1fr;gap:9px;align-items:start;flex:none}
+#introHero .world-selector,#introHero .intro-vault-btn{width:100%;margin:0;padding:0;border-radius:13px;background:#12233ec9;border:1px solid #a6d9e76b;color:#dcefff;min-height:46px;font-size:13px;font-weight:800;letter-spacing:0}
+#introHero .world-selector summary,#introHero .intro-vault-btn{display:flex;align-items:center;justify-content:center;gap:7px;min-height:44px;padding:8px 5px;font-size:13px;letter-spacing:0}
+#introHero .intro-bottom svg{width:19px;height:19px;flex:none}
+#introHero .world-selector[open]{grid-column:1/-1}
+#introHero .world-menu{padding:0 7px 8px;margin-top:0}
+#introHero .world-choice{min-height:44px;font-size:11px}
+.vault-card-status,.vault-card-number{display:none}
+.edukass-modal h2{padding-right:34px}
+@media(max-height:660px){
+ #introHero{gap:6px!important}
+ #introHero .intro-game-name{font-size:clamp(29px,8vw,36px)!important;margin:3px 0 0!important}
+ #introHero .intro-nine-crystals{height:32px}
+ #introHero .intro-crystal{height:30px}
+ .intro-art-stage{height:clamp(110px,26dvh,155px)}
+ #introHero .intro-art-stage .hero-mark{height:clamp(100px,24dvh,140px);width:130px}
+ #introHero #begin{min-height:50px;font-size:19px}
+}
+@media(orientation:landscape) and (max-height:600px) and (min-width:650px){
+ #overlay.is-intro{padding:10px}
+ #introHero{width:min(650px,100%);max-height:calc(100dvh - 20px);display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto auto auto auto auto;gap:5px 22px!important;padding:3px 7px;align-items:center}
+ .intro-top{grid-column:1/-1;grid-row:1}
+ #introHero .intro-game-name{grid-column:2;grid-row:2}
+ .intro-art-stage{grid-column:1;grid-row:2/span 3;width:100%;height:clamp(120px,48dvh,220px)}
+ #introHero .intro-art-stage .hero-mark{height:clamp(110px,42dvh,190px);width:160px}
+ #introHero .intro-nine-crystals{grid-column:1;grid-row:5;width:100%}
+ #introHero .intro-world-title{grid-column:2;grid-row:3}
+ #introHero #begin{grid-column:2;grid-row:4;justify-self:center}
+ .intro-bottom{grid-column:2;grid-row:5;justify-self:center;width:100%}
+}
+@media(prefers-reduced-motion:reduce){.intro-spark{animation:none!important}}
 </style>
 </head>
 <body>
@@ -506,16 +566,16 @@ body{background:radial-gradient(ellipse 100% 75% at 50% 0%,#802441,#3a0b23 66%,#
       <button type="button" class="icon-btn" id="restart" aria-label="Alusta uuesti" title="Alusta uuesti"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></button>
     </div>
   </header>
-  <div class="progress" aria-label="Edenemine"><span class="progress-label">TAKISTUSED</span><div class="gems" id="gems"></div><span class="progress-count" id="step">0/12</span></div>
+  <div class="progress" aria-label="Edenemine"><div class="gems" id="gems"></div><span class="progress-count" id="step">0/12</span></div>
   <section class="scene" id="scene" aria-label="Helendavate saarte mängumaailm">
     <canvas id="world" aria-hidden="true"></canvas>
-    <div class="scene-heading"><small id="sceneWorld">MAAILM 01</small><strong id="sceneName">Valgussaar</strong></div>
+    <div class="scene-heading"><small id="sceneWorld" hidden>MAAILM 01</small><strong id="sceneName">Valgussaar</strong></div>
     <div class="rush-hud" id="rushHud"><div class="rush-line"><span id="rushLabel">TAKISTUSENI</span><strong id="rushClock">—</strong></div><div class="rush-track"><div id="rushFill"></div></div></div>
-    <div class="scene-caption" id="sceneCaption">KIIRUSTA! TAKISTUS LÄHENEB</div>
+    <div class="scene-caption" id="sceneCaption" hidden>KIIRUSTA! TAKISTUS LÄHENEB</div>
     <div class="scene-glow" id="sceneGlow"></div>
   </section>
   <section class="problem" aria-live="polite"><div class="problem-top"><span class="verb">ÜMARDA</span><span class="unit" id="unit">KÜMNELISTENI</span></div><div class="number" id="number">—</div></section>
-  <div class="answer-wrap"><div class="answer-display" id="answerBox"><span class="answer-value empty" id="answerValue"></span></div><div class="answer-info"><small>ETAPP</small><strong id="answerStep">01 / 12</strong></div></div>
+  <div class="answer-wrap"><div class="answer-display" id="answerBox"><span class="answer-value empty" id="answerValue"></span></div><div class="answer-info" hidden><small>ETAPP</small><strong id="answerStep">01 / 12</strong></div></div>
   <div class="note" id="note" aria-live="polite">Sisesta vastus</div>
   <section class="keypad" id="keypad" aria-label="Numbriklahvistik">
     <button class="key" data-key="1">1</button><button class="key" data-key="2">2</button><button class="key" data-key="3">3</button>
@@ -523,33 +583,33 @@ body{background:radial-gradient(ellipse 100% 75% at 50% 0%,#802441,#3a0b23 66%,#
     <button class="key" data-key="7">7</button><button class="key" data-key="8">8</button><button class="key" data-key="9">9</button>
     <button class="key action" data-key="back" aria-label="Kustuta viimane number">⌫</button><button class="key key-zero" data-key="0">0</button>
   </section>
-  <footer class="foot">EDUKASS · 9 KRISTALLIMAAILMA · ÜMARDAMINE</footer>
+  
 </main>
 <div class="overlay" id="overlay" role="dialog" aria-modal="true">
  <div class="hero" id="introHero">
-  <span class="eyebrow">EDUKASS · KRISTALLISEIKLUS</span>
-  <h1 class="intro-game-name">ÜMARDAMISE<br><span>KRISTALLIRÄNNAK</span></h1>
-  <div class="intro-arc-label">9 MAAILMA · 9 KRISTALLI · 1 SUUR FINAAL</div>
-  <div class="intro-nine-crystals" id="introNineCrystals" aria-label="Üheksa kogutavat kristalli"></div>
-  <div class="hero-mark" id="introCrystalArt" aria-hidden="true"></div>
-  <h2 class="intro-world-title">Alustame: <span id="introName">Valgussaar</span></h2>
-  <p>Kristall kihutab ise edasi! Ümarda enne takistust: õige vastus avab hüppe, vale vastus või hilinemine tähendab kokkupõrget. Siis alustad otsast.</p>
-  <details class="world-selector" id="worldSelector"><summary>VALI MAAILM · 9 MAAILMA</summary><div id="worldMenu" class="world-menu"></div></details>
-  <button class="intro-music-toggle" id="introSound" type="button">♫ KUULA SOLAR SPARKI</button>
-  <button class="primary" id="begin">ALUSTA MÄNGU <span aria-hidden="true">›</span></button>
-  <button class="intro-vault-btn" id="openVaultIntro" type="button">KRISTALLIDE VARAKAMBER <span id="introCollectionCount">0 / 9</span></button>
-  <div class="intro-utility-actions"><button type="button" id="shareGameIntro">↗ JAGA MÄNGU</button><button type="button" id="openPassportIntro">◈ MINU EDUSAMMUD · TEINE SEADE</button></div>
+ <div class="intro-top"><div class="logo">EDU<span>KASS</span></div><div class="intro-tools">
+ <button type="button" class="icon-btn" id="introSound" aria-label="Lülita heli sisse" aria-pressed="false" title="Heli"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path class="intro-sound-on" d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/><path class="intro-sound-off" d="m16 9 5 6m0-6-5 6"/></svg></button>
+ <button type="button" class="icon-btn" id="shareGameIntro" aria-label="Jaga mängu" title="Jaga mängu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M8 10.8 15.6 6.2 M8 13.3 15.6 17.8"/></svg></button>
+ <button type="button" class="icon-btn" id="openPassportIntro" aria-label="Minu edusammud" title="Minu edusammud"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="6" height="6" rx="1"/><rect x="15" y="3" width="6" height="6" rx="1"/><rect x="3" y="15" width="6" height="6" rx="1"/><path d="M15 15h3v3h3v3h-6zM21 12v2M12 21v-2M12 12h2"/></svg></button>
+ </div></div>
+ <h1 class="intro-game-name">Ümardamine <span>Kristallirännak</span></h1>
+ <div class="intro-art-stage" aria-hidden="true"><div class="intro-orbit"></div><div class="intro-orbit orbit-two"></div><span class="intro-spark spark-one">✦</span><span class="intro-spark spark-two">✧</span><span class="intro-spark spark-three">✦</span><div class="hero-mark" id="introCrystalArt"></div></div>
+ <div class="intro-nine-crystals" id="introNineCrystals" aria-label="Üheksa kogutavat kristalli"></div>
+ <h2 class="intro-world-title"><span id="introName">Valgussaar</span></h2>
+ <button class="primary" id="begin"><span aria-hidden="true">▶</span> MÄNGI!</button>
+ <div class="intro-bottom"><details class="world-selector" id="worldSelector"><summary><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3zM9 3v15M15 6v15"/></svg> Maailmad <span aria-hidden="true">⌄</span></summary><div id="worldMenu" class="world-menu"></div></details>
+ <button class="intro-vault-btn" id="openVaultIntro" type="button" aria-label="Kristallide varakamber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 8 6-3 9-5 5-5-5-3-9zM4 8l8 4 8-4M12 2v20"/></svg><span id="introCollectionCount">0 / 9</span></button></div>
  </div>
  <div class="celebrate-particles" id="celebrateParticles" aria-hidden="true"></div>
  <div class="hero celebrate-victory" id="victoryHero" hidden>
   <div class="victory-halo" aria-hidden="true"><span></span><span></span><span></span></div>
-  <span class="victory-kicker" id="victoryWorld">MAAILM 01 VÕIDETUD</span>
+  <span class="victory-kicker" id="victoryWorld" hidden>MAAILM 01 VÕIDETUD</span>
   <h1 class="victory-headline">VÕRRATU!</h1>
-  <div class="victory-score"><strong id="victoryScore">8 / 8</strong><span>TAKISTUST LÄBITUD</span></div>
+  <div class="victory-score"><strong id="victoryScore">8 / 8</strong><span>ÕIGESTI</span></div>
   <div class="victory-stars" aria-hidden="true">✦ <span>✦</span> ✦</div>
  </div>
  <div class="hero celebrate-reward" id="finishHero" hidden>
-  <span class="reward-kicker" id="rewardWorld">MAAILM 01 · VALGUSSAAR</span>
+  <span class="reward-kicker" id="rewardWorld" hidden>MAAILM 01 · VALGUSSAAR</span>
   <h1 class="reward-title">KRISTALL SAADUD!</h1>
   <div class="prize-theatre" aria-label="Päikesekuru kristall">
    <div class="prize-rays" aria-hidden="true"></div>
@@ -563,62 +623,62 @@ body{background:radial-gradient(ellipse 100% 75% at 50% 0%,#802441,#3a0b23 66%,#
    <div class="prize-crystal" id="awardCrystalArt" aria-label="Päikesekuru kristall"></div>
    <div class="prize-floor" aria-hidden="true"></div>
   </div>
-  <div class="reward-name"><span id="rewardName">VALGUSSAAR KRISTALL</span><small id="rewardCaption">SA SAID VALGUSSAARE KRISTALLI!</small></div>
-  <button class="vault-open-btn" id="openVaultReward" type="button"><span class="mini-crystal" aria-hidden="true"></span><span>AVA KRISTALLIDE VARAKAMBER</span><strong id="rewardCollectionCount">1 / 9</strong></button>
+  <div class="reward-name"><span id="rewardName">VALGUSSAAR KRISTALL</span><small id="rewardCaption" hidden>SA SAID VALGUSSAARE KRISTALLI!</small></div>
+  <button class="vault-open-btn" id="openVaultReward" type="button"><span class="mini-crystal" aria-hidden="true"></span><span>Kristallid</span><strong id="rewardCollectionCount">1 / 9</strong></button>
   <button class="next-world" id="nextWorld" type="button">JÄRGMINE MAAILM <span>02</span></button>
   <div class="reward-actions">
-   <button class="secondary" id="again" type="button">MÄNGI UUESTI ↻</button>
-   <button class="secondary progress-save-cta" id="saveAfterVictory" type="button">◈ SALVESTA EDUSAMMUD</button>
+   <button class="secondary" id="again" type="button">↻ Uuesti</button>
+   <button class="secondary progress-save-cta" id="saveAfterVictory" type="button">◈ Salvesta</button>
   </div>
  </div>
  <div class="hero crystal-vault" id="vaultHero" hidden>
-  <span class="vault-eyebrow">EDUKASS · KRISTALLIDE KOGU</span>
-  <h1 class="vault-title">KRISTALLIDE VARAKAMBER</h1>
+  
+  <h1 class="vault-title">Kristallid</h1>
   <div class="vault-progress" id="vaultProgress" aria-live="polite">KOGUTUD 0 / 9</div>
   <div class="vault-display">
    <div class="vault-constellation" aria-hidden="true"></div>
    <div class="vault-grid" id="vaultGrid" aria-label="Üheksa kristalli"></div>
   </div>
-  <p class="vault-description" id="vaultDescription">Läbi maailmad ja kogu kõik üheksa kristalli!</p>
+  <p class="vault-description" id="vaultDescription" hidden>Läbi maailmad ja kogu kõik üheksa kristalli!</p>
   <button class="ultimate-vault-link" id="showUltimate" type="button" hidden>VAATA ÜLIMAT KRISTALLI ✦</button>
-  <button class="vault-back progress-save-cta" id="saveFromVault" type="button">◈ MINU EDUSAMMUD · TEINE SEADE</button>
+  <button class="vault-back progress-save-cta" id="saveFromVault" type="button">◈ Minu edusammud</button>
   <button class="vault-back" id="closeVault" type="button">TAGASI</button>
  </div>
  <div class="hero fusion-hero" id="fusionHero" hidden>
   <span class="fusion-kicker">EDUKASS · 9 / 9 KRISTALLI</span>
-  <h1 class="fusion-heading">KÕIK KRISTALLID ÜHINEVAD!</h1>
+  
   <div class="fusion-theatre" aria-label="Üheksast kristallist sünnib ülim kristall">
    <div class="fusion-pieces" id="fusionPieces"></div>
    <div class="fusion-ultimate" id="ultimateGem"></div>
   </div>
   <h2 class="fusion-title">ÜLIM KRISTALL</h2>
-  <p class="fusion-description">Üheksa maailma, üheksa võitu — üks erakordne kristall!</p>
-  <div class="fusion-action-text">OLED ÜHEKSA MAAILMA MEISTER!</div>
+  
+  
   <button class="primary" id="fusionClose" type="button">VAATA KRISTALLE</button>
  </div>
  <div class="hero" id="crashHero" hidden>
-  <span class="fail-kicker" id="crashWorld">MAAILM 01 · KATSE LÄBI</span>
+  <span class="fail-kicker" id="crashWorld" hidden>MAAILM 01 · KATSE LÄBI</span>
   <div class="fail-icon" aria-hidden="true">✕</div>
   <h1>Kokkupõrge!</h1>
   <p id="crashDetail">Takistus tabas kristalli.</p>
   <div class="learning-panel" id="learningPanel" aria-live="assertive">
-   <div class="learning-heading">VAATAME ÕIGE VASTUSE ÜLE!</div>
+   
    <div class="learning-question"><span id="learningPrompt">ÜMARDA</span><strong id="learningNumber">—</strong></div>
    <div class="learning-your-answer" id="learningYourAnswer">SINU VASTUS: —</div>
    <div class="learning-result"><span>ÕIGE VASTUS</span><strong id="learningCorrect">—</strong></div>
    <div class="learning-rule" id="learningRule">Vaata ümardamise reeglit.</div>
   </div>
-  <div class="fail-score">LÄBITUD TAKISTUSI: <strong id="crashCount">0 / 8</strong></div>
-  <p class="fail-explain">Kui eksid või jääd hiljaks, algab tase uuesti.</p>
-  <button class="primary" id="retry">PROOVI UUESTI ↻</button>
+  <div class="fail-score"> <strong id="crashCount">0 / 8</strong></div>
+  
+  <button class="primary" id="retry">↻ UUESTI!</button>
  </div>
 </div>
 <dialog class="edukass-modal" id="shareDialog" aria-labelledby="shareTitle">
  <div class="edukass-modal-inner">
   <button type="button" class="modal-close" id="closeShare" aria-label="Sulge">×</button>
-  <div class="modal-kicker">EDUKASS · 9 MAAILMA</div>
+  
   <h2 id="shareTitle">JAGA MÄNGU</h2>
-  <p>Saada mängu link sõbrale või ava mäng teises seadmes. See link <strong>ei sisalda sinu edusamme</strong>.</p>
+  <p>Jaga sõbraga. <strong>Edusamme ei jagata.</strong></p>
   <div class="transfer-qr" id="shareQr" aria-label="Mängu QR-kood"></div>
   <textarea id="shareUrl" class="transfer-link" readonly aria-label="Mängu link"></textarea>
   <div class="transfer-actions"><button id="copyGameUrl" type="button">⧉ KOPEERI</button><button id="sendGameUrl" type="button">↗ SAADA</button></div>
@@ -628,11 +688,11 @@ body{background:radial-gradient(ellipse 100% 75% at 50% 0%,#802441,#3a0b23 66%,#
 <dialog class="edukass-modal" id="passportDialog" aria-labelledby="passportTitle">
  <div class="edukass-modal-inner">
   <button class="modal-close" id="closePassport" aria-label="Sulge" type="button">×</button>
-  <div class="modal-kicker">EDUKASS · PASSPORT LITE</div>
+  
   <h2 id="passportTitle">MINU EDUSAMMUD</h2>
   <p id="passportText">Sinu kristallid salvestatakse selles seadmes automaatselt. Loo isiklik link, et jätkata teises seadmes.</p>
   <div class="passport-progress" id="passportSummary">KOGUTUD 0 / 9 KRISTALLI</div>
-  <button class="passport-main" id="createPassport" type="button">◈ LOO MINU EDUSAMMUDE LINK</button>
+  <button class="passport-main" id="createPassport" type="button">◈ LOO SALVESTUSLINK</button>
   <div id="passportExport" hidden>
    <div class="transfer-qr" id="passportQr" aria-label="Isiklik edusammude QR-kood"></div>
    <textarea id="passportUrl" class="transfer-link" readonly aria-label="Isiklik edusammude link"></textarea>
@@ -2991,7 +3051,7 @@ let worldId=1;
 function world(){return WORLDS[worldId-1]}
 function updateWorldUI(){
  const w=world(),nn=String(worldId).padStart(2,'0');
- $('worldPill').innerHTML='<span class="world-dot"></span> <b>'+nn+'</b> / 09 · '+w.name.toUpperCase();
+ $('worldPill').innerHTML='<span class="world-dot"></span> <b>'+nn+'</b> / 09';
  $('sceneWorld').textContent='MAAILM '+nn;$('sceneName').textContent=w.name;
  $('introName').textContent=w.name;$('victoryWorld').textContent='MAAILM '+nn+' VÕIDETUD';
  $('victoryScore').textContent=TOTAL+' / '+TOTAL;
@@ -3077,7 +3137,7 @@ function updateCrystalVault(){
  $('introCollectionCount').textContent=count+' / 9';
  if(count===9){try{localStorage.setItem('edukass-ultimate-crystal','1')}catch(e){}}
  $('rewardCollectionCount').textContent=count+' / 9';
- $('vaultProgress').textContent='KOGUTUD '+count+' / 9';
+ $('vaultProgress').textContent=count+' / 9';
  $('showUltimate').hidden=count!==9;
  const views=Array.from({length:9},(_,k)=>{
   const id=k+1,got=ids.includes(id),name=WORLDS[id-1].name.toUpperCase();
@@ -3233,7 +3293,7 @@ function showTask(){
  $('unit').textContent=names[t.unit];$('number').textContent=format(t.v);
  $('number').classList.remove('bump');$('number').classList.toggle('long-number',String(t.v).length>=6);void $('number').offsetWidth;$('number').classList.add('bump');
  typed='';solved=false;jumpStarted=false;wrongLocked=false;turboActive=false;updateAnswer();$('answerBox').classList.remove('wrong','success');
- note('Vasta enne takistust!');updateGems();
+ note('Sisesta vastus');updateGems();
  $('sceneCaption').textContent=step===TOTAL-1?'VIIMANE TAKISTUS · ÄRA PEATU':'KIIRUSTA! TAKISTUS LÄHENEB';
 }
 function showFusion(){
@@ -3246,6 +3306,7 @@ function showFusion(){
 function overlay(type){
  $('overlay').classList.remove('hidden');$('overlay').setAttribute('aria-hidden','false');
  $('overlay').classList.toggle('is-celebrating',type==='victory'||type==='finish'||type==='vault'||type==='fusion');
+ $('overlay').classList.toggle('is-intro',type==='intro');
  $('introHero').hidden=type!=='intro';
  $('victoryHero').hidden=type!=='victory';
  $('finishHero').hidden=type!=='finish';
@@ -3256,7 +3317,7 @@ function overlay(type){
 }
 function hideOverlay(){
  $('overlay').classList.add('hidden');
- $('overlay').classList.remove('is-celebrating');
+ $('overlay').classList.remove('is-celebrating','is-intro');
  $('overlay').setAttribute('aria-hidden','true');
  victoryStage='hidden';
 }
@@ -3297,7 +3358,7 @@ function updateRushHUD(){
  $('rushFill').style.width= `${clamp(distanceToObstacle()/NODE,0,1)*100}%`;
  $('rushHud').classList.toggle('danger',secs<2&&!solved&&status==='running');
  $('rushHud').classList.toggle('safe',solved&&status==='running');
- $('rushLabel').textContent=wrongLocked?'VALE VASTUS':solved?(turboActive?'TURBO · HÜPE VALMIS':'HÜPE VALMIS'):status==='crashing'||status==='crashed'?'KOKKUPÕRGE!':'TAKISTUSENI';
+ $('rushLabel').textContent=wrongLocked?'VALE VASTUS':solved?(turboActive?'TURBO!':'HÜPE'):status==='crashing'||status==='crashed'?'KOKKUPÕRGE!':'AEG';
 }
 let musicNextTime=0,musicStep=0;
 const solarTrack=$('solarTrack'),softFail=$('softFail');
@@ -3310,7 +3371,8 @@ function approvedMusicPause(){try{solarTrack.pause()}catch(e){}}
 function setSound(){
  soundOn=!soundOn;$('sound').classList.toggle('enabled',soundOn);
  $('sound').setAttribute('aria-label',soundOn?'Lülita heli välja':'Lülita heli sisse');
- $('introSound').textContent=soundOn?'♫ MUUSIKA SEES · LÜLITA VÄLJA':'♫ KUULA SOLAR SPARKI';
+ $('introSound').setAttribute('aria-pressed',String(soundOn));
+ $('introSound').setAttribute('aria-label',soundOn?'Lülita heli välja':'Lülita heli sisse');
  if(soundOn){approvedMusicPlay();tone(510,.07,'triangle',.018)}
  else {approvedMusicPause();try{softFail.pause()}catch(e){}}
 }
@@ -3390,11 +3452,11 @@ function lose(reason){
  if(status!=='running')return;
  status='crashing';crashReason=reason;crashElapsed=0;fxGlow=.4;shake=18;
  $('answerBox').classList.remove('success');$('answerBox').classList.add('wrong');
- note(reason==='wrong'?'VALE VASTUS! KOKKUPÕRGE!':'AEG SAI OTSA! KOKKUPÕRGE!','bad');
+ note(reason==='wrong'?'Vale vastus!':'Aeg sai otsa!','bad');
  $('sceneCaption').textContent='KOKKUPÕRGE!';
  approvedFailSound();
  $('crashCount').textContent=`${step} / ${TOTAL}`;
- $('crashDetail').textContent=reason==='wrong'?'Vastus oli vale. Vaata, kuidas õigesti ümardada!':'Aeg sai otsa. Vaata õiget vastust enne uut katset!';
+ $('crashDetail').textContent=reason==='wrong'?'Vale vastus.':'Aeg sai otsa.';
  showLearningFeedback(reason);
  updateRushHUD();
 }
@@ -3412,13 +3474,13 @@ function check(){
  if(status!=='running'||solved||wrongLocked||!typed)return;
  if(Number(typed)===tasks[step].answer){
   solved=true;turboActive=distanceToObstacle()>180; // late correct answers keep the original safe jump speed
-  $('answerBox').classList.add('success');note(turboActive?'ÕIGE! TURBO!':'ÕIGE! HÜPE VALMIS','ok');
+  $('answerBox').classList.add('success');note('Õige!','ok');
   fxGlow=.6;tone(600,.14,'sine',.04);tone(810,.12,'triangle',.022,.08);
   $('sceneCaption').textContent=turboActive?'TURBO · KRISTALL KIHUTAB EDASI':'HÜPE VALMIS · HÜPPA ÜLE TAKISTUSE';updateRushHUD();return;
  }
  if(typed.length<String(tasks[step].answer).length)return;
  wrongLocked=true; // The obstacle remains lethal; the crystal physically runs into it.
- $('answerBox').classList.add('wrong');note('VALE VASTUS! TAKISTUS LÄHENEB!','bad');
+ $('answerBox').classList.add('wrong');note('Vale vastus!','bad');
  $('sceneCaption').textContent='VALE VASTUS · KOKKUPÕRGE LÄHENEB';
  shake=5;tone(230,.15,'sawtooth',.04);updateRushHUD();
 }
@@ -3437,7 +3499,7 @@ function finish(){
  setTimeout(()=>{if(status==='finished'&&token===ceremonyToken)overlay('finish')},1670);
  if(worldId===9)setTimeout(()=>{if(status==='finished'&&token===ceremonyToken)showFusion()},6200);
 }
-function reset(){approvedMusicPause();ceremonyToken++;status='intro';step=0;typed='';solved=false;playerX=ORIGIN;particleTrail=[];jumping=false;jumpAge=0;jumpHeight=0;jumpStarted=false;wrongLocked=false;turboActive=false;jumpScale=1;jumpCount=0;updateGems();updateAnswer();note('Vasta enne takistust!');updateRushHUD();overlay('intro')}
+function reset(){approvedMusicPause();ceremonyToken++;status='intro';step=0;typed='';solved=false;playerX=ORIGIN;particleTrail=[];jumping=false;jumpAge=0;jumpHeight=0;jumpStarted=false;wrongLocked=false;turboActive=false;jumpScale=1;jumpCount=0;updateGems();updateAnswer();note('Sisesta vastus');updateRushHUD();overlay('intro')}
 function advance(dt){
  if($('passportDialog').open||$('shareDialog').open)return; // pause timer while sharing or transferring
  let remaining=clamp(dt,0,100);
@@ -3760,13 +3822,13 @@ function bind(){
  $('keypad').addEventListener('click',e=>{const b=e.target.closest('[data-key]');if(!b)return;onKey(b.dataset.key)});
  document.addEventListener('keydown',e=>{
   if($('passportDialog').open||$('shareDialog').open)return;
-  const key=e.key;if(key==='Backspace'){e.preventDefault();onKey('back')}else if(key==='Enter'){e.preventDefault();if(victoryStage==='vault')closeCrystalVault();else if(status==='intro')startGame();else if(status==='finished'&&victoryStage==='finish')startGame();else if(status==='crashed')startGame(true)}else if(/^\d$/.test(key))onKey(key);
+  const key=e.key;if(key==='Enter'&&e.target instanceof Element&&e.target.closest('button,summary'))return;if(key==='Backspace'){e.preventDefault();onKey('back')}else if(key==='Enter'){e.preventDefault();if(victoryStage==='vault')closeCrystalVault();else if(status==='intro')startGame();else if(status==='finished'&&victoryStage==='finish')startGame();else if(status==='crashed')startGame(true)}else if(/^\d$/.test(key))onKey(key);
  });
  $('begin').addEventListener('click',()=>startGame());$('again').addEventListener('click',()=>startGame());$('retry').addEventListener('click',()=>startGame(true));$('restart').addEventListener('click',reset);$('sound').addEventListener('click',setSound);$('introSound').addEventListener('click',setSound);
  $('openVaultIntro').addEventListener('click',()=>openCrystalVault('intro'));
  $('openVaultReward').addEventListener('click',()=>openCrystalVault('finish'));
  $('closeVault').addEventListener('click',closeCrystalVault);
- $('worldMenu').addEventListener('click',e=>{const item=e.target.closest('[data-world]');if(item&&!item.disabled)switchWorld(Number(item.dataset.world))});
+ $('worldMenu').addEventListener('click',e=>{const item=e.target.closest('[data-world]');if(item&&!item.disabled&&switchWorld(Number(item.dataset.world)))$('worldSelector').open=false});
  $('nextWorld').addEventListener('click',()=>{if(worldId<9)switchWorld(worldId+1);else showFusion()});
  $('fusionClose').addEventListener('click',()=>overlay('vault'));
  $('showUltimate').addEventListener('click',showFusion);
