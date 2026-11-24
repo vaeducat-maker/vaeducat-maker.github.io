@@ -291,6 +291,45 @@ button:disabled{cursor:default;opacity:.7}
  .vault-back{min-height:32px}
 }
 @media(prefers-reduced-motion:reduce){.vault-card.unlocked .vault-card-gem svg{animation:none!important}}
+
+
+/* Pedagogical failure screen: the right answer is the visual focal point. */
+.learning-panel{width:min(370px,100%);display:flex;flex-direction:column;gap:8px;margin:9px auto 12px;padding:13px 14px;border-radius:17px;background:linear-gradient(160deg,#0c2744ee,#11254bef);border:1px solid #9df8e89c;box-shadow:0 0 28px #5affd026,inset 0 1px 1px #ffffff30}
+.learning-heading{font-size:11px;line-height:1.3;letter-spacing:.075em;font-weight:1000;color:#c5fff2;text-align:center}
+.learning-question{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:8px;font-size:11px;font-weight:900;color:#c8dfff}
+.learning-question strong{font-size:clamp(28px,7vw,42px);font-weight:1000;line-height:1.1;color:#fff8d8;font-variant-numeric:tabular-nums}
+.learning-your-answer{font-size:11px;font-weight:900;color:#ffb5b5;text-align:center;letter-spacing:.04em}
+.learning-result{display:flex;justify-content:center;align-items:center;gap:9px;padding:10px 12px;border:1px solid #b0ffe2ba;border-radius:12px;background:linear-gradient(125deg,#12654a8a,#164470b5);box-shadow:0 0 19px #67ffb93b}
+.learning-result span{font-size:12px;font-weight:1000;letter-spacing:.055em;color:#c9ffe7}
+.learning-result strong{font-size:clamp(34px,8vw,49px);font-weight:1000;line-height:1;color:#fff1a6;text-shadow:0 0 18px #9cffe48f;font-variant-numeric:tabular-nums}
+.learning-rule{font-size:clamp(12px,3.2vw,14px);line-height:1.42;color:#e5f9f4;text-align:center;font-weight:750}
+#crashHero{max-height:calc(100dvh - 16px);overflow-y:auto;scrollbar-width:thin;justify-content:flex-start;padding-top:10px;padding-bottom:12px}
+#crashHero .fail-icon{height:64px;width:64px;font-size:37px;border-width:3px;margin:2px auto 3px;flex:none}
+#crashHero h1{font-size:clamp(24px,7vw,32px);margin:1px 0}
+#crashHero .fail-score{margin:0 0 6px;padding:7px 10px}
+#crashHero .fail-explain{margin:2px 0 8px!important;line-height:1.25!important}
+#crashHero #retry{flex:none;margin:0;min-height:44px}
+@media(max-height:660px){
+ #crashHero{gap:3px;padding-top:6px}
+ #crashHero .fail-icon{height:45px;width:45px;font-size:27px;margin:0 auto}
+ #crashHero h1{font-size:22px}
+ #crashHero .fail-kicker{font-size:9px}
+ #crashHero #crashDetail{font-size:11px;margin:0 0 2px}
+ .learning-panel{padding:8px 10px;gap:5px;margin:5px auto 6px}
+ .learning-question strong{font-size:30px}
+ .learning-result{padding:7px}
+ .learning-result strong{font-size:36px}
+ .learning-rule{font-size:11px}
+ #crashHero .fail-explain{font-size:10px!important}
+}
+@media(orientation:landscape) and (max-height:600px) and (min-width:650px){
+ #crashHero{width:min(720px,97vw);max-width:720px;display:grid;grid-template-columns:minmax(120px,200px) minmax(270px,1fr);grid-template-rows:auto auto auto auto auto;gap:3px 12px;align-items:center;padding:5px 10px;max-height:calc(100dvh - 8px)}
+ #crashHero .fail-kicker,#crashHero .fail-icon,#crashHero h1,#crashHero #crashDetail,#crashHero .fail-score,#crashHero .fail-explain,#crashHero #retry{grid-column:1}
+ #crashHero .learning-panel{grid-column:2;grid-row:1 / span 7;width:100%;max-height:100%;padding:8px}
+ #crashHero .fail-icon{height:36px;width:36px;font-size:21px}
+ #crashHero h1{font-size:18px}
+ #crashHero #retry{min-height:34px;padding:5px}
+}
 </style>
 </head>
 <body>
@@ -396,6 +435,13 @@ button:disabled{cursor:default;opacity:.7}
   <div class="fail-icon" aria-hidden="true">✕</div>
   <h1>Kokkupõrge!</h1>
   <p id="crashDetail">Takistus tabas kristalli.</p>
+  <div class="learning-panel" id="learningPanel" aria-live="assertive">
+   <div class="learning-heading">VAATAME ÕIGE VASTUSE ÜLE!</div>
+   <div class="learning-question"><span id="learningPrompt">ÜMARDA</span><strong id="learningNumber">—</strong></div>
+   <div class="learning-your-answer" id="learningYourAnswer">SINU VASTUS: —</div>
+   <div class="learning-result"><span>ÕIGE VASTUS</span><strong id="learningCorrect">—</strong></div>
+   <div class="learning-rule" id="learningRule">Vaata ümardamise reeglit.</div>
+  </div>
   <div class="fail-score">LÄBITUD TAKISTUSI: <strong id="crashCount">0 / 8</strong></div>
   <p class="fail-explain">Kui eksid või jääd hiljaks, algab tase uuesti.</p>
   <button class="primary" id="retry">PROOVI UUESTI ↻</button>
@@ -617,6 +663,22 @@ function startGame(retry=false){
  hideOverlay();showTask();updateRushHUD();
  // Earned crystal is permanent: replay must never remove the collection record.
 }
+function showLearningFeedback(reason){
+ const task=tasks[step];
+ if(!task)return;
+ const digit=task.unit===10?task.v%10:Math.floor(task.v/10)%10;
+ const place=task.unit===10?'üheliste':'kümneliste';
+ const action=digit>=5?'üles':'alla';
+ const decision=digit>=5?'5 või suurem':'väiksem kui 5';
+ $('learningPrompt').textContent='ÜMARDA '+names[task.unit];
+ $('learningNumber').textContent=format(task.v);
+ const actual=typed?format(typed):'—';
+ $('learningYourAnswer').textContent=reason==='wrong'?'SINU VASTUS: '+actual
+  :typed?'POOLELI JÄI: '+actual:'SINU VASTUS: EI VASTANUD';
+ $('learningCorrect').textContent=format(task.answer);
+ $('learningRule').textContent='Vaata '+place+' numbrit: '+digit+'. See on '+decision
+  +', seega ümardame '+action+'. '+format(task.v)+' → '+format(task.answer)+'.';
+}
 function lose(reason){
  if(status!=='running')return;
  status='crashing';crashReason=reason;crashElapsed=0;fxGlow=.4;shake=18;
@@ -625,7 +687,8 @@ function lose(reason){
  $('sceneCaption').textContent='KOKKUPÕRGE!';
  tone(160,.35,'sawtooth',.065);
  $('crashCount').textContent=`${step} / ${TOTAL}`;
- $('crashDetail').textContent=reason==='wrong'?'Vale vastus! Kristall põrkas vastu takistust.':'Takistus jõudis kohale enne õiget vastust.';
+ $('crashDetail').textContent=reason==='wrong'?'Vastus oli vale. Vaata, kuidas õigesti ümardada!':'Aeg sai otsa. Vaata õiget vastust enne uut katset!';
+ showLearningFeedback(reason);
  updateRushHUD();
 }
 function onKey(key){
