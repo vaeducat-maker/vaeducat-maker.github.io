@@ -1,0 +1,931 @@
+<!doctype html>
+<html lang="et">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#080d24"><meta name="color-scheme" content="dark">
+<title>EDUKASS · Ümardamine · Päikesekuru</title>
+<style>:root{
+ --bg:#080d24; --white:#f4f7ff; --dim:#93a5c9; --cyan:#56edec; --violet:#aa83ff;
+ --gold:#ffd67a;--glass:rgba(16,27,59,.88); --stroke:rgba(175,202,255,.19);
+ font-family:Inter, ui-sans-serif, system-ui,-apple-system,Segoe UI,Arial,sans-serif;color:var(--white);color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{width:100%;min-height:100%;margin:0}
+body{background:radial-gradient(ellipse 100% 68% at 50% 0%,#17366e 0%,#080f2c 59%,#080d20 100%);overflow-x:hidden}
+button{font-family:inherit;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+button:focus-visible{outline:3px solid #ffe7a9;outline-offset:3px}
+button:disabled{cursor:default;opacity:.7}
+#shell{width:min(520px,100%);min-height:100svh;margin:0 auto;position:relative;padding:env(safe-area-inset-top,0px) clamp(10px,3vw,17px) max(10px,env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:9px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px;height:48px;flex:0 0 48px}
+.logo{font-weight:950;font-size:18px;letter-spacing:-1px;text-transform:uppercase;white-space:nowrap;color:#f5fbff;text-shadow:0 0 13px #00d6ea55}
+.logo span{color:#64e8de}
+.world-pill{display:flex;align-items:center;gap:7px;min-width:0;justify-content:center;border:1px solid #8c9dd158;border-radius:999px;background:#101d42d6;box-shadow:inset 0 1px #ffffff19;padding:7px 13px;white-space:nowrap;font-size:11px;font-weight:900;letter-spacing:.1em;color:#b9d1ed}
+.world-pill b{color:#fff;font-size:11px;letter-spacing:.07em}
+.world-dot{height:8px;width:8px;background:var(--cyan);box-shadow:0 0 12px #58f8ee;border-radius:50%;flex:none}
+.top-actions{display:flex;gap:5px}
+.icon-btn{border:1px solid #8c9dd14d;background:linear-gradient(150deg,#253764b3,#142148b8);border-radius:13px;width:38px;height:38px;color:#d7e4ff;font-size:18px;cursor:pointer;display:grid;place-items:center;box-shadow:inset 0 1px #ffffff27}
+.icon-btn svg{width:19px;height:19px}
+.progress{display:flex;gap:8px;align-items:center;min-height:23px;padding:0 3px}
+.progress-label{white-space:nowrap;font-weight:900;letter-spacing:.095em;color:#a8c1e7;font-size:10px}
+.gems{flex:1;display:flex;justify-content:space-between;align-items:center;gap:4px;min-width:0}
+.gem{height:9px;flex:1;max-width:44px;border-radius:12px;background:linear-gradient(#24335e,#18294e);border:1px solid #7e8db45e;box-shadow:inset 0 1px 3px #0007;position:relative;transition:background .3s, box-shadow .3s}
+.gem.done{background:linear-gradient(90deg,#55e2ec,#95f8da);border-color:#bbfff6;box-shadow:0 0 12px #31e7d488}
+.gem.now{background:#d7c17b;border-color:#ffeaa1;box-shadow:0 0 10px #ffd870bb}
+.progress-count{font-size:12px;font-weight:850;color:#ffe4a2;min-width:27px;text-align:right;font-variant-numeric:tabular-nums}
+.scene{height:clamp(224px,33svh,318px);min-height:215px;position:relative;flex:0 0 auto;border:1px solid #90adf077;overflow:hidden;isolation:isolate;border-radius:25px;background:#08122f;box-shadow:0 9px 35px #0009, inset 0 1px #fff5}
+.scene::before{pointer-events:none;content:"";position:absolute;inset:0;border-radius:24px;border:1px solid #dcecff1a;z-index:2}
+.scene canvas{width:100%;height:100%;display:block;position:absolute;inset:0}
+.scene-heading{z-index:3;pointer-events:none;position:absolute;top:14px;left:16px;display:flex;flex-direction:column;gap:2px;text-shadow:0 2px 10px #000c}
+.scene-heading small{font-size:9px;font-weight:950;letter-spacing:.22em;color:#8df5eb}
+.scene-heading strong{font-size:clamp(15px,3.8vw,20px);line-height:1.16;letter-spacing:-.04em;font-weight:950}
+.scene-sub{position:absolute;z-index:3;right:14px;top:15px;border:1px solid #bbf8ef45;background:#0f1e47ad;border-radius:10px;font-size:10px;letter-spacing:.05em;font-weight:800;color:#d4eaff;padding:6px 9px}
+.scene-caption{pointer-events:none;position:absolute;z-index:3;left:14px;bottom:12px;max-width:80%;color:#c7d7f3;font-size:10px;letter-spacing:.045em;font-weight:750;text-shadow:0 2px 9px #000e}
+.scene-glow{pointer-events:none;position:absolute;inset:0;z-index:4;opacity:0;background:radial-gradient(circle at 58% 58%,#caffeb70 0%,#40fbd43d 15%,transparent 68%);transition:opacity .15s}
+.scene-glow.on{opacity:1}
+.problem{background:linear-gradient(145deg,#1b2b5aeb,#111c3eea);border:1px solid var(--stroke);border-radius:21px;padding:11px 16px 12px;box-shadow:inset 0 1px #eaf6ff19,0 7px 22px #0004;flex:0 0 auto;position:relative}
+.problem-top{display:flex;align-items:center;justify-content:center;gap:8px;min-height:24px;flex-wrap:wrap}
+.problem-top .verb{font-size:11px;font-weight:1000;letter-spacing:.16em;color:#aabbdc}
+.unit{font-size:10px;letter-spacing:.07em;font-weight:1000;color:#172444;background:linear-gradient(120deg,#d9fdf7,#8bf3dd);border-radius:7px;padding:5px 8px;box-shadow:0 2px 13px #55e3d055}
+.number{text-align:center;font-size:clamp(38px,8vw,50px);line-height:1.07;font-weight:950;letter-spacing:.015em;font-variant-numeric:tabular-nums;text-shadow:0 0 20px #9dafff30;color:#fff;transition:transform .2s}
+.number.bump{transform:scale(1.07)}
+.answer-wrap{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:9px;flex:0 0 auto;align-items:stretch}
+.answer-display{height:57px;display:flex;align-items:center;justify-content:center;border:1.5px solid #4d88b6;border-radius:17px;background:linear-gradient(180deg,#0b1b40,#121f43);box-shadow:inset 0 2px 9px #06102a;position:relative;min-width:0}
+.answer-display:after{content:"";pointer-events:none;position:absolute;inset:2px;border-radius:14px;border:1px solid #ffffff08}
+.answer-value{font-size:clamp(25px,6vw,34px);font-variant-numeric:tabular-nums;letter-spacing:.045em;font-weight:850;color:#e9fffa}
+.answer-value.empty:before{content:"";display:inline-block;width:2px;height:28px;background:#83fff3;vertical-align:middle;box-shadow:0 0 8px #6fffe8;animation:blink 1s step-end infinite}
+.answer-display.wrong{border-color:#ff769e;background:#431c43;animation:shake .27s}
+.answer-display.wrong .answer-value{color:#ffadba}
+.answer-display.success{border-color:#a5ffe0;box-shadow:inset 0 0 14px #3cecbf40,0 0 14px #3de4b949}
+.answer-info{width:79px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0;background:#162a50;border:1px solid #ffffff16;border-radius:15px}
+.answer-info small{color:#839ac6;font-size:9px;font-weight:900;letter-spacing:.13em}
+.answer-info strong{font-size:13px;font-weight:950;color:#edf7ff}
+.note{min-height:20px;flex:0 0 20px;display:flex;align-items:center;justify-content:center;color:#a4b6d9;font-weight:700;font-size:12px;letter-spacing:.01em;text-align:center}
+.note.ok{color:#76f8d5}.note.bad{color:#ff9ba9}
+.keypad{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(4,minmax(40px,1fr));gap:7px;flex:1 1 238px;min-height:197px;max-height:270px}
+.key{border:1px solid #6c85b04d;border-radius:15px;background:linear-gradient(180deg,#2a3b69,#1b2a50);color:#f4f7ff;font-weight:850;font-size:clamp(22px,5vw,28px);box-shadow:0 3px 0 #09132e, inset 0 1px #d5e3ff2b;cursor:pointer;user-select:none;transition:transform .08s,background .08s}
+.key:active,.key.pressed{transform:translateY(2px);box-shadow:0 1px 0 #09132e,inset 0 1px #e7f5ff2b;background:#334e86}
+.key.action{color:#8df8e4;background:linear-gradient(180deg,#214d64,#15364f);border-color:#6debd260;font-size:21px}
+.key.submit{font-size:22px;color:#0a2430;background:linear-gradient(120deg,#adffee,#56e6d4);border-color:#aafff1;box-shadow:0 3px 0 #0c665d,inset 0 1px #fff9}
+.foot{text-align:center;flex:0 0 auto;font-size:9px;letter-spacing:.17em;color:#6e85b0;font-weight:900;padding-top:1px}
+.overlay{position:absolute;inset:0;z-index:10;display:grid;place-items:center;padding:20px;background:linear-gradient(180deg,#05133368,#080d24a8 38%,#050c20e8);backdrop-filter:blur(4px);transition:opacity .25s}
+.overlay.hidden{display:none}
+.hero{text-align:center;width:min(350px,100%);margin:auto;display:flex;flex-direction:column;align-items:center}
+.eyebrow{font-size:10px;font-weight:950;letter-spacing:.19em;color:#96ffdf}
+.hero-mark{height:114px;width:114px;margin:14px auto 15px;position:relative;display:grid;place-items:center;filter:drop-shadow(0 0 29px #45ebed8a)}
+.hero-mark svg{width:100%;height:100%;overflow:visible;animation:float 3s ease-in-out infinite}
+.hero h1{font-size:clamp(27px,7vw,37px);line-height:1.05;margin:0 0 10px;letter-spacing:-.06em;font-weight:1000;text-wrap:balance;text-shadow:0 0 26px #57e7ff70}
+.hero p{font-size:13px;color:#bdcdea;line-height:1.5;max-width:285px;margin:0 0 16px}
+.primary{border:none;border-radius:15px;background:linear-gradient(113deg,#a2ffee,#42e7d2);color:#102442;font-size:15px;font-weight:1000;letter-spacing:.08em;padding:15px 22px;min-width:220px;box-shadow:0 5px 0 #0e756e,0 4px 24px #37efc770;cursor:pointer;transition:transform .1s}
+.primary:active{transform:translateY(3px);box-shadow:0 2px 0 #0e756e}
+.secondary{color:#baceef;background:none;border:1px solid #9ebff955;border-radius:12px;padding:10px 18px;font-weight:800;margin-top:10px;cursor:pointer}
+.finish-kicker{font-size:10px;font-weight:1000;letter-spacing:.2em;color:#ffda85;margin-bottom:10px}
+.finish-gem{position:relative;width:150px;height:150px;margin:4px auto 12px}
+.finish-gem svg{width:100%;height:100%;overflow:visible;filter:drop-shadow(0 0 25px #55efec96);animation:float 3s ease-in-out infinite}
+.stars-score{font-size:14px;color:#fce0a4;letter-spacing:.09em;font-weight:900;margin-bottom:13px}
+.finish-note{border:1px solid #71e4e064;border-radius:13px;background:#18355c99;padding:10px 14px;margin:0 0 15px;color:#d9edff;font-size:12px;font-weight:750}
+@keyframes blink{50%{opacity:0}}@keyframes shake{20%{transform:translateX(-5px)}45%{transform:translateX(5px)}70%{transform:translateX(-3px)}}@keyframes float{50%{transform:translateY(-8px)}}
+@media(max-height:760px){#shell{gap:6px}.scene{height:clamp(205px,31svh,243px)}.top{height:42px;flex-basis:42px}.problem{padding:7px 11px}.number{font-size:36px}.answer-display{height:51px}.keypad{gap:6px;min-height:188px}.key{border-radius:12px}.note{min-height:15px;flex-basis:15px}}
+@media(min-width:740px){body{display:grid;place-items:start center}#shell{margin-top:12px;border:1px solid #aaccff21;min-height:calc(100svh - 24px);border-radius:25px;background:#0b1534c4;box-shadow:0 10px 70px #0006}.scene{height:335px}}
+@media(prefers-reduced-motion:reduce){.hero-mark svg,.finish-gem svg,.answer-value.empty:before{animation:none}*{scroll-behavior:auto!important}}
+.hero[hidden]{display:none!important}
+#sound:not(.enabled) .sound-lines{display:none}
+#sound.enabled .sound-muted{display:none}
+
+@media (orientation:landscape) and (max-height:600px) and (min-width:650px){
+ body{display:block}
+ #shell{width:100%;max-width:none;height:100svh;min-height:0;margin:0;border:0;border-radius:0;padding:5px 13px 6px;display:grid;grid-template-columns:minmax(0,1.12fr) minmax(315px,.88fr);grid-template-rows:38px 19px 76px 46px 16px minmax(0,1fr) 10px;gap:4px 10px;background:transparent;box-shadow:none}
+ .top{grid-column:1 / 3;grid-row:1;height:38px;min-height:0}
+ .world-pill{padding:5px 11px}
+ .icon-btn{width:34px;height:34px}
+ .progress{grid-column:1;grid-row:2;min-height:0}
+ .scene{grid-column:1;grid-row:3 / span 4;width:100%;height:100%;min-height:0;border-radius:17px}
+ .scene::before{border-radius:16px}
+ .scene-heading{top:10px;left:13px}
+ .problem{grid-column:2;grid-row:2 / span 2;min-height:0;padding:5px 8px;display:flex;flex-direction:column;justify-content:center;border-radius:13px}
+ .problem-top{min-height:22px}.number{font-size:32px}
+ .answer-wrap{grid-column:2;grid-row:4;min-height:0}.answer-display{height:auto;min-height:0;border-radius:11px}
+ .answer-info{border-radius:11px}.answer-value{font-size:26px}
+ .note{grid-column:2;grid-row:5;min-height:0;font-size:10px}
+ .keypad{grid-column:2;grid-row:6;min-height:0;max-height:none;height:100%;grid-template-rows:repeat(4,minmax(0,1fr));gap:4px}
+ .key{font-size:19px;border-radius:10px}.key.action,.key.submit{font-size:17px}
+ .foot{grid-column:1 / 3;grid-row:7;font-size:8px;padding:0;line-height:10px}
+ .overlay{position:fixed}.hero-mark{height:60px;width:60px;margin:4px auto}.hero h1{font-size:24px}.hero p{font-size:11px;margin-bottom:9px}.primary{padding:11px 18px}.finish-gem{height:72px;width:72px}.stars-score{margin-bottom:5px}.finish-note{margin-bottom:7px}
+}
+
+/* Auto-run obstacle HUD and collision screen; same approved visual language. */
+.rush-hud{position:absolute;z-index:3;top:58px;right:13px;min-width:125px;width:34%;max-width:190px;border:1px solid #9febef50;background:#091935ba;backdrop-filter:blur(5px);border-radius:10px;padding:6px 8px;pointer-events:none}
+.rush-line{display:flex;justify-content:space-between;gap:7px;font-size:9px;font-weight:950;letter-spacing:.04em;color:#b4ddf0;white-space:nowrap}
+.rush-line strong{font-variant-numeric:tabular-nums;color:#d9fff2}
+.rush-track{height:5px;background:#13254d;border-radius:5px;margin-top:6px;overflow:hidden}
+#rushFill{height:100%;width:100%;border-radius:5px;background:linear-gradient(90deg,#50e9f0,#a2ffe4);transition:width .08s linear}
+.rush-hud.danger{border-color:#ff80b5a6;background:#3b1b3bc7}.rush-hud.danger #rushFill{background:#ff6c98}.rush-hud.danger .rush-line strong{color:#ffbed4}
+.rush-hud.safe{border-color:#87ffc4a1}.rush-hud.safe #rushFill{background:#75ffae}
+.fail-kicker{font-size:10px;font-weight:1000;letter-spacing:.15em;color:#ff94c0;margin-bottom:6px}
+.fail-icon{display:grid;place-items:center;width:115px;height:115px;margin:8px auto 14px;border:4px solid #ff73b8;border-radius:50%;box-shadow:0 0 45px #ff479e7a,inset 0 0 30px #ff479e44;color:#ffd8e8;font-weight:950;font-size:67px;transform:rotate(-9deg)}
+.fail-score{border:1px solid #ff7ca768;background:#50274b8c;color:#ffd5e3;font-size:11px;font-weight:800;padding:11px 14px;border-radius:13px;margin:0 0 8px}
+.fail-score strong{color:white;margin-left:7px}
+.fail-explain{font-size:11px!important;color:#c5b1ca!important;margin-bottom:20px!important}
+@media (orientation:landscape) and (max-height:600px) and (min-width:650px){.rush-hud{top:46px;width:40%;min-width:120px}.fail-icon{width:70px;height:70px;margin:3px auto 6px;font-size:42px}.fail-explain{margin-bottom:9px!important}}
+
+
+/* Valgussaar victory ceremony: original CSS/SVG artwork, no external assets. */
+.overlay.is-celebrating{position:fixed;inset:0;overflow-y:auto;overscroll-behavior:contain;isolation:isolate;background:radial-gradient(ellipse 90% 56% at 50% 35%,#2d67b3b8,#18235fd9 54%,#060b27f4 100%);backdrop-filter:blur(8px)}
+.overlay.is-celebrating:before{content:"";pointer-events:none;position:absolute;inset:0;background:radial-gradient(circle at 50% 43%,#a1ffdb32,transparent 53%),repeating-conic-gradient(from 0deg at 50% 42%,#8ce8ff00 0deg 12deg,#82dcff12 14deg 18deg,#8ce8ff00 22deg 30deg);animation:victoryHalo 11s linear infinite;opacity:.8}
+.hero.celebrate-victory,.hero.celebrate-reward{position:relative;z-index:2;color:#f7ffff;margin:auto;max-width:100%;flex:none}
+.hero.celebrate-victory{width:min(450px,100%);justify-content:center;min-height:min(460px,85svh);gap:12px}
+.victory-kicker{font-size:clamp(12px,2.5vw,15px);font-weight:950;letter-spacing:.26em;color:#b2fff1;text-shadow:0 0 25px #9cfff4;animation:victoryRise .5s .08s both}
+.hero .victory-headline{font-size:clamp(47px,11vw,78px);line-height:1;margin:0;letter-spacing:-.08em;font-weight:1000;color:#fffde1;text-shadow:0 0 16px #fff9cbbb,0 0 50px #5cf7d999,0 0 70px #5695f588;animation:victoryPunch .75s .1s both}
+.victory-score{display:flex;flex-direction:column;gap:3px;background:linear-gradient(125deg,#c8ffed32,#0e366ebd,#ffe6a42c);border:1px solid #d3ffdf9a;padding:15px 33px;border-radius:22px;box-shadow:0 8px 40px #26ffc155,inset 0 1px #ffffffbb;animation:victoryRise .6s .3s both}
+.victory-score strong{font-size:clamp(38px,8vw,60px);font-variant-numeric:tabular-nums;line-height:1;color:#ffe8a1;text-shadow:0 0 22px #ffe291a6}
+.victory-score span{font-size:11px;letter-spacing:.16em;font-weight:900;color:#d8fffa}
+.victory-stars{font-size:40px;letter-spacing:.2em;color:#ffe4a3;text-shadow:0 0 20px #fff0b3;animation:victoryRise .65s .5s both}
+.victory-stars span{display:inline-block;transform:translateY(-8px);font-size:56px}
+.victory-halo{position:absolute;z-index:-1;top:50%;left:50%;transform:translate(-50%,-50%);width:min(390px,85vw);aspect-ratio:1;pointer-events:none}
+.victory-halo span{position:absolute;inset:0;border:2px solid #baffff7d;border-radius:50%;box-shadow:0 0 25px #4fffe98e;animation:victoryRing .9s ease-out both}
+.victory-halo span:nth-child(2){animation-delay:.18s}.victory-halo span:nth-child(3){animation-delay:.36s}
+.celebrate-particles{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:1}
+.celebrate-particles .confetti{position:absolute;top:-14%;left:var(--x);height:var(--h);width:var(--w);border-radius:2px;background:var(--col);box-shadow:0 0 9px var(--col);opacity:0;transform:rotate(var(--rot));animation:celebrateFall var(--duration) var(--delay) linear both}
+.celebrate-particles .spark{position:absolute;top:var(--y);left:var(--x);height:var(--size);width:var(--size);border-radius:50%;background:#fffbd0;box-shadow:0 0 12px #9bfff2,0 0 27px #ffe8ab;animation:celebrateSpark var(--duration) var(--delay) ease-in-out infinite alternate}
+.celebrate-particles .flare{position:absolute;top:var(--y);left:var(--x);width:7px;height:7px;border:1.5px solid #fffdd1;border-radius:50%;box-shadow:0 0 17px #97fff2;opacity:0;animation:celebrateFlare 2.1s var(--delay) ease-out infinite}
+.hero.celebrate-reward{width:min(430px,100%);gap:7px;padding:14px 7px 20px;max-height:calc(100svh - 24px);overflow-y:auto;scrollbar-width:none}
+.hero.celebrate-reward::-webkit-scrollbar{display:none}
+.reward-kicker{font-weight:950;letter-spacing:.24em;color:#b2fff0;font-size:10px;animation:rewardAppear .55s .07s both}
+.hero .reward-title{font-size:clamp(25px,6.1vw,37px);letter-spacing:-.035em;line-height:1.1;margin:1px 0;color:#fff4c0;text-shadow:0 0 22px #ffd98c9c,0 0 42px #aaffdb77;animation:rewardAppear .7s .1s both}
+.prize-theatre{height:clamp(165px,30svh,240px);width:min(280px,86vw);margin:0 auto;flex:none;position:relative;display:grid;place-items:center;isolation:isolate}
+.prize-aura{position:absolute;inset:2%;border-radius:50%;background:radial-gradient(circle,#ffffffac 0%,#c3ffe595 19%,#63cce75d 39%,#4b49d921 65%,transparent 70%);animation:prizeGlow 2.7s ease-in-out infinite;filter:blur(6px)}
+.prize-rays{position:absolute;inset:-13%;opacity:.75;background:repeating-conic-gradient(from 5deg,#ffffff00 0deg 12deg,#feffdbb0 14deg 16deg,#ffffff00 18deg 30deg);mask-image:radial-gradient(circle,transparent 6%,black 33%,transparent 65%);animation:prizeRotate 18s linear infinite}
+.prize-ring{position:absolute;border:2px solid #d3ffebbb;border-radius:50%;box-shadow:0 0 19px #7cffefaa,inset 0 0 23px #e6fff58b;animation:prizeGlow 2.5s ease-in-out infinite}
+.prize-ring-one{width:74%;aspect-ratio:1;transform:scaleY(.65);animation:prizeRingBreath 3.1s ease-in-out infinite}
+.prize-ring-two{width:97%;aspect-ratio:1;border-style:dashed;border-color:#e5d49f8c;transform:scaleY(.66);animation:prizeRingBreath 3.1s .5s ease-in-out infinite}
+.prize-crystal{position:absolute;z-index:2;top:3%;height:91%;aspect-ratio:180/218;filter:drop-shadow(0 3px 14px #abffed) drop-shadow(0 0 25px #4fefe4);animation:prizeEntrance .95s .1s cubic-bezier(.18,1.5,.4,1) both,prizeFloat 3.2s 1.2s ease-in-out infinite}
+.prize-crystal svg{width:100%;height:100%;display:block;overflow:visible}
+.prize-floor{position:absolute;bottom:-6px;width:63%;height:20px;background:radial-gradient(ellipse,#7afce9b5,transparent 68%);filter:blur(6px)}
+.prize-star{position:absolute;font-size:21px;color:#fff5b0;text-shadow:0 0 13px #fff3b3;z-index:3;animation:prizeTwinkle 1.8s ease-in-out infinite}
+.prize-star.s1{top:12%;left:6%}.prize-star.s2{top:25%;right:4%;animation-delay:.45s}.prize-star.s3{bottom:17%;left:14%;animation-delay:.8s}.prize-star.s4{bottom:11%;right:11%;animation-delay:1.2s}
+.reward-name{color:#ebfff8;text-shadow:0 0 19px #a7fff1a3;font-weight:1000;letter-spacing:.14em;font-size:clamp(11px,2.7vw,15px);animation:rewardAppear .55s .25s both}
+.reward-name small{display:block;font-size:9px;font-weight:800;letter-spacing:.06em;color:#c4fff0;margin-top:4px;text-shadow:0 0 10px #73ffe666}
+.crystal-collection{width:min(336px,100%);display:flex;flex-direction:column;gap:8px;padding:9px 12px 10px;border:1px solid #b3f4e86b;border-radius:14px;background:linear-gradient(120deg,#184973bb,#172d59b5);box-shadow:inset 0 1px 1px #ffffff22;animation:rewardAppear .5s .38s both}
+.collection-counter{font-weight:900;color:#d4fff5;letter-spacing:.10em;font-size:11px}
+.collection-counter strong{font-size:15px;color:#ffe3a2;padding-left:6px}
+.crystal-slots{display:flex;justify-content:center;align-items:center;gap:clamp(5px,2vw,10px)}
+.crystal-slots span{font-size:clamp(13px,3.7vw,18px);color:#8f9bbb75;filter:drop-shadow(0 0 1px #647da3)}
+.crystal-slots span.owned{color:#c0fff0;filter:drop-shadow(0 0 9px #aaffdd) drop-shadow(0 0 5px #ffd98c);transform:scale(1.2)}
+.next-world{width:min(336px,100%);border:1px solid #ffdfad72;border-radius:14px;padding:11px 13px;display:flex;align-items:center;justify-content:center;gap:10px;font-size:13px;letter-spacing:.07em;font-weight:1000;color:#fff0cb;background:linear-gradient(110deg,#6f678cbd,#353d76e3);box-shadow:inset 0 1px 1px #ffebd64f;opacity:1!important;cursor:not-allowed!important;animation:rewardAppear .55s .55s both}
+.next-world span{font-size:10px;border:1px solid #fff0bf70;border-radius:7px;padding:4px 6px;background:#101b46c4;letter-spacing:.08em;color:#ffe7ae}
+.reward-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:7px;width:min(336px,100%);animation:rewardAppear .55s .7s both}
+.reward-actions .secondary{margin:0;flex:1 1 128px;min-height:42px;padding:9px 8px;color:#e8ffff;background:#16446caa;border-color:#88ffe26a;font-size:11px;letter-spacing:.04em}
+.reward-actions .secondary:active{transform:translateY(1px);background:#215c83}
+@keyframes victoryHalo{to{transform:rotate(360deg)}}
+@keyframes victoryPunch{0%{opacity:0;transform:scale(.35);filter:blur(9px)}65%{opacity:1;transform:scale(1.15);filter:blur(0)}100%{transform:scale(1)}}
+@keyframes victoryRise{from{opacity:0;transform:translateY(28px) scale(.82)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes victoryRing{0%{opacity:1;transform:scale(.06)}100%{opacity:0;transform:scale(1.45)}}
+@keyframes celebrateFall{0%{opacity:0;transform:translate3d(0,-25px,0) rotate(var(--rot))}7%{opacity:.95}90%{opacity:.9}100%{opacity:0;transform:translate3d(var(--dx),115svh,0) rotate(calc(var(--rot) + 740deg))}}
+@keyframes celebrateSpark{from{opacity:.1;transform:scale(.45)}to{opacity:1;transform:scale(1.65)}}
+@keyframes celebrateFlare{0%{opacity:1;transform:scale(.2)}100%{opacity:0;transform:scale(9)}}
+@keyframes rewardAppear{from{opacity:0;transform:translateY(14px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes prizeGlow{50%{opacity:.62;transform:scale(1.13)}}
+@keyframes prizeRotate{to{transform:rotate(360deg)}}
+@keyframes prizeEntrance{from{opacity:0;transform:translateY(70px) scale(.2) rotate(-75deg)}to{opacity:1;transform:translateY(0) scale(1) rotate(0deg)}}
+@keyframes prizeFloat{50%{transform:translateY(-9px) rotate(4deg)}}
+@keyframes prizeTwinkle{50%{opacity:.27;transform:scale(.6) rotate(25deg)}}
+@keyframes prizeRingBreath{50%{opacity:.5;transform:scaleY(.63) scale(1.1)}}
+@media(max-height:730px){.hero.celebrate-reward{gap:4px;padding:7px 4px}.prize-theatre{height:clamp(128px,26svh,195px)}.crystal-collection{gap:4px;padding:6px 10px}.next-world{padding:8px 12px}.reward-actions .secondary{min-height:36px}.hero .reward-title{font-size:clamp(22px,5.8vw,30px)}}
+@media(orientation:landscape) and (max-height:600px) and (min-width:650px){
+ .hero.celebrate-reward{width:min(570px,100%);max-height:calc(100svh - 12px);gap:3px;padding:4px;display:grid;grid-template-columns:minmax(145px,200px) minmax(250px,1fr);grid-template-rows:auto auto auto auto auto;column-gap:14px;align-items:center}
+ .reward-kicker,.hero .reward-title{grid-column:2;text-align:center}
+ .reward-kicker{grid-row:1;align-self:end}.hero .reward-title{grid-row:2;font-size:23px}
+ .prize-theatre{grid-column:1;grid-row:1 / span 5;align-self:center;height:min(215px,66svh);width:100%}
+ .reward-name{grid-column:2;grid-row:3;font-size:11px}
+ .crystal-collection{grid-column:2;grid-row:4;padding:5px 7px;gap:3px}
+ .next-world{grid-column:2;grid-row:5;padding:6px}
+ .reward-actions{grid-column:2;grid-row:6;gap:5px}
+ .reward-actions .secondary{min-height:32px;font-size:10px}
+ .hero.celebrate-victory{min-height:88svh;gap:5px}
+ .victory-score{padding:7px 25px}.victory-stars{font-size:25px}
+}
+@media(prefers-reduced-motion:reduce){.overlay.is-celebrating:before,.victory-headline,.victory-score,.victory-kicker,.victory-stars,.victory-halo span,.celebrate-particles span,.reward-kicker,.reward-title,.prize-crystal,.prize-rays,.prize-aura,.prize-ring,.prize-star,.reward-name,.crystal-collection,.next-world,.reward-actions{animation:none!important}}
+
+
+/* Fit the full keypad inside Android dynamic browser viewport, without hiding a row. */
+.key-zero{grid-column:span 2}
+.intro-vault-btn{font-size:11px;letter-spacing:.08em;color:#c7fff0;background:#163b64bf;border:1px solid #77f9e27d;border-radius:12px;padding:11px 14px;cursor:pointer;margin-top:11px;font-weight:900;display:flex;justify-content:center;gap:10px;align-items:center}
+.intro-vault-btn span{color:#ffdc9e;font-variant-numeric:tabular-nums}
+.vault-open-btn{width:min(336px,100%);min-height:46px;display:flex;align-items:center;justify-content:center;gap:10px;padding:8px 12px;background:linear-gradient(115deg,#0a6779cf,#18376ccc);color:#effff6;border:1px solid #c1ffe5b8;border-radius:14px;cursor:pointer;box-shadow:inset 0 1px 1px #fff9,0 0 20px #4effba28;font-size:11px;letter-spacing:.035em;font-weight:950}
+.vault-open-btn strong{font-size:12px;white-space:nowrap;color:#ffe6a5}
+.mini-crystal{width:17px;height:25px;background:linear-gradient(140deg,#f9ffc6,#57f3e5,#576ddf);clip-path:polygon(50% 0,90% 28%,82% 68%,50% 100%,18% 68%,10% 28%);filter:drop-shadow(0 0 10px #80fff4)}
+.crystal-vault{width:min(530px,100%);max-height:calc(100dvh - 24px);overflow-y:auto;scrollbar-width:thin;gap:8px;margin:auto;padding:13px 2px 14px;flex:none}
+.crystal-vault[hidden]{display:none!important}
+.vault-eyebrow{font-size:10px;font-weight:950;letter-spacing:.18em;color:#b4fff3}
+.crystal-vault .vault-title{font-size:clamp(24px,5.1vw,34px);line-height:1.06;margin:0;color:#ffecb9;text-shadow:0 0 19px #ffed9c88;letter-spacing:-.035em}
+.vault-progress{font-size:13px;font-weight:950;letter-spacing:.12em;color:#d4ffee;background:#183b6585;border:1px solid #9efde66e;padding:6px 15px;border-radius:50px}
+.vault-display{position:relative;isolation:isolate;width:min(490px,100%);background:radial-gradient(ellipse at 50% 46%,#2963a3ba,#0e1c49ec 76%),repeating-linear-gradient(60deg,#d4ffff10 0 1px,transparent 1px 33px);border:1px solid #c5fbe75a;border-radius:24px;padding:14px;box-shadow:0 11px 38px #0009,inset 0 0 45px #99e9ff12}
+.vault-constellation{position:absolute;inset:5%;pointer-events:none;background:radial-gradient(circle at 50% 50%,#b3fff450 0 1px,transparent 3px),radial-gradient(circle at 24% 25%,#ffe4aa66 0 1.5px,transparent 3px),radial-gradient(circle at 77% 30%,#a4eaff6a 0 1.5px,transparent 3px),repeating-conic-gradient(from 0deg at 50% 50%,transparent 0deg 38deg,#8ee5f31a 39deg 40deg,transparent 42deg 45deg)}
+.vault-grid{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.vault-card{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-width:0;min-height:112px;padding:7px 3px 5px;border:1px solid #749ab65c;border-radius:15px;background:linear-gradient(150deg,#25355dc9,#101c39d9);box-shadow:inset 0 1px 1px #ffffff22,0 3px 13px #020b23a8;overflow:hidden}
+.vault-card:before{content:"";position:absolute;inset:-22%;background:radial-gradient(circle,#78fff119 0%,transparent 57%);pointer-events:none}
+.vault-card.unlocked{border:1px solid #c4ffe2;box-shadow:0 0 18px #4ffff581,inset 0 0 22px #a3fff424;background:radial-gradient(circle at 50% 39%,#4daab66b,#123968e8 75%)}
+.vault-card-number{font-size:11px;letter-spacing:.1em;color:#a7b9d6;font-weight:950}
+.vault-card.unlocked .vault-card-number{color:#fff2b2}
+.vault-card-gem{width:clamp(32px,9vw,49px);height:clamp(45px,11vw,59px);display:flex;align-items:center;justify-content:center}
+.vault-card-gem svg{width:100%;height:100%;filter:grayscale(1) brightness(.34) saturate(.3);opacity:.52;transform:scale(.9) rotate(calc((var(--slot) - 4)*3deg))}
+.vault-card.unlocked .vault-card-gem svg{filter:drop-shadow(0 0 9px #c3ffdb) drop-shadow(0 0 20px #68fff9);opacity:1;transform:scale(1.04);animation:prizeFloat 3.4s ease-in-out infinite}
+.vault-card-name{font-size:10px;color:#cedef8;font-weight:900;letter-spacing:.02em;white-space:nowrap}
+.vault-card.unlocked .vault-card-name{color:#e7fff9}
+.vault-card-status{font-size:9px;font-weight:900;letter-spacing:.075em;color:#8396b2}
+.vault-card.unlocked .vault-card-status{color:#ffe9a7}
+.vault-description{font-size:12px!important;line-height:1.36!important;color:#bce9fa!important;margin:2px 0 5px!important;text-align:center;max-width:340px!important}
+.vault-back{min-width:178px;min-height:42px;border-radius:12px;border:1px solid #8bfce396;background:linear-gradient(125deg,#82fff0,#43ccdd);font-size:13px;font-weight:950;letter-spacing:.08em;color:#132b43;cursor:pointer;box-shadow:0 3px 10px #6cffed3c}
+@media (max-width:739px) and (orientation:portrait){
+ html,body{height:100%;min-height:0;overflow:hidden}
+ body{height:100dvh}
+ #shell{width:100%;height:100dvh;min-height:0;overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:39px 18px minmax(125px,1fr) minmax(60px,76px) 47px 15px minmax(164px,1.03fr);gap:4px;padding:max(4px,env(safe-area-inset-top)) clamp(8px,2.6vw,13px) max(4px,env(safe-area-inset-bottom));margin:0;border:0;border-radius:0}
+ .top{grid-row:1;grid-column:1;height:39px;min-height:0;gap:5px}
+ .logo{font-size:clamp(14px,4.2vw,17px)}
+ .world-pill{font-size:clamp(9px,2.7vw,11px);letter-spacing:.01em;padding:5px 8px;gap:5px}
+ .world-pill b{font-size:10px}
+ .top-actions{gap:4px}
+ .icon-btn{width:34px;height:34px;border-radius:10px}
+ .progress{grid-row:2;grid-column:1;min-height:0;gap:5px}
+ .progress-label{font-size:9px}
+ .gem{height:7px}
+ .scene{grid-row:3;grid-column:1;height:100%;min-height:0;border-radius:17px}
+ .scene:before{border-radius:16px}
+ .scene-heading{top:9px;left:11px}
+ .scene-heading strong{font-size:16px}
+ .scene-heading small{font-size:8px}
+ .scene-caption{left:11px;bottom:8px;font-size:9px}
+ .rush-hud{top:45px;right:9px;min-width:118px;padding:5px 7px}
+ .rush-line{font-size:8px}
+ .problem{grid-row:4;grid-column:1;min-height:0;padding:5px 10px;display:flex;flex-direction:column;justify-content:center;gap:0;border-radius:15px}
+ .problem-top{min-height:19px;gap:6px}
+ .problem-top .verb{font-size:10px}
+ .unit{font-size:9px;padding:4px 7px}
+ .number{font-size:clamp(31px,5.5dvh,42px);line-height:1.0}
+ .answer-wrap{grid-row:5;grid-column:1;min-height:0;gap:6px}
+ .answer-display{height:100%;min-height:0;border-radius:13px}
+ .answer-value{font-size:27px}
+ .answer-info{width:70px;border-radius:12px}
+ .note{grid-row:6;grid-column:1;height:15px;min-height:0;flex:none;font-size:11px;line-height:1}
+ .keypad{grid-row:7;grid-column:1;height:100%;min-height:0;max-height:none;grid-template-rows:repeat(4,minmax(0,1fr));gap:5px}
+ .key{min-height:0;border-radius:11px;font-size:clamp(20px,4.9dvh,27px)}
+ .key.action{font-size:21px}
+ .foot{display:none}
+ .overlay{position:fixed;inset:0;height:100dvh;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+ .hero.celebrate-reward{max-height:calc(100dvh - 12px)}
+}
+@media (max-width:739px) and (orientation:portrait) and (max-height:560px){
+ #shell{grid-template-rows:34px 15px minmax(102px,1fr) minmax(53px,63px) 42px 12px minmax(142px,.97fr);gap:3px}
+ .top{height:34px}
+ .scene-heading strong{font-size:14px}
+ .key{font-size:20px}
+ .note{height:12px;font-size:10px}
+}
+@media(orientation:landscape) and (max-height:600px) and (min-width:650px){
+ .vault-display{width:min(680px,100%);padding:6px 9px}
+ .crystal-vault{width:min(700px,98%);max-height:calc(100dvh - 12px);padding:5px 3px;gap:3px}
+ .crystal-vault .vault-title{font-size:22px}
+ .vault-grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+ .vault-card{min-height:93px;padding:4px}
+ .vault-card-gem{height:44px;width:35px}
+ .vault-description{margin:0!important;font-size:10px!important}
+ .vault-back{min-height:32px}
+}
+@media(prefers-reduced-motion:reduce){.vault-card.unlocked .vault-card-gem svg{animation:none!important}}
+
+:root{--bg:#230719;--cyan:#ffae4e;--violet:#f4516a;--gold:#ffe3a1;--stroke:rgba(255,159,109,.27)}
+body{background:radial-gradient(ellipse 100% 75% at 50% 0%,#802441,#3a0b23 66%,#200719)}
+#shell{background-color:#29091944}
+.logo span{color:#ffc161}.world-dot{background:#ffa632;box-shadow:0 0 12px #ff9d39}
+.world-pill{border-color:#ffad8978;background:#48112ba8}
+.scene{border-color:#ffad8085;background:#390d26}.scene-heading small,.scene-caption{color:#ffdfa7}
+.progress .gem.done{background:linear-gradient(90deg,#ff8d39,#ffe39c);box-shadow:0 0 10px #ff7a39}
+.problem{background:linear-gradient(145deg,#69213fe8,#341025f2);border-color:#e96b6673}
+.unit{background:linear-gradient(120deg,#ffe2a1,#ffb251);color:#562135}.number{color:#fff0d6}
+.answer-display{background:linear-gradient(180deg,#390c26,#4d1632);border-color:#ff966a}.answer-value{color:#fff0d7}
+.key{background:linear-gradient(180deg,#742442,#4b1531);border-color:#ff95666f}
+.key.action{background:linear-gradient(180deg,#7b302f,#57202a);color:#ffd6a0}.key-zero{grid-column:span 2}
+#rushFill{background:linear-gradient(90deg,#ff753b,#ffdc89)}.rush-hud{border-color:#ffad786e;background:#461127b5}
+.prize-crystal{filter:drop-shadow(0 0 21px #ffa63e)}
+</style>
+</head>
+<body>
+<main id="shell">
+  <header class="top">
+    <div class="logo">EDU<span>KASS</span></div>
+    <div class="world-pill"><span class="world-dot"></span> <b>02</b> / 09 · PÄIKESEKURU</div>
+    <div class="top-actions">
+      <button type="button" class="icon-btn" id="sound" aria-label="Lülita heli sisse või välja" title="Heli"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path class="sound-lines" d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/><path class="sound-muted" d="m16 9 5 6m0-6-5 6"/></svg></button>
+      <button type="button" class="icon-btn" id="restart" aria-label="Alusta uuesti" title="Alusta uuesti"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></button>
+    </div>
+  </header>
+  <div class="progress" aria-label="Edenemine"><span class="progress-label">TAKISTUSED</span><div class="gems" id="gems"></div><span class="progress-count" id="step">0/12</span></div>
+  <section class="scene" id="scene" aria-label="Helendavate saarte mängumaailm">
+    <canvas id="world" aria-hidden="true"></canvas>
+    <div class="scene-heading"><small>MAAILM 02</small><strong>Päikesekuru</strong></div>
+    <div class="rush-hud" id="rushHud"><div class="rush-line"><span id="rushLabel">TAKISTUSENI</span><strong id="rushClock">—</strong></div><div class="rush-track"><div id="rushFill"></div></div></div>
+    <div class="scene-caption" id="sceneCaption">KIIRUSTA! TAKISTUS LÄHENEB</div>
+    <div class="scene-glow" id="sceneGlow"></div>
+  </section>
+  <section class="problem" aria-live="polite"><div class="problem-top"><span class="verb">ÜMARDA</span><span class="unit" id="unit">KÜMNELISTENI</span></div><div class="number" id="number">—</div></section>
+  <div class="answer-wrap"><div class="answer-display" id="answerBox"><span class="answer-value empty" id="answerValue"></span></div><div class="answer-info"><small>ETAPP</small><strong id="answerStep">01 / 12</strong></div></div>
+  <div class="note" id="note" aria-live="polite">Sisesta vastus</div>
+  <section class="keypad" id="keypad" aria-label="Numbriklahvistik">
+    <button class="key" data-key="1">1</button><button class="key" data-key="2">2</button><button class="key" data-key="3">3</button>
+    <button class="key" data-key="4">4</button><button class="key" data-key="5">5</button><button class="key" data-key="6">6</button>
+    <button class="key" data-key="7">7</button><button class="key" data-key="8">8</button><button class="key" data-key="9">9</button>
+    <button class="key action" data-key="back" aria-label="Kustuta viimane number">⌫</button><button class="key key-zero" data-key="0">0</button>
+  </section>
+  <footer class="foot">EDUKASS · ÜMARDAMINE · PROTOTÜÜP 01</footer>
+</main>
+<div class="overlay" id="overlay" role="dialog" aria-modal="true">
+ <div class="hero" id="introHero">
+  <span class="eyebrow">EDUKASS · ÜMARDAMINE</span>
+  <div class="hero-mark" aria-hidden="true"><svg viewBox="0 0 128 128"><defs><linearGradient id="introG" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#fdffcf"/><stop offset=".48" stop-color="#83ffe9"/><stop offset="1" stop-color="#587af4"/></linearGradient></defs><circle cx="64" cy="64" r="56" stroke="#a1ffe6" stroke-opacity=".42" stroke-width="2" fill="none" stroke-dasharray="2 9"/><path d="M64 12 92 49 90 82 64 116 38 82 36 49Z" fill="url(#introG)" stroke="#e8fff9" stroke-width="3"/><path d="m64 12 0 104m-28-67 28 13 28-13M38 82l26-20 26 20" stroke="#147baf" stroke-opacity=".52" stroke-width="2" fill="none"/><path d="M64 12 36 49 64 62 92 49Z" fill="#f9ffe4" fill-opacity=".32"/><path d="M14 55h15M99 55h15M64 0v10M64 118v10" stroke="#a5fff1" stroke-width="2"/></svg></div>
+  <h1>Avasta<br>Päikesekuru</h1>
+  <p>Kristall kihutab ise edasi! Ümarda enne takistust: õige vastus avab hüppe, vale vastus või hilinemine tähendab kokkupõrget. Siis alustad otsast.</p>
+  <button class="primary" id="begin">ALUSTA MÄNGU <span aria-hidden="true">›</span></button>
+  <button class="intro-vault-btn" id="openVaultIntro" type="button">KRISTALLIDE VARAKAMBER <span id="introCollectionCount">0 / 9</span></button>
+ </div>
+ <div class="celebrate-particles" id="celebrateParticles" aria-hidden="true"></div>
+ <div class="hero celebrate-victory" id="victoryHero" hidden>
+  <div class="victory-halo" aria-hidden="true"><span></span><span></span><span></span></div>
+  <span class="victory-kicker">MAAILM 02 VÕIDETUD</span>
+  <h1 class="victory-headline">VÕRRATU!</h1>
+  <div class="victory-score"><strong>12 / 12</strong><span>TAKISTUST LÄBITUD</span></div>
+  <div class="victory-stars" aria-hidden="true">✦ <span>✦</span> ✦</div>
+ </div>
+ <div class="hero celebrate-reward" id="finishHero" hidden>
+  <span class="reward-kicker">MAAILM 02 · PÄIKESEKURU</span>
+  <h1 class="reward-title">KRISTALL SAADUD!</h1>
+  <div class="prize-theatre" aria-label="Päikesekuru kristall">
+   <div class="prize-rays" aria-hidden="true"></div>
+   <div class="prize-aura" aria-hidden="true"></div>
+   <div class="prize-ring prize-ring-one" aria-hidden="true"></div>
+   <div class="prize-ring prize-ring-two" aria-hidden="true"></div>
+   <div class="prize-star s1" aria-hidden="true">✦</div>
+   <div class="prize-star s2" aria-hidden="true">✧</div>
+   <div class="prize-star s3" aria-hidden="true">✦</div>
+   <div class="prize-star s4" aria-hidden="true">✦</div>
+   <div class="prize-crystal">
+    <svg viewBox="0 0 180 218" role="img" aria-label="Helendav Päikesekuru kristall">
+     <defs>
+      <linearGradient id="awardBody" x1=".12" y1="0" x2=".86" y2="1"><stop stop-color="#fff8b7"/><stop offset=".22" stop-color="#f0fff7"/><stop offset=".48" stop-color="#8cffe3"/><stop offset=".78" stop-color="#55bcec"/><stop offset="1" stop-color="#7856e7"/></linearGradient>
+      <linearGradient id="awardLeft" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#e5ffff"/><stop offset=".6" stop-color="#66dee4"/><stop offset="1" stop-color="#3179be"/></linearGradient>
+      <linearGradient id="awardRight" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f6fff2"/><stop offset=".45" stop-color="#75f5dd"/><stop offset="1" stop-color="#6357cf"/></linearGradient>
+      <linearGradient id="awardCore" x1="0" y1="0" x2=".2" y2="1"><stop stop-color="#fffde6"/><stop offset=".5" stop-color="#b9ffe4"/><stop offset="1" stop-color="#50c8db"/></linearGradient>
+     </defs>
+     <path d="M90 4 136 43 162 99 128 160 90 212 52 160 18 99 44 43Z" fill="url(#awardBody)" stroke="#f5ffdf" stroke-width="3.5"/>
+     <path d="M90 4 44 43 18 99 90 88Z" fill="url(#awardLeft)"/>
+     <path d="M90 4 136 43 162 99 90 88Z" fill="#cefff0" opacity=".83"/>
+     <path d="M18 99 52 160 90 212 90 88Z" fill="#3d9ad3" opacity=".72"/>
+     <path d="M162 99 128 160 90 212 90 88Z" fill="url(#awardRight)" opacity=".95"/>
+     <path d="M44 43 90 4 136 43 90 88Z" fill="url(#awardCore)" stroke="#fffbd6" stroke-width="1.2"/>
+     <path d="M90 88V212M18 99l72-11 72 11M52 160l38-72 38 72M44 43l46 45 46-45" fill="none" stroke="#f7ffff" stroke-opacity=".58" stroke-width="1.8"/>
+     <path d="M90 25 101 63 91 84 78 63Z" fill="#fffddd" opacity=".76"/>
+     <path d="M37 100 59 94 83 104 58 137Z" fill="#fff" opacity=".28"/>
+     <path d="M110 104 145 102 123 139 98 172Z" fill="#d5fff3" opacity=".30"/>
+    </svg>
+   </div>
+   <div class="prize-floor" aria-hidden="true"></div>
+  </div>
+  <div class="reward-name">PÄIKESEKURU KRISTALL<small>SA SAID PÄIKESEKURU KRISTALLI!</small></div>
+  <button class="vault-open-btn" id="openVaultReward" type="button"><span class="mini-crystal" aria-hidden="true"></span><span>AVA KRISTALLIDE VARAKAMBER</span><strong id="rewardCollectionCount">1 / 9</strong></button>
+  <button class="next-world" id="nextWorld" type="button" disabled aria-label="Järgmine maailm tuleb varsti">JÄRGMINE MAAILM <span>VARSTI</span></button>
+  <div class="reward-actions">
+   <button class="secondary" id="again" type="button">MÄNGI UUESTI ↻</button>
+  </div>
+ </div>
+ <div class="hero crystal-vault" id="vaultHero" hidden>
+  <span class="vault-eyebrow">EDUKASS · KRISTALLIDE KOGU</span>
+  <h1 class="vault-title">KRISTALLIDE VARAKAMBER</h1>
+  <div class="vault-progress" id="vaultProgress" aria-live="polite">KOGUTUD 0 / 9</div>
+  <div class="vault-display">
+   <div class="vault-constellation" aria-hidden="true"></div>
+   <div class="vault-grid" id="vaultGrid" aria-label="Üheksa kristalli"></div>
+  </div>
+  <p class="vault-description" id="vaultDescription">Läbi maailmad ja kogu kõik üheksa kristalli!</p>
+  <button class="vault-back" id="closeVault" type="button">TAGASI</button>
+ </div>
+ <div class="hero" id="crashHero" hidden>
+  <span class="fail-kicker">MAAILM 02 · KATSE LÄBI</span>
+  <div class="fail-icon" aria-hidden="true">✕</div>
+  <h1>Kokkupõrge!</h1>
+  <p id="crashDetail">Takistus tabas kristalli.</p>
+  <div class="fail-score">LÄBITUD TAKISTUSI: <strong id="crashCount">0 / 8</strong></div>
+  <p class="fail-explain">Kui eksid või jääd hiljaks, algab tase uuesti.</p>
+  <button class="primary" id="retry">PROOVI UUESTI ↻</button>
+ </div>
+</div>
+<script>(()=>{
+'use strict';
+const $=id=>document.getElementById(id);
+const canvas=$('world'),ctx=canvas.getContext('2d',{alpha:false});
+const reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const NODE=580, ORIGIN=108, TOTAL=12;
+const SPEED=64.5, FINAL_SPEED=56.25, TURBO_SPEED=255, TURBO_ARC_STRETCH=1.4; // 25% slower
+const ORIGINAL_SPEED=86, ORIGINAL_FINAL_SPEED=75; // maintain original physical jump curves
+const JUMP_V=240, JUMP_G=200, JUMP_TOTAL=2*JUMP_V/JUMP_G;
+const HAZARD_HALF_WIDTH=58, CLEARANCE=76; // consistent with the rendered spike and crystal hitboxes
+const COLORS={cyan:'#ffc26e',cyanB:'#ffa34b',violet:'#ff6879',pink:'#ff8a55',gold:'#ffe29b',white:'#f1fff9'};
+const names={10:'KÜMNELISTENI',100:'SAJALISTENI'};
+const HAZARD_TYPES=['fangs','rotor','tri-spikes','lightning','prism'];
+const templates=[
+{unit:10,kind:'two-tens'},{unit:10,kind:'two-tens'},
+{unit:10,kind:'three-tens'},{unit:100,kind:'three-hundreds'},
+{unit:10,kind:'three-tens'},{unit:100,kind:'three-hundreds'},
+{unit:100,kind:'three-hundreds'},{unit:10,kind:'three-tens'},
+{unit:100,kind:'three-hundreds'},{unit:100,kind:'four-hundreds'},
+{unit:10,kind:'three-tens'},{unit:100,kind:'four-hundreds'}
+];
+let tasks=[],step=0,typed='',status='intro',solved=false,crashStart=0,crashReason='',crashElapsed=0,playElapsed=0;
+let attempts=0,ceremonyToken=0,victoryStage='hidden',vaultReturn='intro';
+let playerX=ORIGIN,clock=0,lastFrame=0,canvasW=0,canvasH=0,dpr=1;
+let jumping=false,jumpAge=0,jumpHeight=0,jumpStarted=false,jumpCount=0,wrongLocked=false,turboActive=false,jumpScale=1;
+let soundOn=false,audio=null,fxGlow=0,fxBurst=0,shake=0,toastUntil=0,rewardUnlocked=false;
+let camera=ORIGIN-110,particleTrail=[],specks=[],stars=[],ambient=[],latestAnswer='',obstacleOffset=0;
+function clamp(v,lo,hi){return Math.max(lo,Math.min(hi,v))}
+function lerp(a,b,t){return a+(b-a)*t}
+function easeOut(t){return 1-Math.pow(1-t,3)}
+function easeBoth(t){return t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2}
+function random(n){return Math.floor(Math.random()*n)}
+function format(n){return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,' ')}
+
+const VAULT_STORAGE='edukass-neon-crystal-vault-v1';
+function collectedCrystals(){
+ let ids=[];try{
+  const parsed=JSON.parse(localStorage.getItem(VAULT_STORAGE)||'[]');
+  if(Array.isArray(parsed))ids=parsed.filter(n=>Number.isInteger(n)&&n>=1&&n<=9);
+  if(localStorage.getItem('edukass-neon-world1-crystal-unlocked')==='1'||localStorage.getItem('edukass-neon-world1-finished')==='1')ids.push(1);
+  if(localStorage.getItem('edukass-neon-world2-crystal-unlocked')==='1'||localStorage.getItem('edukass-neon-world2-finished')==='1')ids.push(2);
+ }catch(e){}
+ return [...new Set(ids)].sort((a,b)=>a-b);
+}
+function awardCrystal(number){
+ const ids=collectedCrystals();
+ if(!ids.includes(number))ids.push(number);
+ try{
+  localStorage.setItem(VAULT_STORAGE,JSON.stringify(ids.sort((a,b)=>a-b)));
+  if(number===2)localStorage.setItem('edukass-neon-world2-crystal-unlocked','1');
+ }catch(e){}
+ updateCrystalVault();
+}
+function updateCrystalVault(){
+ const ids=collectedCrystals(),count=ids.length;
+ $('introCollectionCount').textContent=count+' / 9';
+ $('rewardCollectionCount').textContent=count+' / 9';
+ $('vaultProgress').textContent='KOGUTUD '+count+' / 9';
+ const views=Array.from({length:9},(_,k)=>{
+  const id=k+1,got=ids.includes(id),name=id===1?'VALGUSSAAR':id===2?'PÄIKESEKURU':'MAAILM '+String(id).padStart(2,'0');
+  const title=got?(id===1?'VALGUSSAARE KRISTALL':id===2?'PÄIKESEKURU KRISTALL':'KRISTALL '+id):'LUKUS';
+  const shapeId='vaultShape'+id;
+  return '<div class="vault-card '+(got?'unlocked':'locked')+'" style="--slot:'+(id-1)+'" aria-label="'+name+': '+title+'">'
+    +'<div class="vault-card-number">'+String(id).padStart(2,'0')+'</div>'
+    +'<div class="vault-card-gem"><svg viewBox="0 0 82 104" aria-hidden="true">'
+    +'<defs><linearGradient id="'+shapeId+'" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fffdd0"/><stop offset=".3" stop-color="#9ffff0"/><stop offset=".72" stop-color="#4aa5e6"/><stop offset="1" stop-color="#7858df"/></linearGradient></defs>'
+    +'<path d="M41 3 64 20 77 48 62 76 41 101 20 76 5 48 18 20Z" fill="url(#'+shapeId+')" stroke="#eafff0" stroke-width="2"/>'
+    +'<path d="M41 3 18 20 5 48 41 44Z" fill="#efffff" opacity=".48"/>'
+    +'<path d="M41 44 77 48 62 76 41 101Z" fill="#267abf" opacity=".48"/>'
+    +'<path d="M18 20 41 44 64 20M5 48l36-4 36 4M20 76l21-32 21 32M41 3v98" stroke="#ffffff" stroke-opacity=".52" fill="none" stroke-width="1.5"/>'
+    +'</svg></div>'
+    +'<div class="vault-card-name">'+name+'</div>'
+    +'<div class="vault-card-status">'+(got?'KOGUTUD':'LUKUS')+'</div></div>';
+ });
+ $('vaultGrid').innerHTML=views.join('');
+ $('vaultDescription').textContent=count===9?'Kõik üheksa kristalli on kogutud!':count===0?'Läbi maailmad ja kogu kõik üheksa kristalli!':'Sul on '+count+' kristall'+(count===1?'':'i')+'! Järgmine maailm toob uue auhinna.';
+}
+function openCrystalVault(from){
+ vaultReturn=from==='finish'?'finish':'intro';
+ updateCrystalVault();
+ overlay('vault');
+}
+function closeCrystalVault(){overlay(vaultReturn)}
+
+function numberPool(t){
+ const lo=t.kind==='two-tens'?11:t.kind==='four-hundreds'?1001:101,hi=t.kind==='two-tens'?99:t.kind==='four-hundreds'?3999:999,nums=[];
+ for(let n=lo;n<=hi;n++)if(n%t.unit!==0)nums.push(n);
+ return nums;
+}
+function createTasks(){
+ let history=[];
+ try{const old=JSON.parse(localStorage.getItem('edukass-neon-world2-history-v1')||'[]');if(Array.isArray(old))history=old.filter(Array.isArray).slice(-8)}catch(e){}
+ const recentlyUsed=new Set(history.slice(-3).flat());
+ const usedSignatures=new Set(history.map(h=>h.join('/')));
+ let result=[];
+ for(let attempt=0;attempt<100;attempt++){
+  const used=new Set(),answers=new Set();
+  result=templates.map(t=>{
+   const pool=numberPool(t);
+   let options=pool.filter(n=>!used.has(n)&&!recentlyUsed.has(n)&&!answers.has(Math.floor((n+t.unit/2)/t.unit)*t.unit));
+   if(!options.length)options=pool.filter(n=>!used.has(n)&&!recentlyUsed.has(n));
+   if(!options.length)options=pool.filter(n=>!used.has(n));
+   const v=options[random(options.length)];
+   if(v===undefined)throw Error('Empty rounding pool');
+   const answer=Math.floor((v+t.unit/2)/t.unit)*t.unit;
+   used.add(v);answers.add(answer);
+   return {v,unit:t.unit,answer,kind:t.kind};
+  });
+  if(!usedSignatures.has(result.map(t=>t.v).join('/')))break;
+ }
+ try{history.push(result.map(t=>t.v));localStorage.setItem('edukass-neon-world2-history-v1',JSON.stringify(history.slice(-8)))}catch(e){}
+ return result;
+}
+function validateTasks(ts){
+ if(ts.length!==TOTAL)throw Error('World 2 must have twelve tasks');
+ const seen=new Set();
+ ts.forEach((t,i)=>{if(seen.has(t.v))throw Error('duplicate number');seen.add(t.v);
+ if(t.answer!==Math.floor((t.v+t.unit/2)/t.unit)*t.unit)throw Error('rounding incorrect '+i);
+ if(i<2&&(t.unit!==10||t.v>99||t.v<10))throw Error('early progression');});
+ if(ts.filter(t=>t.unit===100).length<5)throw Error('hundreds must be practiced');
+ return true;
+}
+function updateGems(){
+ $('gems').innerHTML=Array.from({length:TOTAL},(_,i)=>`<span class="gem ${i<step?'done':i===step&&status!=='finished'?'now':''}" aria-hidden="true"></span>`).join('');
+ $('step').textContent=`${step}/${TOTAL}`;
+ $('answerStep').textContent=step<TOTAL?`${String(step+1).padStart(2,'0')} / 12`:'08 / 12';
+}
+function updateAnswer(){
+ $('answerValue').textContent=typed?format(typed):'';
+ $('answerValue').classList.toggle('empty',!typed);
+}
+function note(t='',kind=''){$('note').textContent=t;$('note').className='note '+kind}
+function showTask(){
+ if(step>=TOTAL)return;
+ const t=tasks[step];
+ $('unit').textContent=names[t.unit];$('number').textContent=format(t.v);
+ $('number').classList.remove('bump');void $('number').offsetWidth;$('number').classList.add('bump');
+ typed='';solved=false;jumpStarted=false;wrongLocked=false;turboActive=false;updateAnswer();$('answerBox').classList.remove('wrong','success');
+ note('Vasta enne takistust!');updateGems();
+ $('sceneCaption').textContent=step===TOTAL-1?'VIIMANE TAKISTUS · ÄRA PEATU':'KIIRUSTA! TAKISTUS LÄHENEB';
+}
+function overlay(type){
+ $('overlay').classList.remove('hidden');$('overlay').setAttribute('aria-hidden','false');
+ $('overlay').classList.toggle('is-celebrating',type==='victory'||type==='finish'||type==='vault');
+ $('introHero').hidden=type!=='intro';
+ $('victoryHero').hidden=type!=='victory';
+ $('finishHero').hidden=type!=='finish';
+ $('vaultHero').hidden=type!=='vault';
+ $('crashHero').hidden=type!=='crash';
+ victoryStage=type;
+}
+function hideOverlay(){
+ $('overlay').classList.add('hidden');
+ $('overlay').classList.remove('is-celebrating');
+ $('overlay').setAttribute('aria-hidden','true');
+ victoryStage='hidden';
+}
+function makeConfetti(){
+ if(reduced){$('celebrateParticles').innerHTML='';return}
+ const colors=['#8effe9','#ffe99e','#c8a5ff','#ffffff','#77bcff','#ff9bcf'];
+ const list=[];
+ for(let i=0;i<56;i++){
+  const x=(i*79.7+Math.random()*11)%100;
+  const delay=(i%12)*.085;
+  const dur=2.1+(i%7)*.21;
+  const w=4+i%5,h=8+i%8;
+  const angle=30+i*13%180,dx=(i%2?-1:1)*(24+i%9*9);
+  list.push('<span class="confetti" style="--x:'+x+'%;--delay:'+delay+'s;--duration:'+dur+'s;--w:'+w+'px;--h:'+h+'px;--col:'+colors[i%colors.length]+';--rot:'+angle+'deg;--dx:'+dx+'px"></span>');
+ }
+ for(let i=0;i<20;i++){
+  const x=6+(i*31.9)%88,y=11+(i*28.7)%76;
+  list.push('<span class="spark" style="--x:'+x+'%;--y:'+y+'%;--size:'+(3+i%5)+'px;--duration:'+(1.2+(i%6)*.29)+'s;--delay:'+(i%7)*.22+'s"></span>');
+ }
+ for(let i=0;i<4;i++){
+  const x=22+i*19,y=20+(i%2)*50;
+  list.push('<span class="flare" style="--x:'+x+'%;--y:'+y+'%;--delay:'+(i*.45)+'s"></span>');
+ }
+ $('celebrateParticles').innerHTML=list.join('');
+}
+function speedForStep(){return step===TOTAL-1?FINAL_SPEED:SPEED}
+function jumpReferenceSpeed(){return step===TOTAL-1?ORIGINAL_FINAL_SPEED:ORIGINAL_SPEED}
+function obstacleKind(i){return HAZARD_TYPES[(i-1+obstacleOffset)%HAZARD_TYPES.length]}
+function distanceToObstacle(){return ORIGIN+NODE*(step+1)-playerX}
+function hazardScale(){return clamp(canvasH/310,.42,1)}
+function effectiveSpeed(){
+ if(wrongLocked)return Math.max(speedForStep()*1.65,distanceToObstacle()/1.12);
+ return solved&&turboActive?TURBO_SPEED:speedForStep();
+}
+function updateRushHUD(){
+ const secs=Math.max(0,distanceToObstacle()/effectiveSpeed());
+ $('rushClock').textContent=status==='running' ? `${secs.toFixed(1)} s` : status==='crashing'||status==='crashed'?'0.0 s':'—';
+ $('rushFill').style.width= `${clamp(distanceToObstacle()/NODE,0,1)*100}%`;
+ $('rushHud').classList.toggle('danger',secs<2&&!solved&&status==='running');
+ $('rushHud').classList.toggle('safe',solved&&status==='running');
+ $('rushLabel').textContent=wrongLocked?'VALE VASTUS':solved?(turboActive?'TURBO · HÜPE VALMIS':'HÜPE VALMIS'):status==='crashing'||status==='crashed'?'KOKKUPÕRGE!':'TAKISTUSENI';
+}
+function setSound(){soundOn=!soundOn;$('sound').classList.toggle('enabled',soundOn);$('sound').setAttribute('aria-label',soundOn?'Lülita heli välja':'Lülita heli sisse');if(soundOn)tone(510,.07,'triangle',.035)}
+function tone(frequency,duration,type='sine',volume=.045,delay=0){
+ if(!soundOn)return;
+ try{audio=audio||new(window.AudioContext||window.webkitAudioContext)();if(audio.state==='suspended')audio.resume();
+ const t=audio.currentTime+delay,o=audio.createOscillator(),g=audio.createGain();o.type=type;o.frequency.setValueAtTime(frequency,t);o.frequency.exponentialRampToValueAtTime(frequency*.83,t+duration);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(Math.max(.0002,volume),t+.012);g.gain.exponentialRampToValueAtTime(.0001,t+duration);o.connect(g);g.connect(audio.destination);o.start(t);o.stop(t+duration+.012);}catch(e){}
+}
+function winSound(){
+ // Short original synthesized award fanfare; only plays when the user enabled audio.
+ tone(392,.18,'triangle',.045);
+ tone(523,.18,'triangle',.047,.11);
+ tone(659,.22,'triangle',.043,.23);
+ tone(784,.27,'triangle',.042,.38);
+ tone(1046,.41,'sine',.037,.56);
+ tone(1318,.46,'sine',.022,.67);
+}
+function startGame(retry=false){
+ ceremonyToken++; // cancel delayed celebration steps if the player restarts
+ tasks=createTasks();validateTasks(tasks);obstacleOffset=random(HAZARD_TYPES.length);
+ attempts++;step=0;typed='';solved=false;playerX=ORIGIN;camera=playerX-canvasW*.30;
+ jumping=false;jumpAge=0;jumpHeight=0;jumpStarted=false;wrongLocked=false;turboActive=false;jumpScale=1;jumpCount=0;
+ particleTrail=[];status='running';crashElapsed=0;playElapsed=0;rewardUnlocked=false;fxGlow=0;fxBurst=0;shake=0;
+ hideOverlay();showTask();updateRushHUD();
+ // Earned crystal is permanent: replay must never remove the collection record.
+}
+function lose(reason){
+ if(status!=='running')return;
+ status='crashing';crashReason=reason;crashElapsed=0;fxGlow=.4;shake=18;
+ $('answerBox').classList.remove('success');$('answerBox').classList.add('wrong');
+ note(reason==='wrong'?'VALE VASTUS! KOKKUPÕRGE!':'AEG SAI OTSA! KOKKUPÕRGE!','bad');
+ $('sceneCaption').textContent='KOKKUPÕRGE!';
+ tone(160,.35,'sawtooth',.065);
+ $('crashCount').textContent=`${step} / ${TOTAL}`;
+ $('crashDetail').textContent=reason==='wrong'?'Vale vastus! Kristall põrkas vastu takistust.':'Takistus jõudis kohale enne õiget vastust.';
+ updateRushHUD();
+}
+function onKey(key){
+ if(status!=='running'||solved||wrongLocked)return;
+ if(key==='back'){typed=typed.slice(0,-1);updateAnswer();return}
+ if(!/^\d$/.test(key)||typed.length>=8)return;
+ if(!typed&&key==='0')return;
+ typed+=key;updateAnswer();
+ const answer=String(tasks[step].answer);
+ if(typed===answer)check();
+ else if(typed.length>=answer.length)check();
+}
+function check(){
+ if(status!=='running'||solved||wrongLocked||!typed)return;
+ if(Number(typed)===tasks[step].answer){
+  solved=true;turboActive=distanceToObstacle()>180; // late correct answers keep the original safe jump speed
+  $('answerBox').classList.add('success');note(turboActive?'ÕIGE! TURBO!':'ÕIGE! HÜPE VALMIS','ok');
+  fxGlow=.6;tone(600,.14,'sine',.04);tone(810,.12,'triangle',.022,.08);
+  $('sceneCaption').textContent=turboActive?'TURBO · KRISTALL KIHUTAB EDASI':'HÜPE VALMIS · HÜPPA ÜLE TAKISTUSE';updateRushHUD();return;
+ }
+ if(typed.length<String(tasks[step].answer).length)return;
+ wrongLocked=true; // The obstacle remains lethal; the crystal physically runs into it.
+ $('answerBox').classList.add('wrong');note('VALE VASTUS! TAKISTUS LÄHENEB!','bad');
+ $('sceneCaption').textContent='VALE VASTUS · KOKKUPÕRGE LÄHENEB';
+ shake=5;tone(230,.15,'sawtooth',.04);updateRushHUD();
+}
+function finish(){
+ status='finished';step=TOTAL;solved=false;rewardUnlocked=true;
+ updateGems();updateRushHUD();
+ $('answerBox').classList.remove('success');
+ note('Kristall saadud!','ok');fxBurst=1;spawnBurst(playerX,96);winSound();
+ try{localStorage.setItem('edukass-neon-world2-finished','1')}catch(e){}
+ awardCrystal(2);
+ const token=++ceremonyToken;
+ makeConfetti();
+ if(reduced){overlay('finish');return}
+ // First show the in-world flash, then the victory burst, then award the crystal.
+ setTimeout(()=>{if(status==='finished'&&token===ceremonyToken)overlay('victory')},180);
+ setTimeout(()=>{if(status==='finished'&&token===ceremonyToken)overlay('finish')},1670);
+}
+function reset(){ceremonyToken++;status='intro';step=0;typed='';solved=false;playerX=ORIGIN;particleTrail=[];jumping=false;jumpAge=0;jumpHeight=0;jumpStarted=false;wrongLocked=false;turboActive=false;jumpScale=1;jumpCount=0;updateGems();updateAnswer();note('Vasta enne takistust!');updateRushHUD();overlay('intro')}
+function advance(dt){
+ const delta=clamp(dt,0,100);
+ if(status==='running'){
+  const dtSeconds=delta/1000;
+  const gate=ORIGIN+NODE*(step+1);
+  const approach=gate-playerX;
+  // A correct answer arms one automatic jump. It starts at the same point relative
+  // to the obstacle at every pace, then follows a genuine ballistic arc.
+  const takeoffDistance=jumpReferenceSpeed()*JUMP_TOTAL/2*(turboActive?TURBO_ARC_STRETCH:1);
+  if(solved&&!jumpStarted&&!jumping&&approach<=takeoffDistance){
+   jumping=true;jumpStarted=true;jumpAge=0;jumpHeight=0;jumpCount++;
+   // Longer world-space flight during turbo keeps both ends of the solid hazard
+   // within a visible, physical arc instead of skipping the collision hitbox.
+   jumpScale=(effectiveSpeed()/jumpReferenceSpeed())/(turboActive?TURBO_ARC_STRETCH:1);
+   tone(420,.10,'triangle',.035);
+  }
+  if(jumping){
+   jumpAge+=dtSeconds;
+   jumpHeight=Math.max(0,JUMP_V*jumpScale*jumpAge-.5*JUMP_G*jumpScale*jumpScale*jumpAge*jumpAge);
+   if(jumpAge>=JUMP_TOTAL/jumpScale){jumping=false;jumpAge=0;jumpHeight=0}
+  }
+  playerX+=effectiveSpeed()*dtSeconds;
+  playElapsed+=delta;
+  // No gate toggling or teleport: the hitbox must actually clear the spikes.
+  const inHazard=Math.abs(gate-playerX)<=HAZARD_HALF_WIDTH*hazardScale();
+  if(inHazard&&jumpHeight<CLEARANCE){
+   lose(wrongLocked?'wrong':'timeout');
+  }else if(playerX>=gate+HAZARD_HALF_WIDTH*hazardScale()+8){
+   step++;
+   if(step>=TOTAL)finish();else{showTask();winSound()}
+  }
+  if(status==='running')updateRushHUD();
+ }
+ if(status==='crashing'){
+  const previousCrashElapsed=crashElapsed;
+  crashElapsed+=delta;shake=Math.max(0,18*(1-crashElapsed/650));
+  if(previousCrashElapsed<190&&crashElapsed>=190)spawnBurst(playerX,65);
+  if(crashElapsed>=650){status='crashed';overlay('crash')}
+ }
+}
+const skyStars=Array.from({length:125},(_,i)=>({x:Math.random(),y:Math.random()*.72,r:.45+Math.random()*1.15,a:.2+Math.random()*.7,p:Math.random()*6.28,layer:Math.random()}));
+const snowStars=Array.from({length:22},()=>({x:Math.random(),y:Math.random(),size:.4+Math.random()*1.6,offset:Math.random()*6.28}));
+function resize(){
+ const r=canvas.getBoundingClientRect();if(r.width<10||r.height<10)return;
+ dpr=Math.min(window.devicePixelRatio||1,2);canvasW=r.width;canvasH=r.height;
+ const width=Math.round(canvasW*dpr),height=Math.round(canvasH*dpr);
+ if(canvas.width!==width||canvas.height!==height){canvas.width=width;canvas.height=height}
+ ctx.setTransform(dpr,0,0,dpr,0,0);
+}
+function line(points,stroke,width=1,alpha=1){
+ ctx.globalAlpha=alpha;ctx.strokeStyle=stroke;ctx.lineWidth=width;ctx.beginPath();points.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.stroke();ctx.globalAlpha=1;
+}
+function polygon(points,fill,stroke='',lw=1){ctx.beginPath();points.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.closePath();if(fill){ctx.fillStyle=fill;ctx.fill()}if(stroke){ctx.lineWidth=lw;ctx.strokeStyle=stroke;ctx.stroke()}}
+function circle(x,y,r,fill){ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fillStyle=fill;ctx.fill()}
+function glowCircle(x,y,r,color1,color2='transparent'){
+ if(r<=0)return;const g=ctx.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,color1);g.addColorStop(1,color2);ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();
+}
+function paintBackground(t){
+ const w=canvasW,h=canvasH,g=ctx.createLinearGradient(0,0,0,h);
+ g.addColorStop(0,'#2b081c');g.addColorStop(.5,'#771a35');g.addColorStop(1,'#210719');
+ ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+ const x=w*.65-camera*.002,y=h*.4;
+ glowCircle(x,y,w*.48,'#ff982c3f');circle(x,y,Math.min(w*.20,h*.32),'#ee6135');circle(x,y,Math.min(w*.17,h*.27),'#ffb94f');
+ for(let layer=0;layer<3;layer++){
+  const y0=h*(.61+layer*.08),offset=camera*(.01+layer*.045);
+  ctx.beginPath();ctx.moveTo(-15,h);
+  for(let n=-3;n<w/50+5;n++){const x0=n*50-offset%50;ctx.lineTo(x0,y0+(n%3)*15);ctx.lineTo(x0+24,y0-28-(n%4)*12)}
+  ctx.lineTo(w+15,h);ctx.closePath();ctx.fillStyle=['#771936','#52112b','#390b23'][layer];ctx.fill();
+ }
+ for(let k=0;k<24;k++){let x0=((k*83-camera*.12)%(w+50)+w+50)%(w+50);circle(x0,(k*39)%Math.max(25,h*.54),k%3+1,'#ffd893')}
+}
+function drawTrack(t){
+ const w=canvasW,h=canvasH,y=h*.76;
+ const grad=ctx.createLinearGradient(0,y-4,0,h);grad.addColorStop(0,'#72213d');grad.addColorStop(.35,'#4f152e');grad.addColorStop(1,'#28091b');
+ ctx.fillStyle=grad;ctx.fillRect(0,y,w,h-y);
+ glowCircle(w*.5,y,w*.9,'#2ffff01a');
+ ctx.fillStyle='#5c1734';ctx.fillRect(0,y+6,w,6);
+ ctx.fillStyle='#ffaf4d';ctx.fillRect(0,y,w,3);
+ ctx.fillStyle='#ff9a4c85';ctx.fillRect(0,y+17,w,1);
+ // Track tiles and light patterns move continuously: always a runner, never a static station.
+ const pitch=94,start=Math.floor(camera/pitch)-1,end=Math.ceil((camera+w)/pitch)+1;
+ for(let n=start;n<=end;n++){
+  let x=n*pitch-camera;
+  polygon([[x+7,y+15],[x+75,y+15],[x+65,y+25],[x-3,y+25]],n%2?'#22446c':'#1a3864','#8afae33d',.8);
+  line([[x+14,y+37],[x+47,y+37]],'#4e92c8',2,.35);
+  polygon([[x+20,y+3],[x+27,y+3],[x+34,y+11],[x+27,y+11]],'#68e4dd69');
+ }
+ // Camera streaks add arcade speed without shortening mathematical thinking time.
+ ctx.save();ctx.globalCompositeOperation='lighter';
+ for(let i=0;i<11;i++){
+  let x=(i*79-camera*(.85+i%3*.2))%(w+100);if(x<0)x+=w+100;
+  const yy=y*.63+i*9%Math.max(30,y*.29);const alpha=.08+Math.sin(t*.003+i)*.025;
+  line([[x-62,yy],[x,yy]],i%3?'#5deff2':'#bd9eff',i%4?1:2,alpha);
+ }
+ ctx.restore();
+}
+function drawGate(worldX,i,t){
+ const x=worldX-camera,ground=canvasH*.76;
+ if(x<-130||x>canvasW+130)return;
+ const past=i<=step,danger=i===step+1&&!solved&&status==='running',type=obstacleKind(i);
+ ctx.save();ctx.translate(x,ground);
+ ctx.scale((1+Math.sin(t*.008+i)*.012)*hazardScale(),(1+Math.sin(t*.008+i)*.012)*hazardScale());
+ ctx.globalAlpha=past?.57:1;
+ glowCircle(0,-36,77,past?'#35fbe121':'#ff5aaf35');
+ const col=past?'#225b70':'#a83147',rim=past?'#93ffe8':'#ffd485';
+ if(type==='fangs'){
+  polygon([[-43,0],[-36,-41],[-20,-79],[-3,-40],[-9,0]],col,rim,2);
+  polygon([[9,0],[3,-40],[20,-79],[36,-41],[43,0]],col,rim,2);
+  polygon([[-26,-71],[-20,-86],[-13,-66],[-20,-71]],past?'#adf3e4':'#ffd1ee');
+  polygon([[13,-66],[20,-86],[26,-71],[20,-71]],past?'#adf3e4':'#ffd1ee');
+  polygon([[-10,-36],[0,-60],[10,-36],[0,-13]],past?'#64c5bd':'#ff6aab',rim,1.4);
+ }else if(type==='rotor'){
+  // Rotating crystalline saw mounted on a low pivot.
+  ctx.save();ctx.translate(0,-38);ctx.rotate(t*.0012+(i*.7));
+  const teeth=[];
+  for(let n=0;n<24;n++){const a=n*Math.PI/12-Math.PI/2,rad=n%2===0?39:29;teeth.push([Math.cos(a)*rad,Math.sin(a)*rad]);}
+  polygon(teeth,col,rim,2);
+  circle(0,0,19,past?'#7fdccf':'#ffb1da');
+  polygon([[0,-15],[14,0],[0,15],[-14,0]],past?'#245977':'#473974','#ecfffa',1.5);
+  circle(0,0,5,'#ebfff9');ctx.restore();
+  line([[-6,0],[-6,-5]],rim,2);
+ }else if(type==='tri-spikes'){
+  // Three separate jagged spears, staggered in height.
+  polygon([[-49,0],[-35,-63],[-16,0]],col,rim,2);
+  polygon([[-25,0],[0,-77],[25,0]],past?'#376b79':'#a64bba',rim,2);
+  polygon([[16,0],[35,-63],[49,0]],col,rim,2);
+  polygon([[-35,-63],[-31,-50],[-40,-41]],past?'#bdf9e6':'#ffd1e9');
+  polygon([[0,-77],[7,-53],[-7,-53]],past?'#c3f5e6':'#ffeff9');
+  polygon([[35,-63],[40,-41],[30,-50]],past?'#bdf9e6':'#ffd1e9');
+ }else if(type==='lightning'){
+  // Electric pylons with a zig-zag voltage beam between them.
+  polygon([[-46,0],[-42,-70],[-22,-70],[-18,0]],col,rim,2);
+  polygon([[18,0],[22,-70],[42,-70],[46,0]],col,rim,2);
+  polygon([[-45,-71],[-32,-83],[-19,-71]],past?'#94e4d1':'#ffcfdf',rim,1.1);
+  polygon([[19,-71],[32,-83],[45,-71]],past?'#94e4d1':'#ffcfdf',rim,1.1);
+  line([[-28,-49],[-5,-32],[-11,-48],[14,-34],[29,-50]],past?'#8fe8ce':'#ffe1a6',past?2:4);
+  glowCircle(0,-43,24,past?'#56ffe322':'#ffd7683e');
+ }else if(type==='prism'){
+  // Thick angular prism wall and its internal glowing facet.
+  polygon([[-42,0],[-40,-47],[-22,-76],[20,-76],[41,-48],[43,0]],col,rim,2);
+  polygon([[-22,-76],[0,-62],[20,-76],[7,-43],[-7,-43]],past?'#58989d':'#e78aca',rim,1);
+  polygon([[-31,-21],[0,-45],[31,-21],[0,-9]],past?'#2a6577':'#59377e',rim,1);
+  line([[0,-62],[0,-44]],past?'#b2f9e8':'#fff3dc',2);
+  circle(0,-28,7,past?'#b3fff0':'#ffd6f4');
+ }
+ ctx.restore();
+ if(danger&&x<canvasW*.62){glowCircle(x,ground-52,92,'#ff577e15')}
+}
+function drawSpire(x,y,scale,t,final=false){
+ if(x< -140||x>canvasW+140)return;
+ ctx.save();ctx.translate(x,y);ctx.scale(scale,scale);
+ glowCircle(0,0,95,final?'#ffd97634':'#7fa2ff29');
+ polygon([[-70,60],[-48,-5],[-21,-9],[-12,-74],[0,-100],[12,-74],[21,-9],[48,-5],[70,60]],'#23386a','#84c9ec6a',1.2);
+ polygon([[-12,-74],[0,-100],[12,-74],[21,-9],[0,16],[-21,-9]],'#526bb3','#92acff76',1);
+ polygon([[-6,-78],[0,-92],[6,-78],[0,-62]],final?'#f9d184':'#7ffff1','#d9ffee',1);
+ line([[0,-70],[0,30]],final?'#ffe7a2':'#92e7fa',1.5,.7);
+ ctx.restore();
+}
+function drawPlayer(t){
+ let x=playerX-camera;
+ const scale=hazardScale();
+ const hover=jumping?0:1.3*Math.sin(t*.010);
+ // Position and rotation are driven by physical jump state, not proximity animation.
+ const spin=jumping?Math.PI*2*jumpAge*jumpScale/JUMP_TOTAL:0;
+ const y=canvasH*.76-43*scale-jumpHeight*scale+hover;
+ if(status==='crashing'&&crashElapsed>190)return;
+ // Soft particle trail follows movement.
+ if(status==='running'&&Math.random()<.94){particleTrail.push({x,y:y+random(17)-8,birth:t,size:1.2+Math.random()*3});}
+ particleTrail=particleTrail.filter(s=>t-s.birth<900).slice(-70);
+ ctx.save();particleTrail.forEach(s=>{const age=(t-s.birth)/900,dx=(t-s.birth)*.085;circle(s.x-dx,s.y,s.size*(1-age),'rgba(88,255,226,'+(.56*(1-age))+')')});ctx.restore();
+ glowCircle(x,y,59*scale,'#ffae634c');glowCircle(x,y,27*scale,'#ffda8a72');
+ ctx.save();ctx.translate(x,y);ctx.scale(scale,scale);ctx.rotate(spin+Math.sin(t*.011)*.025);
+ ctx.shadowColor='#ffab5d';ctx.shadowBlur=19;
+ // Original asymmetric prism avatar: no cube, car, vehicle, or iconography from reference games.
+ polygon([[0,-26],[19,-7],[13,16],[0,28],[-18,11],[-15,-9]],'#ffc16c','#ddfff1',2);
+ ctx.shadowBlur=0;
+ polygon([[0,-26],[19,-7],[0,1],[-15,-9]],'#fff0c9');
+ polygon([[-15,-9],[0,1],[0,28],[-18,11]],'#ef8f54');
+ polygon([[0,1],[19,-7],[13,16],[0,28]],'#dd5551');
+ line([[0,-23],[0,24]],'#ffffff9c',1.2,.67);
+ // Geometric bright fins, like a comet but not a vehicle.
+ polygon([[-16,1],[-32,9],[-24,16],[-14,13]],'#f66b78','#f0d5ff70',.8);
+ polygon([[16,1],[31,9],[23,15],[14,12]],'#7adcf6','#d9ffff80',.8);
+ ctx.restore();
+ for(let i=0;i<3;i++){
+  const a=t*.001+i*Math.PI*2/3;circle(x+Math.cos(a)*35*scale,y+Math.sin(a)*18*scale,(1.5+i%2)*scale,'#dcffed');
+ }
+}
+function spawnBurst(worldX,count){
+ const x=worldX-camera,y=canvasH*.52;
+ for(let i=0;i<count;i++){
+  const a=Math.PI*2*i/count+Math.random()*.3;
+  specks.push({x,y,dx:Math.cos(a)*(1.4+Math.random()*2.8),dy:Math.sin(a)*(1.2+Math.random()*3),s:2+Math.random()*3,c:i%5===0?'#ffdd96':i%3===0?'#b18aff':'#91ffdd',life:1});
+ }
+}
+function drawFX(dt){
+ specks=specks.filter(p=>p.life>0);ctx.globalCompositeOperation='lighter';
+ specks.forEach(p=>{p.x+=p.dx*dt*.07;p.y+=p.dy*dt*.07;p.dy+=.017*dt*.05;p.life-=dt*.0013;ctx.globalAlpha=clamp(p.life,0,1);if(p.life>0)circle(p.x,p.y,p.s*p.life,p.c)});
+ ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over';
+ if(fxGlow>0){glowCircle(canvasW*.50,canvasH*.46,canvasW*.65,`rgba(97,255,226,${fxGlow*.20})`);fxGlow=Math.max(0,fxGlow-dt*.0017)}
+}
+function frame(t){
+ if(!canvasW||!canvasH)resize();const dt=lastFrame?clamp(t-lastFrame,0,45):16;lastFrame=t;clock=t;
+ advance(dt);
+ const wanted=playerX-canvasW*.30;camera=lerp(camera,wanted,reduced?1:clamp(dt*.032,0,1));
+ ctx.save();if(status==='crashing'&&shake>0)ctx.translate((Math.random()-.5)*shake,(Math.random()-.5)*shake*.45);
+ ctx.clearRect(-25,-25,canvasW+50,canvasH+50);
+ paintBackground(t);
+ const finalX=ORIGIN+NODE*TOTAL-camera;
+ drawSpire(finalX,canvasH*.49,.8+step*.03,t,true);
+ drawTrack(t);
+ for(let i=1;i<=TOTAL;i++){
+  const wx=ORIGIN+NODE*i;
+  drawGate(wx,i,t);
+ }
+ if(status!=='crashed')drawPlayer(t);
+ drawFX(dt);
+ if(status==='crashing')glowCircle(playerX-camera,canvasH*.72,95,'#ff4da981');
+ ctx.restore();
+ requestAnimationFrame(frame);
+}
+function bind(){
+ $('keypad').addEventListener('click',e=>{const b=e.target.closest('[data-key]');if(!b)return;onKey(b.dataset.key)});
+ document.addEventListener('keydown',e=>{
+  const key=e.key;if(key==='Backspace'){e.preventDefault();onKey('back')}else if(key==='Enter'){e.preventDefault();if(victoryStage==='vault')closeCrystalVault();else if(status==='intro')startGame();else if(status==='finished'&&victoryStage==='finish')startGame();else if(status==='crashed')startGame(true)}else if(/^\d$/.test(key))onKey(key);
+ });
+ $('begin').addEventListener('click',()=>startGame());$('again').addEventListener('click',()=>startGame());$('retry').addEventListener('click',()=>startGame(true));$('restart').addEventListener('click',reset);$('sound').addEventListener('click',setSound);
+ $('openVaultIntro').addEventListener('click',()=>openCrystalVault('intro'));
+ $('openVaultReward').addEventListener('click',()=>openCrystalVault('finish'));
+ $('closeVault').addEventListener('click',closeCrystalVault);
+ window.addEventListener('resize',resize);
+ document.addEventListener('visibilitychange',()=>{lastFrame=0});
+}
+function init(){
+ stars=[];updateGems();resize();bind();updateCrystalVault();updateRushHUD();overlay('intro');requestAnimationFrame(frame);
+}
+// Test interface is read-only except for simulated key input; it is not displayed to players.
+window.__EDUKASS_TEST__={get:()=>({status,step,typed,tasks:tasks.map(t=>({...t})),playerX,solved,crashReason,attempts,world:'paikesekuru',rewardUnlocked:rewardUnlocked||status==='finished',victoryStage,crystalCollected:collectedCrystals().includes(2),vaultCount:collectedCrystals().length,jumping,jumpHeight,jumpCount,wrongLocked,turboActive,runningSpeed:effectiveSpeed(),distance:distanceToObstacle(),obstacles:Array.from({length:TOTAL},(_,j)=>obstacleKind(j+1))}),press:onKey,start:()=>startGame(),retry:()=>startGame(true),tick:(ms)=>{for(let r=0;r<ms;r+=35)advance(Math.min(35,ms-r))},reset,validateTasks,generate:createTasks};
+init();
+})();
+</script>
+</body>
+</html>
