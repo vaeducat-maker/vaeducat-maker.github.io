@@ -54,6 +54,23 @@ function awardCrystal(number){
 function collectibleSVG(id,identifier){
  // Every world has its own collectible silhouette, not merely a recolor.
  if(id===2)return "<svg viewBox=\"0 0 82 104\" aria-hidden=\"true\"><defs><linearGradient id=\"___GRAD___\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\"><stop stop-color=\"#fff6b0\"/><stop offset=\".35\" stop-color=\"#ffb642\"/><stop offset=\".73\" stop-color=\"#ff563b\"/><stop offset=\"1\" stop-color=\"#b5124b\"/></linearGradient></defs><path d=\"M41 95C17 84 11 66 18 44c7 11 12 17 20 19C22 46 26 23 42 6c14 18 20 38 6 57 11-4 15-12 20-21 9 22-1 41-27 53Z\" fill=\"url(#___GRAD___)\" stroke=\"#ffe5a2\" stroke-width=\"2.2\"/><path d=\"M41 97C29 87 22 72 29 51c4 8 9 14 12 16 9-12 14-20 12-30 10 22 1 45-12 60Z\" fill=\"#ffcc5a\" opacity=\".8\"/><path d=\"M41 22 50 48 42 76 33 48Z\" fill=\"#fff4af\" opacity=\".82\"/><path d=\"M18 60 35 74 41 95 46 74 66 60\" fill=\"none\" stroke=\"#fff2ab\" stroke-width=\"1.7\"/><path d=\"M41 12v77M30 52l11 14 11-14\" fill=\"none\" stroke=\"#fff3b8\" stroke-opacity=\".72\" stroke-width=\"1.2\"/></svg>".replaceAll('___GRAD___',identifier);
+ if(id>=3){
+  // Distinct silhouettes reserved for the seven still-locked future worlds:
+  // spire, orbit, twin shards, spiral, star, crown cluster, meteor.
+  const shapes={
+   3:'M41 2 56 28 50 90 41 103 31 90 26 28Z',
+   4:'M41 6A35 35 0 1 1 40.9 6Z M41 17A24 24 0 1 0 41 65A24 24 0 1 0 41 17Z',
+   5:'M24 5 40 35 30 86 15 102 5 65Z M58 5 76 65 66 102 51 86 42 35Z',
+   6:'M41 6C72 6 78 26 64 40C45 58 29 34 38 29C52 22 62 45 48 61C31 84 12 70 14 51C15 77 34 103 41 103C58 97 72 75 72 55C72 39 57 22 41 6Z',
+   7:'M41 1 52 35 79 28 61 52 79 79 50 72 41 103 30 72 3 79 21 52 3 28 30 35Z',
+   8:'M8 37 20 61 21 8 41 44 61 8 62 61 74 37 70 92 41 103 12 92Z',
+   9:'M59 4 71 17 64 34 79 60 51 99 23 103 12 74 24 43 14 30 38 34Z'
+  };
+  const gradient='<defs><linearGradient id="'+identifier+'" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#d3d3ff"/><stop offset=".55" stop-color="#9bbcef"/><stop offset="1" stop-color="#6d569c"/></linearGradient></defs>';
+  return '<svg viewBox="0 0 82 104" aria-hidden="true">'+gradient+
+   '<path d="'+shapes[id]+'" fill="url(#'+identifier+')" stroke="#ecf2ff" stroke-width="2" fill-rule="evenodd"/>'
+   +'<path d="M41 12 41 87" stroke="#ffffff" opacity=".43" stroke-width="1.5"/></svg>';
+ }
  return "<svg viewBox=\"0 0 82 104\" aria-hidden=\"true\"><defs><linearGradient id=\"___GRAD___\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\"><stop stop-color=\"#fffde3\"/><stop offset=\".25\" stop-color=\"#9effff\"/><stop offset=\".65\" stop-color=\"#4ac7f8\"/><stop offset=\"1\" stop-color=\"#4354e8\"/></linearGradient></defs><path d=\"M41 2 64 25 75 49 56 81 41 102 20 81 7 49 17 24Z\" fill=\"url(#___GRAD___)\" stroke=\"#f8ffff\" stroke-width=\"2\"/><path d=\"M41 2 17 24 7 49 41 45Z\" fill=\"#d9ffff\" opacity=\".74\"/><path d=\"M41 45 75 49 56 81 41 102Z\" fill=\"#377fc4\" opacity=\".60\"/><path d=\"M17 24 41 45 64 25M7 49l34-4 34 4M20 81l21-36 15 36M41 2v100\" stroke=\"#fff\" stroke-opacity=\".62\" fill=\"none\" stroke-width=\"1.3\"/></svg>".replaceAll('___GRAD___',identifier);
 }
 function updateAwardArt(){
