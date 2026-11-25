@@ -233,6 +233,14 @@ def validate(browser,width,height,label,full=True):
    assert page.locator("#fusionPieces .fusion-piece").count()==9
    assert page.locator("#ultimateGem svg").count()==1
    assert page.evaluate("localStorage.getItem('edukass-ultimate-crystal')")=="1"
+   assert page.locator("#fusionSparks i").count()==54
+   assert page.locator("#fusionClose").evaluate("(el)=>getComputedStyle(el).visibility")=="hidden"
+   page.wait_for_timeout(1800)
+   page.screenshot(path=str(ROOT/f"qa_{label}_fusion_orbit.png"))
+   page.wait_for_timeout(3500)
+   page.screenshot(path=str(ROOT/f"qa_{label}_fusion_merge.png"))
+   page.locator("#fusionClose").wait_for(state="visible",timeout=12000)
+   page.wait_for_timeout(800)
    page.screenshot(path=str(ROOT/f"qa_{label}_ultimate_crystal.png"))
  assert collected==list(range(1,10))
  assert page.evaluate("JSON.parse(localStorage.getItem('edukass-neon-crystal-vault-v1'))")==list(range(1,10))
@@ -250,11 +258,20 @@ def validate_audio(browser):
  errors=[]
  page.on('pageerror',lambda error:errors.append(str(error)))
  page.goto(URL,wait_until='domcontentloaded')
- assert page.locator('#solarTrack').evaluate('(a)=>a.paused'),'Must not autoplay'
- page.locator('#introSound').click() # one-tap approved soundtrack preview on title screen
+ assert page.locator('#introSound').get_attribute('aria-pressed')=='true'
+ page.locator('#introSound').click() # explicitly mute
+ assert page.locator('#introSound').get_attribute('aria-pressed')=='false'
+ page.reload(wait_until='domcontentloaded')
+ assert page.locator('#introSound').get_attribute('aria-pressed')=='false'
+ assert page.locator('#solarTrack').evaluate('(a)=>a.paused')
+ page.locator('#introSound').click() # explicitly enable
+ assert page.evaluate("localStorage.getItem('edukass-rounding-sound-v1')")=='on'
  page.wait_for_function("() => {const a=document.querySelector('#solarTrack');return a.readyState>=2&&!a.paused}",timeout=12000)
  assert page.locator('#introSound').get_attribute('aria-pressed')=='true'
+ page.reload(wait_until='domcontentloaded')
+ assert page.locator('#introSound').get_attribute('aria-pressed')=='true'
  page.locator('#begin').click()
+ page.wait_for_function("() => {const a=document.querySelector('#solarTrack');return a.readyState>=2&&!a.paused}",timeout=12000)
  assert page.locator('#solarTrack').evaluate('(a)=>a.duration')>20
  page.locator('#shareGame').click()
  assert page.locator('#shareDialog').is_visible()

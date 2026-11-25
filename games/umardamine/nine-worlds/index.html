@@ -558,6 +558,41 @@ body{background:radial-gradient(ellipse 100% 75% at 50% 0%,#802441,#3a0b23 66%,#
 #introHero #introNineCrystals:focus-visible{outline:2px solid #ffe7a9;outline-offset:4px;border-radius:12px}
 .vault-card{font:inherit;color:inherit;cursor:pointer}.vault-card:disabled{opacity:1;cursor:default}
 @media(orientation:landscape) and (max-height:600px) and (min-width:650px){#introHero .intro-nine-crystals{grid-column:1;grid-row:5}#introHero #begin{grid-row:4/span 2}}
+
+/* Grand finale: gather nine gems, spiral inward, merge, reveal. */
+#overlay.is-fusion{background:radial-gradient(ellipse at 50% 45%,#263967 0%,#100c2c 46%,#040717 80%);backdrop-filter:none}
+#overlay.is-fusion:before{opacity:.35;animation:victoryHalo 24s linear infinite}
+#fusionHero{width:min(650px,100%);gap:clamp(6px,1.6dvh,16px)}
+#fusionHero .fusion-theatre{--orbit:clamp(77px,28vw,155px);width:min(420px,88vw);height:clamp(245px,52dvh,420px);overflow:visible;background:none}
+#fusionHero .fusion-theatre:before{display:none}
+.fusion-portal,.fusion-beams,.fusion-pulse,.fusion-sparks{position:absolute;inset:0;pointer-events:none}
+.fusion-portal{inset:10%;border-radius:50%;border:1px solid #a5f8ff4d;background:radial-gradient(circle,#afffff28,transparent 56%);box-shadow:inset 0 0 36px #7af1ff25,0 0 35px #8ba6ff30;animation:grandPortal 8s ease-out both}
+.fusion-portal:before,.fusion-portal:after{content:"";position:absolute;inset:8%;border-radius:50%;border:1px dashed #c9e9ff77;animation:fusionHalo 12s linear infinite}
+.fusion-portal:after{inset:19%;border:1px solid #ffdf9d66;animation-direction:reverse}
+.fusion-beams{inset:6%;border-radius:50%;background:repeating-conic-gradient(from 0deg,#fff0 0deg 18deg,#a8ffff66 20deg 22deg,#fff0 25deg 40deg);mask-image:radial-gradient(circle,transparent 3%,#000 30%,transparent 72%);animation:grandBeams 8s ease-out both}
+#fusionHero .fusion-pieces{animation:none;z-index:3}
+#fusionHero .fusion-piece{width:clamp(30px,11vw,53px);height:clamp(40px,14vw,70px);margin:0;left:50%;top:50%;animation:grandGather 4.7s cubic-bezier(.35,.05,.3,1) var(--delay) both;filter:drop-shadow(0 0 11px var(--c))}
+#fusionHero .fusion-ultimate{z-index:5;width:clamp(145px,54%,245px);animation:grandBirth 8s cubic-bezier(.2,.75,.3,1) both;filter:drop-shadow(0 0 18px #faffda) drop-shadow(0 0 36px #81eaff8c)}
+.fusion-pulse{z-index:4;inset:0;margin:auto;width:90%;height:90%;border:2px solid #ecfff5;border-radius:50%;box-shadow:0 0 18px #bcfaff,inset 0 0 30px #b0d8ff;animation:grandPulse 8s ease-out both}
+.fusion-sparks{z-index:6}
+.fusion-sparks i{position:absolute;left:50%;top:50%;width:5px;height:5px;border-radius:50%;background:var(--c);box-shadow:0 0 9px var(--c);animation:grandSpark 1.8s ease-out calc(4.7s + var(--d)) both}
+#fusionHero .fusion-title{animation:grandCaption 8s ease-out both}
+#fusionHero #fusionClose{animation:grandCaption 8s ease-out both}
+@keyframes grandGather{
+ 0%{opacity:0;transform:translate(-50%,-50%) rotate(var(--a)) translateY(calc(-1.5 * var(--orbit))) scale(.3)}
+ 14%,30%{opacity:1;transform:translate(-50%,-50%) rotate(var(--a)) translateY(calc(-1 * var(--orbit))) rotate(calc(-1 * var(--a))) scale(1)}
+ 64%{opacity:1;transform:translate(-50%,-50%) rotate(calc(var(--a) + 200deg)) translateY(calc(-.8 * var(--orbit))) rotate(calc(-1 * var(--a))) scale(.86)}
+ 88%{opacity:1;transform:translate(-50%,-50%) rotate(calc(var(--a) + 400deg)) translateY(calc(-.22 * var(--orbit))) scale(.6)}
+ 100%{opacity:0;transform:translate(-50%,-50%) rotate(calc(var(--a) + 480deg)) translateY(0) scale(.1)}
+}
+@keyframes grandPortal{0%{opacity:.3;transform:scale(.8)}25%,50%{opacity:1;transform:scale(1)}68%{opacity:.8;transform:scale(.42)}85%,100%{opacity:.6;transform:scale(1)}}
+@keyframes grandBeams{0%,18%{opacity:0;transform:rotate(0)}48%{opacity:.8;transform:rotate(110deg)}62%{opacity:.2;transform:rotate(250deg)}76%,100%{opacity:.45;transform:rotate(330deg)}}
+@keyframes grandBirth{0%,72%{opacity:0;transform:scale(.08) rotate(-20deg)}82%{opacity:1;transform:scale(1.14) rotate(5deg)}94%,100%{opacity:1;transform:scale(1) rotate(0)}}
+@keyframes grandPulse{0%,70%{opacity:0;transform:scale(.08)}75%{opacity:.9;transform:scale(.13)}94%,100%{opacity:0;transform:scale(1.35)}}
+@keyframes grandSpark{0%{opacity:0;transform:rotate(var(--a)) translateX(0) scale(.5)}15%{opacity:1}100%{opacity:0;transform:rotate(var(--a)) translateX(var(--r)) scale(.35)}}
+@keyframes grandCaption{0%,78%{opacity:0;visibility:hidden;transform:translateY(9px)}100%{opacity:1;visibility:visible;transform:none}}
+@media(max-height:610px){#fusionHero .fusion-theatre{--orbit:clamp(62px,18dvh,100px);height:clamp(155px,48dvh,275px)}#fusionHero .fusion-ultimate{width:clamp(100px,22dvh,165px)}}
+@media(prefers-reduced-motion:reduce){#fusionHero .fusion-piece,#fusionHero .fusion-pulse,#fusionHero .fusion-sparks,#fusionHero .fusion-beams{display:none!important}#fusionHero .fusion-portal,#fusionHero .fusion-portal:before,#fusionHero .fusion-portal:after,#fusionHero .fusion-ultimate,#fusionHero .fusion-title,#fusionHero #fusionClose{animation:none!important;opacity:1;visibility:visible;transform:none}}
 </style>
 </head>
 <body>
@@ -653,7 +688,11 @@ body{background:radial-gradient(ellipse 100% 75% at 50% 0%,#802441,#3a0b23 66%,#
   <span class="fusion-kicker">EDUKASS · 9 / 9 KRISTALLI</span>
   
   <div class="fusion-theatre" aria-label="Üheksast kristallist sünnib ülim kristall">
+   <div class="fusion-portal" aria-hidden="true"></div>
+   <div class="fusion-beams" aria-hidden="true"></div>
    <div class="fusion-pieces" id="fusionPieces"></div>
+   <div class="fusion-pulse" aria-hidden="true"></div>
+   <div class="fusion-sparks" id="fusionSparks" aria-hidden="true"></div>
    <div class="fusion-ultimate" id="ultimateGem"></div>
   </div>
   <h2 class="fusion-title">ÜLIM KRISTALL</h2>
@@ -3042,7 +3081,9 @@ let tasks=[],step=0,typed='',status='intro',solved=false,crashStart=0,crashReaso
 let attempts=0,ceremonyToken=0,victoryStage='hidden',vaultReturn='intro';
 let playerX=ORIGIN,clock=0,lastFrame=0,canvasW=0,canvasH=0,dpr=1;
 let jumping=false,jumpAge=0,jumpHeight=0,jumpStarted=false,jumpCount=0,wrongLocked=false,turboActive=false,jumpScale=1;
-let soundOn=false,audio=null,fxGlow=0,fxBurst=0,shake=0,toastUntil=0,rewardUnlocked=false;
+const SOUND_PREF='edukass-rounding-sound-v1';
+ function storedSound(){try{return localStorage.getItem(SOUND_PREF)!=='off'}catch(e){return true}}
+ let soundOn=storedSound(),audio=null,fxGlow=0,fxBurst=0,shake=0,toastUntil=0,rewardUnlocked=false;
 let camera=ORIGIN-110,particleTrail=[],specks=[],stars=[],ambient=[],latestAnswer='',obstacleOffset=0;
 function clamp(v,lo,hi){return Math.max(lo,Math.min(hi,v))}
 function lerp(a,b,t){return a+(b-a)*t}
@@ -3328,17 +3369,30 @@ function showTask(){
  note('Sisesta vastus');updateGems();
  $('sceneCaption').textContent=step===TOTAL-1?'VIIMANE TAKISTUS · ÄRA PEATU':'KIIRUSTA! TAKISTUS LÄHENEB';
 }
+let fusionRun=0;
 function showFusion(){
- if(collectedCrystals().length!==9)return;
- $('fusionPieces').innerHTML=WORLDS.map((w,i)=>'<div class="fusion-piece" style="--a:'+(i*40)+'deg;--c:'+w.main+'">'+collectibleSVG(w.id,'fusionPiece'+w.id)+'</div>').join('');
+ if(collectedCrystals().length!==9||victoryStage==='fusion')return;
+ const run=++fusionRun;
+ ceremonyToken++;
+ approvedMusicPause();
+ $('fusionPieces').innerHTML=WORLDS.map((w,i)=>'<div class="fusion-piece" style="--a:'+(i*40)+'deg;--c:'+w.main+';--delay:'+(i*.15)+'s">'+collectibleSVG(w.id,'fusionPiece'+w.id)+'</div>').join('');
  $('ultimateGem').innerHTML='<svg viewBox="0 0 220 270" role="img" aria-label="Ülim Kristall"><defs><linearGradient id="ultimateRay" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fffacc"/><stop offset=".24" stop-color="#88ffff"/><stop offset=".48" stop-color="#b88fff"/><stop offset=".72" stop-color="#ff9ac1"/><stop offset="1" stop-color="#ffcf74"/></linearGradient></defs><path d="M110 8 160 60 206 100 190 164 160 221 110 263 60 221 30 164 14 100 60 60Z" fill="url(#ultimateRay)" stroke="#ffffff" stroke-width="4"/><path d="M110 8 110 134 30 164Z" fill="#c1fff6" opacity=".60"/><path d="M110 8 110 134 190 164Z" fill="#fca7db" opacity=".59"/><path d="M110 134 60 221 110 263 160 221Z" fill="#ffe48e" opacity=".70"/><path d="M110 8V263 M14 100l96 34 96-34 M30 164l80-30 80 30" fill="none" stroke="#ffffff" stroke-width="2" opacity=".73"/></svg>';
  try{localStorage.setItem('edukass-ultimate-crystal','1')}catch(e){}
- overlay('fusion');winSound();
+ $('fusionSparks').innerHTML=Array.from({length:54},(_,i)=>'<i style="--a:'+(i*137.508%360)+'deg;--r:'+(55+(i*43)%125)+'px;--c:'+WORLDS[i%9].main+';--d:'+((i%9)*.055)+'s"></i>').join('');
+ overlay('fusion');
+ // Original ascending crystal chimes, convergence and major-chord finale.
+ const cue=(ms,fn)=>setTimeout(()=>{if(run===fusionRun&&victoryStage==='fusion'&&!document.hidden)fn()},ms);
+ if(reduced){winSound();return}
+ [392,440,494,523.25,587.33,659.25,698.46,783.99,880].forEach((hz,i)=>cue(180+i*150,()=>tone(hz,.4,'sine',.035)));
+ [261.63,329.63,392,523.25,659.25].forEach((hz,i)=>cue(2300+i*340,()=>tone(hz,.75,'triangle',.035)));
+ cue(4700,()=>{[130.81,196,261.63,329.63,392,523.25,659.25,783.99,1046.5].forEach((hz,i)=>tone(hz,1.35,'sine',i<3?.043:.022,i*.028));});
+ cue(5900,()=>{[523.25,659.25,783.99,1046.5].forEach((hz,i)=>tone(hz,.65,'triangle',.028,i*.16));});
 }
 function overlay(type){
  $('overlay').classList.remove('hidden');$('overlay').setAttribute('aria-hidden','false');
  $('overlay').classList.toggle('is-celebrating',type==='victory'||type==='finish'||type==='vault'||type==='fusion');
  $('overlay').classList.toggle('is-intro',type==='intro');
+ $('overlay').classList.toggle('is-fusion',type==='fusion');
  $('introHero').hidden=type!=='intro';
  $('victoryHero').hidden=type!=='victory';
  $('finishHero').hidden=type!=='finish';
@@ -3349,7 +3403,7 @@ function overlay(type){
 }
 function hideOverlay(){
  $('overlay').classList.add('hidden');
- $('overlay').classList.remove('is-celebrating','is-intro');
+ $('overlay').classList.remove('is-celebrating','is-intro','is-fusion');
  $('overlay').setAttribute('aria-hidden','true');
  victoryStage='hidden';
 }
@@ -3400,11 +3454,17 @@ function approvedMusicPlay(){
  try{const result=solarTrack.play();if(result&&typeof result.catch==='function')result.catch(()=>{});}catch(e){}
 }
 function approvedMusicPause(){try{solarTrack.pause()}catch(e){}}
-function setSound(){
- soundOn=!soundOn;$('sound').classList.toggle('enabled',soundOn);
+function syncSoundUI(){
+ $('sound').classList.toggle('enabled',soundOn);
+ $('sound').setAttribute('aria-pressed',String(soundOn));
  $('sound').setAttribute('aria-label',soundOn?'Lülita heli välja':'Lülita heli sisse');
  $('introSound').setAttribute('aria-pressed',String(soundOn));
  $('introSound').setAttribute('aria-label',soundOn?'Lülita heli välja':'Lülita heli sisse');
+}
+function setSound(){
+ soundOn=!soundOn;
+ try{localStorage.setItem(SOUND_PREF,soundOn?'on':'off')}catch(e){}
+ syncSoundUI();
  if(soundOn){approvedMusicPlay();tone(510,.07,'triangle',.018)}
  else {approvedMusicPause();try{softFail.pause()}catch(e){}}
 }
@@ -3529,9 +3589,9 @@ function finish(){
  // First show the in-world flash, then the victory burst, then award the crystal.
  setTimeout(()=>{if(status==='finished'&&token===ceremonyToken)overlay('victory')},180);
  setTimeout(()=>{if(status==='finished'&&token===ceremonyToken)overlay('finish')},1670);
- if(worldId===9)setTimeout(()=>{if(status==='finished'&&token===ceremonyToken)showFusion()},6200);
+ if(worldId===9)setTimeout(()=>{if(status==='finished'&&token===ceremonyToken&&victoryStage==='finish'&&!$('passportDialog').open&&!$('shareDialog').open)showFusion()},6200);
 }
-function reset(){approvedMusicPause();ceremonyToken++;status='intro';step=0;typed='';solved=false;playerX=ORIGIN;particleTrail=[];jumping=false;jumpAge=0;jumpHeight=0;jumpStarted=false;wrongLocked=false;turboActive=false;jumpScale=1;jumpCount=0;updateGems();updateAnswer();note('Sisesta vastus');updateRushHUD();overlay('intro')}
+function reset(){approvedMusicPause();ceremonyToken++;status='intro';step=0;typed='';solved=false;playerX=ORIGIN;particleTrail=[];jumping=false;jumpAge=0;jumpHeight=0;jumpStarted=false;wrongLocked=false;turboActive=false;jumpScale=1;jumpCount=0;updateGems();updateAnswer();note('Sisesta vastus');updateRushHUD();overlay('intro');approvedMusicPlay()}
 function advance(dt){
  if($('passportDialog').open||$('shareDialog').open)return; // pause timer while sharing or transferring
  let remaining=clamp(dt,0,100);
@@ -3865,6 +3925,13 @@ function bind(){
  $('fusionClose').addEventListener('click',()=>overlay('vault'));
  $('showUltimate').addEventListener('click',showFusion);
 
+ // Mobile autoplay restrictions: retry on the first permitted real interaction.
+ function unlockMusic(e){
+  if(!e.isTrusted||!soundOn||!solarTrack.paused||e.target.closest?.('#sound,#introSound,#shareGame,#shareGameIntro,#openPassport,#openPassportIntro'))return;
+  approvedMusicPlay();
+ }
+ document.addEventListener('click',unlockMusic,true);
+ document.addEventListener('keydown',unlockMusic,true);
  window.addEventListener('resize',resize);
  document.addEventListener('visibilitychange',()=>{lastFrame=0;if(document.hidden)approvedMusicPause();else approvedMusicPlay()});
  window.addEventListener('edukass-dialog-closed',()=>{lastFrame=0;approvedMusicPlay()});
@@ -3876,7 +3943,7 @@ function init(){
  const already=collectedCrystals();let resume=1;
  while(resume<9&&already.includes(resume))resume++;
  worldId=resume;TOTAL=world().total;
- stars=[];resize();bind();updateWorldUI();updateRushHUD();overlay('intro');requestAnimationFrame(frame);
+ stars=[];resize();bind();updateWorldUI();updateRushHUD();overlay('intro');syncSoundUI();approvedMusicPlay();requestAnimationFrame(frame);
 }
 // Small approved public bridge for EDUKASS Passport Lite.
 // Personal link carries only completed crystals and chosen world, no personal data.

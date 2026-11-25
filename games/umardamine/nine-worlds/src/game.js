@@ -23,7 +23,9 @@ let tasks=[],step=0,typed='',status='intro',solved=false,crashStart=0,crashReaso
 let attempts=0,ceremonyToken=0,victoryStage='hidden',vaultReturn='intro';
 let playerX=ORIGIN,clock=0,lastFrame=0,canvasW=0,canvasH=0,dpr=1;
 let jumping=false,jumpAge=0,jumpHeight=0,jumpStarted=false,jumpCount=0,wrongLocked=false,turboActive=false,jumpScale=1;
-let soundOn=false,audio=null,fxGlow=0,fxBurst=0,shake=0,toastUntil=0,rewardUnlocked=false;
+const SOUND_PREF='edukass-rounding-sound-v1';
+ function storedSound(){try{return localStorage.getItem(SOUND_PREF)!=='off'}catch(e){return true}}
+ let soundOn=storedSound(),audio=null,fxGlow=0,fxBurst=0,shake=0,toastUntil=0,rewardUnlocked=false;
 let camera=ORIGIN-110,particleTrail=[],specks=[],stars=[],ambient=[],latestAnswer='',obstacleOffset=0;
 function clamp(v,lo,hi){return Math.max(lo,Math.min(hi,v))}
 function lerp(a,b,t){return a+(b-a)*t}
@@ -309,17 +311,30 @@ function showTask(){
  note('Sisesta vastus');updateGems();
  $('sceneCaption').textContent=step===TOTAL-1?'VIIMANE TAKISTUS · ÄRA PEATU':'KIIRUSTA! TAKISTUS LÄHENEB';
 }
+let fusionRun=0;
 function showFusion(){
- if(collectedCrystals().length!==9)return;
- $('fusionPieces').innerHTML=WORLDS.map((w,i)=>'<div class="fusion-piece" style="--a:'+(i*40)+'deg;--c:'+w.main+'">'+collectibleSVG(w.id,'fusionPiece'+w.id)+'</div>').join('');
+ if(collectedCrystals().length!==9||victoryStage==='fusion')return;
+ const run=++fusionRun;
+ ceremonyToken++;
+ approvedMusicPause();
+ $('fusionPieces').innerHTML=WORLDS.map((w,i)=>'<div class="fusion-piece" style="--a:'+(i*40)+'deg;--c:'+w.main+';--delay:'+(i*.15)+'s">'+collectibleSVG(w.id,'fusionPiece'+w.id)+'</div>').join('');
  $('ultimateGem').innerHTML='<svg viewBox="0 0 220 270" role="img" aria-label="Ülim Kristall"><defs><linearGradient id="ultimateRay" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fffacc"/><stop offset=".24" stop-color="#88ffff"/><stop offset=".48" stop-color="#b88fff"/><stop offset=".72" stop-color="#ff9ac1"/><stop offset="1" stop-color="#ffcf74"/></linearGradient></defs><path d="M110 8 160 60 206 100 190 164 160 221 110 263 60 221 30 164 14 100 60 60Z" fill="url(#ultimateRay)" stroke="#ffffff" stroke-width="4"/><path d="M110 8 110 134 30 164Z" fill="#c1fff6" opacity=".60"/><path d="M110 8 110 134 190 164Z" fill="#fca7db" opacity=".59"/><path d="M110 134 60 221 110 263 160 221Z" fill="#ffe48e" opacity=".70"/><path d="M110 8V263 M14 100l96 34 96-34 M30 164l80-30 80 30" fill="none" stroke="#ffffff" stroke-width="2" opacity=".73"/></svg>';
  try{localStorage.setItem('edukass-ultimate-crystal','1')}catch(e){}
- overlay('fusion');winSound();
+ $('fusionSparks').innerHTML=Array.from({length:54},(_,i)=>'<i style="--a:'+(i*137.508%360)+'deg;--r:'+(55+(i*43)%125)+'px;--c:'+WORLDS[i%9].main+';--d:'+((i%9)*.055)+'s"></i>').join('');
+ overlay('fusion');
+ // Original ascending crystal chimes, convergence and major-chord finale.
+ const cue=(ms,fn)=>setTimeout(()=>{if(run===fusionRun&&victoryStage==='fusion'&&!document.hidden)fn()},ms);
+ if(reduced){winSound();return}
+ [392,440,494,523.25,587.33,659.25,698.46,783.99,880].forEach((hz,i)=>cue(180+i*150,()=>tone(hz,.4,'sine',.035)));
+ [261.63,329.63,392,523.25,659.25].forEach((hz,i)=>cue(2300+i*340,()=>tone(hz,.75,'triangle',.035)));
+ cue(4700,()=>{[130.81,196,261.63,329.63,392,523.25,659.25,783.99,1046.5].forEach((hz,i)=>tone(hz,1.35,'sine',i<3?.043:.022,i*.028));});
+ cue(5900,()=>{[523.25,659.25,783.99,1046.5].forEach((hz,i)=>tone(hz,.65,'triangle',.028,i*.16));});
 }
 function overlay(type){
  $('overlay').classList.remove('hidden');$('overlay').setAttribute('aria-hidden','false');
  $('overlay').classList.toggle('is-celebrating',type==='victory'||type==='finish'||type==='vault'||type==='fusion');
  $('overlay').classList.toggle('is-intro',type==='intro');
+ $('overlay').classList.toggle('is-fusion',type==='fusion');
  $('introHero').hidden=type!=='intro';
  $('victoryHero').hidden=type!=='victory';
  $('finishHero').hidden=type!=='finish';
@@ -330,7 +345,7 @@ function overlay(type){
 }
 function hideOverlay(){
  $('overlay').classList.add('hidden');
- $('overlay').classList.remove('is-celebrating','is-intro');
+ $('overlay').classList.remove('is-celebrating','is-intro','is-fusion');
  $('overlay').setAttribute('aria-hidden','true');
  victoryStage='hidden';
 }
@@ -381,11 +396,17 @@ function approvedMusicPlay(){
  try{const result=solarTrack.play();if(result&&typeof result.catch==='function')result.catch(()=>{});}catch(e){}
 }
 function approvedMusicPause(){try{solarTrack.pause()}catch(e){}}
-function setSound(){
- soundOn=!soundOn;$('sound').classList.toggle('enabled',soundOn);
+function syncSoundUI(){
+ $('sound').classList.toggle('enabled',soundOn);
+ $('sound').setAttribute('aria-pressed',String(soundOn));
  $('sound').setAttribute('aria-label',soundOn?'Lülita heli välja':'Lülita heli sisse');
  $('introSound').setAttribute('aria-pressed',String(soundOn));
  $('introSound').setAttribute('aria-label',soundOn?'Lülita heli välja':'Lülita heli sisse');
+}
+function setSound(){
+ soundOn=!soundOn;
+ try{localStorage.setItem(SOUND_PREF,soundOn?'on':'off')}catch(e){}
+ syncSoundUI();
  if(soundOn){approvedMusicPlay();tone(510,.07,'triangle',.018)}
  else {approvedMusicPause();try{softFail.pause()}catch(e){}}
 }
@@ -510,9 +531,9 @@ function finish(){
  // First show the in-world flash, then the victory burst, then award the crystal.
  setTimeout(()=>{if(status==='finished'&&token===ceremonyToken)overlay('victory')},180);
  setTimeout(()=>{if(status==='finished'&&token===ceremonyToken)overlay('finish')},1670);
- if(worldId===9)setTimeout(()=>{if(status==='finished'&&token===ceremonyToken)showFusion()},6200);
+ if(worldId===9)setTimeout(()=>{if(status==='finished'&&token===ceremonyToken&&victoryStage==='finish'&&!$('passportDialog').open&&!$('shareDialog').open)showFusion()},6200);
 }
-function reset(){approvedMusicPause();ceremonyToken++;status='intro';step=0;typed='';solved=false;playerX=ORIGIN;particleTrail=[];jumping=false;jumpAge=0;jumpHeight=0;jumpStarted=false;wrongLocked=false;turboActive=false;jumpScale=1;jumpCount=0;updateGems();updateAnswer();note('Sisesta vastus');updateRushHUD();overlay('intro')}
+function reset(){approvedMusicPause();ceremonyToken++;status='intro';step=0;typed='';solved=false;playerX=ORIGIN;particleTrail=[];jumping=false;jumpAge=0;jumpHeight=0;jumpStarted=false;wrongLocked=false;turboActive=false;jumpScale=1;jumpCount=0;updateGems();updateAnswer();note('Sisesta vastus');updateRushHUD();overlay('intro');approvedMusicPlay()}
 function advance(dt){
  if($('passportDialog').open||$('shareDialog').open)return; // pause timer while sharing or transferring
  let remaining=clamp(dt,0,100);
@@ -846,6 +867,13 @@ function bind(){
  $('fusionClose').addEventListener('click',()=>overlay('vault'));
  $('showUltimate').addEventListener('click',showFusion);
 
+ // Mobile autoplay restrictions: retry on the first permitted real interaction.
+ function unlockMusic(e){
+  if(!e.isTrusted||!soundOn||!solarTrack.paused||e.target.closest?.('#sound,#introSound,#shareGame,#shareGameIntro,#openPassport,#openPassportIntro'))return;
+  approvedMusicPlay();
+ }
+ document.addEventListener('click',unlockMusic,true);
+ document.addEventListener('keydown',unlockMusic,true);
  window.addEventListener('resize',resize);
  document.addEventListener('visibilitychange',()=>{lastFrame=0;if(document.hidden)approvedMusicPause();else approvedMusicPlay()});
  window.addEventListener('edukass-dialog-closed',()=>{lastFrame=0;approvedMusicPlay()});
@@ -857,7 +885,7 @@ function init(){
  const already=collectedCrystals();let resume=1;
  while(resume<9&&already.includes(resume))resume++;
  worldId=resume;TOTAL=world().total;
- stars=[];resize();bind();updateWorldUI();updateRushHUD();overlay('intro');requestAnimationFrame(frame);
+ stars=[];resize();bind();updateWorldUI();updateRushHUD();overlay('intro');syncSoundUI();approvedMusicPlay();requestAnimationFrame(frame);
 }
 // Small approved public bridge for EDUKASS Passport Lite.
 // Personal link carries only completed crystals and chosen world, no personal data.

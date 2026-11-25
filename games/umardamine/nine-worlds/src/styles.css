@@ -552,3 +552,38 @@ body{background:radial-gradient(ellipse 100% 75% at 50% 0%,#802441,#3a0b23 66%,#
 #introHero #introNineCrystals:focus-visible{outline:2px solid #ffe7a9;outline-offset:4px;border-radius:12px}
 .vault-card{font:inherit;color:inherit;cursor:pointer}.vault-card:disabled{opacity:1;cursor:default}
 @media(orientation:landscape) and (max-height:600px) and (min-width:650px){#introHero .intro-nine-crystals{grid-column:1;grid-row:5}#introHero #begin{grid-row:4/span 2}}
+
+/* Grand finale: gather nine gems, spiral inward, merge, reveal. */
+#overlay.is-fusion{background:radial-gradient(ellipse at 50% 45%,#263967 0%,#100c2c 46%,#040717 80%);backdrop-filter:none}
+#overlay.is-fusion:before{opacity:.35;animation:victoryHalo 24s linear infinite}
+#fusionHero{width:min(650px,100%);gap:clamp(6px,1.6dvh,16px)}
+#fusionHero .fusion-theatre{--orbit:clamp(77px,28vw,155px);width:min(420px,88vw);height:clamp(245px,52dvh,420px);overflow:visible;background:none}
+#fusionHero .fusion-theatre:before{display:none}
+.fusion-portal,.fusion-beams,.fusion-pulse,.fusion-sparks{position:absolute;inset:0;pointer-events:none}
+.fusion-portal{inset:10%;border-radius:50%;border:1px solid #a5f8ff4d;background:radial-gradient(circle,#afffff28,transparent 56%);box-shadow:inset 0 0 36px #7af1ff25,0 0 35px #8ba6ff30;animation:grandPortal 8s ease-out both}
+.fusion-portal:before,.fusion-portal:after{content:"";position:absolute;inset:8%;border-radius:50%;border:1px dashed #c9e9ff77;animation:fusionHalo 12s linear infinite}
+.fusion-portal:after{inset:19%;border:1px solid #ffdf9d66;animation-direction:reverse}
+.fusion-beams{inset:6%;border-radius:50%;background:repeating-conic-gradient(from 0deg,#fff0 0deg 18deg,#a8ffff66 20deg 22deg,#fff0 25deg 40deg);mask-image:radial-gradient(circle,transparent 3%,#000 30%,transparent 72%);animation:grandBeams 8s ease-out both}
+#fusionHero .fusion-pieces{animation:none;z-index:3}
+#fusionHero .fusion-piece{width:clamp(30px,11vw,53px);height:clamp(40px,14vw,70px);margin:0;left:50%;top:50%;animation:grandGather 4.7s cubic-bezier(.35,.05,.3,1) var(--delay) both;filter:drop-shadow(0 0 11px var(--c))}
+#fusionHero .fusion-ultimate{z-index:5;width:clamp(145px,54%,245px);animation:grandBirth 8s cubic-bezier(.2,.75,.3,1) both;filter:drop-shadow(0 0 18px #faffda) drop-shadow(0 0 36px #81eaff8c)}
+.fusion-pulse{z-index:4;inset:0;margin:auto;width:90%;height:90%;border:2px solid #ecfff5;border-radius:50%;box-shadow:0 0 18px #bcfaff,inset 0 0 30px #b0d8ff;animation:grandPulse 8s ease-out both}
+.fusion-sparks{z-index:6}
+.fusion-sparks i{position:absolute;left:50%;top:50%;width:5px;height:5px;border-radius:50%;background:var(--c);box-shadow:0 0 9px var(--c);animation:grandSpark 1.8s ease-out calc(4.7s + var(--d)) both}
+#fusionHero .fusion-title{animation:grandCaption 8s ease-out both}
+#fusionHero #fusionClose{animation:grandCaption 8s ease-out both}
+@keyframes grandGather{
+ 0%{opacity:0;transform:translate(-50%,-50%) rotate(var(--a)) translateY(calc(-1.5 * var(--orbit))) scale(.3)}
+ 14%,30%{opacity:1;transform:translate(-50%,-50%) rotate(var(--a)) translateY(calc(-1 * var(--orbit))) rotate(calc(-1 * var(--a))) scale(1)}
+ 64%{opacity:1;transform:translate(-50%,-50%) rotate(calc(var(--a) + 200deg)) translateY(calc(-.8 * var(--orbit))) rotate(calc(-1 * var(--a))) scale(.86)}
+ 88%{opacity:1;transform:translate(-50%,-50%) rotate(calc(var(--a) + 400deg)) translateY(calc(-.22 * var(--orbit))) scale(.6)}
+ 100%{opacity:0;transform:translate(-50%,-50%) rotate(calc(var(--a) + 480deg)) translateY(0) scale(.1)}
+}
+@keyframes grandPortal{0%{opacity:.3;transform:scale(.8)}25%,50%{opacity:1;transform:scale(1)}68%{opacity:.8;transform:scale(.42)}85%,100%{opacity:.6;transform:scale(1)}}
+@keyframes grandBeams{0%,18%{opacity:0;transform:rotate(0)}48%{opacity:.8;transform:rotate(110deg)}62%{opacity:.2;transform:rotate(250deg)}76%,100%{opacity:.45;transform:rotate(330deg)}}
+@keyframes grandBirth{0%,72%{opacity:0;transform:scale(.08) rotate(-20deg)}82%{opacity:1;transform:scale(1.14) rotate(5deg)}94%,100%{opacity:1;transform:scale(1) rotate(0)}}
+@keyframes grandPulse{0%,70%{opacity:0;transform:scale(.08)}75%{opacity:.9;transform:scale(.13)}94%,100%{opacity:0;transform:scale(1.35)}}
+@keyframes grandSpark{0%{opacity:0;transform:rotate(var(--a)) translateX(0) scale(.5)}15%{opacity:1}100%{opacity:0;transform:rotate(var(--a)) translateX(var(--r)) scale(.35)}}
+@keyframes grandCaption{0%,78%{opacity:0;visibility:hidden;transform:translateY(9px)}100%{opacity:1;visibility:visible;transform:none}}
+@media(max-height:610px){#fusionHero .fusion-theatre{--orbit:clamp(62px,18dvh,100px);height:clamp(155px,48dvh,275px)}#fusionHero .fusion-ultimate{width:clamp(100px,22dvh,165px)}}
+@media(prefers-reduced-motion:reduce){#fusionHero .fusion-piece,#fusionHero .fusion-pulse,#fusionHero .fusion-sparks,#fusionHero .fusion-beams{display:none!important}#fusionHero .fusion-portal,#fusionHero .fusion-portal:before,#fusionHero .fusion-portal:after,#fusionHero .fusion-ultimate,#fusionHero .fusion-title,#fusionHero #fusionClose{animation:none!important;opacity:1;visibility:visible;transform:none}}
