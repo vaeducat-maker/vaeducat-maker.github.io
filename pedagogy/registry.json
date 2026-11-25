@@ -14,5 +14,12 @@
     "proov/stolbiki-250/index.html",
     "proov/stolbiki-mosaic-7q4m9k/index.html"
   ],
-  "new_games": []
+  "new_games": [
+    {
+      "entry": "games/umardamine/index.html",
+      "contract": "pedagogy/contracts/umardamine.json",
+      "trainer_id": "umardamine",
+      "audit": "scripts/pedagogy/audit-umardamine.js"
+    }
+  ]
 }

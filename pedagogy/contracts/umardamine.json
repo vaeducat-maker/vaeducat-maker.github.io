@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "status": "planned",
+  "status": "active",
   "trainer_id": "umardamine",
   "subject": "mathematics",
   "title_et": "Ümardamine",
@@ -471,5 +471,13 @@
     "Независимый аудит умеет отвергать negative_controls",
     "Моделируются успешный, испытывающий трудности и неравномерно подготовленный ученик",
     "Итоговая проверка использует новые числа"
-  ]
+  ],
+  "approved_release_scope": {
+    "worlds": 9,
+    "max_input": 999999999,
+    "max_target": 100000000,
+    "already_multiple": "excluded by owner decision",
+    "claim": "practice, not verified mastery",
+    "historical_reference_only": "R7 and exact-multiple examples"
+  }
 }

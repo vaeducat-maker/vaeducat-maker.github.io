@@ -105,6 +105,10 @@ const publicFiles = [
   'games/korrutamine-test/service-worker.js',
 
   'games/metsarada/index.html',
+  'games/umardamine/index.html',
+  'games/umardamine/preview.svg',
+  'games/umardamine/assets/01_soft_oops.mp3',
+  'games/umardamine/assets/02_solar_spark.mp3',
 
   'materials/hommikulood/app.js',
   'materials/hommikulood/vocabulary.js',
