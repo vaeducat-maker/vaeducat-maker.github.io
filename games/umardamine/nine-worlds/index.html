@@ -593,6 +593,12 @@ body{background:radial-gradient(ellipse 100% 75% at 50% 0%,#802441,#3a0b23 66%,#
 @keyframes grandCaption{0%,78%{opacity:0;visibility:hidden;transform:translateY(9px)}100%{opacity:1;visibility:visible;transform:none}}
 @media(max-height:610px){#fusionHero .fusion-theatre{--orbit:clamp(62px,18dvh,100px);height:clamp(155px,48dvh,275px)}#fusionHero .fusion-ultimate{width:clamp(100px,22dvh,165px)}}
 @media(prefers-reduced-motion:reduce){#fusionHero .fusion-piece,#fusionHero .fusion-pulse,#fusionHero .fusion-sparks,#fusionHero .fusion-beams{display:none!important}#fusionHero .fusion-portal,#fusionHero .fusion-portal:before,#fusionHero .fusion-portal:after,#fusionHero .fusion-ultimate,#fusionHero .fusion-title,#fusionHero #fusionClose{animation:none!important;opacity:1;visibility:visible;transform:none}}
+
+/* Full-game replay appears only after the grand finale. */
+#fusionHero #fusionRestart{width:min(290px,95%);min-height:50px;animation:grandCaption 8s ease-out both}
+#fusionHero #fusionClose{width:min(260px,95%);min-height:44px;background:#121e3dcc;color:#e2f7ff;border:1px solid #b6e6ed77;box-shadow:none;font-size:12px;padding:8px 12px;margin:0;animation:grandCaption 8s ease-out both}
+@media(max-height:610px){#fusionHero #fusionRestart{min-height:44px}#fusionHero #fusionClose{min-height:40px}}
+@media(prefers-reduced-motion:reduce){#fusionHero #fusionRestart{animation:none!important;opacity:1;visibility:visible;transform:none}}
 </style>
 </head>
 <body>
@@ -698,7 +704,8 @@ body{background:radial-gradient(ellipse 100% 75% at 50% 0%,#802441,#3a0b23 66%,#
   <h2 class="fusion-title">ÜLIM KRISTALL</h2>
   
   
-  <button class="primary" id="fusionClose" type="button">VAATA KRISTALLE</button>
+  <button class="primary" id="fusionRestart" type="button">↻ MÄNGI ALGUSEST</button>
+   <button class="secondary" id="fusionClose" type="button">VAATA KRISTALLE</button>
  </div>
  <div class="hero" id="crashHero" hidden>
   <span class="fail-kicker" id="crashWorld" hidden>MAAILM 01 · KATSE LÄBI</span>
@@ -3435,7 +3442,6 @@ function obstacleKind(i){const o=world().obstacles;return o[(i-1)%o.length]}
 function distanceToObstacle(){return ORIGIN+NODE*(step+1)-playerX}
 function hazardScale(){return clamp(canvasH/310,.42,1)}
 function effectiveSpeed(){
- if(wrongLocked)return Math.max(speedForStep()*1.65,distanceToObstacle()/1.12);
  return solved&&turboActive?TURBO_SPEED:speedForStep();
 }
 function updateRushHUD(){
@@ -3553,9 +3559,17 @@ function lose(reason){
  updateRushHUD();
 }
 function onKey(key){
- if(status!=='running'||solved||wrongLocked)return;
- if(key==='back'){typed=typed.slice(0,-1);updateAnswer();return}
- if(!/^\d$/.test(key)||typed.length>=12)return;
+ if(status!=='running'||solved)return;
+ if(key==='back'){
+  if(!typed)return;
+  typed=typed.slice(0,-1);
+  wrongLocked=false; // A wrong answer is feedback, not an irreversible input lock.
+  $('answerBox').classList.remove('wrong','success');
+  note('Sisesta vastus');
+  $('sceneCaption').textContent='KIIRUSTA! TAKISTUS LÄHENEB';
+  updateAnswer();updateRushHUD();return;
+ }
+ if(wrongLocked||!/^\d$/.test(key)||typed.length>=12)return;
  if(!typed&&key==='0')return;
  typed+=key;updateAnswer();
  const answer=String(tasks[step].answer);
@@ -3571,7 +3585,7 @@ function check(){
   $('sceneCaption').textContent=turboActive?'TURBO · KRISTALL KIHUTAB EDASI':'HÜPE VALMIS · HÜPPA ÜLE TAKISTUSE';updateRushHUD();return;
  }
  if(typed.length<String(tasks[step].answer).length)return;
- wrongLocked=true; // The obstacle remains lethal; the crystal physically runs into it.
+ wrongLocked=true; // Backspace can clear this flag until the actual collision.
  $('answerBox').classList.add('wrong');note('Vale vastus!','bad');
  $('sceneCaption').textContent='VALE VASTUS · KOKKUPÕRGE LÄHENEB';
  shake=5;tone(230,.15,'sawtooth',.04);updateRushHUD();
@@ -3923,6 +3937,11 @@ function bind(){
  $('vaultGrid').addEventListener('click',e=>{const item=e.target.closest('[data-world]');if(item&&!item.disabled)switchWorld(Number(item.dataset.world))});
  $('nextWorld').addEventListener('click',()=>{if(worldId<9)switchWorld(worldId+1);else showFusion()});
  $('fusionClose').addEventListener('click',()=>overlay('vault'));
+ $('fusionRestart').addEventListener('click',()=>{
+  if(!window.confirm('Alustad esimesest maailmast. Senised kristallid kustutatakse. Kas soovid jätkata?'))return;
+  try{window.EDUKASS_GAME_PROGRESS.restore({completed:[],lastWorld:1,ultimate:false});}
+  catch(e){window.alert('Uut mängu ei õnnestunud alustada. Proovi uuesti.');}
+ });
  $('showUltimate').addEventListener('click',showFusion);
 
  // Mobile autoplay restrictions: retry on the first permitted real interaction.

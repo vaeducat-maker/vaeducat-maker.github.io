@@ -377,7 +377,6 @@ function obstacleKind(i){const o=world().obstacles;return o[(i-1)%o.length]}
 function distanceToObstacle(){return ORIGIN+NODE*(step+1)-playerX}
 function hazardScale(){return clamp(canvasH/310,.42,1)}
 function effectiveSpeed(){
- if(wrongLocked)return Math.max(speedForStep()*1.65,distanceToObstacle()/1.12);
  return solved&&turboActive?TURBO_SPEED:speedForStep();
 }
 function updateRushHUD(){
@@ -495,9 +494,17 @@ function lose(reason){
  updateRushHUD();
 }
 function onKey(key){
- if(status!=='running'||solved||wrongLocked)return;
- if(key==='back'){typed=typed.slice(0,-1);updateAnswer();return}
- if(!/^\d$/.test(key)||typed.length>=12)return;
+ if(status!=='running'||solved)return;
+ if(key==='back'){
+  if(!typed)return;
+  typed=typed.slice(0,-1);
+  wrongLocked=false; // A wrong answer is feedback, not an irreversible input lock.
+  $('answerBox').classList.remove('wrong','success');
+  note('Sisesta vastus');
+  $('sceneCaption').textContent='KIIRUSTA! TAKISTUS LÄHENEB';
+  updateAnswer();updateRushHUD();return;
+ }
+ if(wrongLocked||!/^\d$/.test(key)||typed.length>=12)return;
  if(!typed&&key==='0')return;
  typed+=key;updateAnswer();
  const answer=String(tasks[step].answer);
@@ -513,7 +520,7 @@ function check(){
   $('sceneCaption').textContent=turboActive?'TURBO · KRISTALL KIHUTAB EDASI':'HÜPE VALMIS · HÜPPA ÜLE TAKISTUSE';updateRushHUD();return;
  }
  if(typed.length<String(tasks[step].answer).length)return;
- wrongLocked=true; // The obstacle remains lethal; the crystal physically runs into it.
+ wrongLocked=true; // Backspace can clear this flag until the actual collision.
  $('answerBox').classList.add('wrong');note('Vale vastus!','bad');
  $('sceneCaption').textContent='VALE VASTUS · KOKKUPÕRGE LÄHENEB';
  shake=5;tone(230,.15,'sawtooth',.04);updateRushHUD();
@@ -865,6 +872,11 @@ function bind(){
  $('vaultGrid').addEventListener('click',e=>{const item=e.target.closest('[data-world]');if(item&&!item.disabled)switchWorld(Number(item.dataset.world))});
  $('nextWorld').addEventListener('click',()=>{if(worldId<9)switchWorld(worldId+1);else showFusion()});
  $('fusionClose').addEventListener('click',()=>overlay('vault'));
+ $('fusionRestart').addEventListener('click',()=>{
+  if(!window.confirm('Alustad esimesest maailmast. Senised kristallid kustutatakse. Kas soovid jätkata?'))return;
+  try{window.EDUKASS_GAME_PROGRESS.restore({completed:[],lastWorld:1,ultimate:false});}
+  catch(e){window.alert('Uut mängu ei õnnestunud alustada. Proovi uuesti.');}
+ });
  $('showUltimate').addEventListener('click',showFusion);
 
  // Mobile autoplay restrictions: retry on the first permitted real interaction.

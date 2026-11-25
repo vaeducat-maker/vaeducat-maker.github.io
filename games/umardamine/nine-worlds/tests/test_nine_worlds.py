@@ -248,8 +248,56 @@ def validate(browser,width,height,label,full=True):
  assert page.locator("#showUltimate").is_visible()
  page.locator("#showUltimate").click()
  assert page.locator("#fusionHero").is_visible()
+ page.locator("#fusionRestart").wait_for(state="visible",timeout=12000)
+ page.once("dialog",lambda dialog:dialog.dismiss())
+ page.locator("#fusionRestart").click()
+ assert page.evaluate("window.__EDUKASS_TEST__.get().vaultCount")==9
+ assert page.locator("#fusionHero").is_visible()
+ page.once("dialog",lambda dialog:dialog.accept())
+ page.locator("#fusionRestart").click()
+ assert page.locator("#introHero").is_visible()
+ assert page.evaluate("window.__EDUKASS_TEST__.get().worldId")==1
+ assert page.evaluate("window.__EDUKASS_TEST__.get().vaultCount")==0
+ assert page.evaluate("localStorage.getItem('edukass-ultimate-crystal')") is None
+ page.reload(wait_until="domcontentloaded")
+ assert page.evaluate("window.__EDUKASS_TEST__.get().worldId")==1
+ assert page.evaluate("window.__EDUKASS_TEST__.get().vaultCount")==0
+ assert page.locator("#vaultGrid .vault-card:not([disabled])").count()==1
  assert not errors,errors
  print(json.dumps({"viewport":label,"worlds":9,"tasks":104,"fusion":"PASS","console_errors":errors},ensure_ascii=False))
+ context.close()
+
+def validate_correction(browser):
+ context=browser.new_context(viewport={"width":390,"height":844})
+ page=context.new_page()
+ errors=[]
+ page.on("pageerror",lambda e:errors.append(str(e)))
+ page.goto(URL,wait_until="domcontentloaded")
+ page.locator("#begin").click()
+ state=page.evaluate("window.__EDUKASS_TEST__.get()")
+ answer=str(state["tasks"][0]["answer"])
+ wrong=answer[:-1]+("1" if answer[-1]!="1" else "2")
+ for char in wrong:page.locator(f'#keypad [data-key="{char}"]').click()
+ assert page.evaluate("window.__EDUKASS_TEST__.get().wrongLocked")
+ assert page.locator("#answerBox").evaluate("(el)=>el.classList.contains('wrong')")
+ assert page.evaluate("window.__EDUKASS_TEST__.get().runningSpeed")==state["runningSpeed"],"Wrong answer must not accelerate collision"
+ page.locator('#keypad [data-key="back"]').click()
+ assert page.evaluate("window.__EDUKASS_TEST__.get().typed")==answer[:-1]
+ assert not page.evaluate("window.__EDUKASS_TEST__.get().wrongLocked")
+ assert not page.locator("#answerBox").evaluate("(el)=>el.classList.contains('wrong')")
+ # A second typo can also be erased using a physical keyboard.
+ page.locator(f'#keypad [data-key="{wrong[-1]}"]').click()
+ page.keyboard.press("Backspace")
+ assert page.evaluate("window.__EDUKASS_TEST__.get().typed")==answer[:-1]
+ page.locator(f'#keypad [data-key="{answer[-1]}"]').click()
+ assert page.evaluate("window.__EDUKASS_TEST__.get().solved")
+ page.evaluate("window.__EDUKASS_TEST__.tick(6500)")
+ assert page.evaluate("window.__EDUKASS_TEST__.get().step")>=1
+ # An uncorrected full wrong answer still causes an actual collision.
+ page.evaluate("window.__EDUKASS_TEST__.reset();window.__EDUKASS_TEST__.start()")
+ page.evaluate("""() => {const api=window.__EDUKASS_TEST__, a=String(api.get().tasks[0].answer);for(const digit of a.slice(0,-1)+(a.endsWith('1')?'2':'1'))api.press(digit);api.tick(14000)}""")
+ assert page.evaluate("window.__EDUKASS_TEST__.get().crashReason")=="wrong"
+ assert not errors,errors
  context.close()
 
 def validate_audio(browser):
@@ -333,6 +381,7 @@ try:
   validate(browser,390,844,"portrait")
   validate(browser,360,600,"compact",full=False)
   validate(browser,844,390,"landscape",full=False)
+  validate_correction(browser)
   validate_audio(browser)
   validate_passport(browser)
   browser.close()

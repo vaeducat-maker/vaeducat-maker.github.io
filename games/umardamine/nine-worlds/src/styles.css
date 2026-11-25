@@ -587,3 +587,9 @@ body{background:radial-gradient(ellipse 100% 75% at 50% 0%,#802441,#3a0b23 66%,#
 @keyframes grandCaption{0%,78%{opacity:0;visibility:hidden;transform:translateY(9px)}100%{opacity:1;visibility:visible;transform:none}}
 @media(max-height:610px){#fusionHero .fusion-theatre{--orbit:clamp(62px,18dvh,100px);height:clamp(155px,48dvh,275px)}#fusionHero .fusion-ultimate{width:clamp(100px,22dvh,165px)}}
 @media(prefers-reduced-motion:reduce){#fusionHero .fusion-piece,#fusionHero .fusion-pulse,#fusionHero .fusion-sparks,#fusionHero .fusion-beams{display:none!important}#fusionHero .fusion-portal,#fusionHero .fusion-portal:before,#fusionHero .fusion-portal:after,#fusionHero .fusion-ultimate,#fusionHero .fusion-title,#fusionHero #fusionClose{animation:none!important;opacity:1;visibility:visible;transform:none}}
+
+/* Full-game replay appears only after the grand finale. */
+#fusionHero #fusionRestart{width:min(290px,95%);min-height:50px;animation:grandCaption 8s ease-out both}
+#fusionHero #fusionClose{width:min(260px,95%);min-height:44px;background:#121e3dcc;color:#e2f7ff;border:1px solid #b6e6ed77;box-shadow:none;font-size:12px;padding:8px 12px;margin:0;animation:grandCaption 8s ease-out both}
+@media(max-height:610px){#fusionHero #fusionRestart{min-height:44px}#fusionHero #fusionClose{min-height:40px}}
+@media(prefers-reduced-motion:reduce){#fusionHero #fusionRestart{animation:none!important;opacity:1;visibility:visible;transform:none}}
