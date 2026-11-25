@@ -7,8 +7,8 @@
   "catalogId": "umardamine",
   "sourceAudit": "scripts/quality-umardamine-acceptance.js",
   "allowedChangedSharedFiles": {
-    "index.html": "f683224746bc1395c2b6d9632578e3dc62bc10d4",
+    "index.html": "1377f33005aa70729e50e3138712850e97746208",
     "data/catalog.json": "6d8f0923208f623fd24d185a5cc777574280ac19"
   },
-  "ownerDecision": "2026-11-25: owner explicitly approved public publication of the tested game in Mängud."
+  "ownerDecision": "2026-11-25: owner explicitly approved public publication of the tested game in Mängud.; owner requested distinct visual separation from multiplication card."
 }
