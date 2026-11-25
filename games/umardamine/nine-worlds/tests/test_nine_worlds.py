@@ -236,6 +236,8 @@ def validate(browser,width,height,label,full=True):
    assert page.evaluate("localStorage.getItem('edukass-ultimate-crystal')")=="1"
    assert not page.locator("#fusionResult").is_visible()
    assert not page.locator("#fusionRestart").is_visible()
+   page.wait_for_function("document.querySelector('#solarTrack').paused === (localStorage.getItem('edukass-rounding-sound-v1') === 'off')",timeout=12000)
+   assert page.locator('#solarTrack').get_attribute('src')=='assets/02_solar_spark.mp3'
    page.wait_for_function("document.querySelector('#fusionHero').dataset.phase==='arrival'",timeout=6000)
    assert page.locator("#fusionCosmos").evaluate("(c)=>c.width>0 && c.height>0")
    page.wait_for_timeout(2500)

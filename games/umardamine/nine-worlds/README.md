@@ -137,3 +137,6 @@ The finale is now an 18-second illustrated story. A tiny golden comet finds a sl
 
 ## Finale art and score refinement · 25 November 2026
 Owner requested removal of the planet and replacement of the finale music. The planet and all related rainbow/face animation are removed; the nine-crystal choreography and eighteen-second timing remain. A prismatic orbital crown surrounds the ultimate crystal. The finale uses a newly composed fixed-pitch D-major melody with layered warm piano-like and pad voices, no pitch-dropping game tones. Its gain bus is stopped when leaving the film or muting. The gameplay Solar Spark and Soft Oops audio are unchanged. The preview starts on a deliberate click so browser audio permission is available; it does not award progress. Manual listening remains required.
+
+## Final music decision · 25 November 2026
+The owner approved the existing gameplay track Solar Spark for the whole experience. The finale-specific synthesized score has been removed. The ninth victory preserves the current Solar Spark playback position through the film, with no replacement or extra victory fanfare; mute preference and background-tab pausing remain in effect. The animation itself is unchanged.

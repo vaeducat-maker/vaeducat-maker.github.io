@@ -3444,7 +3444,7 @@ function ultimateCrystalSVG(){
 }
 function showFusion(){
  if(collectedCrystals().length!==9||victoryStage==='fusion')return;
- const run=++fusionRun;ceremonyToken++;approvedMusicPause();
+ const run=++fusionRun;ceremonyToken++;
  const pieces=$('fusionPieces');
  pieces.innerHTML=WORLDS.map((w,i)=>'<div class="fusion-piece" style="--c:'+w.main+'">'+collectibleSVG(w.id,'fusionPiece'+w.id)+'</div>').join('');
  $('ultimateGem').innerHTML=ultimateCrystalSVG();
@@ -3452,7 +3452,7 @@ function showFusion(){
  $('ultimateGem').style.opacity='0';
  $('celebrateParticles').innerHTML='';
  try{localStorage.setItem('edukass-ultimate-crystal','1')}catch(e){}
- overlay('fusion');
+ overlay('fusion');approvedMusicPlay();
  const canvas=$('fusionCosmos'),c=canvas.getContext('2d'),gems=[...pieces.children],hero=$('fusionHero'),theatre=hero.querySelector('.fusion-theatre');
  const stars=Array.from({length:175},(_,i)=>({x:((i*137.508)%100)/100,y:((i*73.627+13)%100)/100,r:.35+(i%11===0?1.65:(i%4)*.24),phase:i*1.17}));
  const clamp01=v=>Math.max(0,Math.min(1,v)),smooth=v=>{v=clamp01(v);return v*v*(3-2*v)},mix=(a,b,t)=>a+(b-a)*t,TAU=Math.PI*2;
@@ -3553,68 +3553,9 @@ function showFusion(){
   if(!reduced)requestAnimationFrame(draw);
  }
  hero.classList.remove('fusion-complete');requestAnimationFrame(draw);
- if(!reduced)playFinaleScore(run);else winSound();
 }
-let finaleBus=null;
-function stopFinaleScore(){
- if(!finaleBus)return;
- try{const g=finaleBus;g.gain.cancelScheduledValues(audio.currentTime);g.gain.setTargetAtTime(0,audio.currentTime,.035);setTimeout(()=>{try{g.disconnect()}catch(e){}},220)}catch(e){}
- finaleBus=null;
-}
-function playFinaleScore(run){
- if(!soundOn||document.hidden||run!==fusionRun)return;
- stopFinaleScore();
- try{
-  audio=audio||new(window.AudioContext||window.webkitAudioContext)();
-  if(audio.state==='suspended')audio.resume().catch(()=>{});
-  const start=audio.currentTime+.045,bus=audio.createGain();
-  finaleBus=bus;bus.gain.setValueAtTime(.7,start);bus.gain.setValueAtTime(.7,start+17);bus.gain.linearRampToValueAtTime(0,start+18);bus.connect(audio.destination);
-  // Original composition in D major, 120 BPM: fixed pitches, soft strings,
-  // warm piano-like notes, an arpeggiated pulse and a resolved major cadence.
-  const freq=n=>440*Math.pow(2,(n-69)/12);
-  function voice(midi,time,duration,amp,kind){
-   const t=start+time,env=audio.createGain(),o=audio.createOscillator(),f=freq(midi);
-   const attack=kind==='pad'?.22:.014,release=kind==='pad'?.30:.18;
-   o.type=kind==='pad'?'triangle':'sine';o.frequency.setValueAtTime(f,t);
-   env.gain.setValueAtTime(.0001,t);env.gain.linearRampToValueAtTime(amp,t+attack);
-   env.gain.exponentialRampToValueAtTime(Math.max(.0002,amp*(kind==='pad'?.7:.16)),t+Math.max(attack+.03,duration-release));
-   env.gain.exponentialRampToValueAtTime(.0001,t+duration);
-   o.connect(env);env.connect(bus);o.start(t);o.stop(t+duration+.02);
-   if(kind==='piano'){
-    const harmonic=audio.createOscillator(),hg=audio.createGain();harmonic.type='sine';harmonic.frequency.value=f*2;
-    hg.gain.setValueAtTime(.0001,t);hg.gain.linearRampToValueAtTime(amp*.25,t+.008);hg.gain.exponentialRampToValueAtTime(.0001,t+Math.min(.28,duration));
-    harmonic.connect(hg);hg.connect(bus);harmonic.start(t);harmonic.stop(t+Math.min(.28,duration)+.02);
-   }
-  }
-  const bars=[
-   [38,[54,57,62]],[35,[54,59,62]],[43,[55,59,62]],[42,[54,57,62]],
-   [40,[55,59,64]],[45,[57,62,64]],[45,[57,61,64]],[38,[54,57,62]],[38,[54,57,62]]
-  ];
-  bars.forEach(([bass,chord],i)=>{
-   const t=i*2,amp=i<3?.015:i<6?.024:.031;
-   if(i===6){ // short breath before the merge at 12.55
-    chord.forEach(n=>voice(n,12.55,1.40,.025,'pad'));voice(bass,12.55,1.45,.043,'pad');return;
-   }
-   const duration=i===8?1.85:1.98;
-   chord.forEach(n=>voice(n,t,duration,amp,'pad'));
-   voice(bass,t,duration,i<3?.033:.046,'pad');
-   if(i>=1&&i<8)for(let j=0;j<4;j++)voice(chord[j%3]+12,t+j*.5,.44,.023+(i>=3?.009:0),'piano');
-  });
-  const melody=[
-   [2,69,.5],[2.5,71,.5],[3,74,.95],[4,71,.5],[4.5,69,.5],[5,66,.95],
-   [6,69,.5],[6.5,71,.5],[7,74,.5],[7.5,76,.5],[8,78,.95],[9,76,.5],[9.5,74,.5],
-   [10,73,.5],[10.5,69,.5],[11,71,.75],
-   [12.55,76,.65],[13.25,81,.65],[14,78,.5],[14.5,76,.5],[15,74,.9],
-   [16,69,.5],[16.5,74,1.35]
-  ];
-  melody.forEach(([t,n,d])=>voice(n,t,d,t>=12?.078:.052,'piano'));
-  // A full, soft chord on the reveal, not isolated glissando beeps.
-  [50,57,62,66,69,74,78].forEach((n,i)=>voice(n,12.62+i*.045,2.2,i<3?.034:.022,'pad'));
- }catch(e){}
-}
-
 function overlay(type){
- if(type!=='fusion')stopFinaleScore();
+ if(victoryStage==='fusion'&&type!=='fusion')approvedMusicPause();
  $('overlay').classList.remove('hidden');$('overlay').setAttribute('aria-hidden','false');
  $('overlay').classList.toggle('is-celebrating',type==='victory'||type==='finish'||type==='vault'||type==='fusion');
  $('overlay').classList.toggle('is-intro',type==='intro');
@@ -3628,7 +3569,6 @@ function overlay(type){
  victoryStage=type;
 }
 function hideOverlay(){
- stopFinaleScore();
  $('overlay').classList.add('hidden');
  $('overlay').classList.remove('is-celebrating','is-intro','is-fusion');
  $('overlay').setAttribute('aria-hidden','true');
@@ -3676,7 +3616,7 @@ let musicNextTime=0,musicStep=0;
 const solarTrack=$('solarTrack'),softFail=$('softFail');
 solarTrack.volume=.32;softFail.volume=.53;
 function approvedMusicPlay(){
- if(!soundOn||document.hidden||$('passportDialog').open||$('shareDialog').open||status==='crashing'||status==='crashed'||status==='finished')return;
+ if(!soundOn||document.hidden||$('passportDialog').open||$('shareDialog').open||status==='crashing'||status==='crashed'||(status==='finished'&&victoryStage!=='fusion'))return;
  try{const result=solarTrack.play();if(result&&typeof result.catch==='function')result.catch(()=>{});}catch(e){}
 }
 function approvedMusicPause(){try{solarTrack.pause()}catch(e){}}
@@ -3692,7 +3632,7 @@ function setSound(){
  try{localStorage.setItem(SOUND_PREF,soundOn?'on':'off')}catch(e){}
  syncSoundUI();
  if(soundOn){approvedMusicPlay();tone(510,.07,'triangle',.018)}
- else {approvedMusicPause();stopFinaleScore();try{softFail.pause()}catch(e){}}
+ else {approvedMusicPause();try{softFail.pause()}catch(e){}}
 }
 function approvedFailSound(){
  if(!soundOn)return;
@@ -3811,7 +3751,7 @@ function check(){
  shake=5;tone(230,.15,'sawtooth',.04);updateRushHUD();
 }
 function finish(){
- status='finished';step=TOTAL;solved=false;rewardUnlocked=true;approvedMusicPause();
+ status='finished';step=TOTAL;solved=false;rewardUnlocked=true;if(worldId!==9)approvedMusicPause();
  updateGems();updateRushHUD();
  $('answerBox').classList.remove('success');
  note('Kristall saadud!','ok');fxBurst=1;spawnBurst(playerX,96);if(worldId!==9)winSound();
@@ -3820,6 +3760,7 @@ function finish(){
  const token=++ceremonyToken;
  makeConfetti();
  if(worldId===9&&collectedCrystals().length===9){showFusion();return}
+ approvedMusicPause();
  if(reduced){overlay('finish');return}
  // First show the in-world flash, then the victory burst, then award the crystal.
  setTimeout(()=>{if(status==='finished'&&token===ceremonyToken)overlay('victory')},180);
@@ -4172,7 +4113,7 @@ function bind(){
  document.addEventListener('click',unlockMusic,true);
  document.addEventListener('keydown',unlockMusic,true);
  window.addEventListener('resize',resize);
- document.addEventListener('visibilitychange',()=>{lastFrame=0;if(document.hidden){approvedMusicPause();stopFinaleScore()}else approvedMusicPlay()});
+ document.addEventListener('visibilitychange',()=>{lastFrame=0;if(document.hidden)approvedMusicPause();else approvedMusicPlay()});
  window.addEventListener('edukass-dialog-closed',()=>{lastFrame=0;approvedMusicPlay()});
  window.addEventListener('edukass-dialog-open',approvedMusicPause);
 }
