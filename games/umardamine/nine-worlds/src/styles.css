@@ -615,3 +615,11 @@ body{background:radial-gradient(ellipse 100% 75% at 50% 0%,#802441,#3a0b23 66%,#
 @media(max-height:610px){#fusionHero .fusion-theatre{top:36%;width:min(80vw,58dvh,450px);height:min(80vw,58dvh,450px)}#fusionResult{gap:4px;bottom:8px}#fusionHero .fusion-title{font-size:26px}#fusionHero #fusionRestart{min-height:40px;padding:8px 12px}#fusionHero #fusionClose{min-height:34px}}
 @media(orientation:landscape) and (max-height:610px){#fusionHero .fusion-theatre{top:50%;left:34%;width:min(62vw,88dvh);height:min(62vw,88dvh)}#fusionResult{left:75%;bottom:auto;top:50%;transform:translate(-50%,-50%);width:min(40vw,310px)}#fusionHero .fusion-title{font-size:clamp(23px,5dvh,34px)}}
 @media(prefers-reduced-motion:reduce){#fusionResult{animation:none}#fusionHero .fusion-ultimate{opacity:1}}
+
+/* Animated story: more room for the awakened planet below the crystal. */
+#fusionHero .fusion-theatre{top:37%;width:min(88vw,58dvh,560px);height:min(88vw,58dvh,560px)}
+#fusionHero .fusion-piece{width:clamp(28px,9.6vw,68px);height:clamp(36px,12.5vw,86px)}
+#fusionHero .fusion-ultimate{width:76%}
+#fusionResult{background:linear-gradient(0deg,#05091ee8, #05091e70 76%,transparent);padding-top:16px}
+@media(max-height:610px){#fusionHero .fusion-theatre{top:32%;width:min(80vw,53dvh);height:min(80vw,53dvh)}}
+@media(orientation:landscape) and (max-height:610px){#fusionHero .fusion-theatre{top:42%;left:34%;width:min(62vw,76dvh);height:min(62vw,76dvh)}#fusionResult{background:none}}

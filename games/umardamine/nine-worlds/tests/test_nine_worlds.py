@@ -236,13 +236,17 @@ def validate(browser,width,height,label,full=True):
    assert page.evaluate("localStorage.getItem('edukass-ultimate-crystal')")=="1"
    assert not page.locator("#fusionResult").is_visible()
    assert not page.locator("#fusionRestart").is_visible()
-   page.wait_for_timeout(3000)
+   page.wait_for_function("document.querySelector('#fusionHero').dataset.phase==='arrival'",timeout=6000)
    assert page.locator("#fusionCosmos").evaluate("(c)=>c.width>0 && c.height>0")
+   page.wait_for_timeout(2500)
    assert page.locator("#fusionPieces .fusion-piece").first.evaluate("(el)=>Number(el.style.opacity)")>.5
    page.screenshot(path=str(ROOT/f"qa_{label}_fusion_orbit.png"))
-   page.wait_for_timeout(4600)
+   page.wait_for_function("document.querySelector('#fusionHero').dataset.phase==='dance'",timeout=8000)
+   assert not page.locator('#fusionResult').is_visible()
+   page.screenshot(path=str(ROOT/f"qa_{label}_fusion_dance.png"))
+   page.wait_for_function("document.querySelector('#fusionHero').dataset.phase==='fusion'",timeout=10000)
    page.screenshot(path=str(ROOT/f"qa_{label}_fusion_merge.png"))
-   page.locator("#fusionClose").wait_for(state="visible",timeout=16000)
+   page.locator("#fusionClose").wait_for(state="visible",timeout=24000)
    assert page.locator("#ultimateGem").evaluate("(el)=>Number(el.style.opacity)")>.95
    page.screenshot(path=str(ROOT/f"qa_{label}_ultimate_crystal.png"))
 
@@ -252,7 +256,7 @@ def validate(browser,width,height,label,full=True):
  assert page.locator("#showUltimate").is_visible()
  page.locator("#showUltimate").click()
  assert page.locator("#fusionHero").is_visible()
- page.locator("#fusionRestart").wait_for(state="visible",timeout=16000)
+ page.locator("#fusionRestart").wait_for(state="visible",timeout=24000)
  page.once("dialog",lambda dialog:dialog.dismiss())
  page.locator("#fusionRestart").click()
  assert page.evaluate("window.__EDUKASS_TEST__.get().vaultCount")==9
