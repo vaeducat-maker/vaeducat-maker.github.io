@@ -21,6 +21,7 @@ const publicFiles = [
   'home-refresh.js',
   'home.css',
   'index.html',
+  'EDUKASS_umardamine_post_v2.mp4',
   'k/index.html',
   'kirjalik-arvutamine/index.html',
   'styles.css',
