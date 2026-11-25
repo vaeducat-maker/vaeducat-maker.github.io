@@ -13,6 +13,19 @@ const candidateRoots=new Set(['games','materials','proov']);
 const crypto=require('node:crypto');
 const PUBLIC_ENTRY_APPROVAL='quality/publication-approvals/stolbiki-20261031.json';
 function isAuthorizedSharedPublication(file){
+  // Exact-byte scoped approval for the owner-approved rounding game release.
+  if(['index.html','data/catalog.json'].includes(file)){
+    const p=path.join(ROOT,'quality/publication-approvals/umardamine-20261125.json');
+    if(fs.existsSync(p)){
+      const r=JSON.parse(fs.readFileSync(p,'utf8'));
+      const a='scripts/quality-umardamine-acceptance.js';
+      if(r.schemaVersion===1&&r.ownerApproval===true&&r.status==='owner-approved-publication'&&r.changeId==='umardamine-20261125'&&r.publicEntry==='games/umardamine/index.html'&&r.catalogId==='umardamine'&&r.sourceAudit===a&&Object.keys(r.allowedChangedSharedFiles||{}).length===2&&fs.existsSync(path.join(ROOT,a))&&fs.readFileSync(path.join(ROOT,a),'utf8').includes('UMARDAMINE_PUBLIC_NAVIGATION')){
+        const b=fs.readFileSync(path.join(ROOT,file));
+        if(crypto.createHash('sha1').update('blob '+b.length).update(Buffer.from([0])).update(b).digest('hex')===r.allowedChangedSharedFiles[file])return true;
+      }
+    }
+  }
+
   // NOVEMBER_AUTOPLAY_MAGNET_BROWSER_AUDIT — only the newly approved
   // homepage bytes are allowed; all other shared-file revisions remain blocked.
   if(file==='index.html'){

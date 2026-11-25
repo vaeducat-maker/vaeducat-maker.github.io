@@ -169,6 +169,14 @@
       "pathPrefix": "proov/tegusonad-praegu-7q2m9x/",
       "category": "experimental",
       "acceptance": "requires-individual-audit"
+    },
+    {
+      "id": "games-umardamine",
+      "pathPrefix": "games/umardamine/",
+      "category": "interactive",
+      "acceptance": "verified",
+      "sourceContract": "quality/umardamine-acceptance.json",
+      "visualAudit": "scripts/quality-umardamine-acceptance.js"
     }
   ]
 }
