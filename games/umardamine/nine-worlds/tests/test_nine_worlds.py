@@ -248,6 +248,7 @@ def validate(browser,width,height,label,full=True):
    page.screenshot(path=str(ROOT/f"qa_{label}_fusion_merge.png"))
    page.locator("#fusionClose").wait_for(state="visible",timeout=24000)
    assert page.locator("#ultimateGem").evaluate("(el)=>Number(el.style.opacity)")>.95
+   assert page.locator('#fusionHero').get_attribute('data-phase')=='complete'
    page.screenshot(path=str(ROOT/f"qa_{label}_ultimate_crystal.png"))
 
  assert collected==list(range(1,10))

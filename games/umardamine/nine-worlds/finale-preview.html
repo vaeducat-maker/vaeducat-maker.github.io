@@ -629,6 +629,12 @@ body{background:radial-gradient(ellipse 100% 75% at 50% 0%,#802441,#3a0b23 66%,#
 #fusionResult{background:linear-gradient(0deg,#05091ee8, #05091e70 76%,transparent);padding-top:16px}
 @media(max-height:610px){#fusionHero .fusion-theatre{top:32%;width:min(80vw,53dvh);height:min(80vw,53dvh)}}
 @media(orientation:landscape) and (max-height:610px){#fusionHero .fusion-theatre{top:42%;left:34%;width:min(62vw,76dvh);height:min(62vw,76dvh)}#fusionResult{background:none}}
+
+/* Finale without a planet: the crystals and their cosmic crown are the focus. */
+#fusionHero .fusion-theatre{top:43%;width:min(92vw,66dvh,620px);height:min(92vw,66dvh,620px)}
+#fusionResult{background:none;padding-top:0}
+@media(max-height:610px){#fusionHero .fusion-theatre{top:36%;width:min(80vw,58dvh);height:min(80vw,58dvh)}}
+@media(orientation:landscape) and (max-height:610px){#fusionHero .fusion-theatre{top:50%;left:34%;width:min(62vw,88dvh);height:min(62vw,88dvh)}}
 </style>
 </head>
 <body>
@@ -788,6 +794,7 @@ body{background:radial-gradient(ellipse 100% 75% at 50% 0%,#802441,#3a0b23 66%,#
   <p id="passportStatus" class="transfer-status" role="status" aria-live="polite"></p>
  </div>
 </dialog>
+<div id="previewGate" style="position:fixed;inset:0;z-index:1000;background:radial-gradient(ellipse at center,#263564,#04071c 75%);display:grid;place-items:center;text-align:center"><div><h1 style="font-size:32px;margin:0 0 24px">ÜLIM KRISTALL</h1><button class="primary" id="previewStart" type="button">▶ VAATA FINAALI</button></div></div>
 <audio id="solarTrack" src="assets/02_solar_spark.mp3" loop preload="none" hidden></audio>
 <audio id="softFail" src="assets/01_soft_oops.mp3" preload="auto" hidden></audio>
 <script>/* Copyright (c) 2009 Kazuhiko Arase; MIT license. https://github.com/kazuhikoarase/qrcode-generator */
@@ -3486,8 +3493,8 @@ function showFusion(){
   if(w!==lastW||h!==lastH||d!==lastDpr){canvas.width=Math.round(w*d);canvas.height=Math.round(h*d);lastW=w;lastH=h;lastDpr=d;pathHistory.forEach(p=>p.length=0)}
   c.setTransform(d,0,0,d,0,0);
   const cx=tb.left-box.left+tb.width/2,cy=tb.top-box.top+tb.height/2,R=Math.min(tb.width,tb.height)*.36;
-  const awake=smooth((t-12.7)/3),birth=smooth((t-12.9)/2.3),burst=clamp01((t-12.55)/2.6);
-  setPhase(t<2?'sleeping':t<6.9?'arrival':t<10.4?'dance':t<11.5?'anticipation':t<12.8?'fusion':t<18?'awakening':'complete');
+  const birth=smooth((t-12.9)/2.3),burst=clamp01((t-12.55)/2.6);
+  setPhase(t<2?'opening':t<6.9?'arrival':t<10.4?'dance':t<11.5?'anticipation':t<12.8?'fusion':t<18?'reveal':'complete');
   const glow=(x,y,r,stops)=>{const g=c.createRadialGradient(x,y,0,x,y,Math.max(1,r));for(const [at,col] of stops)g.addColorStop(at,col);c.fillStyle=g;c.fillRect(x-r,y-r,r*2,r*2)};
   c.globalCompositeOperation='source-over';c.globalAlpha=1;
   const sky=c.createLinearGradient(0,0,w,h);sky.addColorStop(0,'#050b25');sky.addColorStop(.48,'#101438');sky.addColorStop(1,'#160a2b');c.fillStyle=sky;c.fillRect(0,0,w,h);
@@ -3497,38 +3504,7 @@ function showFusion(){
   glow(w*.6,h*.94,Math.max(w,h)*.45,[[0,'#842e8260'],[1,'transparent']]);
   for(const s of stars){c.globalAlpha=.35+.45*(.5+.5*Math.sin(t*.7+s.phase));c.fillStyle=s.r>1.5?'#fff5df':'#b4caff';c.beginPath();c.arc(s.x*w+Math.sin(t*.16+s.phase)*2,s.y*h,s.r,0,TAU);c.fill()}
   c.globalAlpha=1;
-  // Little sleepy planet: an illustrated character that visibly comes to life.
-  // Portrait: below the crystal; landscape: behind its lower half.
-  const landscape=w>h*1.25,px=landscape?cx+R*.18:w*.5,py=landscape?h*.88:Math.min(h*.77,cy+R*1.42),pr=Math.min(w,h)*(landscape?.24:.265);
-  const planetLift=awake*pr*.12,planetY=py-planetLift;
-  function planet(){
-   c.save();c.translate(px,planetY);
-   glow(0,0,pr*1.65,[[0,'rgba(120,220,255,'+(.08+awake*.25)+')'],[.65,'rgba(104,164,255,'+awake*.18+')'],[1,'transparent']]);
-   c.beginPath();c.arc(0,0,pr,0,TAU);c.clip();
-   const pg=c.createRadialGradient(-pr*.34,-pr*.45,pr*.04,0,0,pr*1.1);
-   pg.addColorStop(0,awake>.01?'rgb('+Math.round(mix(64,137,awake))+','+Math.round(mix(88,229,awake))+','+Math.round(mix(127,237,awake))+')':'#40587f');
-   pg.addColorStop(.62,'rgb('+Math.round(mix(32,45,awake))+','+Math.round(mix(45,121,awake))+','+Math.round(mix(86,190,awake))+')');pg.addColorStop(1,'#142342');
-   c.fillStyle=pg;c.fillRect(-pr,-pr,pr*2,pr*2);
-   // Stylised continents with round painterly silhouettes.
-   for(let k=0;k<4;k++){
-    c.save();c.rotate(k*1.68+.32);c.fillStyle='rgba('+Math.round(mix(57,88,awake))+','+Math.round(mix(73,205,awake))+','+Math.round(mix(106,155,awake))+',.85)';
-    c.beginPath();c.moveTo(-pr*.95,-pr*.38);c.bezierCurveTo(-pr*.62,-pr*.68,-pr*.52,-pr*.37,-pr*.28,-pr*.46);c.bezierCurveTo(-pr*.05,-pr*.51,pr*.1,-pr*.32,-pr*.16,-pr*.15);c.bezierCurveTo(-pr*.35,.01*pr,-pr*.44,.15*pr,-pr*.61,-pr*.04);c.closePath();c.fill();c.restore();
-   }
-   c.globalAlpha=.18+awake*.25;c.strokeStyle='#e7ffff';c.lineWidth=pr*.035;
-   for(let k=0;k<4;k++){c.beginPath();c.ellipse(-pr*.12,pr*(k*.43-.6),pr*.9,pr*.13,-.15,0,TAU);c.stroke()}
-   c.globalAlpha=1;
-   // Closed eyes become an expressive smile, with bright highlights and cheeks.
-   const eyesOpen=smooth((t-13.5)/.8)*(1-.93*Math.exp(-Math.pow((t-16.15)/.12,2)));
-   for(const ex of [-.27,.27]){
-    if(eyesOpen<.1){c.strokeStyle='#c4d8ed';c.lineWidth=pr*.035;c.lineCap='round';c.beginPath();c.arc(ex*pr,-.12*pr,pr*.105,0,Math.PI);c.stroke()}
-    else{c.fillStyle='#f5ffff';c.beginPath();c.ellipse(ex*pr,-.08*pr,pr*.13,pr*.17*eyesOpen,0,0,TAU);c.fill();c.fillStyle='#203966';c.beginPath();c.ellipse((ex+.018)*pr,-.09*pr,pr*.065,pr*.105*eyesOpen,0,0,TAU);c.fill();c.fillStyle='#fff';c.beginPath();c.arc((ex+.043)*pr,-.13*pr,pr*.027,0,TAU);c.fill()}
-    c.globalAlpha=.5*awake;c.fillStyle='#ffb0ce';c.beginPath();c.ellipse(ex*pr,.18*pr,pr*.12,pr*.055,0,0,TAU);c.fill();c.globalAlpha=1;
-   }
-   c.strokeStyle='#d8eaff';c.lineWidth=pr*.027;c.lineCap='round';c.beginPath();c.arc(0,awake>.3?pr*.11:pr*.21,pr*(.055+.15*awake),awake>.3?.1:Math.PI,awake>.3?Math.PI-.1:TAU);c.stroke();
-   c.restore();c.strokeStyle='rgba(164,231,255,'+(.25+.5*awake)+')';c.lineWidth=1.5;c.beginPath();c.arc(px,planetY,pr,0,TAU);c.stroke();
-  }
-  planet();
-  // A tiny golden comet discovers the sleeping planet, then calls the nine gems.
+  // A golden comet summons the nine gems from across the star field.
   if(t<11.5){
    const v=smooth(t/2),a=-2.75+v*2.1,rr=R*(1.4-.3*v),sx=cx+Math.cos(a)*rr,sy=cy+Math.sin(a)*rr;
    const tailAlpha=(1-smooth((t-3)/1.3))*.8;
@@ -3562,9 +3538,12 @@ function showFusion(){
   c.globalAlpha=1;
   if(birth>0){
    glow(cx,cy,R*1.8,[[0,'rgba(245,255,225,'+birth*.4+')'],[.32,'rgba(133,220,255,'+birth*.23+')'],[1,'transparent']]);
-   // The united crystal sends a rainbow down to the planet and the sky blossoms.
-   for(let i=0;i<5;i++){c.globalAlpha=awake*.22;c.strokeStyle=['#8df9ef','#9dc7ff','#c5a4ff','#f9b7da','#ffe9a1'][i];c.lineWidth=3+i*1.2;c.beginPath();c.moveTo(cx+(i-2)*4,cy+R*.24);c.bezierCurveTo(cx+R*.46,cy+R*.66,px-R*.48,planetY-pr*.64,px+(i-2)*pr*.1,planetY-pr*.83);c.stroke()}
-   for(let k=0;k<3;k++){c.globalAlpha=awake*.36;c.strokeStyle=['#a6fdf4','#ffc2fa','#ffe9a3'][k];c.lineWidth=1.3;c.beginPath();c.ellipse(px,planetY,pr*(1.1+k*.13),pr*(.32+k*.1),-.28,0,TAU);c.stroke()}
+   // A luminous orbital crown and curved aurora wrap around the new artifact.
+   for(let k=0;k<3;k++){
+    c.save();c.translate(cx,cy);c.rotate(-.42+k*.38+t*.045);
+    c.globalAlpha=birth*.34;c.strokeStyle=['#a6fdf4','#d9b6ff','#ffe9a3'][k];c.lineWidth=1.8;
+    c.beginPath();c.ellipse(0,0,R*(1.15+k*.15),R*(.42+k*.10),0,0,TAU);c.stroke();c.restore();
+   }
    for(let i=0;i<35;i++){const a=i*2.399963+t*.09,rad=R*(.75+(i%7)*.13);c.globalAlpha=birth*(.3+.4*(.5+.5*Math.sin(t*1.5+i)));c.fillStyle=i%3===0?'#ffe4a7':'#d9ffff';c.beginPath();c.arc(cx+Math.cos(a)*rad,cy+Math.sin(a)*rad,1.2+i%3*.55,0,TAU);c.fill()}
   }
   c.globalAlpha=1;c.globalCompositeOperation='source-over';
@@ -3574,18 +3553,68 @@ function showFusion(){
   if(!reduced)requestAnimationFrame(draw);
  }
  hero.classList.remove('fusion-complete');requestAnimationFrame(draw);
- const cue=(ms,fn)=>setTimeout(()=>{if(run===fusionRun&&victoryStage==='fusion'&&!document.hidden&&soundOn)fn()},ms);
- if(reduced){winSound();return}
- // Original score follows the character arc: mystery, playful entrance, pause, resolution.
- [196,293.66,392].forEach((hz,i)=>cue(i*530,()=>tone(hz,1.5,'sine',.025)));
- [392,440,494,523.25,587.33,659.25,698.46,783.99,880].forEach((hz,i)=>cue(2000+i*370,()=>tone(hz,.55,'triangle',.035)));
- [523.25,659.25,587.33,783.99,659.25,880,783.99,1046.5].forEach((hz,i)=>cue(6900+i*370,()=>tone(hz,.32,'triangle',.035)));
- cue(10400,()=>{[130.81,196,261.63].forEach((hz,i)=>tone(hz,.9,'sine',.025,i*.08));});
- cue(12550,()=>{[130.81,196,261.63,329.63,392,523.25,659.25,783.99,1046.5].forEach((hz,i)=>tone(hz,2.4,'sine',i<3?.043:.022,i*.045));});
- [523.25,659.25,783.99,1046.5,880,1046.5,1318.51].forEach((hz,i)=>cue(14500+i*360,()=>tone(hz,.85,'triangle',.028)));
+ if(!reduced)playFinaleScore(run);else winSound();
+}
+let finaleBus=null;
+function stopFinaleScore(){
+ if(!finaleBus)return;
+ try{const g=finaleBus;g.gain.cancelScheduledValues(audio.currentTime);g.gain.setTargetAtTime(0,audio.currentTime,.035);setTimeout(()=>{try{g.disconnect()}catch(e){}},220)}catch(e){}
+ finaleBus=null;
+}
+function playFinaleScore(run){
+ if(!soundOn||document.hidden||run!==fusionRun)return;
+ stopFinaleScore();
+ try{
+  audio=audio||new(window.AudioContext||window.webkitAudioContext)();
+  if(audio.state==='suspended')audio.resume().catch(()=>{});
+  const start=audio.currentTime+.045,bus=audio.createGain();
+  finaleBus=bus;bus.gain.setValueAtTime(.7,start);bus.gain.setValueAtTime(.7,start+17);bus.gain.linearRampToValueAtTime(0,start+18);bus.connect(audio.destination);
+  // Original composition in D major, 120 BPM: fixed pitches, soft strings,
+  // warm piano-like notes, an arpeggiated pulse and a resolved major cadence.
+  const freq=n=>440*Math.pow(2,(n-69)/12);
+  function voice(midi,time,duration,amp,kind){
+   const t=start+time,env=audio.createGain(),o=audio.createOscillator(),f=freq(midi);
+   const attack=kind==='pad'?.22:.014,release=kind==='pad'?.30:.18;
+   o.type=kind==='pad'?'triangle':'sine';o.frequency.setValueAtTime(f,t);
+   env.gain.setValueAtTime(.0001,t);env.gain.linearRampToValueAtTime(amp,t+attack);
+   env.gain.exponentialRampToValueAtTime(Math.max(.0002,amp*(kind==='pad'?.7:.16)),t+Math.max(attack+.03,duration-release));
+   env.gain.exponentialRampToValueAtTime(.0001,t+duration);
+   o.connect(env);env.connect(bus);o.start(t);o.stop(t+duration+.02);
+   if(kind==='piano'){
+    const harmonic=audio.createOscillator(),hg=audio.createGain();harmonic.type='sine';harmonic.frequency.value=f*2;
+    hg.gain.setValueAtTime(.0001,t);hg.gain.linearRampToValueAtTime(amp*.25,t+.008);hg.gain.exponentialRampToValueAtTime(.0001,t+Math.min(.28,duration));
+    harmonic.connect(hg);hg.connect(bus);harmonic.start(t);harmonic.stop(t+Math.min(.28,duration)+.02);
+   }
+  }
+  const bars=[
+   [38,[54,57,62]],[35,[54,59,62]],[43,[55,59,62]],[42,[54,57,62]],
+   [40,[55,59,64]],[45,[57,62,64]],[45,[57,61,64]],[38,[54,57,62]],[38,[54,57,62]]
+  ];
+  bars.forEach(([bass,chord],i)=>{
+   const t=i*2,amp=i<3?.015:i<6?.024:.031;
+   if(i===6){ // short breath before the merge at 12.55
+    chord.forEach(n=>voice(n,12.55,1.40,.025,'pad'));voice(bass,12.55,1.45,.043,'pad');return;
+   }
+   const duration=i===8?1.85:1.98;
+   chord.forEach(n=>voice(n,t,duration,amp,'pad'));
+   voice(bass,t,duration,i<3?.033:.046,'pad');
+   if(i>=1&&i<8)for(let j=0;j<4;j++)voice(chord[j%3]+12,t+j*.5,.44,.023+(i>=3?.009:0),'piano');
+  });
+  const melody=[
+   [2,69,.5],[2.5,71,.5],[3,74,.95],[4,71,.5],[4.5,69,.5],[5,66,.95],
+   [6,69,.5],[6.5,71,.5],[7,74,.5],[7.5,76,.5],[8,78,.95],[9,76,.5],[9.5,74,.5],
+   [10,73,.5],[10.5,69,.5],[11,71,.75],
+   [12.55,76,.65],[13.25,81,.65],[14,78,.5],[14.5,76,.5],[15,74,.9],
+   [16,69,.5],[16.5,74,1.35]
+  ];
+  melody.forEach(([t,n,d])=>voice(n,t,d,t>=12?.078:.052,'piano'));
+  // A full, soft chord on the reveal, not isolated glissando beeps.
+  [50,57,62,66,69,74,78].forEach((n,i)=>voice(n,12.62+i*.045,2.2,i<3?.034:.022,'pad'));
+ }catch(e){}
 }
 
 function overlay(type){
+ if(type!=='fusion')stopFinaleScore();
  $('overlay').classList.remove('hidden');$('overlay').setAttribute('aria-hidden','false');
  $('overlay').classList.toggle('is-celebrating',type==='victory'||type==='finish'||type==='vault'||type==='fusion');
  $('overlay').classList.toggle('is-intro',type==='intro');
@@ -3599,6 +3628,7 @@ function overlay(type){
  victoryStage=type;
 }
 function hideOverlay(){
+ stopFinaleScore();
  $('overlay').classList.add('hidden');
  $('overlay').classList.remove('is-celebrating','is-intro','is-fusion');
  $('overlay').setAttribute('aria-hidden','true');
@@ -3662,7 +3692,7 @@ function setSound(){
  try{localStorage.setItem(SOUND_PREF,soundOn?'on':'off')}catch(e){}
  syncSoundUI();
  if(soundOn){approvedMusicPlay();tone(510,.07,'triangle',.018)}
- else {approvedMusicPause();try{softFail.pause()}catch(e){}}
+ else {approvedMusicPause();stopFinaleScore();try{softFail.pause()}catch(e){}}
 }
 function approvedFailSound(){
  if(!soundOn)return;
@@ -3784,7 +3814,7 @@ function finish(){
  status='finished';step=TOTAL;solved=false;rewardUnlocked=true;approvedMusicPause();
  updateGems();updateRushHUD();
  $('answerBox').classList.remove('success');
- note('Kristall saadud!','ok');fxBurst=1;spawnBurst(playerX,96);winSound();
+ note('Kristall saadud!','ok');fxBurst=1;spawnBurst(playerX,96);if(worldId!==9)winSound();
  try{localStorage.setItem('edukass-neon-world'+worldId+'-finished','1')}catch(e){}
  awardCrystal(worldId);
  const token=++ceremonyToken;
@@ -4132,13 +4162,13 @@ function bind(){
 
  // Mobile autoplay restrictions: retry on the first permitted real interaction.
  function unlockMusic(e){
-  if(!e.isTrusted||!soundOn||!solarTrack.paused||e.target.closest?.('#sound,#introSound,#shareGame,#shareGameIntro,#openPassport,#openPassportIntro'))return;
+  if(!e.isTrusted||!soundOn||!solarTrack.paused||e.target.closest?.('#sound,#introSound,#shareGame,#shareGameIntro,#openPassport,#openPassportIntro,#previewStart'))return;
   approvedMusicPlay();
  }
  document.addEventListener('click',unlockMusic,true);
  document.addEventListener('keydown',unlockMusic,true);
  window.addEventListener('resize',resize);
- document.addEventListener('visibilitychange',()=>{lastFrame=0;if(document.hidden)approvedMusicPause();else approvedMusicPlay()});
+ document.addEventListener('visibilitychange',()=>{lastFrame=0;if(document.hidden){approvedMusicPause();stopFinaleScore()}else approvedMusicPlay()});
  window.addEventListener('edukass-dialog-closed',()=>{lastFrame=0;approvedMusicPlay()});
  window.addEventListener('edukass-dialog-open',approvedMusicPause);
 }
@@ -4177,7 +4207,8 @@ window.EDUKASS_GAME_PROGRESS={
 
 // Test interface is read-only except for simulated key input; it is not displayed to players.
 window.__EDUKASS_TEST__={get:()=>({status,step,typed,tasks:tasks.map(t=>({...t})),playerX,solved,crashReason,attempts,world:world().name.toLowerCase(),rewardUnlocked:rewardUnlocked||status==='finished',victoryStage,worldId,crystalCollected:collectedCrystals().includes(worldId),vaultCount:collectedCrystals().length,jumping,jumpHeight,jumpCount,wrongLocked,turboActive,runningSpeed:effectiveSpeed(),distance:distanceToObstacle(),obstacles:Array.from({length:TOTAL},(_,j)=>obstacleKind(j+1))}),press:onKey,start:()=>startGame(),retry:()=>startGame(true),tick:(ms)=>{for(let r=0;r<ms;r+=35)advance(Math.min(35,ms-r))},reset,validateTasks,generate:createTasks};
-bind();syncSoundUI();showFusion();
+bind();syncSoundUI();
+ $('previewStart').addEventListener('click',()=>{$('previewGate').hidden=true;soundOn=true;showFusion()});
 })();
 </script>
 <script>/* EDUKASS Passport Lite · portable, private progress for the nine-world runner.

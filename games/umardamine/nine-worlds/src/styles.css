@@ -623,3 +623,9 @@ body{background:radial-gradient(ellipse 100% 75% at 50% 0%,#802441,#3a0b23 66%,#
 #fusionResult{background:linear-gradient(0deg,#05091ee8, #05091e70 76%,transparent);padding-top:16px}
 @media(max-height:610px){#fusionHero .fusion-theatre{top:32%;width:min(80vw,53dvh);height:min(80vw,53dvh)}}
 @media(orientation:landscape) and (max-height:610px){#fusionHero .fusion-theatre{top:42%;left:34%;width:min(62vw,76dvh);height:min(62vw,76dvh)}#fusionResult{background:none}}
+
+/* Finale without a planet: the crystals and their cosmic crown are the focus. */
+#fusionHero .fusion-theatre{top:43%;width:min(92vw,66dvh,620px);height:min(92vw,66dvh,620px)}
+#fusionResult{background:none;padding-top:0}
+@media(max-height:610px){#fusionHero .fusion-theatre{top:36%;width:min(80vw,58dvh);height:min(80vw,58dvh)}}
+@media(orientation:landscape) and (max-height:610px){#fusionHero .fusion-theatre{top:50%;left:34%;width:min(62vw,88dvh);height:min(62vw,88dvh)}}
