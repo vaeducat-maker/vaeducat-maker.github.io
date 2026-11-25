@@ -57,11 +57,6 @@ function updateWorldUI(){
   return '<span title="'+w.name+'" class="intro-crystal'+(owned?' owned':'')+(w.id===worldId?' current':'')+'" style="--ix:'+(w.id-1)+'">'+collectibleSVG(w.id,'introNine'+w.id)+'</span>';
  }).join('');
  $('introCrystalArt').innerHTML=collectibleSVG(worldId,'introWorld'+worldId);
- $('worldMenu').innerHTML=WORLDS.map(z=>{
-  const have=collectedCrystals(),owned=have.includes(z.id),allowed=z.id===1||owned||have.includes(z.id-1);
-  return '<button type="button" data-world="'+z.id+'" class="world-choice'+(worldId===z.id?' active':'')+'" '+(allowed?'':'disabled')+' style="--choice-color:'+z.main+'">'
-   +String(z.id).padStart(2,'0')+' · '+z.name+(owned?' ◆':'')+'</button>';
- }).join('');
  updateCrystalVault();updateGems();
 }
 function switchWorld(id){
@@ -120,19 +115,19 @@ function updateAwardArt(){
 
 function updateCrystalVault(){
  const ids=collectedCrystals(),count=ids.length;
- $('introCollectionCount').textContent=count+' / 9';
+ $('introNineCrystals').setAttribute('aria-label','Kristallid: '+count+' / 9');
  if(count===9){try{localStorage.setItem('edukass-ultimate-crystal','1')}catch(e){}}
  $('rewardCollectionCount').textContent=count+' / 9';
  $('vaultProgress').textContent=count+' / 9';
  $('showUltimate').hidden=count!==9;
  const views=Array.from({length:9},(_,k)=>{
-  const id=k+1,got=ids.includes(id),name=WORLDS[id-1].name.toUpperCase();
+  const id=k+1,got=ids.includes(id),name=WORLDS[id-1].name.toUpperCase(),allowed=id===1||got||ids.includes(id-1);
   const title=got?(WORLDS[id-1].name.toUpperCase()+' KRISTALL'):'LUKUS';
-  return '<div class="vault-card '+(got?'unlocked':'locked')+'" style="--slot:'+(id-1)+'" aria-label="'+name+': '+title+'">'
+  return '<button type="button" data-world="'+id+'" class="vault-card '+(got?'unlocked':'locked')+'" '+(allowed?'':'disabled')+' style="--slot:'+(id-1)+'" aria-label="'+name+': '+title+'">'
   +'<div class="vault-card-number">'+String(id).padStart(2,'0')+'</div>'
   +'<div class="vault-card-gem">'+collectibleSVG(id,'vaultShape'+id)+'</div>'
   +'<div class="vault-card-name">'+name+'</div>'
-  +'<div class="vault-card-status">'+(got?'KOGUTUD':'LUKUS')+'</div></div>';
+  +'<div class="vault-card-status">'+(got?'KOGUTUD':'LUKUS')+'</div></button>';
  });
  $('vaultGrid').innerHTML=views.join('');
  $('vaultDescription').textContent=count===9?'Kõik üheksa kristalli on kogutud!':count===0?'Läbi maailmad ja kogu kõik üheksa kristalli!':'Sul on '+count+' kristall'+(count===1?'':'i')+'! Järgmine maailm toob uue auhinna.';
@@ -151,13 +146,13 @@ function closeCrystalVault(){overlay(vaultReturn)}
 const WORLD_UNITS={
  1:[10,10,10,10,10,10,10,100],
  2:[10,10,10,10,100,10,100,10,100,10,100,100],
- 3:[10,100,1000,100,1000,10,1000,100,10,1000,100,1000],
- 4:[10,100,1000,10000,1000,100,10000,1000,10,10000,100,1000],
- 5:[100,1000,10000,100000,10000,1000,100000,10000,100,100000,1000,10000],
- 6:[1000,10000,100000,1000000,100000,10000,1000000,100000,1000,1000000,10000,100000],
- 7:[10000,100000,1000000,10000000,1000000,100000,10000000,1000000,10000,10000000,100000,1000000],
- 8:[100000,1000000,10000000,100000000,10000000,1000000,100000000,10000000,100000,100000000,1000000,10000000],
- 9:[100,1000,1000000,10,100000000,10000,10000000,100000,1000,100000000,100,10000]
+ 3:[100,100,1000,100,1000,10,10,1000,100,1000,10,1000],
+ 4:[100,1000,1000,10000,1000,100,10,10000,100,10000,10,1000],
+ 5:[100,1000,10000,100000,10000,1000,10,10000,100000,100000,10,10000],
+ 6:[1000,10000,100000,1000000,100000,10000,10,100000,1000000,1000000,10,100000],
+ 7:[10000,100000,1000000,10000000,1000000,100000,10,1000000,10000000,10000000,10,1000000],
+ 8:[100000,1000000,10000000,100000000,10000000,1000000,10,10000000,100000000,100000000,10,10000000],
+ 9:[100,1000,1000000,10000000,100000000,10000,10,100000,1000,100000000,10,10000]
 };
 const SCENARIOS_8=['down','up','boundary4','boundary5','carry','down','up','zeroDown'];
 const SCENARIOS_12=['down','up','boundary4','boundary5','carry','down','up','carry','zeroDown','zeroUp','down','down'];
@@ -165,18 +160,31 @@ function taskBlueprint(){
  const units=WORLD_UNITS[worldId],types=TOTAL===8?SCENARIOS_8:SCENARIOS_12;
  const plan=units.map((unit,i)=>{
   // A target number length is independent of the place being rounded.
-  // Worlds 3..8 mainly use 4..9-digit numbers respectively, plus occasional
-  // shorter review examples. World 9 mixes ALL rounding units with 9-digit inputs.
+  // Worlds 3..9 mix the main magnitude with two intentionally easy tens reviews.
   let digits;
   if(worldId===1)digits=i===7||i===5?3:2;
   else if(worldId===2)digits=i<4?2:3;
   else digits=Math.min(9,worldId+1);
   if(worldId>=3&&worldId<=8&&i<2&&unit<=Math.pow(10,digits-2))digits--;
+  const easy=worldId>=3&&(i===6||i===10);
+  if(easy)digits=2;
   digits=Math.max(digits,String(unit).length);
-  return {unit,scenario:types[i],min:Math.pow(10,digits-1),max:Math.pow(10,digits)-1};
+  return {unit,scenario:types[i],min:Math.pow(10,digits-1),max:Math.pow(10,digits)-1,easy};
  });
  // Mix tasks while retaining the first introductory examples and the last
  // hundred-rounding challenge of world 1. Avoid same-place runs >= 4.
+ if(worldId>=3){
+  const easy=plan.filter(t=>t.easy),main=plan.filter(t=>!t.easy);
+  for(let attempt=0;attempt<200;attempt++){
+   const mixed=main.slice();
+   for(let i=mixed.length-1;i>2;i--){const j=2+random(i-1);[mixed[i],mixed[j]]=[mixed[j],mixed[i]]}
+   if(random(2))easy.reverse();
+   mixed.splice(3+random(4),0,easy[0]);
+   mixed.splice(8+random(3),0,easy[1]);
+   if(!mixed.some((t,i)=>i>=3&&mixed[i-1].unit===t.unit&&mixed[i-2].unit===t.unit&&mixed[i-3].unit===t.unit))return mixed;
+  }
+  throw Error('Could not mix review tasks');
+ }
  const fixed=2; // preserve two approachable starting tasks, then mix the rest
  const end=worldId===1?plan.length-1:plan.length;
  for(let retry=0;retry<80;retry++){
@@ -259,6 +267,10 @@ function validateTasks(ts){
  const configured=WORLD_UNITS[worldId];
  for(const u of [...new Set(configured)])if(ts.filter(t=>t.unit===u).length!==configured.filter(t=>t===u).length)throw Error('Unit frequency drift');
  for(const scenario of [...new Set(required)])if(situationCounts[scenario]!==required.filter(t=>t===scenario).length)throw Error('Situation frequency drift '+scenario);
+ if(worldId>=3){
+  const easy=ts.map((t,i)=>({t,i})).filter(({t})=>t.unit===10&&t.v>=10&&t.v<100);
+  if(easy.length!==2||easy[0].i<3||easy[0].i>6||easy[1].i<8||easy[1].i>10)throw Error('Easy review distribution drift');
+ }
  if(worldId>1&&ts.some((t,i)=>i>=3&&ts[i-1].unit===t.unit&&ts[i-2].unit===t.unit&&ts[i-3].unit===t.unit))throw Error('Four identical units in a row');
  return true;
 }
@@ -811,10 +823,10 @@ function bind(){
   const key=e.key;if(key==='Enter'&&e.target instanceof Element&&e.target.closest('button,summary'))return;if(key==='Backspace'){e.preventDefault();onKey('back')}else if(key==='Enter'){e.preventDefault();if(victoryStage==='vault')closeCrystalVault();else if(status==='intro')startGame();else if(status==='finished'&&victoryStage==='finish')startGame();else if(status==='crashed')startGame(true)}else if(/^\d$/.test(key))onKey(key);
  });
  $('begin').addEventListener('click',()=>startGame());$('again').addEventListener('click',()=>startGame());$('retry').addEventListener('click',()=>startGame(true));$('restart').addEventListener('click',reset);$('sound').addEventListener('click',setSound);$('introSound').addEventListener('click',setSound);
- $('openVaultIntro').addEventListener('click',()=>openCrystalVault('intro'));
+ $('introNineCrystals').addEventListener('click',()=>openCrystalVault('intro'));
  $('openVaultReward').addEventListener('click',()=>openCrystalVault('finish'));
  $('closeVault').addEventListener('click',closeCrystalVault);
- $('worldMenu').addEventListener('click',e=>{const item=e.target.closest('[data-world]');if(item&&!item.disabled&&switchWorld(Number(item.dataset.world)))$('worldSelector').open=false});
+ $('vaultGrid').addEventListener('click',e=>{const item=e.target.closest('[data-world]');if(item&&!item.disabled)switchWorld(Number(item.dataset.world))});
  $('nextWorld').addEventListener('click',()=>{if(worldId<9)switchWorld(worldId+1);else showFusion()});
  $('fusionClose').addEventListener('click',()=>overlay('vault'));
  $('showUltimate').addEventListener('click',showFusion);

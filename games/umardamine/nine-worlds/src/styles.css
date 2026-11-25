@@ -546,3 +546,9 @@ body{background:radial-gradient(ellipse 100% 75% at 50% 0%,#802441,#3a0b23 66%,#
  .intro-bottom{grid-column:2;grid-row:5;justify-self:center;width:100%}
 }
 @media(prefers-reduced-motion:reduce){.intro-spark{animation:none!important}}
+
+/* Final title: no lower menu buttons; the existing crystal row opens the collection. */
+#introHero #introNineCrystals{background:none;border:0;padding:0;color:inherit;cursor:pointer;width:min(350px,98%);min-height:44px}
+#introHero #introNineCrystals:focus-visible{outline:2px solid #ffe7a9;outline-offset:4px;border-radius:12px}
+.vault-card{font:inherit;color:inherit;cursor:pointer}.vault-card:disabled{opacity:1;cursor:default}
+@media(orientation:landscape) and (max-height:600px) and (min-width:650px){#introHero .intro-nine-crystals{grid-column:1;grid-row:5}#introHero #begin{grid-row:4/span 2}}

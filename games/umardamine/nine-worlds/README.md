@@ -15,15 +15,15 @@ The mathematics engine uses **three independent dimensions** for each example: (
 | 2. Päikesekuru (12) | 7 | 5 | – | – | – | – | – | – |
 | 3. Mäevardjad (12) | 3 | 4 | 5 | – | – | – | – | – |
 | 4. Tormitasandik (12) | 2 | 3 | 4 | 3 | – | – | – | – |
-| 5. Kaksikorg (12) | – | 2 | 3 | 4 | 3 | – | – | – |
-| 6. Keeriseorg (12) | – | – | 2 | 3 | 4 | 3 | – | – |
-| 7. Täheväli (12) | – | – | – | 2 | 3 | 4 | 3 | – |
-| 8. Prismakants (12) | – | – | – | – | 2 | 3 | 4 | 3 |
-| 9. Meteoritorm (12) | 1 | 2 | 2 | 2 | 1 | 1 | 1 | 2 |
+| 5. Kaksikorg (12) | 2 | 1 | 2 | 4 | 3 | – | – | – |
+| 6. Keeriseorg (12) | 2 | – | 1 | 2 | 4 | 3 | – | – |
+| 7. Täheväli (12) | 2 | – | – | 1 | 2 | 4 | 3 | – |
+| 8. Prismakants (12) | 2 | – | – | – | 1 | 2 | 4 | 3 |
+| 9. Meteoritorm (12) | 2 | 1 | 2 | 2 | 1 | 1 | 1 | 2 |
 
-The final world comprehensively rechecks **all eight studied rounding units** on large numbers. Rounding unit does **not** mechanically follow the leading number magnitude: four-, five-, or nine-digit input numbers can be rounded to tens or hundreds if the world has introduced those units.
+The final world comprehensively rechecks **all eight studied rounding units**, mixing small tens review with large numbers. Rounding unit does **not** mechanically follow the leading number magnitude: four-, five-, or nine-digit input numbers can be rounded to tens or hundreds if the world has introduced those units.
 
-World 1 preserves two-digit introductory tasks and one final hundreds task. World 2 begins with two approachable two-digit tens examples, then mixes tens and hundreds. In worlds 3–8, the first two positions revise simpler units; other task-unit combinations and situations are shuffled. For worlds 2–9, the engine rejects any four consecutive identical rounding units.
+World 1 preserves two-digit introductory tasks and one final hundreds task. World 2 begins with two approachable two-digit tens examples, then mixes tens and hundreds. In worlds 3–9, the first two positions revise earlier units. Two two-digit tens tasks (one up and one down) are guaranteed in positions 4–7 and 9–11, randomly mixed with ten other tasks. For worlds 2–9, the engine rejects any four consecutive identical rounding units.
 
 ### Each world deliberately includes essential situations
 - **World 1, eight tasks:** 4 downward and 4 upward outcomes including one exact 4, one exact 5, one carry across a place, one interior zero and ordinary mixed cases.
@@ -116,3 +116,6 @@ The previous Chromium suite verified transfer by URL and SVG presence. QR images
 
 ## Child-first interface · 25 November 2026
 One large MÄNGI! button, enlarged animated crystal, collection row and quiet utility icons. World selection and vault remain accessible. Long intro instructions and duplicated gameplay/reward labels are removed. Mathematical feedback retains the task, answer, correct answer and place-value rule. Generator, worlds, physics, audio and transfer consent remain unchanged. Automated tests check title controls at three viewports; manual visual QA remains required.
+
+## Mixed difficulty and final title refinement · 25 November 2026
+At the owner's request, remove both lower title buttons. The existing nine-crystal strip opens the collection, whose available crystals can be selected to replay a world; sound, share and QR remain in the top toolbar. Worlds 1 and 2 are unchanged. In worlds 3–9, two genuinely easy two-digit tasks to tens are interspersed with the main curriculum. All advanced target units remain present, the world count and scenario quotas are unchanged, and already-rounded inputs remain excluded. Browser tests validate the new quotas and placement.

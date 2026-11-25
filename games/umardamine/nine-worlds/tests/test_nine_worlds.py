@@ -29,11 +29,11 @@ UNIT_QUOTAS={
  2:{10:7,100:5},
  3:{10:3,100:4,1000:5},
  4:{10:2,100:3,1000:4,10000:3},
- 5:{100:2,1000:3,10000:4,100000:3},
- 6:{1000:2,10000:3,100000:4,1000000:3},
- 7:{10000:2,100000:3,1000000:4,10000000:3},
- 8:{100000:2,1000000:3,10000000:4,100000000:3},
- 9:{10:1,100:2,1000:2,10000:2,100000:1,1000000:1,10000000:1,100000000:2}
+ 5:{10:2,100:1,1000:2,10000:4,100000:3},
+ 6:{10:2,1000:1,10000:2,100000:4,1000000:3},
+ 7:{10:2,10000:1,100000:2,1000000:4,10000000:3},
+ 8:{10:2,100000:1,1000000:2,10000000:4,100000000:3},
+ 9:{10:2,100:1,1000:2,10000:2,100000:1,1000000:1,10000000:1,100000000:2}
 }
 CASE_QUOTAS_8={'down':2,'up':2,'boundary4':1,'boundary5':1,'carry':1,'zeroDown':1}
 CASE_QUOTAS_12={'down':4,'up':2,'boundary4':1,'boundary5':1,'carry':2,'zeroDown':1,'zeroUp':1}
@@ -58,6 +58,10 @@ def verify_methodical_round(tasks,world):
   }
   assert match[kind],(world,t,match)
  assert sum((t['v']//(t['unit']//10))%10<5 for t in tasks)==(4 if world==1 else 6)
+ if world>=3:
+  easy=[i for i,t in enumerate(tasks) if t['unit']==10 and 10<=t['v']<100]
+  assert len(easy)==2 and 3<=easy[0]<=6 and 8<=easy[1]<=10,(world,easy)
+  assert {tasks[i]['scenario'] for i in easy}=={'up','down'}
  if world>1:
   assert not any(tasks[i]['unit']==tasks[i-1]['unit']==tasks[i-2]['unit']==tasks[i-3]['unit'] for i in range(3,len(tasks)))
 
@@ -74,8 +78,8 @@ def validate(browser,width,height,label,full=True):
  errors=[]
  page.on("pageerror",lambda err:errors.append(str(err)))
  page.goto(URL,wait_until="domcontentloaded")
- assert page.locator(".world-menu .world-choice").count()==9
- assert page.locator("#worldMenu .world-choice:not([disabled])").count()==1
+ assert page.locator("#vaultGrid .vault-card").count()==9
+ assert page.locator("#vaultGrid .vault-card:not([disabled])").count()==1
  assert page.locator(".keypad [data-key='check']").count()==0
  assert page.locator(".keypad .key").count()==11
  assert page.locator("#introName").inner_text()=="Valgussaar"
@@ -83,14 +87,15 @@ def validate(browser,width,height,label,full=True):
  assert "Kristallirännak" in page.locator(".intro-game-name").inner_text()
  assert page.locator("#introHero > p").count()==0
  assert page.locator("#begin").inner_text().strip().endswith("MÄNGI!")
- for control in ("#begin","#introSound","#shareGameIntro","#openPassportIntro","#openVaultIntro","#worldSelector summary"):
+ for control in ("#begin","#introSound","#shareGameIntro","#openPassportIntro","#introNineCrystals"):
   assert page.locator(control).is_visible(),control
   b=page.locator(control).bounding_box()
   assert b["x"]>=0 and b["y"]>=0 and b["x"]+b["width"]<=width+1 and b["y"]+b["height"]<=height+1,(label,control,b)
- page.locator("#worldSelector summary").click()
- assert page.locator("#worldMenu .world-choice").first.is_visible()
- page.locator("#worldMenu .world-choice").first.click()
- assert not page.locator("#worldSelector").evaluate("(d)=>d.open")
+ assert page.locator(".intro-bottom").count()==0
+ page.locator("#introNineCrystals").click()
+ assert page.locator("#vaultHero").is_visible()
+ page.locator("#vaultGrid .vault-card").first.click()
+ assert page.locator("#introHero").is_visible()
  assert page.locator("#shareGame").is_visible()
  assert page.locator("#openPassport").is_visible()
  assert page.locator("#solarTrack").get_attribute("src")=="assets/02_solar_spark.mp3"
@@ -288,7 +293,7 @@ def validate_passport(browser):
  # Reopening the game on device B must retain both crystals.
  b.reload(wait_until="domcontentloaded")
  assert b.evaluate("window.EDUKASS_GAME_PROGRESS.get().completed")==[1,2]
- assert b.locator("#worldMenu .world-choice:not([disabled])").count()==3
+ assert b.locator("#vaultGrid .vault-card:not([disabled])").count()==3
  print(json.dumps({"passport":"TWO_DEVICE_TRANSFER_PASS","qr":"BOTH_VISIBLE","confirmation":"REQUIRED"}))
  old.close();newer.close()
 
