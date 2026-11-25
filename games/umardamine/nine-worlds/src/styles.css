@@ -593,3 +593,25 @@ body{background:radial-gradient(ellipse 100% 75% at 50% 0%,#802441,#3a0b23 66%,#
 #fusionHero #fusionClose{width:min(260px,95%);min-height:44px;background:#121e3dcc;color:#e2f7ff;border:1px solid #b6e6ed77;box-shadow:none;font-size:12px;padding:8px 12px;margin:0;animation:grandCaption 8s ease-out both}
 @media(max-height:610px){#fusionHero #fusionRestart{min-height:44px}#fusionHero #fusionClose{min-height:40px}}
 @media(prefers-reduced-motion:reduce){#fusionHero #fusionRestart{animation:none!important;opacity:1;visibility:visible;transform:none}}
+
+/* Full-viewport cosmic finale. Canvas owns the light and motion; DOM owns the real nine gems and buttons. */
+#overlay.is-fusion{padding:0;background:#030616;overflow:hidden;isolation:isolate;backdrop-filter:none}
+#overlay.is-fusion:before,#overlay.is-fusion #celebrateParticles{display:none}
+#fusionHero{position:relative;isolation:isolate;width:100%;height:100dvh;max-height:none;padding:0;margin:0;gap:0;overflow:hidden;display:flex;align-items:center;justify-content:center}
+#fusionCosmos{position:absolute;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none}
+#fusionHero .fusion-theatre{position:absolute;top:43%;left:50%;transform:translate(-50%,-50%);width:min(88vw,64dvh,560px);height:min(88vw,64dvh,560px);margin:0;display:block;isolation:isolate;pointer-events:none;background:none}
+#fusionHero .fusion-pieces{position:absolute;inset:0;animation:none;z-index:3}
+#fusionHero .fusion-piece{position:absolute;top:50%;left:50%;width:clamp(28px,10vw,68px);height:clamp(36px,13vw,86px);margin:0;opacity:0;animation:none;will-change:transform,opacity;filter:drop-shadow(0 0 10px var(--c)) drop-shadow(0 0 23px var(--c))}
+#fusionHero .fusion-piece svg{width:100%;height:100%}
+#fusionHero .fusion-ultimate{position:absolute;top:50%;left:50%;width:72%;height:auto;z-index:5;opacity:0;animation:none;will-change:transform,opacity;filter:drop-shadow(0 0 14px #ecffff) drop-shadow(0 0 37px #8ba7ff99)}
+#fusionHero .fusion-ultimate svg{width:100%;height:auto;display:block}
+#fusionResult{position:absolute;left:50%;bottom:max(14px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:10;display:flex;flex-direction:column;align-items:center;gap:7px;width:min(340px,90vw);padding:0 6px 4px;animation:cosmicResult .55s ease-out both}
+.fusion-count{font-size:12px;letter-spacing:.2em;color:#c8e9ff;font-weight:800}
+#fusionHero .fusion-title{font-size:clamp(27px,8vw,45px);line-height:1.03;letter-spacing:.025em;animation:none;text-shadow:0 0 28px #ffe8a1b6;margin:0 0 3px}
+#fusionHero #fusionRestart,#fusionHero #fusionClose{animation:none;visibility:visible;opacity:1;transform:none;min-width:0;width:100%;margin:0}
+#fusionHero #fusionRestart{background:linear-gradient(125deg,#fff1b1,#ffcb5d);color:#16223e;box-shadow:0 0 24px #ffcc6060,0 4px 0 #a86c36}
+#fusionHero #fusionClose{background:#10192cd9;border-color:#b5daff55;min-height:40px}
+@keyframes cosmicResult{from{opacity:0;translate:0 10px}to{opacity:1;translate:0 0}}
+@media(max-height:610px){#fusionHero .fusion-theatre{top:36%;width:min(80vw,58dvh,450px);height:min(80vw,58dvh,450px)}#fusionResult{gap:4px;bottom:8px}#fusionHero .fusion-title{font-size:26px}#fusionHero #fusionRestart{min-height:40px;padding:8px 12px}#fusionHero #fusionClose{min-height:34px}}
+@media(orientation:landscape) and (max-height:610px){#fusionHero .fusion-theatre{top:50%;left:34%;width:min(62vw,88dvh);height:min(62vw,88dvh)}#fusionResult{left:75%;bottom:auto;top:50%;transform:translate(-50%,-50%);width:min(40vw,310px)}#fusionHero .fusion-title{font-size:clamp(23px,5dvh,34px)}}
+@media(prefers-reduced-motion:reduce){#fusionResult{animation:none}#fusionHero .fusion-ultimate{opacity:1}}

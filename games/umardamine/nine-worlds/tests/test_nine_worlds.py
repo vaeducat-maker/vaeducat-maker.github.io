@@ -189,17 +189,18 @@ def validate(browser,width,height,label,full=True):
   s=page.evaluate("window.__EDUKASS_TEST__.get()")
   assert s["status"]=="finished" and s["vaultCount"]==world
   collected.append(world)
-  page.wait_for_timeout(1900)
-  assert page.locator("#finishHero").is_visible()
-  assert page.locator("#awardCrystalArt svg").count()==1
-  assert page.locator("#saveAfterVictory").is_visible()
+  if world<9:
+   page.wait_for_timeout(1900)
+   assert page.locator("#finishHero").is_visible()
+   assert page.locator("#awardCrystalArt svg").count()==1
+   assert page.locator("#saveAfterVictory").is_visible()
   if world==1:
    page.locator("#saveAfterVictory").click()
    assert page.locator("#passportDialog").is_visible()
    assert "KOGUTUD 1 / 9" in page.locator("#passportSummary").inner_text()
    page.locator("#closePassport").click()
-  page.screenshot(path=str(ROOT/f"qa_{label}_world_{world}_award.png"))
   if world<9:
+   page.screenshot(path=str(ROOT/f"qa_{label}_world_{world}_award.png"))
    page.locator("#nextWorld").click()
    assert page.locator("#introHero").is_visible()
    assert page.evaluate("window.__EDUKASS_TEST__.get().worldId")==world+1
@@ -227,28 +228,31 @@ def validate(browser,width,height,label,full=True):
     page.locator("#closePassport").click()
    page.screenshot(path=str(ROOT/f"qa_{label}_world_{world+1}_intro.png"))
   else:
-   # The automatic cinematic also activates after the winning ceremony.
-   page.locator("#nextWorld").click()
-   assert page.locator("#fusionHero").is_visible()
+   # No click or intermediary reward: actual final collision-free finish launches the cinema.
+   page.locator("#fusionHero").wait_for(state="visible",timeout=2000)
+   assert not page.locator("#finishHero").is_visible()
    assert page.locator("#fusionPieces .fusion-piece").count()==9
    assert page.locator("#ultimateGem svg").count()==1
    assert page.evaluate("localStorage.getItem('edukass-ultimate-crystal')")=="1"
-   assert page.locator("#fusionSparks i").count()==54
-   assert page.locator("#fusionClose").evaluate("(el)=>getComputedStyle(el).visibility")=="hidden"
-   page.wait_for_timeout(1800)
+   assert not page.locator("#fusionResult").is_visible()
+   assert not page.locator("#fusionRestart").is_visible()
+   page.wait_for_timeout(3000)
+   assert page.locator("#fusionCosmos").evaluate("(c)=>c.width>0 && c.height>0")
+   assert page.locator("#fusionPieces .fusion-piece").first.evaluate("(el)=>Number(el.style.opacity)")>.5
    page.screenshot(path=str(ROOT/f"qa_{label}_fusion_orbit.png"))
-   page.wait_for_timeout(3500)
+   page.wait_for_timeout(4600)
    page.screenshot(path=str(ROOT/f"qa_{label}_fusion_merge.png"))
-   page.locator("#fusionClose").wait_for(state="visible",timeout=12000)
-   page.wait_for_timeout(800)
+   page.locator("#fusionClose").wait_for(state="visible",timeout=16000)
+   assert page.locator("#ultimateGem").evaluate("(el)=>Number(el.style.opacity)")>.95
    page.screenshot(path=str(ROOT/f"qa_{label}_ultimate_crystal.png"))
+
  assert collected==list(range(1,10))
  assert page.evaluate("JSON.parse(localStorage.getItem('edukass-neon-crystal-vault-v1'))")==list(range(1,10))
  page.locator("#fusionClose").click()
  assert page.locator("#showUltimate").is_visible()
  page.locator("#showUltimate").click()
  assert page.locator("#fusionHero").is_visible()
- page.locator("#fusionRestart").wait_for(state="visible",timeout=12000)
+ page.locator("#fusionRestart").wait_for(state="visible",timeout=16000)
  page.once("dialog",lambda dialog:dialog.dismiss())
  page.locator("#fusionRestart").click()
  assert page.evaluate("window.__EDUKASS_TEST__.get().vaultCount")==9
