@@ -232,9 +232,9 @@ async function checkCompetitor() {
           return{count:list.length,newCards:catalogCount,videoFirst,heroLink,uusLink,gamesLink,heroAtTop,
             visibleNames:list.map(x=>x.closest('article,.top-math-promo')?.querySelector('h1,h2,h3')?.textContent||'')};
         });
-        note('public-launch','Kirjalik arvutamine visible at the very top and in UUS and Mängud',
-          publicLinks.count===3&&publicLinks.newCards===1&&
-          publicLinks.videoFirst&&publicLinks.heroLink&&publicLinks.uusLink&&publicLinks.gamesLink&&publicLinks.heroAtTop&&
+        note('public-launch','Kirjalik arvutamine remains discoverable in UUS and Mängud; rounding is the new hero',
+          publicLinks.count===2&&publicLinks.newCards===1&&
+          publicLinks.videoFirst&&!publicLinks.heroLink&&publicLinks.uusLink&&publicLinks.gamesLink&&publicLinks.heroAtTop&&
           publicLinks.visibleNames.every(x=>x.includes('Kirjalik arvutamine')),
           JSON.stringify(publicLinks),'critical');
         const catalog=await page.evaluate(async()=>await(await fetch('/data/catalog.json')).json());

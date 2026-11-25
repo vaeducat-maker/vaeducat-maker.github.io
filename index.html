@@ -58,6 +58,14 @@
 @media(max-width:980px){.home-new-november .nov-magnet{min-height:470px}}
 @media(max-width:520px){.home-new-november .nov-magnet{min-height:460px}}
 </style>
+<style id="edukass-rounding-hero">
+.top-rounding-promo .top-math-layout{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.top-rounding-promo .top-math-player{width:min(100%,440px);margin-inline:auto;box-sizing:border-box}
+.top-rounding-promo .top-math-player video{aspect-ratio:4/5;width:100%;height:auto;object-fit:contain;background:#102a36}
+.top-rounding-promo h1{font-size:clamp(2.15rem,4vw,4rem);line-height:1.08;overflow-wrap:anywhere}
+@media(max-width:900px){.top-rounding-promo .top-math-layout{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:640px){.top-rounding-promo .top-math-player{max-width:360px}.top-rounding-promo h1{font-size:clamp(2rem,8vw,3rem)}}
+</style>
 </head>
 <body class="home-page">
 <header class="site-header">
@@ -76,21 +84,20 @@
 </header>
 
 <main>
-  <section class="top-math-promo" aria-labelledby="top-math-title">
+  <section class="top-math-promo top-rounding-promo" aria-labelledby="top-math-title">
     <div class="container top-math-layout">
       <div class="top-math-player">
-        <video controls autoplay muted playsinline loop preload="metadata" poster="/kirjalik-arvutamine-esitlus/media/kirjalik-arvutamine-promo-sait-39s.jpg" aria-label="Kirjalik arvutamine: ülesannete lahendamine ja maailma avamine">
-          <source src="/kirjalik-arvutamine-esitlus/media/kirjalik-arvutamine-promo-mobiil-39s.mp4" media="(max-width:640px)" type="video/mp4">
-          <source src="/kirjalik-arvutamine-esitlus/media/kirjalik-arvutamine-promo-sait-39s.mp4" type="video/mp4">
-          <a href="/kirjalik-arvutamine-esitlus/">Vaata videodemonstratsiooni</a>
+        <video controls autoplay muted playsinline loop preload="metadata" poster="/games/umardamine/preview.svg" aria-label="Ümardamine – Kristallirännak: mängu tutvustus">
+          <source src="/EDUKASS_umardamine_post_v2.mp4" type="video/mp4">
+          <a href="/games/umardamine/">Mängi Ümardamist</a>
         </video>
       </div>
       <div class="top-math-copy">
         <div class="top-math-eyebrow">EDUKASS · MATEMAATIKA <strong>TASUTA</strong></div>
-        <h1 id="top-math-title">Kirjalik arvutamine</h1>
-        <p>Harjuta liitmist, lahutamist, korrutamist ja jagamist kirjalikult. Lahenda tehteid ja avasta mängides pildimaailmu.</p>
-        <div class="top-math-facts"><span>4 tehet</span><span>52 taset</span><span>50 maailma</span><span>15 minutit</span></div>
-        <div class="top-math-actions"><a class="home-button home-button-primary" href="kirjalik-arvutamine/">Mängi kohe</a><a href="#mangud">Vaata kõiki mänge</a></div>
+        <h1 id="top-math-title">Ümardamine – Kristallirännak</h1>
+        <p>Harjuta arvude ümardamist kümnelistest saja miljonini. Lahenda järjest keerukamaid ülesandeid, ületa takistusi ja kogu kristalle üheksas mängumaailmas.</p>
+        <div class="top-math-facts"><span>9 maailma</span><span>104 ülesannet</span><span>9 kristalli</span><span>Tasuta</span></div>
+        <div class="top-math-actions"><a class="home-button home-button-primary" href="/games/umardamine/">Mängi kohe</a><a href="#mangud">Vaata kõiki mänge</a></div>
       </div>
     </div>
   </section>
@@ -318,9 +325,7 @@
   </div>
 </footer>
   <script src="home-refresh.js?v=118"></script>
-<script id="edukass-kirjalik-arvutamine-poster">
-  (function(){var v=document.querySelector('.top-math-player video');if(!v)return;if(window.matchMedia&&window.matchMedia('(max-width:640px)').matches){v.poster='/kirjalik-arvutamine-esitlus/media/kirjalik-arvutamine-promo-mobiil-39s.jpg';}})();
-</script>
+
 <script>
 /* Start the approved November MP4 as soon as its UUS card is visible; stop offscreen. */
 (function(){
