@@ -688,6 +688,12 @@ body{background:radial-gradient(ellipse 100% 75% at 50% 0%,#802441,#3a0b23 66%,#
   .key{font-size:21px}
 }
 </style>
+<!-- EDUKASS: aggregate, privacy-friendly game analytics. Never send passport links or answers. -->
+<script>
+window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)};
+plausible.init=plausible.init||function(i){plausible.o=i||{}};
+plausible.init({autoCapturePageviews:false,hashBasedRouting:false});
+</script>
 </head>
 <body>
 <main id="shell">
@@ -3733,6 +3739,20 @@ function winSound(){
  tone(1046,.41,'sine',.037,.56);
  tone(1318,.46,'sine',.022,.67);
 }
+// Only aggregate events; no answers, saved progress links, identifiers or dates are transmitted.
+function trackRounding(name,props){
+ try{if(typeof window.plausible==='function')window.plausible(name,{url:location.origin+location.pathname,...(props?{props}: {})})}catch(e){}
+}
+function trackRoundingReturn(){
+ try{
+  const date=new Date(),pad=n=>String(n).padStart(2,'0');
+  const today=date.getFullYear()+'-'+pad(date.getMonth()+1)+'-'+pad(date.getDate());
+  const key='edukass-umardamine-last-start-day-v1',previous=localStorage.getItem(key);
+  if(previous===today)return;
+  localStorage.setItem(key,today);
+  if(typeof previous==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(previous)&&previous<today)trackRounding('Umardamine Return');
+ }catch(e){}
+}
 function startGame(retry=false){
  ceremonyToken++; // cancel delayed celebration steps if the player restarts
  tasks=createTasks();validateTasks(tasks);obstacleOffset=random(HAZARD_TYPES.length);
@@ -3740,6 +3760,7 @@ function startGame(retry=false){
  jumping=false;jumpAge=0;jumpHeight=0;jumpStarted=false;wrongLocked=false;turboActive=false;jumpScale=1;jumpCount=0;
  particleTrail=[];status='running';crashElapsed=0;playElapsed=0;rewardUnlocked=false;fxGlow=0;fxBurst=0;shake=0;
  hideOverlay();showTask();updateRushHUD();approvedMusicPlay();
+ trackRounding('Umardamine Start',{world:String(worldId),retry:retry?'yes':'no'});trackRoundingReturn();
  // Earned crystal is permanent: replay must never remove the collection record.
 }
 function showLearningFeedback(reason){
@@ -3761,6 +3782,7 @@ function showLearningFeedback(reason){
 function lose(reason){
  if(status!=='running')return;
  status='crashing';crashReason=reason;crashElapsed=0;fxGlow=.4;shake=18;
+ trackRounding('Umardamine World Failed',{world:String(worldId),reason:reason==='wrong'?'wrong':'timeout',step:String(step)});
  $('answerBox').classList.remove('success');$('answerBox').classList.add('wrong');
  note(reason==='wrong'?'Vale vastus!':'Aeg sai otsa!','bad');
  $('sceneCaption').textContent='KOKKUPÕRGE!';
@@ -3803,12 +3825,15 @@ function check(){
  shake=5;tone(230,.15,'sawtooth',.04);updateRushHUD();
 }
 function finish(){
+ const beforeCount=collectedCrystals().length;
  status='finished';step=TOTAL;solved=false;rewardUnlocked=true;if(worldId!==9)approvedMusicPause();
  updateGems();updateRushHUD();
  $('answerBox').classList.remove('success');
  note('Kristall saadud!','ok');fxBurst=1;spawnBurst(playerX,96);if(worldId!==9)winSound();
  try{localStorage.setItem('edukass-neon-world'+worldId+'-finished','1')}catch(e){}
  awardCrystal(worldId);
+ trackRounding('Umardamine World '+worldId+' Complete');
+ if(beforeCount<9&&collectedCrystals().length===9)trackRounding('Umardamine Game Complete');
  const token=++ceremonyToken;
  makeConfetti();
  if(worldId===9&&collectedCrystals().length===9){showFusion();return}
@@ -4359,5 +4384,19 @@ init();
  window.__EDUKASS_PASSPORT_TEST__={encode,decode,validate,extractCode,prepareImport,createPassport,restore};
 })();
 </script>
+<!-- Initialize pageview only after the passport fragment has been processed. -->
+<script>
+(function(){
+ try{
+  const clean=new URL(location.origin+location.pathname);
+  const incoming=new URLSearchParams(location.search);
+  for(const key of ['utm_source','utm_medium','utm_campaign','utm_content','utm_term']){
+   const value=incoming.get(key);if(value&&value.length<=120)clean.searchParams.set(key,value);
+  }
+  window.plausible('pageview',{url:clean.href});
+ }catch(e){}
+})();
+</script>
+<script async src="https://plausible.io/js/pa-3mkwYCn93BZZKvx5orDK8.js"></script>
 </body>
 </html>

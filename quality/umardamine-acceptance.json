@@ -2,7 +2,7 @@
   "page": "games/umardamine/index.html",
   "approvedCommit": "f1a20a9530bd00aa007daba2410fd6f55584fa4c",
   "approvedBlobs": {
-    "games/umardamine/index.html": "cca96816f172a800d523eb31b474311c7797c67d",
+    "games/umardamine/index.html": "afdf8447067a8e8dc7ccb688803f5439a046dbbe",
     "games/umardamine/assets/01_soft_oops.mp3": "90852684cac138d3d51c5c4c265bcbd28eeaf033",
     "games/umardamine/assets/02_solar_spark.mp3": "9874708a6bd63e110c0902fc5b3650f0df522f9b"
   },
@@ -12,6 +12,26 @@
     "homepage navigation",
     "approved file hashes",
     "desktop fit",
-    "mobile play"
-  ]
+    "mobile play",
+    "aggregate analytics with sanitized URLs; start, failure, world complete, nine-crystal completion, return"
+  ],
+  "analyticsChange": {
+    "ownerDecision": "2026-11-25: owner explicitly requested aggregate Plausible analytics for rounding game; no changes to math, visual design, or progress behavior.",
+    "previousApprovedPageBlob": "cca96816f172a800d523eb31b474311c7797c67d",
+    "eventNames": [
+      "Umardamine Start",
+      "Umardamine Return",
+      "Umardamine World Failed",
+      "Umardamine World 1 Complete",
+      "Umardamine World 2 Complete",
+      "Umardamine World 3 Complete",
+      "Umardamine World 4 Complete",
+      "Umardamine World 5 Complete",
+      "Umardamine World 6 Complete",
+      "Umardamine World 7 Complete",
+      "Umardamine World 8 Complete",
+      "Umardamine World 9 Complete",
+      "Umardamine Game Complete"
+    ]
+  }
 }
