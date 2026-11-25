@@ -152,22 +152,34 @@ const WORLD_UNITS={
  6:[1000,10000,100000,1000000,100000,10000,10,100000,1000000,1000000,10,100000],
  7:[10000,100000,1000000,10000000,1000000,100000,10,1000000,10000000,10000000,10,1000000],
  8:[100000,1000000,10000000,100000000,10000000,1000000,10,10000000,100000000,100000000,10,10000000],
- 9:[100,1000,1000000,10000000,100000000,10000,10,100000,1000,100000000,10,10000]
+ 9:[100,1000,1000000,10000000,100000000,10000,10,100000,1000,100000000,10,10]
 };
 const SCENARIOS_8=['down','up','boundary4','boundary5','carry','down','up','zeroDown'];
 const SCENARIOS_12=['down','up','boundary4','boundary5','carry','down','up','carry','zeroDown','zeroUp','down','down'];
+// Each review pair uses different rounding units and at least one shorter input.
+// The two review slots in WORLD_UNITS are placeholders, not fixed tens quotas.
+const REVIEW_SHORT=[[2,10],[3,10],[3,100]];
+const REVIEW_POOL=[[2,10],[3,10],[3,100],[4,10],[4,100],[4,1000]];
+function reviewPair(){
+ const first=REVIEW_SHORT[random(REVIEW_SHORT.length)];
+ const choices=REVIEW_POOL.filter(([d,u])=>u!==first[1]);
+ const second=choices[random(choices.length)];
+ return random(2)?[first,second]:[second,first];
+}
 function taskBlueprint(){
  const units=WORLD_UNITS[worldId],types=TOTAL===8?SCENARIOS_8:SCENARIOS_12;
- const plan=units.map((unit,i)=>{
+ const reviews=worldId>=3?reviewPair():null;
+ const plan=units.map((baseUnit,i)=>{
+  let unit=baseUnit;
   // A target number length is independent of the place being rounded.
-  // Worlds 3..9 mix the main magnitude with two intentionally easy tens reviews.
+  // Worlds 3..9 mix the main magnitude with varied shorter review examples.
   let digits;
   if(worldId===1)digits=i===7||i===5?3:2;
   else if(worldId===2)digits=i<4?2:3;
   else digits=Math.min(9,worldId+1);
   if(worldId>=3&&worldId<=8&&i<2&&unit<=Math.pow(10,digits-2))digits--;
   const easy=worldId>=3&&(i===6||i===10);
-  if(easy)digits=2;
+  if(easy){const review=reviews[i===6?0:1];digits=review[0];unit=review[1];}
   digits=Math.max(digits,String(unit).length);
   return {unit,scenario:types[i],min:Math.pow(10,digits-1),max:Math.pow(10,digits)-1,easy};
  });
@@ -247,7 +259,7 @@ function createTasks(){
   const answer=Math.floor((n+spec.unit/2)/spec.unit)*spec.unit;
   if(!Number.isSafeInteger(answer))throw Error('Unsafe rounding result');
   used.add(n);usedAnswers.add(answer);
-  result.push({v:n,unit:spec.unit,answer,scenario:spec.scenario});
+  result.push({v:n,unit:spec.unit,answer,scenario:spec.scenario,review:spec.easy});
  }
  try{history.push(result.map(t=>t.v));localStorage.setItem(key,JSON.stringify(history.slice(-4)))}catch(e){}
  validateTasks(result);
@@ -258,18 +270,21 @@ function validateTasks(ts){
  const used=new Set(),required=worldId===1?SCENARIOS_8:SCENARIOS_12;
  const situationCounts={};
  ts.forEach((t,i)=>{
-  if(!WORLD_UNITS[worldId].includes(t.unit)||used.has(t.v)||t.v%t.unit===0||!Number.isSafeInteger(t.v)||!Number.isSafeInteger(t.answer))
+  if((!t.review&&!WORLD_UNITS[worldId].includes(t.unit))||used.has(t.v)||t.v%t.unit===0||!Number.isSafeInteger(t.v)||!Number.isSafeInteger(t.answer))
    throw Error('Invalid or already-rounded exercise '+i);
   if(t.answer!==Math.floor((t.v+t.unit/2)/t.unit)*t.unit||!matchesSituation(t.v,{unit:t.unit,min:1,max:999999999,scenario:t.scenario}))
    throw Error('Wrong rounding or scenario '+i);
   used.add(t.v);situationCounts[t.scenario]=(situationCounts[t.scenario]||0)+1;
  });
- const configured=WORLD_UNITS[worldId];
- for(const u of [...new Set(configured)])if(ts.filter(t=>t.unit===u).length!==configured.filter(t=>t===u).length)throw Error('Unit frequency drift');
+ const configured=WORLD_UNITS[worldId].filter((u,i)=>worldId<3||(i!==6&&i!==10));
+ const main=ts.filter(t=>!t.review);
+ if(main.length!==configured.length||main.some(t=>!configured.includes(t.unit)))throw Error('Main unit coverage drift');
+ for(const u of [...new Set(configured)])if(main.filter(t=>t.unit===u).length!==configured.filter(t=>t===u).length)throw Error('Unit frequency drift');
  for(const scenario of [...new Set(required)])if(situationCounts[scenario]!==required.filter(t=>t===scenario).length)throw Error('Situation frequency drift '+scenario);
  if(worldId>=3){
-  const easy=ts.map((t,i)=>({t,i})).filter(({t})=>t.unit===10&&t.v>=10&&t.v<100);
-  if(easy.length!==2||easy[0].i<3||easy[0].i>6||easy[1].i<8||easy[1].i>10)throw Error('Easy review distribution drift');
+  const easy=ts.map((t,i)=>({t,i})).filter(({t})=>t.review);
+  if(easy.length!==2||easy[0].i<3||easy[0].i>6||easy[1].i<8||easy[1].i>10)throw Error('Review distribution drift');
+  if(easy.some(({t})=>!REVIEW_POOL.some(([d,u])=>u===t.unit&&d===String(t.v).length))||easy[0].t.unit===easy[1].t.unit||!easy.some(({t})=>String(t.v).length<=3)||new Set(easy.map(({t})=>t.scenario)).size!==2||easy.some(({t})=>!['up','down'].includes(t.scenario)))throw Error('Review variety drift');
  }
  if(worldId>1&&ts.some((t,i)=>i>=3&&ts[i-1].unit===t.unit&&ts[i-2].unit===t.unit&&ts[i-3].unit===t.unit))throw Error('Four identical units in a row');
  return true;

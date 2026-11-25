@@ -8,22 +8,22 @@ Open `index.html` in a browser or through an HTTPS static preview. There are no 
 
 The mathematics engine uses **three independent dimensions** for each example: (1) magnitude / digit count of the starting number, (2) requested rounding unit, and (3) the mathematical situation (up/down, threshold 4/5, carry, internal zero). **Never generate an input already divisible by the requested unit.** Example 3 400 rounded to hundreds = 3 400 is intentionally excluded, following the EDUKASS owner's decision.
 
-### Spiral progression: exact per-world quotas
+### Spiral progression: core per-world quotas (plus two variable review tasks in worlds 3–9)
 | World | Tens (10) | Hundreds (100) | Thousands (1,000) | Ten-thousands (10,000) | Hundred-thousands (100,000) | Millions | Ten-millions | Hundred-millions |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
 | 1. Valgussaar (8) | 7 | 1 | – | – | – | – | – | – |
 | 2. Päikesekuru (12) | 7 | 5 | – | – | – | – | – | – |
-| 3. Mäevardjad (12) | 3 | 4 | 5 | – | – | – | – | – |
-| 4. Tormitasandik (12) | 2 | 3 | 4 | 3 | – | – | – | – |
-| 5. Kaksikorg (12) | 2 | 1 | 2 | 4 | 3 | – | – | – |
-| 6. Keeriseorg (12) | 2 | – | 1 | 2 | 4 | 3 | – | – |
-| 7. Täheväli (12) | 2 | – | – | 1 | 2 | 4 | 3 | – |
-| 8. Prismakants (12) | 2 | – | – | – | 1 | 2 | 4 | 3 |
-| 9. Meteoritorm (12) | 2 | 1 | 2 | 2 | 1 | 1 | 1 | 2 |
+| 3. Mäevardjad (10 + 2 review) | 1 | 4 | 5 | – | – | – | – | – |
+| 4. Tormitasandik (10 + 2 review) | – | 3 | 4 | 3 | – | – | – | – |
+| 5. Kaksikorg (10 + 2 review) | – | 1 | 2 | 4 | 3 | – | – | – |
+| 6. Keeriseorg (10 + 2 review) | – | – | 1 | 2 | 4 | 3 | – | – |
+| 7. Täheväli (10 + 2 review) | – | – | – | 1 | 2 | 4 | 3 | – |
+| 8. Prismakants (10 + 2 review) | – | – | – | – | 1 | 2 | 4 | 3 |
+| 9. Meteoritorm (10 + 2 review) | 1 | 1 | 2 | 1 | 1 | 1 | 1 | 2 |
 
-The final world comprehensively rechecks **all eight studied rounding units**, mixing small tens review with large numbers. Rounding unit does **not** mechanically follow the leading number magnitude: four-, five-, or nine-digit input numbers can be rounded to tens or hundreds if the world has introduced those units.
+The final world comprehensively rechecks **all eight studied rounding units**, mixing short varied review examples with large numbers. Rounding unit does **not** mechanically follow the leading number magnitude: four-, five-, or nine-digit input numbers can be rounded to tens or hundreds if the world has introduced those units.
 
-World 1 preserves two-digit introductory tasks and one final hundreds task. World 2 begins with two approachable two-digit tens examples, then mixes tens and hundreds. In worlds 3–9, the first two positions revise earlier units. Two two-digit tens tasks (one up and one down) are guaranteed in positions 4–7 and 9–11, randomly mixed with ten other tasks. For worlds 2–9, the engine rejects any four consecutive identical rounding units.
+World 1 preserves two-digit introductory tasks and one final hundreds task. World 2 begins with two approachable two-digit tens examples, then mixes tens and hundreds. In worlds 3–9, the first two positions revise earlier units. Two review tasks (one up and one down) are guaranteed in positions 4–7 and 9–11, randomly mixed with ten core tasks. Review inputs have two to four digits, with varied rounding units (tens, hundreds, or thousands for a four-digit input); each pair uses two distinct units and includes at least one two- or three-digit input. For worlds 2–9, the engine rejects any four consecutive identical rounding units.
 
 ### Each world deliberately includes essential situations
 - **World 1, eight tasks:** 4 downward and 4 upward outcomes including one exact 4, one exact 5, one carry across a place, one interior zero and ordinary mixed cases.
@@ -119,3 +119,6 @@ One large MÄNGI! button, enlarged animated crystal, collection row and quiet ut
 
 ## Mixed difficulty and final title refinement · 25 November 2026
 At the owner's request, remove both lower title buttons. The existing nine-crystal strip opens the collection, whose available crystals can be selected to replay a world; sound, share and QR remain in the top toolbar. Worlds 1 and 2 are unchanged. In worlds 3–9, two genuinely easy two-digit tasks to tens are interspersed with the main curriculum. All advanced target units remain present, the world count and scenario quotas are unchanged, and already-rounded inputs remain excluded. Browser tests validate the new quotas and placement.
+
+## Varied short-number review · 25 November 2026
+The owner clarified that easier exercises should vary both magnitude and target unit, rather than always using two-digit numbers rounded to tens. The two review slots now draw from 2-digit/tens, 3-digit/tens, 3-digit/hundreds, 4-digit/tens, 4-digit/hundreds, and 4-digit/thousands. Each pair uses distinct target units and at least one shorter input, with randomized positions in the existing windows. The final world's core independently covers all eight target units. Core quotas and scenario quotas are validated separately, and browser QA samples 60 randomized rounds per later world to check variety. No title, audio, physics, or progress-transfer changes.

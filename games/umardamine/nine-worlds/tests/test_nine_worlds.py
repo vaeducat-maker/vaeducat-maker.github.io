@@ -27,20 +27,20 @@ URL=f"http://127.0.0.1:{httpd.server_port}/index.html"
 UNIT_QUOTAS={
  1:{10:7,100:1},
  2:{10:7,100:5},
- 3:{10:3,100:4,1000:5},
- 4:{10:2,100:3,1000:4,10000:3},
- 5:{10:2,100:1,1000:2,10000:4,100000:3},
- 6:{10:2,1000:1,10000:2,100000:4,1000000:3},
- 7:{10:2,10000:1,100000:2,1000000:4,10000000:3},
- 8:{10:2,100000:1,1000000:2,10000000:4,100000000:3},
- 9:{10:2,100:1,1000:2,10000:2,100000:1,1000000:1,10000000:1,100000000:2}
+ 3:{10:1,100:4,1000:5},
+ 4:{100:3,1000:4,10000:3},
+ 5:{100:1,1000:2,10000:4,100000:3},
+ 6:{1000:1,10000:2,100000:4,1000000:3},
+ 7:{10000:1,100000:2,1000000:4,10000000:3},
+ 8:{100000:1,1000000:2,10000000:4,100000000:3},
+ 9:{10:1,100:1,1000:2,10000:1,100000:1,1000000:1,10000000:1,100000000:2}
 }
 CASE_QUOTAS_8={'down':2,'up':2,'boundary4':1,'boundary5':1,'carry':1,'zeroDown':1}
 CASE_QUOTAS_12={'down':4,'up':2,'boundary4':1,'boundary5':1,'carry':2,'zeroDown':1,'zeroUp':1}
 
 def verify_methodical_round(tasks,world):
  from collections import Counter
- assert Counter(t['unit'] for t in tasks)==Counter(UNIT_QUOTAS[world])
+ assert Counter(t['unit'] for t in tasks if not t.get('review'))==Counter(UNIT_QUOTAS[world])
  assert Counter(t['scenario'] for t in tasks)==Counter(CASE_QUOTAS_8 if world==1 else CASE_QUOTAS_12)
  assert len({t['v'] for t in tasks})==len(tasks)
  for t in tasks:
@@ -59,9 +59,15 @@ def verify_methodical_round(tasks,world):
   assert match[kind],(world,t,match)
  assert sum((t['v']//(t['unit']//10))%10<5 for t in tasks)==(4 if world==1 else 6)
  if world>=3:
-  easy=[i for i,t in enumerate(tasks) if t['unit']==10 and 10<=t['v']<100]
+  easy=[i for i,t in enumerate(tasks) if t.get('review')]
   assert len(easy)==2 and 3<=easy[0]<=6 and 8<=easy[1]<=10,(world,easy)
   assert {tasks[i]['scenario'] for i in easy}=={'up','down'}
+  forms={(len(str(tasks[i]['v'])),tasks[i]['unit']) for i in easy}
+  assert forms<={(2,10),(3,10),(3,100),(4,10),(4,100),(4,1000)},(world,forms)
+  assert len({unit for _,unit in forms})==2 and min(d for d,_ in forms)<=3,(world,forms)
+  if world==9:assert {t['unit'] for t in tasks}>={10,100,1000,10000,100000,1000000,10000000,100000000}
+ else:
+  assert not any(t.get('review') for t in tasks)
  if world>1:
   assert not any(tasks[i]['unit']==tasks[i-1]['unit']==tasks[i-2]['unit']==tasks[i-3]['unit'] for i in range(3,len(tasks)))
 
@@ -154,9 +160,13 @@ def validate(browser,width,height,label,full=True):
   assert len(initial["tasks"])==count,(world,initial)
   verify_methodical_round(initial['tasks'],world)
   # Verify several fresh random rounds with the full pedagogical distribution.
-  for _ in range(20):
+  review_forms=set()
+  for _ in range(60 if world>=3 else 20):
    sample=page.evaluate('window.__EDUKASS_TEST__.generate()')
    verify_methodical_round(sample,world)
+   review_forms.update((len(str(t['v'])),t['unit']) for t in sample if t.get('review'))
+  if world>=3:
+   assert len(review_forms)>=4 and {10,100}<=set(u for _,u in review_forms),(world,review_forms)
   if world>=3:
    assert 10<=initial["distance"]/initial["runningSpeed"]<=31
   # Test actual keypad click on the first digit, then deterministic in-game stepping.
