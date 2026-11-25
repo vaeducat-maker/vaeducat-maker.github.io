@@ -311,6 +311,37 @@ def validate_correction(browser):
  assert not errors,errors
  context.close()
 
+def validate_desktop_fit(browser,width,height,label):
+ """Every active-game control must fit in the desktop viewport, with no scroll."""
+ context=browser.new_context(viewport={"width":width,"height":height},device_scale_factor=1)
+ page=context.new_page()
+ errors=[]
+ page.on("pageerror",lambda err:errors.append(str(err)))
+ page.goto(URL,wait_until="domcontentloaded")
+ page.locator("#begin").click()
+ bounds=page.evaluate("""() => {
+  const selectors=['#shell','.top','.progress','.scene','.problem','.answer-display','.note','#keypad','#keypad .key-zero'];
+  const rects={};
+  for(const sel of selectors){
+   const b=document.querySelector(sel).getBoundingClientRect();
+   rects[sel]={left:b.left,right:b.right,top:b.top,bottom:b.bottom,width:b.width,height:b.height};
+  }
+  return {rects,scrollHeight:document.documentElement.scrollHeight,
+          scrollWidth:document.documentElement.scrollWidth,
+          innerHeight:innerHeight,innerWidth:innerWidth};
+ }""")
+ for selector,b in bounds['rects'].items():
+  assert b['left']>=-2 and b['top']>=-2,(label,selector,b)
+  assert b['right']<=width+2 and b['bottom']<=height+2,(label,selector,b)
+  assert b['width']>10 and b['height']>10,(label,selector,b)
+ assert bounds['rects']['.scene']['right'] < bounds['rects']['.problem']['left'],(label,bounds)
+ assert bounds['rects']['#keypad']['top'] > bounds['rects']['.answer-display']['bottom'],(label,bounds)
+ assert bounds['scrollWidth']<=width+2 and bounds['scrollHeight']<=height+2,(label,bounds)
+ assert not errors,(label,errors)
+ page.screenshot(path=str(ROOT/f"qa_{label}_desktop_game.png"))
+ print(json.dumps({"desktop_fit":label,"viewport":[width,height],"scroll":"NONE","keypad":"VISIBLE"}))
+ context.close()
+
 def validate_audio(browser):
  context=browser.new_context(viewport={'width':390,'height':844})
  page=context.new_page()
@@ -392,6 +423,9 @@ try:
   validate(browser,390,844,"portrait")
   validate(browser,360,600,"compact",full=False)
   validate(browser,844,390,"landscape",full=False)
+  validate_desktop_fit(browser,840,620,"small_laptop")
+  validate_desktop_fit(browser,1280,720,"laptop")
+  validate_desktop_fit(browser,1646,888,"desktop")
   validate_correction(browser)
   validate_audio(browser)
   validate_passport(browser)

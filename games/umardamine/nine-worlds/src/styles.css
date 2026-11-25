@@ -629,3 +629,55 @@ body{background:radial-gradient(ellipse 100% 75% at 50% 0%,#802441,#3a0b23 66%,#
 #fusionResult{background:none;padding-top:0}
 @media(max-height:610px){#fusionHero .fusion-theatre{top:36%;width:min(80vw,58dvh);height:min(80vw,58dvh)}}
 @media(orientation:landscape) and (max-height:610px){#fusionHero .fusion-theatre{top:50%;left:34%;width:min(62vw,88dvh);height:min(62vw,88dvh)}}
+/* Desktop play mode: keep the board, task, answer and all keypad rows visible
+   without scrolling, including short laptop windows and high browser zoom. */
+@media (min-width:740px) and (min-height:601px){
+  body{display:flex;align-items:center;justify-content:center;min-height:100dvh}
+  #shell{
+    width:min(1120px,calc(100vw - 24px));
+    height:min(760px,calc(100dvh - 20px));
+    min-height:0;
+    margin:0 auto;
+    padding:clamp(8px,1.4dvh,15px);
+    display:grid;
+    grid-template-columns:minmax(0,1.2fr) minmax(285px,.8fr);
+    grid-template-rows:50px 23px 90px 58px 18px minmax(170px,1fr);
+    gap:clamp(5px,.9dvh,9px) clamp(10px,1.8vw,18px);
+    overflow:hidden;
+  }
+  .top{grid-column:1/-1;grid-row:1;height:100%;min-height:0;flex-basis:auto}
+  .progress{grid-column:1;grid-row:2;min-height:0;padding:0 3px}
+  .scene{
+    grid-column:1;grid-row:3/7;
+    height:100%;min-height:0;width:100%;
+    border-radius:21px;
+  }
+  .scene::before{border-radius:20px}
+  .scene-heading strong{font-size:clamp(20px,2.8dvh,27px)}
+  .problem{
+    grid-column:2;grid-row:3;
+    height:100%;min-height:0;
+    display:flex;flex-direction:column;justify-content:center;
+    padding:7px 12px;border-radius:17px;
+  }
+  .problem-top{min-height:20px}
+  .number{font-size:clamp(31px,4.8dvh,45px);line-height:1.03}
+  .answer-wrap{grid-column:2;grid-row:4;height:100%;min-height:0}
+  .answer-display{height:100%;min-height:0;border-radius:15px}
+  .note{grid-column:2;grid-row:5;height:100%;min-height:0;flex:none;font-size:11px}
+  .keypad{
+    grid-column:2;grid-row:6;
+    height:100%;min-height:0;max-height:none;
+    grid-template-rows:repeat(4,minmax(0,1fr));
+    gap:clamp(4px,.65dvh,8px);
+  }
+  .key{min-height:0;border-radius:12px;font-size:clamp(20px,3.4dvh,29px)}
+}
+@media (min-width:740px) and (min-height:601px) and (max-height:700px){
+  #shell{grid-template-rows:40px 18px 73px 49px 15px minmax(155px,1fr);row-gap:5px}
+  .top{height:100%}
+  .problem{padding:5px 10px}
+  .number{font-size:32px}
+  .answer-value{font-size:27px}
+  .key{font-size:21px}
+}
