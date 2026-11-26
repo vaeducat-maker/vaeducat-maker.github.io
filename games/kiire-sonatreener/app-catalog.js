@@ -23,6 +23,7 @@ window.EDUKASS_CATALOG=[
   {id:"english",label:"English",icon:"🇬🇧",lessons:[
     {kind:"core",lang:"en",topic:"present-simple-words",extraMeta:"🔊 озвучка"},
     {kind:"core",lang:"en",topic:"its-hot-today",extraMeta:"🔊 озвучка · ✍️ написание"},
+    {kind:"core",lang:"en",topic:"youre-sleeping",extraMeta:"🔊 озвучка · ✍️ написание"},
     {kind:"custom",handler:"englishPresentSimple3",title:"Тренировка Present Simple — он, она, оно",meta:"7 глаголов · -s / -es / -ies"}
   ]},
   {id:"russian",label:"Русский язык",icon:"🇷🇺",lessons:[
