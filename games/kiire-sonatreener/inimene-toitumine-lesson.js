@@ -131,7 +131,7 @@
       '.food-section h3{margin:0;font-size:17px;line-height:1.3;color:#275b42}'+
       '.food-et{font-size:16px;line-height:1.45;font-weight:600;color:#263a30}'+
       '.food-ru{font-size:14px;line-height:1.45;color:#586a5f;padding-top:4px}'+
-      '.food-summary[data-ru="off"] .food-ru{display:none!important}'+
+      '.food-summary[data-ru="off"] .food-section:not(.food-vocab) .food-ru{display:none!important}'+
       '.food-line{border-left:3px solid #d8e9df;padding-left:10px}'+
       '.food-label{color:#6b8073;font-size:12px;font-weight:800;letter-spacing:.03em;text-transform:uppercase}'+
       '.food-examples{display:grid;gap:7px}'+
@@ -165,7 +165,7 @@
       '<section class="food-section"><h3>'+esc((i+1)+'. '+topic[0])+'</h3>'+
       pair(topic[1],topic[2])+'</section>'
     ).join('');
-    const vocab='<details class="food-section"><summary>Список слов · '+WORDS.length+'</summary>'+WORDS.map(row=>pair(row[0],row[1])).join('')+'</details>';
+    const vocab='<details class="food-section food-vocab"><summary>Список слов · '+WORDS.length+'</summary>'+WORDS.map(row=>pair(row[0],row[1])).join('')+'</details>';
     card.innerHTML=
       '<div id="foodSummary" class="food-summary" data-ru="'+(showRu?'on':'off')+'">'+
       '<div class="topic-intro"><div class="topic-kicker">👤 Inimeseõpetus · Урок 4</div>'+
