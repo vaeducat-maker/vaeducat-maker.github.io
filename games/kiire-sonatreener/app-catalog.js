@@ -11,7 +11,8 @@ window.EDUKASS_CATALOG=[
   {id:"inimene",label:"Inimeseõpetus",icon:"👤",lessons:[
     {kind:"custom",handler:"inimeneTervisLesson",title:"Урок 1 — Tervis · 03.10.26",meta:"4 карточки"},
     {kind:"custom",handler:"inimeneTervisenaitajadLesson",title:"Урок 2 — Tervisenäitajad",meta:"Задание A · переводы · 15 карточек в обе стороны"},
-    {kind:"custom",handler:"inimeneKontrollLesson",title:"Урок 3 — Kontrolltöö: tervis ja stress",meta:"4 темы · скрытый перевод · 23 карточки"}
+    {kind:"custom",handler:"inimeneKontrollLesson",title:"Урок 3 — Kontrolltöö: tervis ja stress",meta:"4 темы · скрытый перевод · 23 карточки"},
+    {kind:"custom",handler:"inimeneToitumineLesson",title:"2.4. Toitumist mõjutavad tegurid",meta:"5 предложений · скрытый перевод · 19 карточек"}
   ]},
   {id:"eesti-keel",label:"Eesti keel",icon:"📝",lessons:[
     {kind:"core",lang:"et",topic:"eesti-keel-1"},
