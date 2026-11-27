@@ -2,7 +2,7 @@ window.EDUKASS_CATALOG=[
   {id:"loodus",label:"Loodus",icon:"🌿",lessons:[
     {kind:"core",lang:"et",topic:"vesi-ja-jogi",extraMeta:"6 вопросов · 🖼"},
     {kind:"core",lang:"et",topic:"jarved",title:"Урок 2 — Järved",meta:"9 предложений · перевод · карточки"},
-    {kind:"custom",handler:"kalaKehaosadLesson",title:"Урок 3 — Kala kehaosad",meta:"7 частей рыбы · плакат · карточки · Kontroll (7 заданий)"},
+    {kind:"custom",handler:"kalaKehaosadLesson",title:"Урок 3 — Kalad",meta:"Части тела · признаки · образ жизни · словарь и карточки"},
     {kind:"custom",handler:"konnLesson",title:"Урок 4 — Konn ja kobras",meta:"19 строк · 9 вопросов с ответами · перевод · 28 карточек (10 + 18)"}
   ]},
   {id:"matemaatika",label:"Matemaatika",icon:"📐",lessons:[
