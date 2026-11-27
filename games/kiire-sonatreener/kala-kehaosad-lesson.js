@@ -16,6 +16,9 @@
     {et:'Pärakuuim',ru:'Анальный плавник'},
     {et:'Sabauim',ru:'Хвостовой плавник'}
   ];
+  const STUDY_GROUPS=[["Kalade iseloomulikud tunnused","Характерные признаки рыб",[["Kalad on selgroogsed loomad.","Рыбы — позвоночные животные."],["Kalade keha on voolujooneline.","Тело рыб имеет обтекаемую форму."],["Kalade keha on kaetud soomustega.","Тело рыб покрыто чешуёй."]]],["Kalade eluviis","Образ жизни рыб",[["Kalad elavad vees.","Рыбы живут в воде."],["Kalad liiguvad uimede abil.","Рыбы передвигаются с помощью плавников."],["Kalad hingavad lõpustega vees lahustunud hapnikku.","Рыбы дышат жабрами, получая растворённый в воде кислород."]]]];
+  const STUDY_WORDS=[{"et":"tunnus","ru":"признак"},{"et":"iseloomulik","ru":"характерный"},{"et":"eluviis","ru":"образ жизни"},{"et":"kohastumine","ru":"приспособление"},{"et":"selgroogsed","ru":"позвоночные"},{"et":"selgrootud","ru":"беспозвоночные"},{"et":"selgroog","ru":"позвоночник"},{"et":"keha","ru":"тело"},{"et":"voolujooneline","ru":"обтекаемый"},{"et":"uim","ru":"плавник"},{"et":"lõpused","ru":"жабры"},{"et":"soomused","ru":"чешуя"},{"et":"liikuma","ru":"передвигаться"},{"et":"abil","ru":"с помощью"},{"et":"hingama","ru":"дышать"},{"et":"hapnik","ru":"кислород"},{"et":"lahustunud","ru":"растворённый"},{"et":"vees lahustunud hapnik","ru":"растворённый в воде кислород"},{"et":"kaetud","ru":"покрытый"}];
+  let studyTranslation=true, studyDeck=false;
   const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   let view='diagram', languageMode='et', chosen=-1, revealed=new Set();
   let direction='et-ru', deck=[], place=0, flipped=false, learned=new Set(), retryCount=0;
@@ -47,6 +50,11 @@
     '.fish-word-number{flex:0 0 24px;height:24px;border-radius:99px;background:#e5f1e9;color:#2f6f58;font-size:12px;display:inline-flex;align-items:center;justify-content:center}',
     '.fish-word-ru{font-size:clamp(12px,3.3vw,15px);font-weight:600;color:#52675b;padding-left:32px;line-height:1.35}',
     '.fish-card-shell{display:grid;gap:10px}',
+    '.fish-study{border:1px solid #dce7df;border-radius:16px;padding:14px;display:grid;gap:10px;text-align:left;background:#fff}',
+    '.fish-study h3{margin:0;color:#2f6f58;font-size:20px;line-height:1.3}',
+    '.fish-study-row{border-top:1px solid #e5eee8;padding:9px 0 0;display:grid;gap:4px;line-height:1.4;overflow-wrap:anywhere}',
+    '.fish-study-et{font-weight:750;color:#27543a}',
+    '.fish-study-ru{color:#52675b;font-size:14px}',
     '.fish-quiz-board{position:relative;isolation:isolate;background:#fff;border:1px solid #e0e8ec;border-radius:18px;overflow:hidden}',
     '.fish-quiz-board svg{display:block;width:100%;height:auto;touch-action:manipulation}',
     '.fish-quiz-click{cursor:pointer;outline:none}',
@@ -162,6 +170,12 @@
   const shuffle=arr=>{const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));const t=a[i];a[i]=a[j];a[j]=t;}return a;};
   function intro(){return '<header class="topic-intro"><div class="fish-kicker">🌿 Loodusõpetus · Урок 3</div><h2>Kala kehaosad</h2><div class="fish-sub">Ahven — окунь · 7 частей тела рыбы</div></header>';}
   function backButton(){return '<button type="button" class="secondary" id="fishBack">← К предметам</button>';}
+  function studyMaterial(){
+    const row=(et,ru,show)=>'<div class="fish-study-row"><div class="fish-study-et">'+esc(et)+'</div>'+(show?'<div class="fish-study-ru">'+esc(ru)+'</div>':'')+'</div>';
+    return '<div class="fish-actions"><button type="button" class="secondary" id="fishStudyTranslation">'+(studyTranslation?'Скрыть перевод предложений':'Показать перевод предложений')+'</button></div>'+
+      STUDY_GROUPS.map(([title,ru,lines])=>'<section class="fish-study"><h3>'+esc(title)+'</h3><div class="fish-sub">'+esc(ru)+'</div>'+lines.map(([et,ru])=>row(et,ru,studyTranslation)).join('')+'</section>').join('')+
+      '<section class="fish-study"><h3>Sõnavara — словарь</h3><div class="fish-sub">19 слов и выражений</div>'+STUDY_WORDS.map(w=>row(w.et,w.ru,true)).join('')+'<div class="fish-actions"><button type="button" class="secondary" id="fishStudyEtCards">🃏 Карточки: Eesti → русский</button><button type="button" class="secondary" id="fishStudyRuCards">🃏 Карточки: русский → Eesti</button></div></section>';
+  }
   function diagram(){
     card.innerHTML='<div class="fish-lesson" id="fishLesson">'+intro()+
       '<div class="fish-toolbar"><button type="button" data-fish-mode="et" class="'+(languageMode==='et'?'is-active':'')+'">🇪🇪 Только эстонский</button>'+
@@ -170,7 +184,7 @@
       '<p class="fish-hint">Нажми на подпись около рыбы — русский перевод появится прямо под ней. Нажми ещё раз, чтобы скрыть его.</p>'+
       '<div class="fish-actions"><button class="primary" id="fishStartQuiz">✍️ Kontroll — контрольная</button></div>'+
       '<div class="fish-actions"><button class="secondary" id="fishEtCards">🃏 Карточки: Eesti → русский</button><button class="secondary" id="fishRuCards">🃏 Карточки: русский → Eesti</button></div>'+
-      backButton()+'</div>';
+      studyMaterial()+backButton()+'</div>';
     card.querySelectorAll('[data-fish-word], [data-fish-part]').forEach(el=>{
       const idx=Number(el.dataset.fishWord!==undefined?el.dataset.fishWord:el.dataset.fishPart);
       const choose=()=>{
@@ -191,6 +205,9 @@
     card.querySelector('#fishStartQuiz').onclick=startQuiz;
     card.querySelector('#fishEtCards').onclick=()=>startCards('et-ru');
     card.querySelector('#fishRuCards').onclick=()=>startCards('ru-et');
+    card.querySelector('#fishStudyTranslation').onclick=()=>{studyTranslation=!studyTranslation;diagram();};
+    card.querySelector('#fishStudyEtCards').onclick=()=>startCards('et-ru',true);
+    card.querySelector('#fishStudyRuCards').onclick=()=>startCards('ru-et',true);
     card.querySelector('#fishBack').onclick=()=>libraryBtn.click();
   }
 
@@ -319,16 +336,16 @@
       diagram();
     };
   }
-  function startCards(dir){
-    view='cards';direction=dir;deck=shuffle([0,1,2,3,4,5,6]);place=0;flipped=false;learned=new Set();retryCount=0;cards();
+  function startCards(dir,isStudy=false){
+    studyDeck=isStudy;view='cards';direction=dir;deck=shuffle((studyDeck?STUDY_WORDS:WORDS).map((_,i)=>i));place=0;flipped=false;learned=new Set();retryCount=0;cards();
   }
   function cards(){
     if(place>=deck.length){finish();return;}
-    const i=deck[place],w=WORDS[i];
+    const i=deck[place],w=(studyDeck?STUDY_WORDS:WORDS)[i];
     const front=direction==='et-ru'?w.et:w.ru;
     const back=direction==='et-ru'?w.ru:w.et;
     flipped=false;
-    card.innerHTML='<div class="fish-lesson" id="fishLesson">'+intro()+
+    card.innerHTML='<div class="fish-lesson" id="fishLesson">'+(studyDeck?'<header class="topic-intro"><div class="fish-kicker">🌿 Loodusõpetus · Урок 3</div><h2>Kalad · Sõnavara</h2><div class="fish-sub">19 слов и выражений</div></header>':intro())+
       '<div class="review-wrap">'+
         '<button type="button" class="secondary" id="fishChangeDir" style="width:100%">↔ '+(direction==='et-ru'?'🇪🇪 Eesti → 🇷🇺 Русский':'🇷🇺 Русский → 🇪🇪 Eesti')+'</button>'+
         '<div class="flashcard" id="fishFlip" role="button" tabindex="0" aria-label="Перевернуть карточку">'+
@@ -342,7 +359,7 @@
           '<button class="review-no" type="button" id="fishRepeat" aria-label="Повторить">✕</button>'+
           '<button class="review-yes" type="button" id="fishKnow" aria-label="Знаю">✓</button>'+
         '</div>'+
-        '<button type="button" class="secondary" id="fishToDiagram" style="width:100%">← К плакату</button>'+
+        '<button type="button" class="secondary" id="fishToDiagram" style="width:100%">← К уроку</button>'+
       '</div></div>';
     const flash=card.querySelector('#fishFlip');
     const actions=card.querySelector('#fishActions');
@@ -380,18 +397,18 @@
   }
   function finish(){
     card.innerHTML='<div class="fish-lesson" id="fishLesson">'+intro()+
-      '<div class="fish-done"><div style="font-size:48px">🐟</div><h3>Väga tubli!</h3><p>Все 7 частей рыбы пройдены.</p></div>'+
+      '<div class="fish-done"><div style="font-size:48px">🐟</div><h3>Väga tubli!</h3><p>'+(studyDeck?'Все 19 слов и выражений пройдены.':'Все 7 частей рыбы пройдены.')+'</p></div>'+
       '<div class="fish-actions"><button type="button" class="primary" id="fishAgain">🃏 Повторить карточки</button>'+
       '<button type="button" class="secondary" id="fishDiagram">🐟 К рисунку</button></div>'+
       backButton()+'</div>';
-    card.querySelector('#fishAgain').onclick=()=>startCards(direction);
+    card.querySelector('#fishAgain').onclick=()=>startCards(direction,studyDeck);
     card.querySelector('#fishDiagram').onclick=()=>{view='diagram';diagram();};
     card.querySelector('#fishBack').onclick=()=>libraryBtn.click();
   }
   function openLesson(){
-    view='diagram';chosen=-1;revealed.clear();languageMode='et';
+    view='diagram';chosen=-1;revealed.clear();languageMode='et';studyTranslation=true;studyDeck=false;
     if(pill)pill.textContent='🌿 Loodusõpetus';
-    if(sub)sub.textContent='Урок 3 · Kala kehaosad';
+    if(sub)sub.textContent='Урок 3 · Kalad';
     if(restart)restart.hidden=true;
     if(counter)counter.textContent='';
     diagram();
