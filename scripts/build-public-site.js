@@ -24,6 +24,7 @@ const publicFiles = [
   'EDUKASS_umardamine_post_v2.mp4',
   'k/index.html',
   'kirjalik-arvutamine/index.html',
+  'korruta/index.html',
   'styles.css',
 
   'assets/korrutustabel.png',
