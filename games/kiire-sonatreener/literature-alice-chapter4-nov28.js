@@ -1,0 +1,24 @@
+(function(){
+'use strict';
+const card=document.getElementById('card'),libraryBtn=document.getElementById('libraryBtn'),pill=document.getElementById('pill'),sub=document.getElementById('sub');
+if(!card||!libraryBtn)return;
+const d={"words":[["1. lagendik"],["2. kann → anum","сосуд"],["veekann"],["uinuv = magav"],["3. kübar = peakate"],["kübarsepp – kübarsepa – kübarseppa"],["veider – veidra – veidrat"],["ebatavaline = kummaline"]],"paragraphs":["Alice kohtub Hullu Kübarsepaga ja Märtsijänesega, kes peavad veidrat ja segast teepidu.","Peatükk näitab, et Imedemaal võivad juhtuda väga kummalised ja naljakad asjad.","Hull Kübarsepp rääkis, et kell on alati kuus, sest ta oli aja peale pahane. Aeg oli karistuseks seisma jäänud, nii et nad pidid kogu aeg teed jooma ja kell kuus teepidu pidama.","Kõik inimesed on erinevad ja igaühel on oma mõtted ning arvamused.","Ära usu kõike kohe, vaid mõtle ise ja küsi küsimusi.","Maailm võib olla kummaline ja ettearvamatu, kuid sellesse võib suhtuda huumoriga."],"order":[[2,"Alice kohtus Hullu Kübarsepaga."],[1,"Alice jõudis lagendikule."],[6,"Alice otsustas edasi minna."],[8,"Alice küsis, kus aed on."],[3,"Kübarsepp rääkis oma kellast."],[4,"Alice võttis koogi."],[5,"Uinuv Hiir ärkas korraks."],[7,"Kübarsepp hoiatas Alicet."]],"meanings":[["„Kas sul on aega?”","b","Kas sa oled vaba?"],["„Ma ei saa sellest aru.”","a","Ma ei mõista seda."],["„Võib-olla.”","c","Võib juhtuda."],["„Ole ettevaatlik!”","b","Käitu hoolikalt."],["„See sõltub sellest.”","b","Kõik oleneb sellest."],["„Ma ei tea veel.”","c","Ma ei tea praegu vastust."],["„Kuhu sa tahad jõuda?”","b","Mis on sinu sihtkoht?"],["„Ma tahan aeda minna.”","a","Ma soovin aeda minna."],["„See ei ole piisav põhjus.”","a","Sellest põhjusest ei piisa."],["„Mis siin toimub?”","a","Mis siin juhtus või juhtub?"]]};
+const e=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+if(!document.getElementById('alice4RefStyle')){
+ const style=document.createElement('style');style.id='alice4RefStyle';
+ style.textContent='.alice4-ref{display:grid;gap:15px}.alice4-ref .head,.alice4-ref .sheet{background:#fff;border:1px solid #dce8df;border-radius:16px;padding:17px}.alice4-ref .head{background:#edf7f0}.alice4-ref h2{margin:4px 0 7px;font-size:23px}.alice4-ref h3{margin:0 0 15px;color:#245a3a;font-size:20px}.alice4-ref h4{margin:22px 0 12px;color:#245a3a;font-size:17px}.alice4-ref .item{font-size:18px;line-height:1.55;margin-bottom:4px}.alice4-ref .subword{font-size:15px;color:#596e61;padding-left:76px;margin:0 0 8px}.alice4-ref .para{font-size:18px;line-height:1.65;margin:16px 0}.alice4-ref .task{display:flex;gap:9px;padding:9px 0;border-bottom:1px solid #edf2ee;font-size:17px;line-height:1.52}.alice4-ref .task:last-child{border-bottom:0}.alice4-ref .idx{min-width:24px;color:#66786b;font-weight:800}.alice4-ref .ans{font-weight:900;color:#177341}.alice4-ref .muted{color:#64776a;font-size:13px}.alice4-ref .quoted{display:block;color:#385542;margin-bottom:3px}@media(max-width:540px){.alice4-ref .head,.alice4-ref .sheet{padding:14px}.alice4-ref .item,.alice4-ref .para{font-size:17px}.alice4-ref .task{font-size:16px}}';
+ document.head.appendChild(style);
+}
+function render(){
+ if(pill)pill.textContent='📖 Eesti kirjandus';
+ if(sub)sub.textContent='Урок 13 · Alice imedemaal · 4. peatükk';
+ const words=d.words.map(w=>'<div class="item" lang="et">'+e(w[0])+'</div>'+(w[1]?'<div class="subword" lang="ru">'+e(w[1])+'</div>':'')).join('');
+ const paragraphs=d.paragraphs.map(p=>'<p class="para" lang="et">'+e(p)+'</p>').join('');
+ const ordered=d.order.map((r,i)=>'<div class="task"><span class="idx">'+(i+1)+'.</span><div><span class="ans">'+r[0]+'</span> – <span lang="et">'+e(r[1])+'</span></div></div>').join('');
+ const meanings=d.meanings.map((r,i)=>'<div class="task"><span class="idx">'+(i+1)+'.</span><div><span class="quoted" lang="et">'+e(r[0])+'</span><span class="ans">'+r[1]+')</span> <span lang="et">'+e(r[2])+'</span></div></div>').join('');
+ card.innerHTML='<div class="alice4-ref"><section class="head"><div class="muted">📖 Eesti kirjandus · Урок 13</div><h2>Alice imedemaal · 4. peatükk</h2><div class="muted">26. november · Klassitöö | 28. november · Kodutöö</div></section><section class="sheet"><h3>26. november · Klassitöö</h3>'+words+'<div style="height:12px"></div>'+paragraphs+'</section><section class="sheet"><h3>28. november · Kodutöö</h3><h4>1. Pane sündmused õigesse järjekorda (4. peatüki järgi).</h4>'+ordered+'<h4>2. Vali õige tähendus.</h4>'+meanings+'</section><button type="button" class="secondary" id="alice4RefBack">← К предметам</button></div>';
+ card.querySelector('#alice4RefBack').onclick=()=>libraryBtn.click();
+}
+window.EDUKASS_LESSONS=window.EDUKASS_LESSONS||{};
+window.EDUKASS_LESSONS.litAliceChapter4Nov28=render;
+})();
